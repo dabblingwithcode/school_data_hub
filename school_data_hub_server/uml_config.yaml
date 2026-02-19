@@ -1,7 +1,7 @@
 # uml_config.yaml - Example configuration file
 paths:
   modelsDirPath: lib/src
-  umlOutputFile: 'uml_diagram.puml'
+  umlOutputFile: 'model_relations_diagram.puml'
 options:
   printComments: true
   useNameSpace: false

@@ -20,10 +20,10 @@ class PendingCategoryScore {
 
 /// Manager for handling support category scoring state
 /// in the ScoreSupportCategoryPage
-class ScoreSupportCategoryManager extends ChangeNotifier {
+class SetBuldSupportCategoriesStatusManager extends ChangeNotifier {
   final PupilProxy pupil;
 
-  ScoreSupportCategoryManager({required this.pupil});
+  SetBuldSupportCategoriesStatusManager({required this.pupil});
 
   /// Map of categoryId -> pending score changes
   final _pendingScores = ValueNotifier<Map<int, PendingCategoryScore>>({});

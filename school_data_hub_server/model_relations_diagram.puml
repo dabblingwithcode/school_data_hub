@@ -41,6 +41,76 @@ classDiagram {
 </style>
  
 
+class HubLogEntry ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/hub_log_entry.spy.yaml</size></b>
+--
+  <i>logLevel</i>: <b><color:#ff962f>int</color></b>
+  <i>message</i>: <b><color:#ff962f>String</color></b>
+  <i>error</i>: <b><color:#ff962f>String?</color></b>
+  <i>stackTrace</i>: <b><color:#ff962f>String?</color></b>
+  <i>time</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>order</i>: <b><color:#ff962f>int</color></b>
+
+}
+
+class HubQueryLogEntry ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/hub_query_log_entry.spy.yaml</size></b>
+--
+  <i>query</i>: <b><color:#ff962f>String</color></b>
+  <i>duration</i>: <b><color:#ff962f>double</color></b>
+  <i>numRows</i>: <b><color:#ff962f>int?</color></b>
+  <i>error</i>: <b><color:#ff962f>String?</color></b>
+  <i>slow</i>: <b><color:#ff962f>bool</color></b>
+  <i>order</i>: <b><color:#ff962f>int</color></b>
+
+}
+
+class HubSessionLogEntry ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/hub_session_log_entry.spy.yaml</size></b>
+--
+  <i>sessionId</i>: <b><color:#ff962f>int</color></b>
+  <i>serverId</i>: <b><color:#ff962f>String</color></b>
+  <i>time</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>endpoint</i>: <b><color:#ff962f>String?</color></b>
+  <i>method</i>: <b><color:#ff962f>String?</color></b>
+  <i>duration</i>: <b><color:#ff962f>double?</color></b>
+  <i>numQueries</i>: <b><color:#ff962f>int?</color></b>
+  <i>slow</i>: <b><color:#ff962f>bool?</color></b>
+  <i>error</i>: <b><color:#ff962f>String?</color></b>
+  <i>stackTrace</i>: <b><color:#ff962f>String?</color></b>
+  <i>authenticatedUserId</i>: <b><color:#ff962f>int?</color></b>
+  <i>isOpen</i>: <b><color:#ff962f>bool?</color></b>
+
+}
+
+class HubSessionLogFilter ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/hub_session_log_filter.spy.yaml</size></b>
+--
+  <i>endpoint</i>: <b><color:#ff962f>String?</color></b>
+  <i>method</i>: <b><color:#ff962f>String?</color></b>
+  <i>slow</i>: <b><color:#ff962f>bool</color></b>
+  <i>error</i>: <b><color:#ff962f>bool</color></b>
+  <i>open</i>: <b><color:#ff962f>bool</color></b>
+  <i>lastSessionLogId</i>: <b><color:#ff962f>int?</color></b>
+
+}
+
+class HubSessionLogInfo ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/hub_session_log_info.spy.yaml</size></b>
+--
+  <i>sessionLogEntry</i>: <b><color:#ff962f>HubSessionLogEntry</color></b>
+  <i>logs</i>: <b><color:#ff962f>List<HubLogEntry></color></b>
+  <i>queries</i>: <b><color:#ff962f>List<HubQueryLogEntry></color></b>
+
+}
+
+class HubSessionLogResult ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/hub_session_log_result.spy.yaml</size></b>
+--
+  <i>sessionLog</i>: <b><color:#ff962f>List<HubSessionLogInfo></color></b>
+
+}
+
 enum ContactedType #ece4ff ##[bold] {
 <size:14>📁</size> <b><size:12> /_features/attendance/models/contacted_type.spy.yaml</size></b>
 --
@@ -335,6 +405,7 @@ class LearningSupportPlan <<table: <b>learning_support_plan</b>>> #e2f0fb##[bold
   <i>planId</i>: <b><color:#ff962f>String</color></b>
   <i>number</i>: <b><color:#ff962f>int?</color></b>
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>specialNeedsTeacher</i>: <b><color:#ff962f>String?</color></b>
   <i>socialPedagogue</i>: <b><color:#ff962f>String?</color></b>
   <i>proffesionalsInvolved</i>: <b><color:#ff962f>String?</color></b>
   <i>strengthsDescription</i>: <b><color:#ff962f>String?</color></b>
@@ -355,6 +426,8 @@ class SupportCategory <<table: <b>support_category</b>>> #e2f0fb##[bold] {
   <i>name</i>: <b><color:#ff962f>String</color></b>
   <i>categoryId</i>: <b><color:#ff962f>int</color></b>
   <i>parentCategory</i>: <b><color:#ff962f>int?</color></b>
+  <i>order</i>: <b><color:#ff962f>int?</color></b>
+  <i>printable</i>: <b><color:#ff962f>bool?</color></b>
  ➡️ <i>categoryGoals</i> : <b><color:#ff962f>List<SupportGoal>?</color></b>,  <b><color:#0164aa>relation</color></b>
  ➡️ <i>categoryStatues</i> : <b><color:#ff962f>List<SupportCategoryStatus>?</color></b>,  <b><color:#0164aa>relation</color></b>
 
@@ -772,6 +845,12 @@ class SchoolData <<table: <b>school_data</b>>> #e2f0fb##[bold] {
   <i>name</i>: <b><color:#ff962f>String</color></b>
   <i>officialName</i>: <b><color:#ff962f>String</color></b>
   <i>address</i>: <b><color:#ff962f>String</color></b>
+<color:#93c47d>## TODO: zipCode is optional to avoid a forced migration</color>
+<color:#93c47d>## This should be fixed in a future migration</color>
+  <i>zipCode</i>: <b><color:#ff962f>String?</color></b>
+<color:#93c47d>## TODO: city is optional to avoid a forced migration</color>
+<color:#93c47d>## This should be fixed in a future migration </color>
+  <i>city</i>: <b><color:#ff962f>String?</color></b>
   <i>schoolNumber</i>: <b><color:#ff962f>String</color></b>
   <i>telephoneNumber</i>: <b><color:#ff962f>String</color></b>
   <i>email</i>: <b><color:#ff962f>String</color></b>
@@ -1145,6 +1224,10 @@ enum MemberOperation #ece4ff ##[bold] {
  User::userInfo "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" module 
  PupilWorkbook::workbook "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Workbook 
 
+HubSessionLogInfo - HubLogEntry
+HubSessionLogInfo - HubQueryLogEntry
+HubSessionLogInfo - HubSessionLogEntry
+HubSessionLogResult - HubSessionLogInfo
 MissedSchoolday - ContactedType
 MissedSchoolday - MissedType
 MissedSchooldayDto - MissedSchoolday

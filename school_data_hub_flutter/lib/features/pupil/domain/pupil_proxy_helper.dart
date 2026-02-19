@@ -102,4 +102,37 @@ class PupilProxyHelper {
     }
     return false;
   }
+
+  /// Calculate "Lernjahr Deutsch" (1..4 where 4 means >3).
+  /// Returns null if the pupil is not a migration pupil.
+  static int? calculateLernjahr(PupilProxy pupil) {
+    final migrationEnd = pupil.migrationSupportEnds;
+    if (migrationEnd == null) {
+      return null;
+    }
+    final years = DateTime.now().difference(pupil.pupilSince).inDays ~/ 365;
+    if (years <= 0) return 1;
+    if (years >= 4) return 4; // >3
+    return years;
+  }
+
+  /// Calculate the "Schulbesuchsjahr" from the pupil's school grade,
+  /// adding one extra year if the pupil was held back.
+  static int calculateSchulbesuchsjahr(PupilProxy pupil) {
+    int base;
+    switch (pupil.schoolGrade) {
+      case SchoolGrade.E1:
+        base = 1;
+      case SchoolGrade.E2:
+        base = 2;
+      case SchoolGrade.E3:
+        base = 3;
+      case SchoolGrade.K3:
+        base = 3;
+      case SchoolGrade.K4:
+        base = 4;
+    }
+    if (pupil.schoolyearHeldBackAt != null) base += 1;
+    return base;
+  }
 }

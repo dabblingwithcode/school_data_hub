@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_page/logs_page.dart';
 import 'package:school_data_hub_flutter/app_utils/shorebird_code_push_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_account_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_admin_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_session_section.dart';
+import 'package:school_data_hub_flutter/features/server_logs/presentation/server_logs_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SettingsPage extends WatchingWidget {
   const SettingsPage({super.key});
@@ -69,10 +71,23 @@ class SettingsPage extends WatchingWidget {
                   SettingsTile.navigation(
                     leading: const Icon(Icons.bug_report_rounded),
                     title: const Text('Logs'),
-                    onPressed: (context) => Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (ctx) => const LogsPage())),
+                    onPressed: (context) => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (ctx) => const LogsPage()),
+                    ),
                   ),
+                  if (AuthClearanceHelper.isAdmin())
+                    SettingsTile.navigation(
+                      leading: const Icon(Icons.dns_outlined),
+                      title: const Text('Server-Logs'),
+                      onPressed: (context) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ServerLogsPage(),
+                          ),
+                        );
+                      },
+                    ),
                   SettingsTile.navigation(
                     leading: const Icon(Icons.info_rounded),
                     title: const Text('App Infos'),

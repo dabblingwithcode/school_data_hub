@@ -1,7 +1,9 @@
+import 'package:flutter_it/flutter_it.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pdf_helpers.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
@@ -97,6 +99,11 @@ class PdfPage3 {
                         .where((c) => c.categoryId == goal.supportCategoryId)
                         .firstOrNull;
                     final categoryName = category?.name ?? 'Unbekannt';
+                    final rootCategoryName = category != null
+                        ? di<SupportCategoryManager>()
+                              .getRootSupportCategory(category.id!)
+                              .name
+                        : 'Unbekannt';
                     final status = statusMap[goal.supportCategoryId];
                     final istStand = status?.comment ?? '';
                     final achievedText = goal.goalChecks != null
@@ -114,7 +121,10 @@ class PdfPage3 {
                           PdfHelpers.formatDate(goal.createdAt),
                           fontRegular,
                         ),
-                        PdfHelpers.tableDataCell(categoryName, fontRegular),
+                        PdfHelpers.tableDataCell(
+                          '$rootCategoryName\n$categoryName',
+                          fontRegular,
+                        ),
                         PdfHelpers.tableDataCell(istStand, fontRegular),
                         PdfHelpers.tableDataCell(goal.description, fontRegular),
                         PdfHelpers.tableDataCell(goal.strategies, fontRegular),

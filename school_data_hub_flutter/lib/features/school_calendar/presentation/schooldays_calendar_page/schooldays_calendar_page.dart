@@ -7,8 +7,8 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/atendance_list_card.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
@@ -78,6 +78,7 @@ class SchooldaysCalendarPage extends WatchingWidget {
 
     // -- Build ----------------------------------------------------------------
     return Scaffold(
+      backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: AppColors.backgroundColor,
@@ -92,7 +93,7 @@ class SchooldaysCalendarPage extends WatchingWidget {
               selectedDay.value = DateTime.now().toLocal();
             },
           ),
-          if (di<HubSessionManager>().isAdmin)
+          if (AuthClearanceHelper.isAdmin())
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: () async {
@@ -130,16 +131,14 @@ class SchooldaysCalendarPage extends WatchingWidget {
                 floating: true,
                 automaticallyImplyLeading: false,
                 leading: const SizedBox.shrink(),
-                backgroundColor: Colors.white,
+                backgroundColor: AppColors.canvasColor,
                 collapsedHeight: 452,
                 expandedHeight: 452,
                 toolbarHeight: 452,
                 stretch: true,
                 elevation: 0,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                  ),
+                  background: Container(color: AppColors.canvasColor),
                   titlePadding: const EdgeInsets.only(
                     left: 0,
                     top: 0,
@@ -154,6 +153,13 @@ class SchooldaysCalendarPage extends WatchingWidget {
                       child: TableCalendar<String>(
                         daysOfWeekHeight: 52,
                         startingDayOfWeek: StartingDayOfWeek.monday,
+                        headerStyle: const HeaderStyle(
+                          titleCentered: true,
+                          titleTextStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
                         calendarStyle: const CalendarStyle(
                           canMarkersOverflow: false,
                         ),
@@ -321,7 +327,7 @@ class SchooldaysCalendarPage extends WatchingWidget {
                           }
                         },
                         onDayLongPressed: (selected, focused) async {
-                          if (!di<HubSessionManager>().isAdmin) {
+                          if (AuthClearanceHelper.isAdmin()) {
                             di<NotificationService>().showInformationDialog(
                               'Keine Berechtigung für das Löschen von Schultagen.',
                             );
@@ -369,7 +375,7 @@ class SchooldaysCalendarPage extends WatchingWidget {
                                 child: Text(
                                   '${DateFormat('EEEE', Localizations.localeOf(context).toString()).format(selectedDayValue)} ${selectedDayValue.formatDateForUser()}',
                                   style: const TextStyle(
-                                    fontSize: 20.0,
+                                    fontSize: 19.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   overflow: TextOverflow.ellipsis,

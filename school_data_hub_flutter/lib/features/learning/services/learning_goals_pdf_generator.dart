@@ -71,58 +71,32 @@ class LearningGoalsPdfGenerator {
         ),
       );
     } else {
-      // First, add a summary page
-      // pdf.addPage(
-      //   _buildSummaryPage(
-      //     image: image,
-      //     pupils: pupilsWithGoals,
-      //     fontRegular: fontRegular,
-      //     fontBold: fontBold,
-      //   ),
-      // );
-
-      // Then add detailed pages for each pupil with goals
-      for (var pupil in pupilsWithGoals) {
-        final competenceGoals = pupil.competenceGoals ?? [];
-
-        // Sort goals by competence
-        final sortedGoals = List<CompetenceGoal>.from(competenceGoals);
-        sortedGoals.sort((a, b) {
-          final rootA = di<CompetenceManager>().findRootCompetenceById(
-            a.competenceId,
-          );
-          final rootB = di<CompetenceManager>().findRootCompetenceById(
-            b.competenceId,
-          );
-          return rootA.name.compareTo(rootB.name);
-        });
-
-        // Add pages for this pupil's goals
-        const int maxGoalsPerPage = 8;
-        final int totalPagesForPupil = (sortedGoals.length / maxGoalsPerPage)
-            .ceil();
-
-        for (int pageIndex = 0; pageIndex < totalPagesForPupil; pageIndex++) {
-          final startIndex = pageIndex * maxGoalsPerPage;
-          final endIndex = (startIndex + maxGoalsPerPage).clamp(
-            0,
-            sortedGoals.length,
-          );
-          final goalsOnPage = sortedGoals.sublist(startIndex, endIndex);
-
-          pdf.addPage(
-            _buildPupilDetailPage(
-              image: image,
-              pupil: pupil,
-              competenceGoals: goalsOnPage,
-              pageNumber: pageIndex + 1,
-              totalPages: totalPagesForPupil,
+      // Build continuous pages with all pupils' goals
+      pdf.addPage(
+        pw.MultiPage(
+          margin: const pw.EdgeInsets.all(20),
+          header: (context) => pw.Column(
+            children: [
+              _buildHeader(
+                image,
+                context.pageNumber,
+                context.pagesCount,
+                fontRegular,
+                fontBold,
+              ),
+              pw.SizedBox(height: 15),
+            ],
+          ),
+          footer: (context) => _buildFooter(fontRegular),
+          build: (context) => [
+            _buildContinuousGoalsList(
+              pupils: pupilsWithGoals,
               fontRegular: fontRegular,
               fontBold: fontBold,
             ),
-          );
-        }
-      }
+          ],
+        ),
+      );
     }
 
     di<NotificationService>().setHeavyLoadingValue(false);
@@ -691,28 +665,82 @@ class LearningGoalsPdfGenerator {
     pw.Font fontBold,
   ) {
     const double fontSize = 9;
-    return pw.Row(
+    return pw.Column(
       children: [
-        pw.Text(
-          '${pupil.firstName} ${pupil.lastName}',
-          style: pw.TextStyle(fontSize: fontSize, font: fontBold),
+        pw.Row(
+          children: [
+            pw.Text(
+              '${pupil.firstName} ${pupil.lastName}',
+              style: pw.TextStyle(fontSize: fontSize, font: fontBold),
+            ),
+            pw.SizedBox(width: 12),
+            pw.Text(
+              pupil.group,
+              style: pw.TextStyle(fontSize: fontSize, font: fontRegular),
+            ),
+            pw.SizedBox(width: 12),
+            pw.Text(
+              pupil.schoolGrade.name,
+              style: pw.TextStyle(fontSize: fontSize, font: fontRegular),
+            ),
+            pw.Spacer(),
+            pw.Text(
+              DateTime.now().formatDateForUser(),
+              style: pw.TextStyle(fontSize: fontSize, font: fontRegular),
+            ),
+          ],
         ),
-        pw.SizedBox(width: 12),
-        pw.Text(
-          pupil.group,
-          style: pw.TextStyle(fontSize: fontSize, font: fontRegular),
-        ),
-        pw.SizedBox(width: 12),
-        pw.Text(
-          pupil.schoolGrade.name,
-          style: pw.TextStyle(fontSize: fontSize, font: fontRegular),
-        ),
-        pw.Spacer(),
-        pw.Text(
-          DateTime.now().formatDateForUser(),
-          style: pw.TextStyle(fontSize: fontSize, font: fontRegular),
+
+        pw.Row(
+          children: [
+            pw.Text(
+              'MEINE LERNZIELE',
+              style: pw.TextStyle(fontSize: 12, font: fontBold),
+            ),
+          ],
         ),
       ],
+    );
+  }
+
+  /// Builds a continuous list with all pupils' goals
+  static pw.Widget _buildContinuousGoalsList({
+    required List<PupilProxy> pupils,
+    required pw.Font fontRegular,
+    required pw.Font fontBold,
+  }) {
+    final List<pw.Widget> widgets = [];
+
+    for (var pupil in pupils) {
+      final competenceGoals = pupil.competenceGoals ?? [];
+      if (competenceGoals.isEmpty) continue;
+
+      // Sort goals by competence
+      final sortedGoals = List<CompetenceGoal>.from(competenceGoals);
+      sortedGoals.sort((a, b) {
+        final rootA = di<CompetenceManager>().findRootCompetenceById(
+          a.competenceId,
+        );
+        final rootB = di<CompetenceManager>().findRootCompetenceById(
+          b.competenceId,
+        );
+        return rootA.name.compareTo(rootB.name);
+      });
+
+      // Add pupil info row
+      widgets.add(_buildPupilInfoRow(pupil, fontRegular, fontBold));
+      widgets.add(pw.SizedBox(height: 4));
+
+      // Add goals table for this pupil
+      widgets.add(_buildDetailedGoalsTable(sortedGoals, fontRegular, fontBold));
+
+      // Add spacing between pupils
+      widgets.add(pw.SizedBox(height: 12));
+    }
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: widgets,
     );
   }
 
@@ -744,30 +772,11 @@ class LearningGoalsPdfGenerator {
       columnWidths: const {
         0: pw.FixedColumnWidth(45), // Fach
         1: pw.FlexColumnWidth(4), // Beschreibung
-        2: pw.FixedColumnWidth(50), // Status
-        3: pw.FlexColumnWidth(2), // Strategien
+        2: pw.FlexColumnWidth(2), // Strategien
       },
       children: [
         // Header row
-        pw.TableRow(
-          decoration: const pw.BoxDecoration(color: PdfColors.grey200),
-          children: [
-            _buildTableCell('Fach', fontRegular, fontBold, isHeader: true),
-            _buildTableCell(
-              'Beschreibung',
-              fontRegular,
-              fontBold,
-              isHeader: true,
-            ),
-            _buildTableCell('Status', fontRegular, fontBold, isHeader: true),
-            _buildTableCell(
-              'Strategien',
-              fontRegular,
-              fontBold,
-              isHeader: true,
-            ),
-          ],
-        ),
+
         // Data rows
         ...competenceGoals.asMap().entries.map((entry) {
           final index = entry.key + 1;
@@ -776,25 +785,13 @@ class LearningGoalsPdfGenerator {
             goal.competenceId,
           );
           final shortName = _getShortName(rootCompetence.publicId);
-          final isAchieved = goal.score != null && goal.score! > 0;
           final strategies = goal.strategies?.join(', ') ?? '';
 
           return pw.TableRow(
             children: [
               _buildTableCell(shortName, fontRegular, fontBold),
-              _buildTableCell(
-                goal.description,
-                fontRegular,
-                fontBold,
-                maxLength: 60,
-              ),
-              _buildTableCell(
-                isAchieved ? 'Erreicht' : 'Offen',
-                fontRegular,
-                fontBold,
-                isBold: !isAchieved,
-              ),
-              _buildTableCell(strategies, fontRegular, fontBold, maxLength: 30),
+              _buildTableCell(goal.description, fontRegular, fontBold),
+              _buildTableCell(strategies, fontRegular, fontBold),
             ],
           );
         }),
@@ -827,24 +824,17 @@ class LearningGoalsPdfGenerator {
     pw.Font fontBold, {
     bool isHeader = false,
     bool isBold = false,
-    int maxLength = 25,
   }) {
-    // Truncate text if it's too long to prevent overflow issues
-    String displayText = text;
-    if (!isHeader && text.length > maxLength) {
-      displayText = '${text.substring(0, maxLength - 3)}...';
-    }
-
     return pw.Container(
       padding: const pw.EdgeInsets.all(4),
       child: pw.Text(
-        displayText,
+        text,
         style: pw.TextStyle(
           fontSize: isHeader ? 10 : 9,
           font: isHeader || isBold ? fontBold : fontRegular,
         ),
         textAlign: isHeader ? pw.TextAlign.center : pw.TextAlign.left,
-        overflow: pw.TextOverflow.clip,
+        softWrap: true,
       ),
     );
   }

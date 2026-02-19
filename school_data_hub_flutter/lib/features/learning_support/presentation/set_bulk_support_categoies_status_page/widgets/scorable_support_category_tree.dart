@@ -5,7 +5,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/score_support_category_page/manager/score_support_category_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/manager/set_bulk_support_categories_status_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 const _categoryTextStyle = TextStyle(
@@ -22,7 +22,7 @@ class ScorableSupportCategoryTree extends WatchingWidget {
   final int? parentCategoryId;
   final double indentation;
   final Color? backGroundColor;
-  final ScoreSupportCategoryManager manager;
+  final SetBuldSupportCategoriesStatusManager manager;
 
   const ScorableSupportCategoryTree({
     required this.pupil,
@@ -63,7 +63,7 @@ class _CategoryNode extends StatelessWidget {
   final PupilProxy pupil;
   final double indentation;
   final Color? inheritedColor;
-  final ScoreSupportCategoryManager manager;
+  final SetBuldSupportCategoriesStatusManager manager;
 
   const _CategoryNode({
     required this.category,
@@ -113,7 +113,7 @@ class _BranchNode extends WatchingWidget {
   final PupilProxy pupil;
   final double indentation;
   final Color color;
-  final ScoreSupportCategoryManager manager;
+  final SetBuldSupportCategoriesStatusManager manager;
 
   const _BranchNode({
     required this.category,
@@ -190,7 +190,7 @@ class _LeafNode extends WatchingWidget {
   final SupportCategory category;
   final PupilProxy pupil;
   final Color color;
-  final ScoreSupportCategoryManager manager;
+  final SetBuldSupportCategoriesStatusManager manager;
 
   const _LeafNode({
     required this.category,

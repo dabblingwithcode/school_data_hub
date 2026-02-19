@@ -15,11 +15,12 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
+import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/score_support_category_page/score_support_category_page.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/set_bulk_support_categoies_status_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/kindergarden_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
@@ -258,7 +259,8 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (ctx) => ScoreSupportCategoryPage(pupil: pupil),
+                    builder: (ctx) =>
+                        SetBulkSupportCategoriesStatusPage(pupil: pupil),
                   ),
                 );
               },
@@ -404,9 +406,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                 (plan) => LearningSupportPlanCard(plan: plan, pupil: pupil),
               ),
             const Gap(10),
+
             // New Learning Support Plan Button
-            // TODO: show if special educator or group tutor
-            if (di<HubSessionManager>().isAdmin)
+            if (AuthClearanceHelper.isTutorOrAdmin(pupil))
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: ElevatedButton(

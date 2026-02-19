@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
@@ -240,6 +243,16 @@ class ToolsPage extends WatchingWidget {
                         icon: Icons.mobile_screen_share,
                         label: 'Ids teilen',
                       ),
+                      _ToolsMenuButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _importUnencryptedPupilIdentitySourceFile(
+                            'pupil_identities',
+                          );
+                        },
+                        icon: Icons.file_open_rounded,
+                        label: 'aus Datei',
+                      ),
                       // Desktop-only admin tools for pupil identity import
                       if (_hubSessionManager.isAdmin &&
                           (Platform.isWindows || Platform.isMacOS)) ...[
@@ -260,16 +273,6 @@ class ToolsPage extends WatchingWidget {
                           },
                           icon: Icons.school,
                           label: 'SchiLD Import',
-                        ),
-                        _ToolsMenuButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            _importUnencryptedPupilIdentitySourceFile(
-                              'pupil_identities',
-                            );
-                          },
-                          icon: Icons.people,
-                          label: 'ID-Liste',
                         ),
                       ],
                     ],
@@ -327,6 +330,19 @@ class ToolsPage extends WatchingWidget {
                   label: 'Statistik',
                 ),
 
+                // --- Calendar section ---
+                _ToolsCategoryButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SchooldaysCalendarPage(),
+                      ),
+                    );
+                  },
+                  icon: Icons.calendar_month_rounded,
+                  label: 'Schultage-\nKalender',
+                ),
+
                 // --- Admin sections ---
                 if (_hubSessionManager.isAdmin) ...[
                   // User-Verwaltung
@@ -375,7 +391,7 @@ class ToolsPage extends WatchingWidget {
                       ],
                     ),
                     icon: Icons.people_rounded,
-                    label: 'User',
+                    label: 'Personal',
                   ),
 
                   // Admin (Schuldaten + Kalender + Stundenplan + Matrix)
@@ -409,18 +425,7 @@ class ToolsPage extends WatchingWidget {
                           icon: Icons.schedule,
                           label: 'Stundenplan',
                         ),
-                        _ToolsMenuButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const SchooldaysCalendarPage(),
-                              ),
-                            );
-                          },
-                          icon: Icons.calendar_month_rounded,
-                          label: 'Schultage-\nKalender',
-                        ),
+
                         _ToolsMenuButton(
                           onPressed: () {
                             Navigator.pop(context);
@@ -455,6 +460,20 @@ class ToolsPage extends WatchingWidget {
                           label: matrixPolicyManagerIsRegistered
                               ? 'Matrix\ninitialisiert'
                               : 'Matrix\ninitialisieren',
+                        ),
+                        _ToolsMenuButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            final Map<String, dynamic> json = di<EnvManager>()
+                                .activeEnv!
+                                .toJson();
+
+                            final String jsonString = jsonEncode(json);
+
+                            showQrCode(jsonString, context);
+                          },
+                          icon: Icons.key_rounded,
+                          label: 'Schulschlüssel\nzeigen',
                         ),
                         _ToolsMenuButton(
                           onPressed: () async {

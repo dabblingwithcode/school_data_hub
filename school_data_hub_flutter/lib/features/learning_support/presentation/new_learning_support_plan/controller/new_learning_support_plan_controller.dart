@@ -142,7 +142,7 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
           ? '1. Halbjahr'
           : '2. Halbjahr';
       semesterInfoNotifier.value = isEditing
-          ? 'Förderplan für $semesterName ${currentSemester.schoolYear} bearbeiten.'
+          ? 'Förderplan für $semesterName ${currentSemester.schoolYear}'
           : 'Der Förderplan wird für das $semesterName ${currentSemester.schoolYear} erstellt.';
     } else {
       semesterInfoNotifier.value =

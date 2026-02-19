@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/utils/book_ids_pdf_generator.dart';
@@ -39,18 +36,6 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
         ),
       ),
       tiles: <SettingsTile>[
-        SettingsTile.navigation(
-          leading: const Icon(Icons.dns_outlined),
-          title: const Text('Server-Logs'),
-          onPressed: (context) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const ServerLogsPage(),
-              ),
-            );
-          },
-        ),
         SettingsTile.navigation(
           title: const Text('Buch IDs generieren'),
           leading: const Icon(Icons.qr_code_rounded),
@@ -85,17 +70,6 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
               return;
             }
             await userManager.increaseUsersCredit();
-          },
-        ),
-        SettingsTile.navigation(
-          leading: const Icon(Icons.qr_code_rounded),
-          title: const Text('Schulschlüssel zeigen'),
-          onPressed: (context) {
-            final Map<String, dynamic> json = envManager.activeEnv!.toJson();
-
-            final String jsonString = jsonEncode(json);
-
-            showQrCode(jsonString, context);
           },
         ),
 

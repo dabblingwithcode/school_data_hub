@@ -37,19 +37,22 @@ class CustomExpansionTileSwitch extends WatchingWidget {
               children: [
                 expansionSwitchWidget!,
                 const Gap(10),
-                Icon(
-                  isExpanded
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: switchColor!,
+                AnimatedRotation(
+                  turns: isExpanded ? 0.5 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(Icons.keyboard_arrow_down, color: switchColor!),
                 ),
               ],
             )
           : expansionSwitchWidget != null && includeSwitch != true
           ? expansionSwitchWidget
-          : Icon(
-              isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-              color: switchColor ?? Colors.white,
+          : AnimatedRotation(
+              turns: isExpanded ? 0.5 : 0.0,
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                Icons.keyboard_arrow_down,
+                color: switchColor ?? Colors.white,
+              ),
             ),
     );
   }

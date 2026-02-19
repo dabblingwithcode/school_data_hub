@@ -4,6 +4,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_helper.dart';
 
@@ -25,34 +26,13 @@ class PdfHelpers {
   /// Calculate "Lernjahr Deutsch" (1..4 where 4 means >3).
   /// Returns null if the pupil is not a migration pupil.
   static int? calculateLernjahr(PupilProxy pupil) {
-    final migrationEnd = pupil.migrationSupportEnds;
-    if (migrationEnd == null) {
-      return null;
-    }
-    final years = DateTime.now().difference(pupil.pupilSince).inDays ~/ 365;
-    if (years <= 0) return 1;
-    if (years >= 4) return 4; // >3
-    return years;
+    return PupilProxyHelper.calculateLernjahr(pupil);
   }
 
   /// Calculate the "Schulbesuchsjahr" from the pupil's school grade,
   /// adding one extra year if the pupil was held back.
   static int calculateSchulbesuchsjahr(PupilProxy pupil) {
-    int base;
-    switch (pupil.schoolGrade) {
-      case SchoolGrade.E1:
-        base = 1;
-      case SchoolGrade.E2:
-        base = 2;
-      case SchoolGrade.E3:
-        base = 3;
-      case SchoolGrade.K3:
-        base = 3;
-      case SchoolGrade.K4:
-        base = 4;
-    }
-    if (pupil.schoolyearHeldBackAt != null) base += 1;
-    return base;
+    return PupilProxyHelper.calculateSchulbesuchsjahr(pupil);
   }
 
   /// Background color for PDF growth icons, matching AppColors.growthIconColor.

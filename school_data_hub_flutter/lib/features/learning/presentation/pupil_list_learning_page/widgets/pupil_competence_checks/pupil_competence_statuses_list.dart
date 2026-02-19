@@ -3,6 +3,9 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_competence_checks/competence_check_card.dart';
@@ -62,18 +65,142 @@ class PupilCompetenceStatusesList extends WatchingWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (final rootCompetenceId in sortedRootIds) ...[
-          _RootCompetenceHeader(rootCompetenceId: rootCompetenceId),
-          for (final competenceId in leafCompetenceIdsByRoot[rootCompetenceId]!)
-            _buildCompetenceCard(
-              context: context,
-              competenceId: competenceId,
-              competences: competences,
-              competenceChecksMap: pupilCompetenceChecksMap,
-              rootCompetenceId: rootCompetenceId,
-            ),
-        ],
+        for (final rootCompetenceId in sortedRootIds)
+          _RootCompetenceExpansionTile(
+            pupil: pupil,
+            rootCompetenceId: rootCompetenceId,
+            leafCompetenceIds: leafCompetenceIdsByRoot[rootCompetenceId]!,
+            competenceChecksMap: pupilCompetenceChecksMap,
+          ),
       ],
+    );
+  }
+}
+
+class _RootCompetenceExpansionTile extends WatchingWidget {
+  final PupilProxy pupil;
+  final int rootCompetenceId;
+  final List<int> leafCompetenceIds;
+  final Map<int, List<CompetenceCheck>> competenceChecksMap;
+
+  const _RootCompetenceExpansionTile({
+    required this.pupil,
+    required this.rootCompetenceId,
+    required this.leafCompetenceIds,
+    required this.competenceChecksMap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tileController = createOnce(() => CustomExpansionTileController());
+    final competenceManager = di<CompetenceManager>();
+    final rootCompetence = competenceManager.findRootCompetenceById(
+      rootCompetenceId,
+    );
+    final color = CompetenceHelper.getCompetenceColor(rootCompetenceId);
+
+    // Calculate total number of checks for this root competence
+    int totalChecks = 0;
+    for (final competenceId in leafCompetenceIds) {
+      totalChecks += competenceChecksMap[competenceId]?.length ?? 0;
+    }
+
+    // Get all competences allowed for this pupil
+    final competences = CompetenceHelper.getAllowedCompetencesForThisPupil(
+      pupil,
+    );
+
+    return Card(
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () => tileController.toggle(),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40.0,
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        _getCompetenceShortName(rootCompetence.name),
+                        style: TextStyle(
+                          color: AppColors.bestContrastCompetenceFontColor(
+                            color,
+                          ),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Gap(10),
+                  Expanded(
+                    child: Text(
+                      rootCompetence.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                  const Gap(10),
+                  Text(
+                    totalChecks.toString(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                  const Gap(10),
+                  CustomExpansionTileSwitch(
+                    customExpansionTileController: tileController,
+                    switchColor: color,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          CustomExpansionTileContent(
+            tileController: tileController,
+            widgetList: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 4.0,
+                ),
+                child: Column(
+                  children: [
+                    for (final competenceId in leafCompetenceIds)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: _buildCompetenceCard(
+                          context: context,
+                          competenceId: competenceId,
+                          competences: competences,
+                          competenceChecksMap: competenceChecksMap,
+                          rootCompetenceId: rootCompetenceId,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -119,68 +246,14 @@ class PupilCompetenceStatusesList extends WatchingWidget {
 
     final isReport = !competenceManager.isCompetenceWithChildren(competence);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: PupilCompetenceCard(
-        backgroundColor: backgroundColor,
-        competence: competence,
-        pupil: pupil,
-        isReport: isReport,
-        competenceChecks: competenceCheckCards,
-        checksAverageValue: averageCompetenceStatus,
-        children: const [], // No children in flat structure
-      ),
-    );
-  }
-}
-
-class _RootCompetenceHeader extends StatelessWidget {
-  final int rootCompetenceId;
-
-  const _RootCompetenceHeader({required this.rootCompetenceId});
-
-  @override
-  Widget build(BuildContext context) {
-    final competenceManager = di<CompetenceManager>();
-    final rootCompetence = competenceManager.findRootCompetenceById(
-      rootCompetenceId,
-    );
-    final color = CompetenceHelper.getCompetenceColor(rootCompetenceId);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Container(
-            width: 40.0,
-            height: 40.0,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            child: Center(
-              child: Text(
-                _getCompetenceShortName(rootCompetence.name),
-                style: TextStyle(
-                  color: AppColors.bestContrastCompetenceFontColor(color),
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const Gap(10),
-          Expanded(
-            child: Text(
-              rootCompetence.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-          ),
-        ],
-      ),
+    return PupilCompetenceCard(
+      backgroundColor: backgroundColor,
+      competence: competence,
+      pupil: pupil,
+      isReport: isReport,
+      competenceChecks: competenceCheckCards,
+      checksAverageValue: averageCompetenceStatus,
+      children: const [], // No children in flat structure
     );
   }
 

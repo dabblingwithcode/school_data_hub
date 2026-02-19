@@ -3,8 +3,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/score_support_category_page/manager/score_support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/score_support_category_page/widgets/scorable_support_category_tree.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/manager/set_bulk_support_categories_status_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/widgets/scorable_support_category_tree.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 /// A page that allows scoring support categories for a pupil.
@@ -12,14 +12,16 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 /// Categories that already have a status are indicated with a green dot.
 /// Changes can be made using the GrowthDropdown for each category.
 /// The FAB saves all pending changes at once.
-class ScoreSupportCategoryPage extends WatchingWidget {
+class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
   final PupilProxy pupil;
 
-  const ScoreSupportCategoryPage({required this.pupil, super.key});
+  const SetBulkSupportCategoriesStatusPage({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final manager = createOnce(() => ScoreSupportCategoryManager(pupil: pupil));
+    final manager = createOnce(
+      () => SetBuldSupportCategoriesStatusManager(pupil: pupil),
+    );
     final pendingScores = watch(manager.pendingScores).value;
     final hasPendingChanges = pendingScores.isNotEmpty;
 
@@ -127,7 +129,7 @@ class ScoreSupportCategoryPage extends WatchingWidget {
 
   Future<void> _saveAllChanges(
     BuildContext context,
-    ScoreSupportCategoryManager manager,
+    SetBuldSupportCategoriesStatusManager manager,
   ) async {
     final learningSupportManager = di<LearningSupportManager>();
     final pendingScores = manager.pendingScoresList;
