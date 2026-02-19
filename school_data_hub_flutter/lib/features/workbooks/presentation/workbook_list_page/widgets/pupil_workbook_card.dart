@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
@@ -16,8 +17,8 @@ import 'package:school_data_hub_flutter/common/widgets/grades_widget.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
 
 class PupilWorkbookCard extends WatchingWidget {
@@ -188,19 +189,22 @@ class PupilWorkbookCard extends WatchingWidget {
                                     children: [
                                       Row(
                                         children: [
-                                          Text(
+                                          Image.asset(
                                             workbook.subject != null
-                                                ? RootCompetenceType
-                                                      .stringToValue[workbook
-                                                          .subject]!
-                                                      .value
-                                                : 'Fach nicht bekannt',
-                                            overflow: TextOverflow.fade,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                                ? SubjectEnum.values
+                                                          .firstWhereOrNull(
+                                                            (element) =>
+                                                                element.name ==
+                                                                workbook
+                                                                    .subject,
+                                                          )
+                                                          ?.imagePath ??
+                                                      'assets/images/learning_icons/unknown.png'
+                                                : 'assets/images/learning_icons/unknown.png',
+                                            width: 25,
+                                            height: 25,
                                           ),
+
                                           const Gap(5),
                                           workbook.level != null
                                               ? GradesWidget(

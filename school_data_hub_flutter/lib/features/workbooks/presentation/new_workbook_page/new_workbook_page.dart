@@ -31,10 +31,11 @@ class NewWorkbookPage extends WatchingWidget {
     final workbookNameTextFieldController = createOnce(
       () => TextEditingController(),
     );
-    final selectedSubject = createOnce<ValueNotifier<workbookEnum.Subject?>>(
-      () => ValueNotifier(null),
-      dispose: (notifier) => notifier.dispose(),
-    );
+    final selectedSubject =
+        createOnce<ValueNotifier<workbookEnum.SubjectEnum?>>(
+          () => ValueNotifier(null),
+          dispose: (notifier) => notifier.dispose(),
+        );
     final selectedGrades = createOnce<ValueNotifier<Set<workbookEnum.Grade>>>(
       () => ValueNotifier(<workbookEnum.Grade>{}),
       dispose: (notifier) => notifier.dispose(),
@@ -51,8 +52,8 @@ class NewWorkbookPage extends WatchingWidget {
       if (isEdit) {
         workbookNameTextFieldController.text = workbook!.name ?? '';
         if (workbook!.subject != null) {
-          selectedSubject.value = workbookEnum.Subject.values
-              .cast<workbookEnum.Subject?>()
+          selectedSubject.value = workbookEnum.SubjectEnum.values
+              .cast<workbookEnum.SubjectEnum?>()
               .firstWhere(
                 (s) =>
                     s?.name == workbook!.subject ||
@@ -138,22 +139,52 @@ class NewWorkbookPage extends WatchingWidget {
                   ),
                   const Gap(20),
 
-                  DropdownButtonFormField<workbookEnum.Subject>(
+                  DropdownButtonFormField<workbookEnum.SubjectEnum>(
                     initialValue: currentSubject,
-                    decoration: AppStyles.textFieldDecoration(
-                      labelText: 'Fach',
-                    ),
+                    isDense: false,
+                    itemHeight: 50,
+                    decoration: AppStyles.textFieldDecoration(labelText: 'Fach')
+                        .copyWith(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 14,
+                          ),
+                        ),
                     style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
-                    items: workbookEnum.Subject.values.map((subject) {
-                      return DropdownMenuItem<workbookEnum.Subject>(
+                    items: workbookEnum.SubjectEnum.values.map((subject) {
+                      return DropdownMenuItem<workbookEnum.SubjectEnum>(
                         value: subject,
-                        child: Text(subject.name),
+                        child: Row(
+                          children: [
+                            if (subject.imagePath != null) ...[
+                              _SubjectIcon(imagePath: subject.imagePath!),
+                              const Gap(8),
+                            ],
+                            Text(subject.name),
+                          ],
+                        ),
                       );
                     }).toList(),
-                    onChanged: (workbookEnum.Subject? newValue) {
+                    selectedItemBuilder: (context) {
+                      return workbookEnum.SubjectEnum.values.map((subject) {
+                        return SizedBox(
+                          height: 56,
+                          child: Row(
+                            children: [
+                              if (subject.imagePath != null) ...[
+                                _SubjectIcon(imagePath: subject.imagePath!),
+                                const Gap(8),
+                              ],
+                              Text(subject.name),
+                            ],
+                          ),
+                        );
+                      }).toList();
+                    },
+                    onChanged: (workbookEnum.SubjectEnum? newValue) {
                       selectedSubject.value = newValue;
                     },
                   ),
@@ -234,6 +265,28 @@ class NewWorkbookPage extends WatchingWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SubjectIcon extends StatelessWidget {
+  final String imagePath;
+
+  const _SubjectIcon({required this.imagePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 40,
+      height: 40,
+      child: ClipRect(
+        child: Align(
+          alignment: Alignment.center,
+          widthFactor: 0.75,
+          heightFactor: 0.75,
+          child: Image.asset(imagePath, fit: BoxFit.contain),
         ),
       ),
     );

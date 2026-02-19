@@ -1,19 +1,34 @@
-enum Subject {
-  german('Deutsch', 'D'),
-  english('Englisch', 'E'),
-  math('Mathematik', 'M'),
-  physics('Physik', 'P'),
-  chemistry('Chemie', 'C'),
-  biology('Biologie', 'B'),
-  history('Geschichte', 'H'),
-  geography('Geografie', 'G'),
-  music('Musik', 'M'),
-  art('Kunst', 'K');
+enum SubjectEnum {
+  english('Englisch', 'E', 'assets/images/learning_icons/english.png'),
+  englishWorkbook(
+    'Englisch Arbeitsheft',
+    'EW',
+    'assets/images/learning_icons/english_workbook.png',
+  ),
+  math('Mathematik', 'M', 'assets/images/learning_icons/math.png'),
+  mathWorkbook(
+    'Mathematik Arbeitsheft',
+    'MW',
+    'assets/images/learning_icons/math_workbook.png',
+  ),
+  music('Musik', 'M', 'assets/images/learning_icons/music.png'),
+  art('Kunst', 'K', 'assets/images/learning_icons/art.png'),
+  grammar('Rechtschreibung', 'G', 'assets/images/learning_icons/grammar.png'),
+  writing('Schreiben', 'S', 'assets/images/learning_icons/writing.png'),
+  reading('Lesen', 'L', 'assets/images/learning_icons/reading.png'),
+
+  germanSupport(
+    'Deutsch Förderheft',
+    'DF',
+    'assets/images/learning_icons/daz.png',
+  ),
+  science('Sachunterricht', 'SU', 'assets/images/learning_icons/science.png');
 
   final String name;
   final String code;
+  final String? imagePath;
 
-  const Subject(this.name, this.code);
+  const SubjectEnum(this.name, this.code, [this.imagePath]);
 }
 
 enum Grade {

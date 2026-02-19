@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/learning_list_card/workbooks_competence_overview.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class WorkbooksInfoSwitch extends WatchingWidget {
   final PupilProxy pupil;
@@ -10,6 +10,6 @@ class WorkbooksInfoSwitch extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
-    return WorkbooksCompetenceOverview(pupil: pupil);
+    return WorkbooksOverview(pupil: pupil);
   }
 }

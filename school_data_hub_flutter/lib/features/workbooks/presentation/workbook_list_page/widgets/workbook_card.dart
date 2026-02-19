@@ -1,10 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -14,6 +15,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/common/workbook_image.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
@@ -159,6 +161,21 @@ class WorkbookCard extends WatchingWidget {
                               children: [
                                 const Text('Kompetenzbereich(e):'),
                                 const Gap(10),
+                                Image.asset(
+                                  workbook.subject != null
+                                      ? SubjectEnum.values
+                                                .firstWhereOrNull(
+                                                  (element) =>
+                                                      element.name ==
+                                                      workbook.subject,
+                                                )
+                                                ?.imagePath ??
+                                            'assets/images/learning_icons/unknown.png'
+                                      : 'assets/images/learning_icons/unknown.png',
+                                  width: 30,
+                                  height: 30,
+                                ),
+                                const Gap(5),
                                 Text(
                                   workbook.subject ?? 'nicht angegeben',
                                   overflow: TextOverflow.fade,
