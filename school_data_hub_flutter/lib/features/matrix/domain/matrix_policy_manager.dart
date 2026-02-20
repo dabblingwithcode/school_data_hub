@@ -12,6 +12,7 @@ import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_event_report.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/policy.dart';
@@ -59,6 +60,22 @@ class MatrixPolicyManager {
   String _encryptionIv;
   String get encryptionIv => _encryptionIv;
 
+  MatrixCredentials exportMatrixCredentialsForTransfer() {
+    final normalizedUrl = _matrixUrl.replaceFirst(RegExp(r'^https?://'), '');
+    return MatrixCredentials(
+      url: normalizedUrl,
+      matrixToken: _matrixToken,
+      policyToken: _corporalToken,
+      matrixAdmin: _matrixAdminId ?? '',
+      encryptionKey: _encryptionKey,
+      encryptionIv: _encryptionIv,
+    );
+  }
+
+  String exportMatrixCredentialsJsonForTransfer() {
+    return jsonEncode(exportMatrixCredentialsForTransfer().toJson());
+  }
+
   // List<String> _compulsoryRooms;
   // List<String> get compulsoryRooms => _compulsoryRooms;
 
@@ -78,6 +95,39 @@ class MatrixPolicyManager {
   // Delegate to sub-managers for backward compatibility
   ValueListenable<List<MatrixUser>> get matrixUsers => _userManager.matrixUsers;
   ValueListenable<List<MatrixRoom>> get matrixRooms => _roomManager.matrixRooms;
+
+  final _eventReports = ValueNotifier<List<MatrixEventReport>>([]);
+  ValueListenable<List<MatrixEventReport>> get eventReports => _eventReports;
+
+  final _eventReportsLoading = ValueNotifier<bool>(false);
+  ValueListenable<bool> get eventReportsLoading => _eventReportsLoading;
+
+  final _eventReportsLoadingMore = ValueNotifier<bool>(false);
+  ValueListenable<bool> get eventReportsLoadingMore => _eventReportsLoadingMore;
+
+  final _eventReportsTotal = ValueNotifier<int>(0);
+  ValueListenable<int> get eventReportsTotal => _eventReportsTotal;
+
+  final _eventReportsError = ValueNotifier<String?>(null);
+  ValueListenable<String?> get eventReportsError => _eventReportsError;
+
+  int? _eventReportsNextToken;
+  int? get eventReportsNextToken => _eventReportsNextToken;
+
+  String _eventReportsDir = 'b';
+  String get eventReportsDir => _eventReportsDir;
+
+  String? _eventReportsUserIdFilter;
+  String? get eventReportsUserIdFilter => _eventReportsUserIdFilter;
+
+  String? _eventReportsRoomIdFilter;
+  String? get eventReportsRoomIdFilter => _eventReportsRoomIdFilter;
+
+  String? _eventReportsSenderUserIdFilter;
+  String? get eventReportsSenderUserIdFilter => _eventReportsSenderUserIdFilter;
+
+  int _eventReportsPageLimit = 50;
+  int get eventReportsPageLimit => _eventReportsPageLimit;
 
   // TODO: improve lookups with maps
 
@@ -116,6 +166,11 @@ class MatrixPolicyManager {
     _roomManager.dispose();
     _userManager.dispose();
     _policyPendingChanges.dispose();
+    _eventReports.dispose();
+    _eventReportsLoading.dispose();
+    _eventReportsLoadingMore.dispose();
+    _eventReportsTotal.dispose();
+    _eventReportsError.dispose();
   }
 
   void pendingChangesHandler(bool newValue) {
@@ -168,11 +223,26 @@ class MatrixPolicyManager {
 
   Future<void> fetchMatrixPolicy() async {
     _log.info('Fetching Matrix policy...');
-    final Policy? policy = await _matrixApiService.fetchMatrixPolicy();
+    Policy? policy;
+    try {
+      policy = await _matrixApiService.fetchMatrixPolicy();
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Laden der Matrix-Räumeverwaltung',
+      );
+      _log.severe('Error fetching Matrix policy: $e');
+      return;
+    }
     if (policy == null) {
       _log.severe('Error fetching Matrix policy!');
       return;
     }
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Matrix-Räumeverwaltung geladen',
+    );
 
     _matrixPolicy = policy;
 
@@ -203,7 +273,22 @@ class MatrixPolicyManager {
     final updatedPolicy = MatrixPolicyHelper.refreshMatrixPolicy();
     _matrixPolicy = updatedPolicy;
 
-    await _matrixApiService.putMatrixPolicy();
+    try {
+      await _matrixApiService.putMatrixPolicy();
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Setzen der Policy',
+      );
+      _log.severe('Error applying Matrix policy changes: $e');
+      return;
+    }
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Policy erfolgreich gesetzt',
+    );
+
     di<MatrixPolicyFilterManager>().resetAllMatrixFilters();
     _policyPendingChanges.value = false;
   }
@@ -220,6 +305,13 @@ class MatrixPolicyManager {
     _log.info('transactionId: $transactionId');
 
     try {
+      final purgedRooms = await _matrixApiService.cleanupAdminOnlyDirectRooms(
+        currentUserId: _matrixAdminId!,
+      );
+      if (purgedRooms > 0) {
+        _log.info('Purged $purgedRooms orphan direct rooms before DM send');
+      }
+
       // First, check if there's already an existing direct message room
       // This checks both the sender's and receiver's account data
       _log.info('Checking for existing direct message room...');
@@ -274,4 +366,130 @@ class MatrixPolicyManager {
     limit: limit,
     dir: dir,
   );
+
+  Future<void> refreshEventReports({
+    int? limit,
+    String? dir,
+    String? userId,
+    String? roomId,
+    String? eventSenderUserId,
+  }) async {
+    if (_eventReportsLoading.value) {
+      return;
+    }
+
+    if (limit != null && limit > 0) {
+      _eventReportsPageLimit = limit;
+    }
+    if (dir != null && (dir == 'b' || dir == 'f')) {
+      _eventReportsDir = dir;
+    }
+
+    _eventReportsUserIdFilter = userId;
+    _eventReportsRoomIdFilter = roomId;
+    _eventReportsSenderUserIdFilter = eventSenderUserId;
+
+    _eventReportsLoading.value = true;
+    _eventReportsError.value = null;
+
+    try {
+      final response = await _matrixApiService.fetchEventReports(
+        from: 0,
+        limit: _eventReportsPageLimit,
+        dir: _eventReportsDir,
+        userId: _eventReportsUserIdFilter,
+        roomId: _eventReportsRoomIdFilter,
+        eventSenderUserId: _eventReportsSenderUserIdFilter,
+      );
+
+      _eventReports.value = response.eventReports;
+      _eventReportsTotal.value = response.total;
+      _eventReportsNextToken = response.nextToken;
+    } catch (e) {
+      _eventReportsError.value = 'Fehler beim Laden der Event Reports';
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Laden der Event Reports',
+      );
+      _log.severe('Error refreshing event reports: $e');
+    } finally {
+      _eventReportsLoading.value = false;
+    }
+  }
+
+  Future<void> loadMoreEventReports() async {
+    final nextToken = _eventReportsNextToken;
+    if (nextToken == null ||
+        _eventReportsLoading.value ||
+        _eventReportsLoadingMore.value) {
+      return;
+    }
+
+    _eventReportsLoadingMore.value = true;
+    _eventReportsError.value = null;
+
+    try {
+      final response = await _matrixApiService.fetchEventReports(
+        from: nextToken,
+        limit: _eventReportsPageLimit,
+        dir: _eventReportsDir,
+        userId: _eventReportsUserIdFilter,
+        roomId: _eventReportsRoomIdFilter,
+        eventSenderUserId: _eventReportsSenderUserIdFilter,
+      );
+
+      _eventReports.value = [..._eventReports.value, ...response.eventReports];
+      _eventReportsTotal.value = response.total;
+      _eventReportsNextToken = response.nextToken;
+    } catch (e) {
+      _eventReportsError.value = 'Fehler beim Laden weiterer Event Reports';
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Laden weiterer Event Reports',
+      );
+      _log.severe('Error loading more event reports: $e');
+    } finally {
+      _eventReportsLoadingMore.value = false;
+    }
+  }
+
+  Future<MatrixEventReportDetail?> fetchEventReportDetail(int reportId) async {
+    try {
+      return await _matrixApiService.fetchEventReportDetail(reportId);
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Laden des Event Report Details',
+      );
+      _log.severe('Error fetching event report detail for $reportId: $e');
+      return null;
+    }
+  }
+
+  Future<bool> deleteEventReport(int reportId) async {
+    try {
+      await _matrixApiService.deleteEventReport(reportId);
+
+      _eventReports.value = _eventReports.value
+          .where((report) => report.id != reportId)
+          .toList();
+
+      if (_eventReportsTotal.value > 0) {
+        _eventReportsTotal.value = _eventReportsTotal.value - 1;
+      }
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Event Report gelöscht',
+      );
+      return true;
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Löschen des Event Reports',
+      );
+      _log.severe('Error deleting event report $reportId: $e');
+      return false;
+    }
+  }
 }

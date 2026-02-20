@@ -1,15 +1,14 @@
 import 'dart:convert';
-import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_message.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_client.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 enum ChatTypePreset {
   public('public_chat'),
@@ -22,27 +21,9 @@ enum ChatTypePreset {
 
 class MatrixRoomApiService {
   final ApiClient _apiClient;
-  final _notificationService = di<NotificationService>();
   final _log = Logger('MatrixRoomApiService');
 
-  final String _matrixUrl;
-
-  MatrixRoomApiService({
-    required ApiClient apiClient,
-    required String matrixUrl,
-    required String matrixToken, // Keep for potential future use
-    required String corporalToken, // Keep for potential future use
-  }) : _apiClient = apiClient,
-       _matrixUrl = matrixUrl;
-
-  void setMatrixEnvironmentValues({
-    required String url,
-    required String matrixToken,
-    required String policyToken,
-  }) {
-    // Note: This method might need to be coordinated with the main API service
-    // Consider if this should be handled at a higher level
-  }
+  MatrixRoomApiService({required ApiClient apiClient}) : _apiClient = apiClient;
 
   //- CREATE ROOM
   static const String _createRoom = '/_matrix/client/v3/createRoom';
@@ -68,8 +49,8 @@ class MatrixRoomApiService {
       "topic": topic,
       "visibility": 'private',
       "power_level_content_override": {
-        "users": {"${di<MatrixPolicyManager>().matrixAdminId}": 100},
-        "events": {"m.room.name": 50},
+        // "users": {"<user-id>": 100},
+        "events": {"m.room.name": 50, "m.reaction": 0},
         "users_default": 0,
         "events_default": 50,
         "state_default": 50,
@@ -81,7 +62,7 @@ class MatrixRoomApiService {
     });
 
     final Response response = await _apiClient.post(
-      '$_matrixUrl$_createRoom',
+      _createRoom,
       data: data,
       options: _apiClient.matrixOptions,
     );
@@ -103,16 +84,28 @@ class MatrixRoomApiService {
     return '/_matrix/client/v3/rooms/$roomId/state/m.room.power_levels';
   }
 
+  String _fetchRoomAvatarUrl(String roomId) {
+    return '/_matrix/client/v3/rooms/$roomId/state/m.room.avatar';
+  }
+
+  String _fetchRoomTopicUrl(String roomId) {
+    return '/_matrix/client/v3/rooms/${_encodeRoomId(roomId)}/state/m.room.topic';
+  }
+
+  String _fetchRoomCanonicalAliasUrl(String roomId) {
+    return '/_matrix/client/v3/rooms/${_encodeRoomId(roomId)}/state/m.room.canonical_alias';
+  }
+
   Future<MatrixRoom> fetchAdditionalRoomInfos(String roomId) async {
     String? name;
+    String? avatarUrl;
     int? powerLevelReactions;
     int? eventsDefault;
     List<RoomAdmin>? roomAdmins;
 
     // First API call
     final responseRoomSPowerLevels = await _apiClient.get(
-      // ignore: unnecessary_string_interpolations
-      '$_matrixUrl${_fetchRoomPowerLevelsUrl(roomId)}',
+      _fetchRoomPowerLevelsUrl(roomId),
       options: _apiClient.matrixOptions,
     );
 
@@ -134,8 +127,7 @@ class MatrixRoomApiService {
 
     // Second API call
     final responseRoomName = await _apiClient.get(
-      // ignore: unnecessary_string_interpolations
-      '$_matrixUrl${_fetchRoomName(roomId)}',
+      _fetchRoomName(roomId),
       options: _apiClient.matrixOptions,
     );
 
@@ -143,9 +135,26 @@ class MatrixRoomApiService {
       name = responseRoomName.data['name'] ?? 'No Room Name';
     }
 
+    final responseRoomAvatar = await _apiClient.get(
+      _fetchRoomAvatarUrl(roomId),
+      options: _apiClient.matrixOptions,
+    );
+
+    if (responseRoomAvatar.statusCode == 200) {
+      final avatarData = responseRoomAvatar.data;
+      if (avatarData is Map<String, dynamic>) {
+        avatarUrl =
+            avatarData['url'] as String? ??
+            (avatarData['content'] is Map<String, dynamic>
+                ? (avatarData['content']['url'] as String?)
+                : null);
+      }
+    }
+
     MatrixRoom roomWithAdditionalInfos = MatrixRoom(
       id: roomId,
       name: name,
+      avatarUrl: avatarUrl,
       powerLevelReactions: powerLevelReactions,
       eventsDefault: eventsDefault,
       roomAdmins: roomAdmins,
@@ -155,20 +164,21 @@ class MatrixRoomApiService {
   }
 
   //- PUT ROOM POWER LEVELS
-  String _putRoomPowerLevels(String roomId) {
-    // ensure that ! and : are properly coded for the url
-    final roomIdforUrl = roomId.replaceAllMapped(RegExp(r'[!:]'), (match) {
-      switch (match.group(0)) {
-        case '!':
-          return '%21';
-        case ':':
-          return '%3A';
-        default:
-          return match.group(0)!;
-      }
-    });
-    return '/_matrix/client/v3/rooms/$roomIdforUrl/state/m.room.power_levels';
-  }
+  // Individual user power levels must only be set through the policy API.
+  // String _putRoomPowerLevels(String roomId) {
+  //   // ensure that ! and : are properly coded for the url
+  //   final roomIdforUrl = roomId.replaceAllMapped(RegExp(r'[!:]'), (match) {
+  //     switch (match.group(0)) {
+  //       case '!':
+  //         return '%21';
+  //       case ':':
+  //         return '%3A';
+  //       default:
+  //         return match.group(0)!;
+  //     }
+  //   });
+  //   return '/_matrix/client/v3/rooms/$roomIdforUrl/state/m.room.power_levels';
+  // }
 
   Future<MatrixRoom> changeRoomPowerLevels({
     required String roomId,
@@ -176,79 +186,195 @@ class MatrixRoomApiService {
     String? adminIdToRemove,
     int? eventsDefault,
     int? reactions,
-    required MatrixRoom currentRoom, // We need the current room info
-    required String matrixAdmin, // We need the admin ID
+    required MatrixRoom currentRoom,
+    required String matrixAdmin,
   }) async {
-    List<RoomAdmin> adminPowerLevels = [];
-
-    Map<String, dynamic> adminPowerLevelsMap = {};
-
-    // We make sure that the instance admin has admin power level in the room
-    adminPowerLevels =
-        currentRoom.roomAdmins ?? [RoomAdmin(id: matrixAdmin, powerLevel: 100)];
-
-    if (newRoomAdmin != null) {
-      adminPowerLevels.add(newRoomAdmin);
-    }
-    if (adminIdToRemove != null) {
-      adminPowerLevels.removeWhere((admin) => admin.id == adminIdToRemove);
+    if (newRoomAdmin != null || adminIdToRemove != null) {
+      di<NotificationService>().showInformationDialog(
+        'Power levels werden von der Policy geändert.',
+      );
+      return currentRoom;
     }
 
-    for (RoomAdmin admin in adminPowerLevels) {
-      adminPowerLevelsMap[admin.id] = admin.powerLevel;
+    if (eventsDefault == null && reactions == null) {
+      return currentRoom;
     }
 
-    final data = jsonEncode({
-      "ban": 50,
-      "events": {
-        "m.room.name": 50,
-        "m.room.power_levels": 100,
-        "m.room.history_visibility": 100,
-        "m.room.canonical_alias": 50,
-        "m.room.avatar": 50,
-        "m.room.tombstone": 100,
-        "m.room.server_acl": 100,
-        "m.room.encryption": 100,
-        "m.space.child": 50,
-        "m.room.topic": 50,
-        "m.room.pinned_events": 50,
-        "m.reaction": reactions ?? currentRoom.powerLevelReactions,
-        "m.room.redaction": 0,
-        "org.matrix.msc3401.call": 50,
-        "org.matrix.msc3401.call.member": 50,
-        "im.vector.modular.widgets": 50,
-        "io.element.voice_broadcast_info": 50,
-      },
-      "events_default": eventsDefault ?? currentRoom.eventsDefault,
-      "invite": 50,
-      "kick": 50,
-      "notifications": {"room": 20},
-      "redact": 50,
-      "state_default": 50,
-      "users": adminPowerLevelsMap,
-      "users_default": 0,
-    });
+    final Response fetchResponse = await _apiClient.get(
+      _fetchRoomPowerLevelsUrl(roomId),
+      options: _apiClient.matrixOptions,
+    );
 
+    if (fetchResponse.statusCode != 200 ||
+        fetchResponse.data is! Map<String, dynamic>) {
+      throw ApiException(
+        'Fehler beim Laden der Raum-Berechtigungen',
+        fetchResponse.statusCode,
+      );
+    }
+
+    final Map<String, dynamic> payload = Map<String, dynamic>.from(
+      fetchResponse.data,
+    );
+    final Map<String, dynamic> events = Map<String, dynamic>.from(
+      payload['events'] ?? <String, dynamic>{},
+    );
+
+    if (reactions != null) {
+      events['m.reaction'] = reactions;
+    }
+    if (eventsDefault != null) {
+      payload['events_default'] = eventsDefault;
+    }
+    payload['events'] = events;
+
+    final Response putResponse = await _apiClient.put(
+      _fetchRoomPowerLevelsUrl(roomId),
+      data: payload,
+      options: _apiClient.matrixOptions,
+    );
+
+    if (putResponse.statusCode != 200) {
+      throw ApiException(
+        'Fehler beim Setzen der Raum-Berechtigungen',
+        putResponse.statusCode,
+      );
+    }
+
+    return fetchAdditionalRoomInfos(roomId);
+  }
+
+  Future<MatrixRoom> setRoomAvatar({
+    required String roomId,
+    required Uint8List fileBytes,
+    required String fileName,
+  }) async {
+    final extension = fileName.contains('.')
+        ? fileName.split('.').last.toLowerCase()
+        : '';
+    final contentType = switch (extension) {
+      'png' => 'image/png',
+      'jpg' || 'jpeg' => 'image/jpeg',
+      'gif' => 'image/gif',
+      'webp' => 'image/webp',
+      _ => 'application/octet-stream',
+    };
+
+    final Response uploadResponse = await _apiClient.post(
+      '/_matrix/media/v3/upload',
+      data: fileBytes,
+      queryParameters: {'filename': fileName},
+      options: _apiClient.matrixOptions.copyWith(contentType: contentType),
+    );
+
+    if (uploadResponse.statusCode != 200) {
+      throw ApiException(
+        'Fehler beim Hochladen des Raum-Avatars',
+        uploadResponse.statusCode,
+      );
+    }
+
+    final String? mxcUrl = uploadResponse.data['content_uri'] as String?;
+    if (mxcUrl == null || mxcUrl.isEmpty) {
+      throw ApiException('Ungültige Antwort beim Avatar-Upload', 500);
+    }
+
+    final Response stateResponse = await _apiClient.put(
+      _fetchRoomAvatarUrl(roomId),
+      data: {'url': mxcUrl},
+      options: _apiClient.matrixOptions,
+    );
+
+    if (stateResponse.statusCode != 200) {
+      throw ApiException(
+        'Fehler beim Setzen des Raum-Avatars',
+        stateResponse.statusCode,
+      );
+    }
+
+    return fetchAdditionalRoomInfos(roomId);
+  }
+
+  Future<String?> fetchRoomTopic(String roomId) async {
+    final Response response = await _apiClient.get(
+      _fetchRoomTopicUrl(roomId),
+      options: _apiClient.matrixOptions,
+    );
+
+    if (response.statusCode != 200 || response.data is! Map<String, dynamic>) {
+      return null;
+    }
+
+    return response.data['topic'] as String?;
+  }
+
+  Future<String?> fetchRoomCanonicalAlias(String roomId) async {
+    final Response response = await _apiClient.get(
+      _fetchRoomCanonicalAliasUrl(roomId),
+      options: _apiClient.matrixOptions,
+    );
+
+    if (response.statusCode != 200 || response.data is! Map<String, dynamic>) {
+      return null;
+    }
+
+    return response.data['alias'] as String?;
+  }
+
+  Future<MatrixRoom> setRoomName({
+    required String roomId,
+    required String name,
+  }) async {
     final Response response = await _apiClient.put(
-      '$_matrixUrl${_putRoomPowerLevels(roomId)}',
-      data: data,
+      '/_matrix/client/v3/rooms/${_encodeRoomId(roomId)}/state/m.room.name',
+      data: {'name': name},
       options: _apiClient.matrixOptions,
     );
 
     if (response.statusCode != 200) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler: status code ${response.statusCode}',
-      );
       throw ApiException(
-        'Fehler beim Setzen der Power Levels',
+        'Fehler beim Setzen des Raumnamens',
         response.statusCode,
       );
     }
 
-    final MatrixRoom room = await fetchAdditionalRoomInfos(roomId);
+    return fetchAdditionalRoomInfos(roomId);
+  }
 
-    return room;
+  Future<void> setRoomTopic({
+    required String roomId,
+    required String topic,
+  }) async {
+    final Response response = await _apiClient.put(
+      _fetchRoomTopicUrl(roomId),
+      data: {'topic': topic},
+      options: _apiClient.matrixOptions,
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(
+        'Fehler beim Setzen des Raumthemas',
+        response.statusCode,
+      );
+    }
+  }
+
+  Future<void> setRoomCanonicalAlias({
+    required String roomId,
+    required String? alias,
+  }) async {
+    final Response response = await _apiClient.put(
+      _fetchRoomCanonicalAliasUrl(roomId),
+      data: {'alias': alias?.trim().isEmpty == true ? null : alias},
+      options: _apiClient.matrixOptions,
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(
+        'Fehler beim Setzen des Raum-Alias',
+        response.statusCode,
+      );
+    }
   }
 
   //- SEND MESSAGE
@@ -276,20 +402,14 @@ class MatrixRoomApiService {
     final eventType = _getEventTypeForMessage(message);
 
     // Build the API endpoint
-    final endpoint =
-        '$_matrixUrl$_sendMessage/$encodedRoomId/send/$eventType/$txnId';
+    final endpoint = '$_sendMessage/$encodedRoomId/send/$eventType/$txnId';
 
     // Create a simple message structure for testing
     final messageData = {'msgtype': 'm.text', 'body': message.body};
 
     try {
       _log.info('Sending message to room: $roomId');
-      log('Endpoint: $endpoint');
-      log('Message data: ${jsonEncode(messageData)}');
-      log('Message data type: ${messageData.runtimeType}');
-      log('JSON encoded data: ${jsonEncode(messageData)}');
-      log('JSON encoded data type: ${jsonEncode(messageData).runtimeType}');
-      log('API options: ${_apiClient.matrixOptions.headers}');
+      _log.fine('Endpoint: $endpoint');
 
       final Response response = await _apiClient.put(
         endpoint,
@@ -297,22 +417,13 @@ class MatrixRoomApiService {
         options: _apiClient.matrixOptions,
       );
 
-      log('Send message response status: ${response.statusCode}');
-      log('Send message response data: ${response.data}');
-
       if (response.statusCode == 200) {
         final eventId = response.data['event_id'] as String;
-        log('Message sent successfully with event ID: $eventId');
-        _notificationService.showSnackBar(
-          NotificationType.success,
-          'Nachricht gesendet',
-        );
+        _log.info('Message sent successfully with event ID: $eventId');
         return MatrixMessageResponse(eventId: eventId);
       } else {
-        log('Send message failed: ${response.statusCode} - ${response.data}');
-        _notificationService.showSnackBar(
-          NotificationType.error,
-          'Fehler beim Senden: ${response.statusCode} - ${response.data}',
+        _log.warning(
+          'Send message failed: ${response.statusCode} - ${response.data}',
         );
         throw ApiException(
           'Fehler beim Senden der Nachricht: ${response.statusCode} - ${response.data}',
@@ -320,12 +431,7 @@ class MatrixRoomApiService {
         );
       }
     } catch (e, stackTrace) {
-      log('Send message exception: $e');
-      log('Send message stack trace: $stackTrace');
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler beim Senden der Nachricht: $e',
-      );
+      _log.severe('Send message exception: $e', e, stackTrace);
       rethrow;
     }
   }
@@ -407,7 +513,7 @@ class MatrixRoomApiService {
     String dir = 'b', // backwards by default
   }) async {
     final encodedRoomId = _encodeRoomId(roomId);
-    final endpoint = '$_matrixUrl$_getRoomMessages/$encodedRoomId/messages';
+    final endpoint = '$_getRoomMessages/$encodedRoomId/messages';
 
     final queryParams = <String, dynamic>{'limit': limit, 'dir': dir};
 
@@ -428,20 +534,12 @@ class MatrixRoomApiService {
             .map((eventJson) => MatrixMessageEvent.fromJson(eventJson))
             .toList();
       } else {
-        _notificationService.showSnackBar(
-          NotificationType.error,
-          'Fehler beim Laden der Nachrichten: ${response.statusCode}',
-        );
         throw ApiException(
           'Fehler beim Laden der Nachrichten',
           response.statusCode,
         );
       }
     } catch (e) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler beim Laden der Nachrichten: $e',
-      );
       rethrow;
     }
   }
@@ -505,26 +603,19 @@ class MatrixRoomApiService {
 
   /// Creates a direct message room with a specific user
   /// First checks if a direct message room already exists with this user
-  Future<String> _findOrcreateDirectMessageRoom({
+  Future<String> _findOrCreateDirectMessageRoom({
     required String targetUserId,
     required String currentUserId,
   }) async {
-    log('_createDirectMessageRoom called for: $targetUserId');
-
     try {
-      // First, try to find an existing direct message room
-      log('🔍 CHECKING FOR EXISTING DIRECT MESSAGE ROOM...');
       final existingRoomId = await _findExistingDirectMessageRoom(
         targetUserId: targetUserId,
         currentUserId: currentUserId,
       );
       if (existingRoomId != null) {
-        log('✅ FOUND EXISTING ROOM: $existingRoomId');
         return existingRoomId;
       }
 
-      log('❌ NO EXISTING ROOM FOUND, CREATING NEW DIRECT MESSAGE ROOM...');
-      // If no existing room found, create a new one with specific power levels
       final data = jsonEncode({
         "is_direct": true,
         "name": "Schuldaten Benachrichtigungen",
@@ -532,10 +623,6 @@ class MatrixRoomApiService {
         "preset": "private_chat",
         "creation_content": {"m.federate": false},
         "power_level_content_override": {
-          "users": {
-            currentUserId: 100, // Admin has full permissions
-            targetUserId: 0, // User has read-only permissions
-          },
           "events": {
             "m.room.name": 50,
             "m.room.power_levels": 100,
@@ -555,57 +642,38 @@ class MatrixRoomApiService {
             "im.vector.modular.widgets": 50,
             "io.element.voice_broadcast_info": 50,
           },
+          "users_default": 0,
           "events_default": 50,
           "invite": 50,
           "kick": 50,
           "notifications": {"room": 20},
           "redact": 50,
           "state_default": 50,
-          "users_default": 0,
         },
       });
 
       _log.info('Creating room with data: $data');
-      _log.info('Matrix URL: $_matrixUrl');
-      _log.info('API Options: ${_apiClient.matrixOptions.headers}');
 
       final Response response = await _apiClient.post(
-        '$_matrixUrl/_matrix/client/v3/createRoom',
+        '/_matrix/client/v3/createRoom',
         data: data,
         options: _apiClient.matrixOptions,
       );
 
-      log('Create room response status: ${response.statusCode}');
-      log('Create room response data: ${response.data}');
-
       if (response.statusCode == 200) {
         final roomId = response.data['room_id'] as String;
-        log('Room created successfully: $roomId');
-        log('Room creation response: ${response.data}');
-
-        // Check if this room was actually marked as a direct chat
-        log('🔍 Checking if the created room is marked as direct chat...');
-        await _checkIfRoomIsMarkedAsDirectChat(roomId, targetUserId);
-
-        // Manually mark this room as a direct chat in m.direct account data
-        log('🔧 Manually marking room as direct chat...');
         await _markRoomAsDirectChat(roomId, targetUserId);
 
         return roomId;
       } else {
-        log('Error creating room: ${response.statusCode} - ${response.data}');
-        _notificationService.showSnackBar(
-          NotificationType.error,
-          'Fehler beim Erstellen des Direktnachrichten-Raums: ${response.statusCode}',
-        );
         throw ApiException(
           'Fehler beim Erstellen des Direktnachrichten-Raums: ${response.statusCode} - ${response.data}',
           response.statusCode,
         );
       }
     } catch (e, stackTrace) {
-      log('_createDirectMessageRoom error: $e');
-      log('_createDirectMessageRoom stackTrace: $stackTrace');
+      _log.info('_findOrCreateDirectMessageRoom error: $e');
+      _log.info('_findOrCreateDirectMessageRoom stackTrace: $stackTrace');
       rethrow;
     }
   }
@@ -617,46 +685,11 @@ class MatrixRoomApiService {
     required String targetUserId,
     required String currentUserId,
   }) async {
-    _log.info('🔍 _findExistingDirectMessageRoom called for: $targetUserId');
-
     try {
-      // First, check the admin's (sender's) m.direct account data
-      _log.info(
-        '🔍 Checking m.direct account data for existing direct message rooms...',
-      );
-      final existingRoomId = await _checkDirectRoomsInAccountData(
+      return await _checkDirectRoomsInAccountData(
         targetUserId: targetUserId,
         currentUserId: currentUserId,
       );
-
-      if (existingRoomId != null) {
-        _log.info(
-          '✅ Found existing room in admin\'s account data: $existingRoomId',
-        );
-        return existingRoomId;
-      }
-
-      // If not found in admin's account data, check the receiver's (target user's) account data
-      _log.info(
-        '🔍 No room found in admin\'s account data, checking receiver\'s m.direct account data...',
-      );
-      // final receiverRoomId = await _checkDirectRoomsInAccountData(
-      //   targetUserId:
-      //       targetUserId, // The target user's m.direct will have currentUserId as key
-      //   currentUserId: currentUserId,
-      // );
-
-      // if (receiverRoomId != null) {
-      //   _log.info(
-      //     '✅ Found existing room in receiver\'s account data: $receiverRoomId',
-      //   );
-      //   return receiverRoomId;
-      // }
-
-      _log.info(
-        '❌ No existing direct message room found in either account - will create new one',
-      );
-      return null;
     } catch (e, stackTrace) {
       _log.info('_findExistingDirectMessageRoom error: $e');
       _log.info('_findExistingDirectMessageRoom stackTrace: $stackTrace');
@@ -674,124 +707,78 @@ class MatrixRoomApiService {
     required String currentUserId,
   }) async {
     try {
-      _log.info('🔍 Checking m.direct account data for user: $currentUserId');
-      final Response accountDataResponse = await _apiClient.get(
-        '$_matrixUrl/_matrix/client/v3/user/$currentUserId/account_data/m.direct',
-        options: _apiClient.matrixOptions,
-      );
-
-      _log.info(
-        '📊 m.direct response status: ${accountDataResponse.statusCode}',
-      );
-      _log.info('📊 m.direct response data: ${accountDataResponse.data}');
-
-      if (accountDataResponse.statusCode == 200) {
-        final directRooms = accountDataResponse.data as Map<String, dynamic>;
-        _log.info('📊 All direct rooms: ${directRooms.keys.toList()}');
-        _log.info('📊 Looking for target user: $targetUserId');
-
-        if (directRooms.containsKey(targetUserId)) {
-          final roomIds = directRooms[targetUserId] as List<dynamic>;
-          _log.info(
-            'Found ${roomIds.length} direct message rooms with target user: $roomIds',
-          );
-
-          // Try all existing rooms until we find one we can access
-          if (roomIds.isNotEmpty) {
-            _log.info(
-              '🔍 Trying ${roomIds.length} existing direct message rooms...',
-            );
-
-            for (int i = 0; i < roomIds.length; i++) {
-              final String existingRoomId = roomIds[i] as String;
-              _log.info(
-                '🔍 Trying room ${i + 1}/${roomIds.length}: $existingRoomId',
-              );
-
-              // Quick verification: check if we can still access this room
-              try {
-                final Response membersResponse = await _apiClient.get(
-                  '$_matrixUrl/_matrix/client/v3/rooms/$existingRoomId/members',
-                  options: _apiClient.matrixOptions,
-                );
-
-                if (membersResponse.statusCode == 200) {
-                  final List<dynamic> members =
-                      membersResponse.data['chunk'] ?? [];
-                  final joinedMembers = members
-                      .where(
-                        (member) => member['content']?['membership'] == 'join',
-                      )
-                      .map((member) => member['state_key'] as String)
-                      .toList();
-
-                  _log.info(
-                    '✅ Room $existingRoomId has ${joinedMembers.length} joined members: $joinedMembers',
-                  );
-
-                  // If it's a 2-person room with admin and target user, check power levels
-                  if (joinedMembers.length == 2 &&
-                      joinedMembers.contains(currentUserId) &&
-                      joinedMembers.contains(targetUserId)) {
-                    // Check if this room has the correct power levels for admin-only messaging
-                    _log.info(
-                      '🔍 Checking power levels for room: $existingRoomId',
-                    );
-                    final powerLevelsValid = await _checkRoomPowerLevels(
-                      existingRoomId,
-                      currentUserId,
-                      targetUserId,
-                    );
-
-                    if (powerLevelsValid) {
-                      _log.info(
-                        '🎯 Found valid 2-person room with correct power levels: $existingRoomId',
-                      );
-                      return existingRoomId;
-                    } else {
-                      _log.info(
-                        '⚠️ Room $existingRoomId has incorrect power levels (user can write), trying next...',
-                      );
-                    }
-                  } else {
-                    _log.info(
-                      '⚠️ Room $existingRoomId is not a valid 2-person room, trying next...',
-                    );
-                  }
-                } else {
-                  _log.info(
-                    '❌ Cannot access room $existingRoomId (status: ${membersResponse.statusCode}), leaving room...',
-                  );
-                  // Leave the room if we can't access it
-                  await _apiClient.delete(
-                    '$_matrixUrl/_matrix/client/v3/rooms/$existingRoomId',
-                    options: _apiClient.matrixOptions,
-                  );
-                  _log.info('Room left successfully');
-                }
-              } catch (e) {
-                _log.info(
-                  '❌ Error checking room $existingRoomId: $e, trying next...',
-                );
-              }
-            }
-
-            _log.info(
-              '❌ None of the ${roomIds.length} existing rooms are accessible or valid',
-            );
-          }
-        } else {
-          _log.info(
-            '❌ No direct message rooms found with target user: $targetUserId',
-          );
-        }
-      } else {
+      final directRooms = await _getDirectRoomsForUser(currentUserId);
+      if (directRooms == null) {
         _log.info(
-          '❌ Failed to get m.direct account data for user $currentUserId: ${accountDataResponse.statusCode}',
+          'Failed to get m.direct account data for user $currentUserId',
         );
+        return null;
       }
 
-      return null;
+      final dynamic rawRoomIds = directRooms[targetUserId];
+      if (rawRoomIds is! List) {
+        return null;
+      }
+
+      final roomIds = rawRoomIds.whereType<String>().toList();
+      if (roomIds.isEmpty) {
+        return null;
+      }
+
+      bool directRoomsChanged = false;
+      String? reusableRoomId;
+      final retainedRoomIds = <String>[];
+
+      for (final existingRoomId in roomIds) {
+        try {
+          final encodedRoomId = _encodeRoomId(existingRoomId);
+          final Response membersResponse = await _apiClient.get(
+            '/_matrix/client/v3/rooms/$encodedRoomId/members',
+            options: _apiClient.matrixOptions,
+          );
+
+          if (membersResponse.statusCode != 200) {
+            directRoomsChanged = true;
+            continue;
+          }
+
+          final List<dynamic> members = membersResponse.data['chunk'] ?? [];
+          final joinedMembers = members
+              .where((member) => member['content']?['membership'] == 'join')
+              .map((member) => member['state_key'] as String)
+              .toSet();
+
+          if (joinedMembers.length == 1 &&
+              joinedMembers.contains(currentUserId)) {
+            await _purgeDirectRoom(existingRoomId);
+            directRoomsChanged = true;
+            continue;
+          }
+
+          if (joinedMembers.contains(currentUserId) &&
+              joinedMembers.contains(targetUserId)) {
+            retainedRoomIds.add(existingRoomId);
+            reusableRoomId ??= existingRoomId;
+            continue;
+          }
+
+          directRoomsChanged = true;
+        } catch (e) {
+          _log.info('Error checking direct room $existingRoomId: $e');
+          retainedRoomIds.add(existingRoomId);
+        }
+      }
+
+      if (directRoomsChanged) {
+        if (retainedRoomIds.isEmpty) {
+          directRooms.remove(targetUserId);
+        } else {
+          directRooms[targetUserId] = retainedRoomIds;
+        }
+        await _putDirectRoomsForUser(currentUserId, directRooms);
+      }
+
+      return reusableRoomId;
     } catch (e, stackTrace) {
       _log.info(
         '_checkDirectRoomsInAccountData error for user $currentUserId: $e',
@@ -842,7 +829,7 @@ class MatrixRoomApiService {
     required String targetUserId,
     required String currentUserId,
   }) async {
-    final roomId = await _findOrcreateDirectMessageRoom(
+    final roomId = await _findOrCreateDirectMessageRoom(
       targetUserId: targetUserId,
       currentUserId: currentUserId,
     );
@@ -851,14 +838,84 @@ class MatrixRoomApiService {
     return roomId;
   }
 
+  Future<int> cleanupAdminOnlyDirectRooms({
+    required String currentUserId,
+  }) async {
+    final directRooms = await _getDirectRoomsForUser(currentUserId);
+    if (directRooms == null || directRooms.isEmpty) {
+      return 0;
+    }
+
+    bool directRoomsChanged = false;
+    int purgedRooms = 0;
+
+    final entries = directRooms.entries.toList();
+    for (final entry in entries) {
+      final targetUserId = entry.key;
+      final roomIds = (entry.value as List<dynamic>)
+          .whereType<String>()
+          .toList();
+
+      final retainedRoomIds = <String>[];
+      for (final roomId in roomIds) {
+        try {
+          final encodedRoomId = _encodeRoomId(roomId);
+          final Response membersResponse = await _apiClient.get(
+            '/_matrix/client/v3/rooms/$encodedRoomId/members',
+            options: _apiClient.matrixOptions,
+          );
+
+          if (membersResponse.statusCode != 200) {
+            directRoomsChanged = true;
+            continue;
+          }
+
+          final List<dynamic> members = membersResponse.data['chunk'] ?? [];
+          final joinedMembers = members
+              .where((member) => member['content']?['membership'] == 'join')
+              .map((member) => member['state_key'] as String)
+              .toSet();
+
+          if (joinedMembers.length == 1 &&
+              joinedMembers.contains(currentUserId)) {
+            await _purgeDirectRoom(roomId);
+            purgedRooms++;
+            directRoomsChanged = true;
+            continue;
+          }
+
+          retainedRoomIds.add(roomId);
+        } catch (e) {
+          _log.info('Error during orphan DM cleanup for room $roomId: $e');
+          retainedRoomIds.add(roomId);
+        }
+      }
+
+      if (retainedRoomIds.isEmpty) {
+        directRooms.remove(targetUserId);
+        directRoomsChanged = true;
+      } else {
+        if (retainedRoomIds.length != roomIds.length) {
+          directRoomsChanged = true;
+        }
+        directRooms[targetUserId] = retainedRoomIds;
+      }
+    }
+
+    if (directRoomsChanged) {
+      await _putDirectRoomsForUser(currentUserId, directRooms);
+    }
+
+    return purgedRooms;
+  }
+
   /// Invites a user to an existing room
   Future<void> inviteUserToRoom({
     required String roomId,
     required String userId,
   }) async {
     final encodedRoomId = _encodeRoomId(roomId);
-    final endpoint =
-        '$_matrixUrl/_matrix/client/v3/rooms/$encodedRoomId/invite';
+    final endpoint = '/_matrix/client/v3/rooms/$encodedRoomId/invite';
 
     final data = jsonEncode({"user_id": userId});
 
@@ -868,16 +925,7 @@ class MatrixRoomApiService {
       options: _apiClient.matrixOptions,
     );
 
-    if (response.statusCode == 200) {
-      _notificationService.showSnackBar(
-        NotificationType.success,
-        'Benutzer eingeladen',
-      );
-    } else {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler beim Einladen: ${response.statusCode}',
-      );
+    if (response.statusCode != 200) {
       throw ApiException(
         'Fehler beim Einladen des Benutzers',
         response.statusCode,
@@ -896,7 +944,7 @@ class MatrixRoomApiService {
       _log.info('Checking power levels for room: $roomId');
 
       final Response response = await _apiClient.get(
-        '$_matrixUrl/_matrix/client/v3/rooms/$roomId/state/m.room.power_levels',
+        '/_matrix/client/v3/rooms/$roomId/state/m.room.power_levels',
         options: _apiClient.matrixOptions,
       );
 
@@ -938,145 +986,126 @@ class MatrixRoomApiService {
   /// Manually marks a room as a direct chat in m.direct account data
   Future<void> _markRoomAsDirectChat(String roomId, String targetUserId) async {
     try {
-      // Get current user info
-      final Response whoamiResponse = await _apiClient.get(
-        '$_matrixUrl/_matrix/client/v3/account/whoami',
-        options: _apiClient.matrixOptions,
-      );
+      final currentUserId = await _getCurrentUserId();
 
-      if (whoamiResponse.statusCode == 200) {
-        final currentUserId = whoamiResponse.data['user_id'] as String;
+      if (currentUserId == null) {
+        return;
+      }
 
-        // Get current m.direct account data
-        final Response getResponse = await _apiClient.get(
-          '$_matrixUrl/_matrix/client/v3/user/$currentUserId/account_data/m.direct',
-          options: _apiClient.matrixOptions,
+      final directRooms = await _getDirectRoomsForUser(currentUserId) ?? {};
+
+      // Add this room to the direct chat list for the target user
+      if (directRooms.containsKey(targetUserId)) {
+        final List<dynamic> existingRooms = List<dynamic>.from(
+          directRooms[targetUserId] ?? [],
         );
-
-        Map<String, dynamic> directRooms = {};
-        if (getResponse.statusCode == 200) {
-          directRooms = Map<String, dynamic>.from(getResponse.data ?? {});
-          _log.info('📊 Current m.direct data: $directRooms');
-        }
-
-        // Add this room to the direct chat list for the target user
-        if (directRooms.containsKey(targetUserId)) {
-          final List<dynamic> existingRooms = List<dynamic>.from(
-            directRooms[targetUserId] ?? [],
-          );
-          if (!existingRooms.contains(roomId)) {
-            existingRooms.add(roomId);
-            directRooms[targetUserId] = existingRooms;
-            _log.info(
-              '📊 Added room to existing direct chat list for $targetUserId',
-            );
-          } else {
-            _log.info('📊 Room already in direct chat list for $targetUserId');
-            return;
-          }
+        if (!existingRooms.contains(roomId)) {
+          existingRooms.add(roomId);
+          directRooms[targetUserId] = existingRooms;
         } else {
-          directRooms[targetUserId] = [roomId];
-          _log.info('📊 Created new direct chat entry for $targetUserId');
+          return;
         }
+      } else {
+        directRooms[targetUserId] = [roomId];
+      }
 
-        // Update m.direct account data
-        final Response putResponse = await _apiClient.put(
-          '$_matrixUrl/_matrix/client/v3/user/$currentUserId/account_data/m.direct',
-          data: directRooms,
-          options: _apiClient.matrixOptions,
-        );
+      final success = await _putDirectRoomsForUser(currentUserId, directRooms);
 
-        if (putResponse.statusCode == 200) {
-          _log.info(
-            '✅ Successfully marked room $roomId as direct chat with $targetUserId',
-          );
-        } else {
-          _log.info(
-            '❌ Failed to mark room as direct chat: ${putResponse.statusCode} - ${putResponse.data}',
-          );
-        }
+      if (!success) {
+        _log.info('Failed to mark room as direct chat for $targetUserId');
       }
     } catch (e) {
-      _log.info('❌ Error marking room as direct chat: $e');
+      _log.info('Error marking room as direct chat: $e');
     }
   }
 
-  /// Checks if a room is marked as a direct chat in m.direct account data
-  Future<void> _checkIfRoomIsMarkedAsDirectChat(
-    String roomId,
-    String targetUserId,
+  Future<Map<String, dynamic>?> _getDirectRoomsForUser(String userId) async {
+    final encodedUserId = Uri.encodeComponent(userId);
+    final Response response = await _apiClient.get(
+      '/_matrix/client/v3/user/$encodedUserId/account_data/m.direct',
+      options: _apiClient.matrixOptions,
+    );
+
+    if (response.statusCode != 200) {
+      return null;
+    }
+
+    final data = response.data;
+    if (data is! Map<String, dynamic>) {
+      return null;
+    }
+
+    if (data['content'] is Map<String, dynamic>) {
+      return Map<String, dynamic>.from(data['content'] as Map<String, dynamic>);
+    }
+
+    return Map<String, dynamic>.from(data);
+  }
+
+  Future<bool> _putDirectRoomsForUser(
+    String userId,
+    Map<String, dynamic> directRooms,
   ) async {
+    final encodedUserId = Uri.encodeComponent(userId);
+    final Response response = await _apiClient.put(
+      '/_matrix/client/v3/user/$encodedUserId/account_data/m.direct',
+      data: directRooms,
+      options: _apiClient.matrixOptions,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  Future<void> _purgeDirectRoom(String roomId) async {
+    final encodedRoomId = _encodeRoomId(roomId);
+
     try {
-      // Get current user info
-      final Response whoamiResponse = await _apiClient.get(
-        '$_matrixUrl/_matrix/client/v3/account/whoami',
+      await _apiClient.post(
+        '/_matrix/client/v3/rooms/$encodedRoomId/leave',
         options: _apiClient.matrixOptions,
       );
-
-      if (whoamiResponse.statusCode == 200) {
-        final currentUserId = whoamiResponse.data['user_id'] as String;
-
-        // Check m.direct account data
-        final Response accountDataResponse = await _apiClient.get(
-          '$_matrixUrl/_matrix/client/v3/user/$currentUserId/account_data/m.direct',
-          options: _apiClient.matrixOptions,
-        );
-
-        if (accountDataResponse.statusCode == 200) {
-          final directRooms = accountDataResponse.data as Map<String, dynamic>;
-          _log.info('📊 Current m.direct data: $directRooms');
-
-          if (directRooms.containsKey(targetUserId)) {
-            final roomIds = directRooms[targetUserId] as List<dynamic>;
-            if (roomIds.contains(roomId)) {
-              _log.info(
-                '✅ Room $roomId IS marked as direct chat with $targetUserId',
-              );
-            } else {
-              _log.info(
-                '❌ Room $roomId is NOT marked as direct chat with $targetUserId',
-              );
-              _log.info('📊 Direct chat rooms with $targetUserId: $roomIds');
-            }
-          } else {
-            _log.info('❌ No direct chat rooms found with $targetUserId');
-          }
-        } else {
-          _log.info(
-            '❌ Failed to get m.direct data: ${accountDataResponse.statusCode}',
-          );
-        }
-      }
     } catch (e) {
-      _log.info('❌ Error checking if room is marked as direct chat: $e');
+      _log.info('Failed to leave room $roomId during purge: $e');
     }
+
+    try {
+      await _apiClient.post(
+        '/_matrix/client/v3/rooms/$encodedRoomId/forget',
+        options: _apiClient.matrixOptions,
+      );
+    } catch (e) {
+      _log.info('Failed to forget room $roomId during purge: $e');
+    }
+  }
+
+  Future<String?> _getCurrentUserId() async {
+    final Response whoamiResponse = await _apiClient.get(
+      '/_matrix/client/v3/account/whoami',
+      options: _apiClient.matrixOptions,
+    );
+
+    if (whoamiResponse.statusCode != 200) {
+      _log.info(
+        'Failed to get current user info: ${whoamiResponse.statusCode}',
+      );
+      return null;
+    }
+
+    return whoamiResponse.data['user_id'] as String;
   }
 
   /// Ensures the admin account is in the room before sending messages
   /// This prevents 403 Forbidden errors when trying to send to existing rooms
   Future<void> _ensureAdminInRoom(String roomId) async {
-    _log.info('_ensureAdminInRoom called for room: $roomId');
-
     try {
-      // Get current user info
-      final Response whoamiResponse = await _apiClient.get(
-        '$_matrixUrl/_matrix/client/v3/account/whoami',
-        options: _apiClient.matrixOptions,
-      );
-
-      if (whoamiResponse.statusCode != 200) {
-        _log.info(
-          'Failed to get current user info: ${whoamiResponse.statusCode}',
-        );
+      final currentUserId = await _getCurrentUserId();
+      if (currentUserId == null) {
         return;
       }
 
-      final currentUserId = whoamiResponse.data['user_id'] as String;
-      _log.info('Current admin user: $currentUserId');
-
       // Check if the admin is already in the room
       final Response membersResponse = await _apiClient.get(
-        '$_matrixUrl/_matrix/client/v3/rooms/$roomId/members',
+        '/_matrix/client/v3/rooms/$roomId/members',
         options: _apiClient.matrixOptions,
       );
 
@@ -1089,21 +1118,17 @@ class MatrixRoomApiService {
         );
 
         if (isAdminInRoom) {
-          _log.info('Admin is already in room: $roomId');
           return;
         }
       }
 
       // If admin is not in the room, try to join it
-      _log.info('Admin not in room, attempting to join...');
       final Response joinResponse = await _apiClient.post(
-        '$_matrixUrl/_matrix/client/v3/rooms/$roomId/join',
+        '/_matrix/client/v3/rooms/$roomId/join',
         options: _apiClient.matrixOptions,
       );
 
-      if (joinResponse.statusCode == 200) {
-        _log.info('Successfully joined room: $roomId');
-      } else {
+      if (joinResponse.statusCode != 200) {
         _log.info(
           'Failed to join room: ${joinResponse.statusCode} - ${joinResponse.data}',
         );

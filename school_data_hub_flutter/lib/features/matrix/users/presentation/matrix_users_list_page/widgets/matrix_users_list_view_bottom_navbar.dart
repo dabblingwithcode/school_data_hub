@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/matrix_rooms_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class MatrixUsersListViewBottomNavbar extends WatchingWidget {
   const MatrixUsersListViewBottomNavbar({super.key});
@@ -41,8 +42,8 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                     Navigator.pop(context);
                   },
                 ),
-                if (pendingChanges) ...<Widget>[
-                  const Gap(30),
+                if (pendingChanges) ...[
+                  const Gap(20),
                   IconButton(
                     tooltip: 'Änderungen speichern',
                     icon: const Icon(Icons.save, size: 30),
@@ -51,12 +52,11 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                     },
                   ),
                 ],
-                const Gap(30),
+                const Gap(20),
                 IconButton(
                   tooltip: 'neues Matrix-Konto',
                   icon: const Icon(Icons.add, size: 30),
                   onPressed: () {
-                    // TODo: implement this
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (ctx) => const NewMatrixUserPage(),
@@ -64,7 +64,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                     );
                   },
                 ),
-                const Gap(30),
+                const Gap(20),
                 IconButton(
                   tooltip: 'Matrix-Räume',
                   icon: const Icon(Icons.meeting_room_rounded, size: 30),
@@ -76,14 +76,26 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                     );
                   },
                 ),
-                const Gap(30),
+                const Gap(20),
+                IconButton(
+                  tooltip: 'Event Reports',
+                  icon: const Icon(Icons.flag_circle_rounded, size: 30),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const MatrixEventReportsPage(),
+                      ),
+                    );
+                  },
+                ),
+                const Gap(20),
                 IconButton(
                   tooltip: 'Zur Startseite',
                   onPressed: () =>
                       Navigator.popUntil(context, (route) => route.isFirst),
                   icon: const Icon(Icons.home, size: 35),
                 ),
-                const Gap(30),
+                const Gap(20),
                 IconButton(
                   tooltip: 'Mehrere neue Benutzer-Codes generieren',
                   icon: const Icon(Icons.print, color: Colors.orange, size: 30),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/new_matrix_room_page/new_matrix_room_page.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 
 class RoomListPageBottomNavBar extends WatchingWidget {
   const RoomListPageBottomNavBar({super.key});
@@ -41,7 +42,7 @@ class RoomListPageBottomNavBar extends WatchingWidget {
                     Navigator.pop(context);
                   },
                 ),
-                if (pendingChanges) ...<Widget>[
+                if (pendingChanges) ...[
                   const Gap(30),
                   IconButton(
                     tooltip: 'Änderungen speichern',
@@ -71,6 +72,18 @@ class RoomListPageBottomNavBar extends WatchingWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (ctx) => const MatrixUsersListPage(),
+                      ),
+                    );
+                  },
+                ),
+                const Gap(30),
+                IconButton(
+                  tooltip: 'Event Reports',
+                  icon: const Icon(Icons.flag_circle_rounded, size: 30),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const MatrixEventReportsPage(),
                       ),
                     );
                   },

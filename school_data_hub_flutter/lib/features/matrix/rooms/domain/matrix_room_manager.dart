@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class MatrixRoomManager {
   final _notificationService = di<NotificationService>();
@@ -93,32 +93,158 @@ class MatrixRoomManager {
     int? eventsDefault,
     int? reactions,
   }) async {
-    final currentRoom = getRoomById(roomId);
-
-    final MatrixRoom room = await _matrixApiService.roomApi
-        .changeRoomPowerLevels(
-          currentRoom: currentRoom,
-          roomId: roomId,
-          newRoomAdmin: roomAdmin,
-          adminIdToRemove: removeAdminWithId,
-          eventsDefault: eventsDefault,
-          reactions: reactions,
-          matrixAdmin: _matrixAdminId,
-        );
-    if (currentRoom.roomAdmins != null) {
-      currentRoom.roomAdmins = room.roomAdmins;
-    }
-    if (currentRoom.eventsDefault != null) {
-      currentRoom.eventsDefault = room.eventsDefault;
-    }
-    if (currentRoom.powerLevelReactions != null) {
-      currentRoom.powerLevelReactions = room.powerLevelReactions;
+    if (roomAdmin != null || removeAdminWithId != null) {
+      di<NotificationService>().showInformationDialog(
+        'Power levels werden von der Policy geändert.',
+      );
+      return;
     }
 
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Power Levels gesetzt',
-    );
+    final MatrixRoom currentRoom = getRoomById(roomId);
+
+    try {
+      final MatrixRoom updatedRoom = await _matrixApiService.roomApi
+          .changeRoomPowerLevels(
+            roomId: roomId,
+            newRoomAdmin: roomAdmin,
+            adminIdToRemove: removeAdminWithId,
+            eventsDefault: eventsDefault,
+            reactions: reactions,
+            currentRoom: currentRoom,
+            matrixAdmin: _matrixAdminId,
+          );
+
+      currentRoom.eventsDefault = updatedRoom.eventsDefault;
+      currentRoom.powerLevelReactions = updatedRoom.powerLevelReactions;
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Raum-Berechtigungen aktualisiert',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Aktualisieren der Raum-Berechtigungen',
+      );
+    }
+
+    return;
+  }
+
+  Future<void> setRoomAvatar({
+    required String roomId,
+    required Uint8List fileBytes,
+    required String fileName,
+  }) async {
+    final MatrixRoom currentRoom = getRoomById(roomId);
+
+    try {
+      final MatrixRoom updatedRoom = await _matrixApiService.roomApi
+          .setRoomAvatar(
+            roomId: roomId,
+            fileBytes: fileBytes,
+            fileName: fileName,
+          );
+
+      currentRoom.avatarUrl = updatedRoom.avatarUrl;
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Raum-Avatar aktualisiert',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Aktualisieren des Raum-Avatars',
+      );
+    }
+  }
+
+  Future<String?> fetchRoomTopic({required String roomId}) async {
+    try {
+      return await _matrixApiService.roomApi.fetchRoomTopic(roomId);
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Laden des Raumthemas',
+      );
+      return null;
+    }
+  }
+
+  Future<String?> fetchRoomCanonicalAlias({required String roomId}) async {
+    try {
+      return await _matrixApiService.roomApi.fetchRoomCanonicalAlias(roomId);
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Laden des Raum-Alias',
+      );
+      return null;
+    }
+  }
+
+  Future<void> setRoomName({
+    required String roomId,
+    required String name,
+  }) async {
+    final MatrixRoom currentRoom = getRoomById(roomId);
+    try {
+      final MatrixRoom updatedRoom = await _matrixApiService.roomApi
+          .setRoomName(roomId: roomId, name: name);
+      currentRoom.name = updatedRoom.name;
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Raumname aktualisiert',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Aktualisieren des Raumnamens',
+      );
+    }
+  }
+
+  Future<void> setRoomTopic({
+    required String roomId,
+    required String topic,
+  }) async {
+    try {
+      await _matrixApiService.roomApi.setRoomTopic(
+        roomId: roomId,
+        topic: topic,
+      );
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Raumthema aktualisiert',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Aktualisieren des Raumthemas',
+      );
+    }
+  }
+
+  Future<void> setRoomCanonicalAlias({
+    required String roomId,
+    required String? alias,
+  }) async {
+    try {
+      await _matrixApiService.roomApi.setRoomCanonicalAlias(
+        roomId: roomId,
+        alias: alias,
+      );
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Raum-Alias aktualisiert',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Aktualisieren des Raum-Alias',
+      );
+    }
   }
 
   Future<void> loadRoomsFromPolicy(List<String> managedRoomIds) async {

@@ -1,10 +1,11 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/import_string_from_txt_file.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
@@ -136,29 +137,16 @@ class SetupMatrixEnvironmentPage extends StatelessWidget {
                       scanResult = await importStringfromTxtFile();
                     }
                     if (scanResult != null) {
-                      final matrixCredentialsMap = jsonDecode(scanResult);
+                      final success = await viewModel
+                          .importAndApplyMatrixCredentials(scanResult);
 
-                      // final MatrixCredentials matrixCredentials =
-                      //     MatrixCredentials.fromJson(matrixCredentialsMap);
-                      viewModel.urlTextFieldController.text =
-                          matrixCredentialsMap['url'];
-
-                      viewModel.matrixTokenTextFieldController.text =
-                          matrixCredentialsMap['matrixToken'];
-
-                      viewModel.policyTokenTextFieldController.text =
-                          matrixCredentialsMap['policyToken'];
-                      viewModel.matrixAdminTextFieldController.text =
-                          matrixCredentialsMap['matrixAdmin'];
-                      viewModel.encryptionKeyTextFieldController.text =
-                          matrixCredentialsMap['encryptionKey'];
-                      viewModel.encryptionIvTextFieldController.text =
-                          matrixCredentialsMap['encryptionIv'];
-
-                      viewModel.setMatrixEnvironment();
-
-                      if (context.mounted) {
+                      if (success && context.mounted) {
                         Navigator.pop(context);
+                      } else {
+                        di<NotificationService>().showSnackBar(
+                          NotificationType.error,
+                          'Ungültige Matrix-Zugangsdaten',
+                        );
                       }
                     }
                   },

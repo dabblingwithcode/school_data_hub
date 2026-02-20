@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 part 'matrix_user.g.dart';
 
@@ -73,22 +73,57 @@ class MatrixUser extends ChangeNotifier {
   }
 
   void setPowerLevel(String roomId, int powerLevel) {
-    final index = _joinedRooms.indexWhere((room) => room.roomId == roomId);
-    if (index != -1) {
-      _joinedRooms[index] = JoinedRoom(roomId: roomId, powerLevel: powerLevel);
-      _matrixPolicyManager.pendingChangesHandler(true);
-      notifyListeners();
+    final normalizedRoomId = roomId.trim();
+    bool wasUpdated = false;
+    _joinedRooms = _joinedRooms.map((room) {
+      if (room.roomId.trim() == normalizedRoomId) {
+        wasUpdated = true;
+        return JoinedRoom(roomId: room.roomId, powerLevel: powerLevel);
+      }
+      return room;
+    }).toList();
+
+    if (!wasUpdated) {
+      _joinedRooms.add(
+        JoinedRoom(roomId: normalizedRoomId, powerLevel: powerLevel),
+      );
     }
+
+    if (_matrixRooms.every((room) => room.id.trim() != normalizedRoomId)) {
+      _matrixRooms.add(MatrixRoom(id: normalizedRoomId));
+    }
+    _matrixPolicyManager.pendingChangesHandler(true);
+    notifyListeners();
+  }
+
+  int powerLevelForRoom(String roomId) {
+    final normalizedRoomId = roomId.trim();
+    for (final room in _joinedRooms.reversed) {
+      if (room.roomId.trim() != normalizedRoomId) {
+        continue;
+      }
+      return room.powerLevel ?? 0;
+    }
+    return 0;
   }
 
   void joinRooms(List<JoinedRoom> roomIds) {
     _joinedRooms.addAll(roomIds);
+    for (final room in roomIds) {
+      if (_matrixRooms.any((x) => x.id == room.roomId)) {
+        continue;
+      }
+      _matrixRooms.add(MatrixRoom(id: room.roomId));
+    }
     _matrixPolicyManager.pendingChangesHandler(true);
     notifyListeners();
   }
 
   void joinRoom(MatrixRoom room) {
     _joinedRooms.add(JoinedRoom(roomId: room.id, powerLevel: 0));
+    if (_matrixRooms.every((x) => x.id != room.id)) {
+      _matrixRooms.add(room);
+    }
     _matrixPolicyManager.pendingChangesHandler(true);
     notifyListeners();
   }
@@ -97,6 +132,7 @@ class MatrixUser extends ChangeNotifier {
     final List<JoinedRoom> joinedRooms = List.from(_joinedRooms)
       ..removeWhere((joinedRoom) => joinedRoom.roomId == room.id);
     _joinedRooms = joinedRooms;
+    _matrixRooms.removeWhere((matrixRoom) => matrixRoom.id == room.id);
     _matrixPolicyManager.pendingChangesHandler(true);
     notifyListeners();
   }

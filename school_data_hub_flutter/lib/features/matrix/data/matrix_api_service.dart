@@ -1,8 +1,6 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_event_report.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_message.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/models/policy.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart'
@@ -10,15 +8,12 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_a
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_client.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/data/matrix_user_api_service.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 enum MatrixAuthType { matrix, corporal }
 
 class MatrixApiService {
-  final _apiClient = ApiClient(Dio());
-  final _notificationService = di<NotificationService>();
+  late final ApiClient _apiClient;
 
-  String _matrixUrl;
   String _matrixToken;
   String _corporalToken;
 
@@ -30,9 +25,10 @@ class MatrixApiService {
     required String matrixUrl,
     required String matrixToken,
     required String corporalToken,
-  }) : _matrixUrl = matrixUrl,
-       _matrixToken = matrixToken,
+  }) : _matrixToken = matrixToken,
        _corporalToken = corporalToken {
+    _apiClient = ApiClient(Dio(), baseUrl: matrixUrl);
+
     _apiClient.setApiOptions(
       tokenKey: Token.matrix,
       token: 'Bearer $_matrixToken',
@@ -43,18 +39,8 @@ class MatrixApiService {
     );
 
     // Initialize sub-services with shared ApiClient
-    _userApiService = MatrixUserApiService(
-      apiClient: _apiClient,
-      matrixUrl: matrixUrl,
-      matrixToken: matrixToken,
-      corporalToken: corporalToken,
-    );
-    _roomApiService = room_api.MatrixRoomApiService(
-      apiClient: _apiClient,
-      matrixUrl: matrixUrl,
-      matrixToken: matrixToken,
-      corporalToken: corporalToken,
-    );
+    _userApiService = MatrixUserApiService(apiClient: _apiClient);
+    _roomApiService = room_api.MatrixRoomApiService(apiClient: _apiClient);
   }
 
   // Getters to access sub-services
@@ -120,6 +106,70 @@ class MatrixApiService {
     required String userId,
   }) => _roomApiService.inviteUserToRoom(roomId: roomId, userId: userId);
 
+  Future<MatrixEventReportsResponse> fetchEventReports({
+    int? from,
+    int? limit,
+    String? dir,
+    String? userId,
+    String? roomId,
+    String? eventSenderUserId,
+  }) async {
+    final queryParameters = <String, dynamic>{
+      if (from != null) 'from': from,
+      if (limit != null) 'limit': limit,
+      if (dir != null && dir.isNotEmpty) 'dir': dir,
+      if (userId != null && userId.isNotEmpty) 'user_id': userId,
+      if (roomId != null && roomId.isNotEmpty) 'room_id': roomId,
+      if (eventSenderUserId != null && eventSenderUserId.isNotEmpty)
+        'event_sender_user_id': eventSenderUserId,
+    };
+
+    final response = await _apiClient.get(
+      '/_synapse/admin/v1/event_reports',
+      queryParameters: queryParameters,
+      options: _apiClient.matrixOptions,
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(
+        'Fehler beim Laden der Event Reports',
+        response.statusCode,
+      );
+    }
+
+    return MatrixEventReportsResponse.fromJson(response.data);
+  }
+
+  Future<MatrixEventReportDetail> fetchEventReportDetail(int reportId) async {
+    final response = await _apiClient.get(
+      '/_synapse/admin/v1/event_reports/$reportId',
+      options: _apiClient.matrixOptions,
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(
+        'Fehler beim Laden des Event Report Details',
+        response.statusCode,
+      );
+    }
+
+    return MatrixEventReportDetail.fromJson(response.data);
+  }
+
+  Future<void> deleteEventReport(int reportId) async {
+    final response = await _apiClient.delete(
+      '/_synapse/admin/v1/event_reports/$reportId',
+      options: _apiClient.matrixOptions,
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(
+        'Fehler beim Löschen des Event Reports',
+        response.statusCode,
+      );
+    }
+  }
+
   Future<String> getOrCreateDirectMessageRoom({
     required String targetUserId,
     required String currentUserId,
@@ -128,26 +178,27 @@ class MatrixApiService {
     currentUserId: currentUserId,
   );
 
+  Future<int> cleanupAdminOnlyDirectRooms({required String currentUserId}) =>
+      _roomApiService.cleanupAdminOnlyDirectRooms(currentUserId: currentUserId);
+
   void setMatrixEnvironmentValues({
     required String url,
     required String matrixToken,
     required String policyToken,
   }) {
-    _matrixUrl = url;
     _matrixToken = matrixToken;
     _corporalToken = policyToken;
 
-    // Update sub-services as well
-    _userApiService.setMatrixEnvironmentValues(
-      url: url,
-      matrixToken: matrixToken,
-      policyToken: policyToken,
+    _apiClient.setBaseUrl(url);
+    _apiClient.setApiOptions(
+      tokenKey: Token.matrix,
+      token: 'Bearer $_matrixToken',
     );
-    _roomApiService.setMatrixEnvironmentValues(
-      url: url,
-      matrixToken: matrixToken,
-      policyToken: policyToken,
+    _apiClient.setApiOptions(
+      tokenKey: Token.corporal,
+      token: 'Bearer $_corporalToken',
     );
+
     return;
   }
 
@@ -155,64 +206,33 @@ class MatrixApiService {
 
   Future<Policy?> fetchMatrixPolicy() async {
     final response = await _apiClient.get(
-      '$_matrixUrl/_matrix/corporal/policy',
+      '/_matrix/corporal/policy',
       options: _apiClient.corporalOptions,
     );
 
     if (response.statusCode != 200) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler: status code ${response.statusCode}',
-      );
       throw ApiException('Fehler beim Laden der Policy', response.statusCode);
     }
 
-    //-TODO URGENT: remove this debug code later
-    // final File file = File('matrix-fetched-policy.json');
-    // if (file.existsSync()) {
-    //   file.deleteSync();
-    // }
-    // file.writeAsStringSync(jsonEncode(response.data['policy']));
-
-    final Policy policy = Policy.fromJson(response.data['policy']);
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Matrix-Räumeverwaltung geladen',
-    );
-
-    return policy;
+    return Policy.fromJson(response.data['policy']);
   }
 
   static const String _putMatrixPolicy = '/_matrix/corporal/policy';
 
   Future<void> putMatrixPolicy() async {
-    final File policyFile = await MatrixPolicyHelper.generatePolicyJsonFile(
-      filename: 'updated-policy',
-    );
-    final bytes = policyFile.readAsBytesSync();
+    final String policyJson = MatrixPolicyHelper.generatePolicyJson();
 
     final Response response = await _apiClient.put(
-      '$_matrixUrl$_putMatrixPolicy',
-      data: bytes,
+      _putMatrixPolicy,
+      data: policyJson,
       options: _apiClient.corporalOptions.copyWith(
         contentType: 'application/json',
       ),
     );
-    //- TODO URGENT: uncomment this when the backend is ready
-    //delete file, we don't need it anymore
-    // policyFile.deleteSync();
+
     if (response.statusCode != 200) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler: status code ${response.statusCode}',
-      );
       throw ApiException('Fehler beim Setzen der Policy', response.statusCode);
     }
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Policy erfolgreich gesetzt',
-    );
 
     return;
   }

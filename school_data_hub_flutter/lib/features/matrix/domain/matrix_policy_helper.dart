@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
@@ -13,7 +13,6 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_roo
 import 'package:school_data_hub_flutter/features/matrix/domain/models/policy.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('MatrixPolicyHelperFunctions');
 
@@ -76,21 +75,10 @@ class MatrixPolicyHelper {
     return;
   }
 
-  static Future<File> generatePolicyJsonFile({required String filename}) async {
-    // create a new json file with the policy
-
-    final File file = File('$filename.json');
-    if (file.existsSync()) {
-      file.deleteSync();
-    }
+  static String generatePolicyJson() {
     final Policy policy = _matrixPolicyManager.matrixPolicy!;
     final Map<String, dynamic> jsonMap = policy.toJson();
-    // transform the map into a json string
-    final String policyJson = jsonEncode(jsonMap);
-
-    file.writeAsStringSync(policyJson);
-
-    return file;
+    return jsonEncode(jsonMap);
   }
 
   static Policy refreshMatrixPolicy() {

@@ -69,6 +69,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Row(
                             children: [
@@ -115,265 +116,354 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                           ),
                                       ],
                                     ),
-                                    Row(
-                                      children: [
-                                        const Text('Kontakt: '),
-                                        const Gap(5),
-                                        InkWell(
-                                          onTap: () async {
-                                            if (pupil.contact == null) {
-                                              if (!di
-                                                  .isRegistered<
-                                                    MatrixPolicyManager
-                                                  >()) {
-                                                di<NotificationService>()
-                                                    .showInformationDialog(
-                                                      'Es sind keine Matrix-Admindaten hinterlegt.',
-                                                    );
-                                                return;
-                                              }
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (ctx) => NewMatrixUserPage(
-                                                    pupil: pupil,
-                                                    matrixId:
-                                                        MatrixPolicyHelper.generateMatrixId(
-                                                          isParent: false,
-                                                        ),
-                                                    displayName:
-                                                        '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
-                                                  ),
-                                                ),
-                                              );
-                                              return;
-                                            }
-                                            final confirm =
-                                                await confirmationDialog(
-                                                  context: context,
-                                                  title: 'Messenger öffnen',
-                                                  message:
-                                                      'Nachricht an ${pupil.firstName} schicken?',
-                                                );
-                                            if (confirm == true &&
-                                                context.mounted) {
-                                              MatrixPolicyHelper.launchMatrixUrl(
-                                                context,
-                                                pupil.contact!,
-                                              );
-                                            }
-                                          },
-                                          onLongPress: () async {
-                                            final result =
-                                                await longTextFieldDialog(
-                                                  title: 'Kontakt',
-                                                  labelText: 'Kontakt',
-                                                  initialValue: pupil.contact,
-                                                  parentContext: context,
-                                                );
-                                            if (result == null ||
-                                                result.value == pupil.contact) {
-                                              return;
-                                            }
 
-                                            await PupilMutator()
-                                                .updateStringProperty(
-                                                  pupilId: pupil.pupilId,
-                                                  property: PupilStringProperty
-                                                      .contact,
-                                                  propertyValue: (
-                                                    value: result.value,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text('Kontakt: '),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Flexible(
+                                                    child: InkWell(
+                                                      onTap: () async {
+                                                        if (pupil.contact ==
+                                                            null) {
+                                                          if (!di
+                                                              .isRegistered<
+                                                                MatrixPolicyManager
+                                                              >()) {
+                                                            di<
+                                                                  NotificationService
+                                                                >()
+                                                                .showInformationDialog(
+                                                                  'Es sind keine Matrix-Admindaten hinterlegt.',
+                                                                );
+                                                            return;
+                                                          }
+                                                          Navigator.of(
+                                                            context,
+                                                          ).push(
+                                                            MaterialPageRoute(
+                                                              builder: (ctx) => NewMatrixUserPage(
+                                                                pupil: pupil,
+                                                                matrixId:
+                                                                    MatrixPolicyHelper.generateMatrixId(
+                                                                      isParent:
+                                                                          false,
+                                                                    ),
+                                                                displayName:
+                                                                    '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
+                                                              ),
+                                                            ),
+                                                          );
+                                                          return;
+                                                        }
+                                                        final confirm =
+                                                            await confirmationDialog(
+                                                              context: context,
+                                                              title:
+                                                                  'Messenger öffnen',
+                                                              message:
+                                                                  'Nachricht an ${pupil.firstName} schicken?',
+                                                            );
+                                                        if (confirm == true &&
+                                                            context.mounted) {
+                                                          MatrixPolicyHelper.launchMatrixUrl(
+                                                            context,
+                                                            pupil.contact!,
+                                                          );
+                                                        }
+                                                      },
+                                                      onLongPress: () async {
+                                                        final result =
+                                                            await longTextFieldDialog(
+                                                              title: 'Kontakt',
+                                                              labelText:
+                                                                  'Kontakt',
+                                                              initialValue:
+                                                                  pupil.contact,
+                                                              parentContext:
+                                                                  context,
+                                                            );
+                                                        if (result == null ||
+                                                            result.value ==
+                                                                pupil.contact) {
+                                                          return;
+                                                        }
+
+                                                        await PupilMutator()
+                                                            .updateStringProperty(
+                                                              pupilId:
+                                                                  pupil.pupilId,
+                                                              property:
+                                                                  PupilStringProperty
+                                                                      .contact,
+                                                              propertyValue: (
+                                                                value: result
+                                                                    .value,
+                                                              ),
+                                                            );
+                                                      },
+                                                      child: Text(
+                                                        pupil.contact ??
+                                                            'nicht vorhanden',
+                                                        style: TextStyle(
+                                                          color:
+                                                              pupil.contact ==
+                                                                  null
+                                                              ? Colors.black
+                                                              : AppColors
+                                                                    .backgroundColor,
+                                                          fontWeight:
+                                                              pupil.contact ==
+                                                                  null
+                                                              ? FontWeight.bold
+                                                              : FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
-                                                );
-                                          },
-                                          child: Text(
-                                            pupil.contact ?? 'nicht vorhanden',
-                                            style: TextStyle(
-                                              color: pupil.contact == null
-                                                  ? Colors.black
-                                                  : AppColors.backgroundColor,
-                                              fontWeight: pupil.contact == null
-                                                  ? FontWeight.bold
-                                                  : FontWeight.bold,
-                                            ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        const Gap(10),
-                                        IconButton(
-                                          iconSize: 18,
-                                          icon: const Icon(Icons.copy),
-                                          onPressed: () {
-                                            if (pupil.contact == null) {
-                                              return;
-                                            }
-                                            Clipboard.setData(
-                                              ClipboardData(
-                                                text: pupil.contact!,
-                                              ),
-                                            );
-                                            di<NotificationService>()
-                                                .showSnackBar(
-                                                  NotificationType.success,
-                                                  'In die Zwischenablage kopiert',
+                                        Column(
+                                          children: [
+                                            const Gap(10),
+                                            IconButton(
+                                              iconSize: 18,
+                                              icon: const Icon(Icons.copy),
+                                              onPressed: () {
+                                                if (pupil.contact == null) {
+                                                  return;
+                                                }
+                                                Clipboard.setData(
+                                                  ClipboardData(
+                                                    text: pupil.contact!,
+                                                  ),
                                                 );
-                                          },
+                                                di<NotificationService>()
+                                                    .showSnackBar(
+                                                      NotificationType.success,
+                                                      'In die Zwischenablage kopiert',
+                                                    );
+                                              },
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
 
                                     Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
-                                        const Text('Elternkontakt: '),
-                                        const Gap(5),
-                                        InkWell(
-                                          onTap: () async {
-                                            if (pupil
-                                                    .tutorInfo
-                                                    ?.parentsContact ==
-                                                null) {
-                                              if (!di
-                                                  .isRegistered<
-                                                    MatrixPolicyManager
-                                                  >()) {
-                                                di<NotificationService>()
-                                                    .showInformationDialog(
-                                                      'Es sind keine Matrix-Admindaten hinterlegt.',
-                                                    );
-                                                return;
-                                              }
-                                              String? pupilSiblingsGroups;
-                                              if (pupil.family != null) {
-                                                pupilSiblingsGroups =
-                                                    [
-                                                          ...pupilManager
-                                                              .getSiblings(
-                                                                pupil,
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text('Elternkontakt: '),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Flexible(
+                                                    child: InkWell(
+                                                      onTap: () async {
+                                                        if (pupil
+                                                                .tutorInfo
+                                                                ?.parentsContact ==
+                                                            null) {
+                                                          if (!di
+                                                              .isRegistered<
+                                                                MatrixPolicyManager
+                                                              >()) {
+                                                            di<
+                                                                  NotificationService
+                                                                >()
+                                                                .showInformationDialog(
+                                                                  'Es sind keine Matrix-Admindaten hinterlegt.',
+                                                                );
+                                                            return;
+                                                          }
+                                                          String?
+                                                          pupilSiblingsGroups;
+                                                          if (pupil.family !=
+                                                              null) {
+                                                            pupilSiblingsGroups =
+                                                                [
+                                                                      ...pupilManager
+                                                                          .getSiblings(
+                                                                            pupil,
+                                                                          ),
+                                                                      pupil,
+                                                                    ]
+                                                                    .map(
+                                                                      (e) => e
+                                                                          .group,
+                                                                    )
+                                                                    .toList()
+                                                                    .join();
+                                                          }
+                                                          Navigator.of(
+                                                            context,
+                                                          ).push(
+                                                            MaterialPageRoute(
+                                                              builder: (ctx) => NewMatrixUserPage(
+                                                                pupil: pupil,
+                                                                matrixId:
+                                                                    MatrixPolicyHelper.generateMatrixId(
+                                                                      isParent:
+                                                                          true,
+                                                                    ),
+                                                                displayName:
+                                                                    pupilSiblingsGroups !=
+                                                                        null
+                                                                    ? 'Fa. ${pupil.lastName} (E) $pupilSiblingsGroups'
+                                                                    : '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (E) ${pupil.group}',
+                                                                isParent: true,
                                                               ),
-                                                          pupil,
-                                                        ]
-                                                        .map((e) => e.group)
-                                                        .toList()
-                                                        .join();
-                                              }
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (ctx) => NewMatrixUserPage(
-                                                    pupil: pupil,
-                                                    matrixId:
-                                                        MatrixPolicyHelper.generateMatrixId(
-                                                          isParent: true,
+                                                            ),
+                                                          );
+                                                          return;
+                                                        }
+                                                        final confirm =
+                                                            await confirmationDialog(
+                                                              context: context,
+                                                              title:
+                                                                  'Messenger öffnen',
+                                                              message:
+                                                                  'Nachricht an ${pupil.firstName}s Erziehungsberechtigte schicken?',
+                                                            );
+                                                        if (confirm == true &&
+                                                            context.mounted) {
+                                                          MatrixPolicyHelper.launchMatrixUrl(
+                                                            context,
+                                                            pupil
+                                                                .tutorInfo!
+                                                                .parentsContact!,
+                                                          );
+                                                        }
+                                                      },
+                                                      onLongPress: () async {
+                                                        final result =
+                                                            await longTextFieldDialog(
+                                                              title:
+                                                                  'Elternkontakt',
+                                                              labelText:
+                                                                  'Elternkontakt',
+                                                              initialValue: pupil
+                                                                  .tutorInfo
+                                                                  ?.parentsContact,
+                                                              parentContext:
+                                                                  context,
+                                                            );
+                                                        if (result == null ||
+                                                            result.value ==
+                                                                pupil
+                                                                    .tutorInfo
+                                                                    ?.parentsContact) {
+                                                          return;
+                                                        }
+                                                        final TutorInfo
+                                                        tutorInfo =
+                                                            pupil.tutorInfo ==
+                                                                null
+                                                            ? TutorInfo(
+                                                                parentsContact:
+                                                                    '@${result.value}',
+                                                                createdBy:
+                                                                    di<
+                                                                          HubSessionManager
+                                                                        >()
+                                                                        .signedInUser!
+                                                                        .userName!,
+                                                              )
+                                                            : pupil.tutorInfo!
+                                                                  .copyWith(
+                                                                    parentsContact:
+                                                                        '@${result.value}',
+                                                                  );
+                                                        await PupilMutator()
+                                                            .updateTutorInfo(
+                                                              pupilId:
+                                                                  pupil.pupilId,
+                                                              tutorInfo:
+                                                                  tutorInfo,
+                                                            );
+                                                      },
+                                                      child: Text(
+                                                        pupil
+                                                                .tutorInfo
+                                                                ?.parentsContact ??
+                                                            'nicht vorhanden',
+                                                        style: TextStyle(
+                                                          color:
+                                                              pupil
+                                                                      .tutorInfo
+                                                                      ?.parentsContact ==
+                                                                  null
+                                                              ? Colors.black
+                                                              : AppColors
+                                                                    .backgroundColor,
+                                                          fontWeight:
+                                                              pupil
+                                                                      .tutorInfo
+                                                                      ?.parentsContact ==
+                                                                  null
+                                                              ? FontWeight.bold
+                                                              : FontWeight.bold,
                                                         ),
-                                                    displayName:
-                                                        pupilSiblingsGroups !=
-                                                            null
-                                                        ? 'Fa. ${pupil.lastName} (E) $pupilSiblingsGroups'
-                                                        : '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (E) ${pupil.group}',
-                                                    isParent: true,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                              return;
-                                            }
-                                            final confirm =
-                                                await confirmationDialog(
-                                                  context: context,
-                                                  title: 'Messenger öffnen',
-                                                  message:
-                                                      'Nachricht an ${pupil.firstName}s Erziehungsberechtigte schicken?',
-                                                );
-                                            if (confirm == true &&
-                                                context.mounted) {
-                                              MatrixPolicyHelper.launchMatrixUrl(
-                                                context,
-                                                pupil
-                                                    .tutorInfo!
-                                                    .parentsContact!,
-                                              );
-                                            }
-                                          },
-                                          onLongPress: () async {
-                                            final result =
-                                                await longTextFieldDialog(
-                                                  title: 'Elternkontakt',
-                                                  labelText: 'Elternkontakt',
-                                                  initialValue: pupil
-                                                      .tutorInfo
-                                                      ?.parentsContact,
-                                                  parentContext: context,
-                                                );
-                                            if (result == null ||
-                                                result.value ==
-                                                    pupil
-                                                        .tutorInfo
-                                                        ?.parentsContact) {
-                                              return;
-                                            }
-                                            final TutorInfo tutorInfo =
-                                                pupil.tutorInfo == null
-                                                ? TutorInfo(
-                                                    parentsContact:
-                                                        '@${result.value}',
-                                                    createdBy:
-                                                        di<HubSessionManager>()
-                                                            .signedInUser!
-                                                            .userName!,
-                                                  )
-                                                : pupil.tutorInfo!.copyWith(
-                                                    parentsContact:
-                                                        '@${result.value}',
-                                                  );
-                                            await PupilMutator()
-                                                .updateTutorInfo(
-                                                  pupilId: pupil.pupilId,
-                                                  tutorInfo: tutorInfo,
-                                                );
-                                          },
-                                          child: Text(
-                                            pupil.tutorInfo?.parentsContact ??
-                                                'nicht vorhanden',
-                                            style: TextStyle(
-                                              color:
-                                                  pupil
-                                                          .tutorInfo
-                                                          ?.parentsContact ==
-                                                      null
-                                                  ? Colors.black
-                                                  : AppColors.backgroundColor,
-                                              fontWeight:
-                                                  pupil
-                                                          .tutorInfo
-                                                          ?.parentsContact ==
-                                                      null
-                                                  ? FontWeight.bold
-                                                  : FontWeight.bold,
-                                            ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        const Gap(10),
-                                        IconButton(
-                                          iconSize: 18,
-                                          icon: const Icon(Icons.copy),
-                                          onPressed: () {
-                                            if (pupil
-                                                    .tutorInfo
-                                                    ?.parentsContact ==
-                                                null) {
-                                              return;
-                                            }
-                                            Clipboard.setData(
-                                              ClipboardData(
-                                                text:
-                                                    pupil
+                                        Column(
+                                          children: [
+                                            const Gap(10),
+                                            IconButton(
+                                              iconSize: 18,
+                                              icon: const Icon(Icons.copy),
+                                              onPressed: () {
+                                                if (pupil
                                                         .tutorInfo
-                                                        ?.parentsContact ??
-                                                    'Kein Elternkontakt vorhanden!',
-                                              ),
-                                            );
-                                            di<NotificationService>()
-                                                .showSnackBar(
-                                                  NotificationType.success,
-                                                  'In die Zwischenablage kopiert',
+                                                        ?.parentsContact ==
+                                                    null) {
+                                                  return;
+                                                }
+                                                Clipboard.setData(
+                                                  ClipboardData(
+                                                    text:
+                                                        pupil
+                                                            .tutorInfo
+                                                            ?.parentsContact ??
+                                                        'Kein Elternkontakt vorhanden!',
+                                                  ),
                                                 );
-                                          },
+                                                di<NotificationService>()
+                                                    .showSnackBar(
+                                                      NotificationType.success,
+                                                      'In die Zwischenablage kopiert',
+                                                    );
+                                              },
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),

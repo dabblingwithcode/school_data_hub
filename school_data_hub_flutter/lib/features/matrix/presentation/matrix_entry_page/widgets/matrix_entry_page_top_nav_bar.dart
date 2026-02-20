@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/matrix_rooms_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
-enum SelectedMatrixContent { rooms, users, compulsoryRooms, settings }
+enum SelectedMatrixContent { rooms, users, reports, compulsoryRooms, settings }
 
 class SelectedMatrixContentNotifier extends ChangeNotifier {
   // Private constructor
@@ -46,6 +47,8 @@ class MatrixEntryPageTopNavBar extends WatchingWidget {
               ? const MatrixRoomsListPage()
               : (selectedContent == SelectedMatrixContent.users)
               ? const MatrixUsersListPage()
+              : (selectedContent == SelectedMatrixContent.reports)
+              ? const MatrixEventReportsPage()
               : (selectedContent == SelectedMatrixContent.compulsoryRooms)
               ? const SizedBox() // Placeholder widget
               : const SizedBox(), // Default case
@@ -105,6 +108,26 @@ class MatrixContentNavBar extends WatchingWidget {
               onPressed: () {
                 if (selectedContent != SelectedMatrixContent.users) {
                   selectedContentNotifier.select(SelectedMatrixContent.users);
+
+                  return;
+                }
+              },
+            ),
+            IconButton(
+              isSelected: selectedContent == SelectedMatrixContent.reports,
+              icon: Icon(
+                Icons.flag_circle_rounded,
+                size: 30,
+                color: AppColors.interactiveColor,
+              ),
+              selectedIcon: Icon(
+                Icons.flag_circle_rounded,
+                size: 30,
+                color: AppColors.accentColor,
+              ),
+              onPressed: () {
+                if (selectedContent != SelectedMatrixContent.reports) {
+                  selectedContentNotifier.select(SelectedMatrixContent.reports);
 
                   return;
                 }

@@ -9,6 +9,7 @@ enum RoomMembers { pupils, parents, teachers, workers, ogs }
 class MatrixRoom extends ChangeNotifier {
   final String id;
   String? _name;
+  String? _avatarUrl;
   int? _powerLevelReactions;
   int? _eventsDefault;
   List<RoomAdmin>? _roomAdmins;
@@ -16,16 +17,19 @@ class MatrixRoom extends ChangeNotifier {
   MatrixRoom({
     required this.id,
     String? name,
+    String? avatarUrl,
     int? powerLevelReactions,
     int? eventsDefault,
     List<RoomAdmin>? roomAdmins,
-  })  : _name = name,
-        _powerLevelReactions = powerLevelReactions,
-        _eventsDefault = eventsDefault,
-        _roomAdmins = roomAdmins;
+  }) : _name = name,
+       _avatarUrl = avatarUrl,
+       _powerLevelReactions = powerLevelReactions,
+       _eventsDefault = eventsDefault,
+       _roomAdmins = roomAdmins;
 
   // Getters
   String? get name => _name;
+  String? get avatarUrl => _avatarUrl;
   int? get powerLevelReactions => _powerLevelReactions;
   int? get eventsDefault => _eventsDefault;
   List<RoomAdmin>? get roomAdmins => _roomAdmins;
@@ -34,6 +38,13 @@ class MatrixRoom extends ChangeNotifier {
   set name(String? value) {
     if (_name != value) {
       _name = value;
+      notifyListeners();
+    }
+  }
+
+  set avatarUrl(String? value) {
+    if (_avatarUrl != value) {
+      _avatarUrl = value;
       notifyListeners();
     }
   }

@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
 
-enum Token { hub, matrix, corporal }
+enum Token { matrix, corporal }
 
 final _log = Logger('ApiClient');
 
@@ -11,7 +11,7 @@ class ApiClient {
   late final Dio _dio;
 
   // injecting dio instance
-  ApiClient(this._dio) {
+  ApiClient(this._dio, {String? baseUrl}) {
     _dio
       //..options.baseUrl = baseUrl
       ..options.connectTimeout = ApiSettings.connectionTimeout
@@ -29,7 +29,20 @@ class ApiClient {
     //   responseHeader: true,
     //   responseBody: true,
     // ));
+    if (baseUrl != null && baseUrl.isNotEmpty) {
+      setBaseUrl(baseUrl);
+    }
+
     _log.info('ApiClient initialized');
+  }
+
+  String get baseUrl => _dio.options.baseUrl;
+
+  void setBaseUrl(String baseUrl) {
+    final normalizedBaseUrl = baseUrl.endsWith('/')
+        ? baseUrl.substring(0, baseUrl.length - 1)
+        : baseUrl;
+    _dio.options.baseUrl = normalizedBaseUrl;
   }
 
   Options _hubOptions = Options();
@@ -42,12 +55,6 @@ class ApiClient {
 
   void setApiOptions({required Token tokenKey, required String token}) {
     switch (tokenKey) {
-      case Token.hub:
-        _hubOptions = Options(headers: {});
-        _hubOptions.headers!['x-access-token'] = token;
-        _hubOptions.responseType = ResponseType.json;
-
-        break;
       case Token.matrix:
         _matrixOptions = Options(headers: {});
         _matrixOptions.headers!['Authorization'] = token;
@@ -66,9 +73,6 @@ class ApiClient {
   Options apiOptions({required Token tokenKey, bool? isFile}) {
     Options options;
     switch (tokenKey) {
-      case Token.hub:
-        options = _hubOptions;
-        break;
       case Token.matrix:
         options = _matrixOptions;
         break;

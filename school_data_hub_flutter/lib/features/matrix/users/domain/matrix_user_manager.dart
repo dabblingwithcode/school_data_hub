@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
@@ -11,7 +12,6 @@ import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_use
 import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class MatrixUserManager {
   final _log = Logger('MatrixUserManager');
@@ -75,6 +75,11 @@ class MatrixUserManager {
 
     final matrixUsers = [..._matrixUsers.value, newUser];
     _matrixUsers.value = matrixUsers;
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Benutzer erstellt oder reaktiviert',
+    );
 
     await _applyPolicyChanges();
 
@@ -253,5 +258,9 @@ class MatrixUserManager {
     _matrixUsers.value = List.from(_matrixUsers.value);
 
     // Notify listeners about the change
+  }
+
+  Future<String?> fetchUserAvatarUrl(String userId) {
+    return _matrixApiService.userApi.fetchUserAvatarUrl(userId);
   }
 }
