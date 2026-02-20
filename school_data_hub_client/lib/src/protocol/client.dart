@@ -197,6 +197,14 @@ class EndpointAdminSchoolData extends _i1.EndpointRef {
         {'schoolData': schoolData},
       );
 
+  /// Update existing school data
+  _i2.Future<_i8.SchoolData> updateSchoolData(_i8.SchoolData schoolData) =>
+      caller.callServerEndpoint<_i8.SchoolData>(
+        'adminSchoolData',
+        'updateSchoolData',
+        {'schoolData': schoolData},
+      );
+
   /// Upload a logo image and link it to the SchoolData record
   _i2.Future<_i8.SchoolData> uploadLogo(
     int schoolDataId,

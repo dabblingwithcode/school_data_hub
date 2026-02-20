@@ -9,9 +9,37 @@ class AdminSchoolDataEndpoint extends Endpoint {
   Set<Scope> get requiredScopes => {Scope('serverpod.admin')};
 
   Future<SchoolData> postSchoolData(
-      Session session, SchoolData schoolData) async {
+    Session session,
+    SchoolData schoolData,
+  ) async {
     final schooldataInDb = await session.db.insertRow(schoolData);
     return schooldataInDb;
+  }
+
+  /// Update existing school data
+  Future<SchoolData> updateSchoolData(
+    Session session,
+    SchoolData schoolData,
+  ) async {
+    if (schoolData.id == null) {
+      throw Exception('School data ID is required for update');
+    }
+
+    final updatedSchoolData = await SchoolData.db.updateRow(
+      session,
+      schoolData,
+    );
+
+    // Return with includes
+    return await SchoolData.db.findById(
+          session,
+          schoolData.id!,
+          include: SchoolData.include(
+            logo: HubDocument.include(),
+            officialSeal: HubDocument.include(),
+          ),
+        ) ??
+        updatedSchoolData;
   }
 
   /// Upload a logo image and link it to the SchoolData record
@@ -24,9 +52,7 @@ class AdminSchoolDataEndpoint extends Endpoint {
     final schoolData = await SchoolData.db.findById(
       session,
       schoolDataId,
-      include: SchoolData.include(
-        logo: HubDocument.include(),
-      ),
+      include: SchoolData.include(logo: HubDocument.include()),
     );
     if (schoolData == null) {
       throw Exception('SchoolData not found');
@@ -88,9 +114,7 @@ class AdminSchoolDataEndpoint extends Endpoint {
     final schoolData = await SchoolData.db.findById(
       session,
       schoolDataId,
-      include: SchoolData.include(
-        officialSeal: HubDocument.include(),
-      ),
+      include: SchoolData.include(officialSeal: HubDocument.include()),
     );
     if (schoolData == null) {
       throw Exception('SchoolData not found');

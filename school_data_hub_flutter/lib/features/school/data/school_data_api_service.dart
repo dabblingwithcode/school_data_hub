@@ -2,11 +2,11 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SchoolDataApiService {
   final _client = di<Client>();
@@ -30,6 +30,15 @@ class SchoolDataApiService {
     return createdSchoolData;
   }
 
+  /// Update existing school data
+  Future<SchoolData?> updateSchoolData(SchoolData schoolData) async {
+    final updatedSchoolData = await ClientHelper.apiCall(
+      call: () => _client.adminSchoolData.updateSchoolData(schoolData),
+      errorMessage: 'Fehler beim Aktualisieren der Schulinformationen',
+    );
+    return updatedSchoolData;
+  }
+
   /// Upload school logo - uploads file to storage and links to SchoolData
   Future<SchoolData?> uploadLogo(
     File imageFile,
@@ -42,6 +51,10 @@ class SchoolDataApiService {
       storageId: StorageId.private,
       folder: ServerStorageFolder.schoolLogos,
     );
+
+    if (result.cancelled) {
+      return null;
+    }
 
     if (result.success && result.path != null) {
       // Cache the uploaded file so it's immediately available
@@ -59,7 +72,8 @@ class SchoolDataApiService {
       );
       return updatedSchoolData;
     }
-    return null;
+
+    throw Exception('Logo upload failed before linking to SchoolData');
   }
 
   /// Upload official seal - uploads file to storage and links to SchoolData
@@ -72,8 +86,12 @@ class SchoolDataApiService {
     final result = await ClientFileUpload.uploadFile(
       file: imageFile,
       storageId: StorageId.private,
-      folder: ServerStorageFolder.schoolSeals,
+      folder: ServerStorageFolder.schoolLogos,
     );
+
+    if (result.cancelled) {
+      return null;
+    }
 
     if (result.success && result.path != null) {
       // Cache the uploaded file so it's immediately available
@@ -91,7 +109,8 @@ class SchoolDataApiService {
       );
       return updatedSchoolData;
     }
-    return null;
+
+    throw Exception('Official seal upload failed before linking to SchoolData');
   }
 
   /// Get school logo image with caching

@@ -38,6 +38,20 @@ class SchoolInfoDataManager {
     }
   }
 
+  /// Update existing school data
+  Future<SchoolData?> updateSchoolData(SchoolData schoolData) async {
+    try {
+      final updatedSchoolData = await _apiService.updateSchoolData(schoolData);
+      if (updatedSchoolData != null) {
+        _log.info('School data updated successfully: ${updatedSchoolData.name}');
+      }
+      return updatedSchoolData;
+    } catch (e) {
+      _log.info('Error updating school data: $e');
+      rethrow;
+    }
+  }
+
   /// Upload school logo and link to SchoolData
   Future<SchoolData?> uploadLogo(
     File imageFile,

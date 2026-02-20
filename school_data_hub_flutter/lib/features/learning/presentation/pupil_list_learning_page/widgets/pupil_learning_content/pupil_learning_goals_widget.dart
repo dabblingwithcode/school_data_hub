@@ -13,9 +13,6 @@ class PupilLearningGoals extends StatelessWidget {
     return Column(
       children: [
         pupil.competenceGoals != null && pupil.competenceGoals!.isNotEmpty
-            ? const Gap(15)
-            : const SizedBox.shrink(),
-        pupil.competenceGoals != null && pupil.competenceGoals!.isNotEmpty
             ? ListView.builder(
                 padding: const EdgeInsets.all(0),
                 shrinkWrap: true,
@@ -30,6 +27,7 @@ class PupilLearningGoals extends StatelessWidget {
                 },
               )
             : const SizedBox.shrink(),
+        const Gap(10),
       ],
     );
   }

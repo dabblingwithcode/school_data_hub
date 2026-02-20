@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/widgets/school_data_form.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class EditSchoolDataPage extends WatchingWidget {
   const EditSchoolDataPage({super.key});
@@ -64,11 +64,22 @@ class EditSchoolDataPage extends WatchingWidget {
                   'Bearbeiten Sie die Informationen Ihrer Schule. Alle Felder sind Pflichtfelder.',
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
-                const Gap(24),
+
                 const SchoolDataForm(),
                 const Gap(24),
                 Row(
                   children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: AppStyles.cancelButtonStyle,
+                        child: const Text(
+                          'ABBRECHEN',
+                          style: AppStyles.buttonTextStyle,
+                        ),
+                      ),
+                    ),
+                    const Gap(16),
                     Expanded(
                       child: ElevatedButton(
                         onPressed: isFormValid && !isSaving
@@ -92,7 +103,7 @@ class EditSchoolDataPage extends WatchingWidget {
                                 }
                               }
                             : null,
-                        style: AppStyles.actionButtonStyle,
+                        style: AppStyles.successButtonStyle,
                         child: isSaving
                             ? const SizedBox(
                                 height: 20,
@@ -104,15 +115,10 @@ class EditSchoolDataPage extends WatchingWidget {
                                   ),
                                 ),
                               )
-                            : const Text('Speichern'),
-                      ),
-                    ),
-                    const Gap(16),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: AppStyles.cancelButtonStyle,
-                        child: const Text('Abbrechen'),
+                            : const Text(
+                                'SPEICHERN',
+                                style: AppStyles.buttonTextStyle,
+                              ),
                       ),
                     ),
                   ],

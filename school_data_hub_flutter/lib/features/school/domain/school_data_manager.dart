@@ -110,7 +110,15 @@ class SchoolDataMainManager {
 
     _dataManager.setSaving(true);
     try {
-      final savedData = await _crudManager.postSchoolData(formData);
+      SchoolData? savedData;
+
+      // Use update if ID exists, otherwise create new
+      if (formData.id != null) {
+        savedData = await _crudManager.updateSchoolData(formData);
+      } else {
+        savedData = await _crudManager.postSchoolData(formData);
+      }
+
       if (savedData != null) {
         _dataManager.setSchoolData(savedData);
         _uiManager.clearFormChanges();
@@ -130,8 +138,7 @@ class SchoolDataMainManager {
       throw Exception('SchoolData must be saved before uploading a logo');
     }
 
-    final createdBy =
-        di<HubSessionManager>().userName ?? 'unknown';
+    final createdBy = di<HubSessionManager>().userName ?? 'unknown';
 
     _dataManager.setSaving(true);
     try {
@@ -140,19 +147,21 @@ class SchoolDataMainManager {
         currentSchoolData!.id!,
         createdBy,
       );
-      if (updatedSchoolData != null) {
-        _log.info(
-          'Logo uploaded and linked successfully. LogoId: ${updatedSchoolData.logoId}',
-        );
-        // Update local state with the returned SchoolData
-        _dataManager.setSchoolData(updatedSchoolData);
-        // Load the new image data to show it in the UI
-        if (updatedSchoolData.logo != null) {
-          await _loadLogoImage(updatedSchoolData.logo!.documentId);
-        }
-        // Re-initialize the form so it reflects the updated SchoolData
-        _uiManager.initializeForm(updatedSchoolData);
+      if (updatedSchoolData == null) {
+        throw Exception('Logo upload returned no updated SchoolData');
       }
+
+      _log.info(
+        'Logo uploaded and linked successfully. LogoId: ${updatedSchoolData.logoId}',
+      );
+      // Update local state with the returned SchoolData
+      _dataManager.setSchoolData(updatedSchoolData);
+      // Load the new image data to show it in the UI
+      if (updatedSchoolData.logo != null) {
+        await _loadLogoImage(updatedSchoolData.logo!.documentId);
+      }
+      // Re-initialize the form so it reflects the updated SchoolData
+      _uiManager.initializeForm(updatedSchoolData);
     } catch (e) {
       _log.severe('Error uploading logo: $e');
       rethrow;
@@ -170,8 +179,7 @@ class SchoolDataMainManager {
       );
     }
 
-    final createdBy =
-        di<HubSessionManager>().userName ?? 'unknown';
+    final createdBy = di<HubSessionManager>().userName ?? 'unknown';
 
     _dataManager.setSaving(true);
     try {
@@ -180,21 +188,23 @@ class SchoolDataMainManager {
         currentSchoolData!.id!,
         createdBy,
       );
-      if (updatedSchoolData != null) {
-        _log.info(
-          'Official seal uploaded and linked successfully. SealId: ${updatedSchoolData.officialSealId}',
-        );
-        // Update local state with the returned SchoolData
-        _dataManager.setSchoolData(updatedSchoolData);
-        // Load the new image data to show it in the UI
-        if (updatedSchoolData.officialSeal != null) {
-          await _loadOfficialSealImage(
-            updatedSchoolData.officialSeal!.documentId,
-          );
-        }
-        // Re-initialize the form so it reflects the updated SchoolData
-        _uiManager.initializeForm(updatedSchoolData);
+      if (updatedSchoolData == null) {
+        throw Exception('Official seal upload returned no updated SchoolData');
       }
+
+      _log.info(
+        'Official seal uploaded and linked successfully. SealId: ${updatedSchoolData.officialSealId}',
+      );
+      // Update local state with the returned SchoolData
+      _dataManager.setSchoolData(updatedSchoolData);
+      // Load the new image data to show it in the UI
+      if (updatedSchoolData.officialSeal != null) {
+        await _loadOfficialSealImage(
+          updatedSchoolData.officialSeal!.documentId,
+        );
+      }
+      // Re-initialize the form so it reflects the updated SchoolData
+      _uiManager.initializeForm(updatedSchoolData);
     } catch (e) {
       _log.severe('Error uploading official seal: $e');
       rethrow;

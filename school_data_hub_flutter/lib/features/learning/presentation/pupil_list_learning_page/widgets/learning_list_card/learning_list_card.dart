@@ -195,6 +195,8 @@ class LearningListCard extends WatchingWidget {
                                   ],
                                   SelectedContent.competenceGoals => [
                                     CustomExpansionTileSwitch(
+                                      includeSwitch: true,
+                                      switchColor: AppColors.interactiveColor,
                                       customExpansionTileController:
                                           expansionTileController,
                                       expansionSwitchWidget:

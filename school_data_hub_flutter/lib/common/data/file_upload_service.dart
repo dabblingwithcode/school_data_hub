@@ -46,7 +46,7 @@ class ClientFileUpload {
     );
     try {
       final uploadDescription = await di<Client>().files.getUploadDescription(
-        StorageId.private.name,
+        storageId.name,
         path,
       );
       _log.info('Upload description received for $path');
@@ -61,15 +61,32 @@ class ClientFileUpload {
 
         final fileLength = await fileToUpload.length();
         di<NotificationService>().apiRunning(true);
-        await uploader.upload(fileStream, fileLength);
+        try {
+          await uploader.upload(fileStream, fileLength);
+        } catch (e, st) {
+          di<NotificationService>().apiRunning(false);
+          _log.severe('Upload transfer failed for $path', e, st);
+          di<NotificationService>().showSnackBar(
+            NotificationType.error,
+            'Upload transfer failed for $path: $e',
+          );
+          return (path: null, success: false, cancelled: false);
+        }
         di<NotificationService>().apiRunning(false);
 
         // Verify the upload
         try {
           final success = await di<Client>().files.verifyUpload(
-            StorageId.private.name,
+            storageId.name,
             path,
           );
+          if (!success) {
+            _log.severe('Upload verification failed for $path');
+            di<NotificationService>().showSnackBar(
+              NotificationType.error,
+              'Upload verification failed for $path',
+            );
+          }
           return (path: path, success: success, cancelled: false);
         } catch (e) {
           _log.severe('Upload failed for $path: $e');

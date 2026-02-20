@@ -7,7 +7,6 @@ enum ServerStorageFolder {
   auths,
   temp,
   schoolLogos,
-  schoolSeals,
 }
 
 enum StorageId { public, private }

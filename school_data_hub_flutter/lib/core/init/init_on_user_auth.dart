@@ -1,3 +1,4 @@
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
@@ -26,14 +27,13 @@ import 'package:school_data_hub_flutter/features/school/domain/school_data_manag
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
+import 'package:school_data_hub_flutter/features/server_logs/data/server_logs_api_service.dart';
+import 'package:school_data_hub_flutter/features/server_logs/domain/server_logs_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
 import 'package:school_data_hub_flutter/features/timetable/timetable.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/server_logs/data/server_logs_api_service.dart';
-import 'package:school_data_hub_flutter/features/server_logs/domain/server_logs_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('[Init][OnUserAuth]');
 

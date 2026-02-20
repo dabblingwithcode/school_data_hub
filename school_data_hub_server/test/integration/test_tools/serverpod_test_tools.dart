@@ -655,6 +655,35 @@ class _AdminSchoolDataEndpoint {
     });
   }
 
+  _i3.Future<_i9.SchoolData> updateSchoolData(
+    _i1.TestSessionBuilder sessionBuilder,
+    _i9.SchoolData schoolData,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'adminSchoolData',
+        method: 'updateSchoolData',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'adminSchoolData',
+          methodName: 'updateSchoolData',
+          parameters: _i1.testObjectToJson({'schoolData': schoolData}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i9.SchoolData>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
   _i3.Future<_i9.SchoolData> uploadLogo(
     _i1.TestSessionBuilder sessionBuilder,
     int schoolDataId,

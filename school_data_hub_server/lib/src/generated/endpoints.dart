@@ -514,6 +514,25 @@ class Endpoints extends _i1.EndpointDispatch {
             params['schoolData'],
           ),
         ),
+        'updateSchoolData': _i1.MethodConnector(
+          name: 'updateSchoolData',
+          params: {
+            'schoolData': _i1.ParameterDescription(
+              name: 'schoolData',
+              type: _i1.getType<_i43.SchoolData>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['adminSchoolData'] as _i5.AdminSchoolDataEndpoint)
+                  .updateSchoolData(
+            session,
+            params['schoolData'],
+          ),
+        ),
         'uploadLogo': _i1.MethodConnector(
           name: 'uploadLogo',
           params: {

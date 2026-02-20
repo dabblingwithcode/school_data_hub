@@ -19,6 +19,7 @@ enum FilterState {
   authorization,
   matrixUser,
   matrixRoom,
+  user,
 }
 
 const Map<FilterState, bool> _initialFilterGlobalValues = {
@@ -30,6 +31,7 @@ const Map<FilterState, bool> _initialFilterGlobalValues = {
   FilterState.authorization: false,
   FilterState.matrixUser: false,
   FilterState.matrixRoom: false,
+  FilterState.user: false,
 };
 
 abstract class FiltersStateManager {

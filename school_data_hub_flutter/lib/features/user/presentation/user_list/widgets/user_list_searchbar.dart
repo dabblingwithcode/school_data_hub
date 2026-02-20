@@ -2,12 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_filter_button.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_search_text_field.dart';
 
-class UserListSearchBar extends WatchingWidget {
+class UserListSearchBar extends StatelessWidget {
   final List<User> users;
+  final TextEditingController searchController;
+  final bool filtersOn;
+  final ValueChanged<String> onSearchChanged;
+  final VoidCallback onResetFilters;
+  final VoidCallback onOpenFilter;
 
-  const UserListSearchBar({required this.users, super.key});
+  const UserListSearchBar({
+    required this.users,
+    required this.searchController,
+    required this.filtersOn,
+    required this.onSearchChanged,
+    required this.onResetFilters,
+    required this.onOpenFilter,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -112,36 +126,18 @@ class UserListSearchBar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 10.0,
-                        horizontal: 20.0,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      hintText: 'Benutzer suchen',
-                      prefixIcon: const Icon(Icons.search),
-                    ),
-                    onChanged: (value) {
-                      // TODO: Implement search functionality
-                      // This would require implementing a filter system similar to PupilsFilter
-                    },
+                  child: UserSearchTextField(
+                    hintText: 'Benutzer suchen',
+                    filtersOn: filtersOn,
+                    controller: searchController,
+                    onChanged: onSearchChanged,
+                    onReset: onResetFilters,
                   ),
                 ),
                 const Gap(5),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundColor,
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.filter_list, color: Colors.white),
-                    onPressed: () {
-                      // TODO: Implement filter bottom sheet
-                    },
-                  ),
+                GenericFilterButton(
+                  isSearchBar: true,
+                  showBottomSheetFunction: onOpenFilter,
                 ),
               ],
             ),
