@@ -445,6 +445,15 @@ class EndpointAdminUser extends _i1.EndpointRef {
         'getUserById',
         {'userId': userId},
       );
+
+  /// Sets the pupilsAuth value for the authenticated user.
+  /// [pupilIds] is a set of pupil IDs that the user is authorized to access.
+  _i2.Future<_i11.User?> setUserPupilsAuth(Set<int> pupilIds) =>
+      caller.callServerEndpoint<_i11.User?>(
+        'adminUser',
+        'setUserPupilsAuth',
+        {'pupilIds': pupilIds},
+      );
 }
 
 /// {@category Endpoint}

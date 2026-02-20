@@ -27,6 +27,7 @@ adminUser:
   - promoteUserScope:
   - demoteUserScope:
   - getUserById:
+  - setUserPupilsAuth:
 missedSchoolday:
   - streamMissedSchooldays:
   - postMissedSchoolday:

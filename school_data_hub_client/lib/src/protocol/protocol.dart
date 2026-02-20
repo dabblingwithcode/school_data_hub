@@ -1303,6 +1303,9 @@ class Protocol extends _i1.SerializationManager {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
+    if (t == Set<int>) {
+      return (data as List).map((e) => deserialize<int>(e)).toSet() as T;
+    }
     if (t == List<_i91.MissedSchoolday>) {
       return (data as List)
           .map((e) => deserialize<_i91.MissedSchoolday>(e))
@@ -1457,9 +1460,6 @@ class Protocol extends _i1.SerializationManager {
     if (t == List<_i89.PupilData>) {
       return (data as List).map((e) => deserialize<_i89.PupilData>(e)).toList()
           as T;
-    }
-    if (t == Set<int>) {
-      return (data as List).map((e) => deserialize<int>(e)).toSet() as T;
     }
     if (t == List<_i105.SupportLevelLegacyDto>) {
       return (data as List)

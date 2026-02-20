@@ -1282,6 +1282,35 @@ class _AdminUserEndpoint {
       }
     });
   }
+
+  _i3.Future<_i12.User?> setUserPupilsAuth(
+    _i1.TestSessionBuilder sessionBuilder,
+    Set<int> pupilIds,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'adminUser',
+        method: 'setUserPupilsAuth',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'adminUser',
+          methodName: 'setUserPupilsAuth',
+          parameters: _i1.testObjectToJson({'pupilIds': pupilIds}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i12.User?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
 }
 
 class _MissedSchooldayEndpoint {

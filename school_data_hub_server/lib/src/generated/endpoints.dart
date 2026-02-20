@@ -1067,6 +1067,25 @@ class Endpoints extends _i1.EndpointDispatch {
             params['userId'],
           ),
         ),
+        'setUserPupilsAuth': _i1.MethodConnector(
+          name: 'setUserPupilsAuth',
+          params: {
+            'pupilIds': _i1.ParameterDescription(
+              name: 'pupilIds',
+              type: _i1.getType<Set<int>>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['adminUser'] as _i7.AdminUserEndpoint)
+                  .setUserPupilsAuth(
+            session,
+            params['pupilIds'],
+          ),
+        ),
       },
     );
     connectors['missedSchoolday'] = _i1.EndpointConnector(

@@ -276,4 +276,30 @@ class AdminUserEndpoint extends Endpoint {
     );
     return user;
   }
+
+  /// Sets the pupilsAuth value for the authenticated user.
+  /// [pupilIds] is a set of pupil IDs that the user is authorized to access.
+  Future<User?> setUserPupilsAuth(Session session, Set<int> pupilIds) async {
+    // Get the authenticated user
+    final authenticationInfo = await session.authenticated;
+    if (authenticationInfo == null) {
+      return null; // User is not authenticated
+    }
+
+    // Find the user
+    var user = await User.db.findFirstRow(
+      session,
+      where: (t) => t.userInfoId.equals(authenticationInfo.userId),
+    );
+    if (user == null) {
+      return null; // User not found
+    }
+
+    // Update the pupilsAuth field
+    user.pupilsAuth = pupilIds;
+
+    // Save the updated User
+    await User.db.updateRow(session, user);
+    return user;
+  }
 }
