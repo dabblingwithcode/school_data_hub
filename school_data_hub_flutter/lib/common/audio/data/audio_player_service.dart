@@ -28,6 +28,7 @@ class AudioPlayerService {
   bool _isDisposed = false;
   bool get isDisposed => _isDisposed;
 
+  // ignore: unused_field
   File? _loadedFile;
 
   /// Loads audio from the given [documentId].

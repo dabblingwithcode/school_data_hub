@@ -4,19 +4,20 @@ import 'dart:io';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final customEncrypter = CustomEncrypter();
-final _envManager = di<EnvManager>();
+
+typedef EncryptedString = String;
 
 class CustomEncrypter {
   final encrypter = enc.Encrypter(
     enc.AES(
-      enc.Key.fromUtf8(_envManager.activeEnv!.key!),
+      enc.Key.fromUtf8(di<EnvManager>().activeEnv!.key!),
       mode: enc.AESMode.cbc,
     ),
   );
@@ -40,16 +41,16 @@ class CustomEncrypter {
     return _matrixIv!;
   }
 
-  final iv = enc.IV.fromUtf8(_envManager.activeEnv!.iv!);
+  final iv = enc.IV.fromUtf8(di<EnvManager>().activeEnv!.iv!);
 
-  String encryptMatrixString(String nonEncryptedString) {
+  EncryptedString encryptMatrixString(String nonEncryptedString) {
     final encryptedString = matrixCredentialsEncrypter
         .encrypt(nonEncryptedString, iv: matrixIv)
         .base64;
     return encryptedString;
   }
 
-  String decryptMatrixString(String encryptedString) {
+  String decryptMatrixString(EncryptedString encryptedString) {
     final thisEncryptedString = enc.Encrypted.fromBase64(encryptedString);
     final decryptedString = matrixCredentialsEncrypter.decrypt(
       thisEncryptedString,
@@ -58,14 +59,14 @@ class CustomEncrypter {
     return decryptedString;
   }
 
-  String encryptString(String nonEncryptedString) {
+  EncryptedString encryptString(String nonEncryptedString) {
     final encryptedString = encrypter
         .encrypt(nonEncryptedString, iv: iv)
         .base64;
     return encryptedString;
   }
 
-  String decryptString(String encryptedString) {
+  String decryptString(EncryptedString encryptedString) {
     final thisEncryptedString = enc.Encrypted.fromBase64(encryptedString);
     final decryptedString = encrypter.decrypt(thisEncryptedString, iv: iv);
     return decryptedString;

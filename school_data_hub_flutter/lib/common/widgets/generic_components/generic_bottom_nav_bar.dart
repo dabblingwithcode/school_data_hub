@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class GenericBottomNavBar extends WatchingWidget {
   final Function specificFilterBottomSheetFunction;
   final Widget? bottomNavBarButtons;
+  final bool? showFilterButton;
 
   const GenericBottomNavBar({
     required this.specificFilterBottomSheetFunction,
     required this.bottomNavBarButtons,
+    this.showFilterButton = true,
     super.key,
   });
 
@@ -42,18 +44,20 @@ class GenericBottomNavBar extends WatchingWidget {
                   },
                 ),
                 if (bottomNavBarButtons != null) bottomNavBarButtons!,
-                const Gap(AppPaddings.bottomNavBarButtonGap),
-                InkWell(
-                  onTap: () => specificFilterBottomSheetFunction(context),
-                  onLongPress: () {
-                    di<FiltersStateManager>().resetFilters();
-                  },
-                  child: Icon(
-                    Icons.filter_list,
-                    color: filtersActive ? Colors.deepOrange : Colors.white,
-                    size: 30,
+                if (showFilterButton == true) ...[
+                  const Gap(AppPaddings.bottomNavBarButtonGap),
+                  InkWell(
+                    onTap: () => specificFilterBottomSheetFunction(context),
+                    onLongPress: () {
+                      di<FiltersStateManager>().resetFilters();
+                    },
+                    child: Icon(
+                      Icons.filter_list,
+                      color: filtersActive ? Colors.deepOrange : Colors.white,
+                      size: 30,
+                    ),
                   ),
-                ),
+                ],
                 const Gap(15),
               ],
             ),

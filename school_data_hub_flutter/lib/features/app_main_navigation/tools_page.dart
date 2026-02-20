@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
-import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
@@ -116,6 +114,9 @@ class ToolsPage extends WatchingWidget {
   Widget build(BuildContext context) {
     final bool matrixPolicyManagerIsRegistered = watchPropertyValue(
       (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus,
+    );
+    final bool matrixSessionIsConfigured = watchPropertyValue(
+      (HubSessionManager x) => x.isMatrixSessionConfigured,
     );
 
     return Scaffold(
@@ -439,14 +440,49 @@ class ToolsPage extends WatchingWidget {
                           label: 'Schulhalbjahre\nverwalten',
                         ),
                         _ToolsMenuButton(
-                          onPressed: () {
-                            if (matrixPolicyManagerIsRegistered) {
-                              di<NotificationService>().showSnackBar(
-                                NotificationType.info,
-                                'Raumverwaltung ist bereits initialisiert',
+                          onPressed: () async {
+                            if (!matrixPolicyManagerIsRegistered) {
+                              Navigator.pop(context);
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const SetMatrixEnvironment(),
+                                ),
                               );
                               return;
                             }
+
+                            Navigator.pop(context);
+                            final qrString = di<MatrixPolicyManager>()
+                                .exportMatrixCredentialsJsonForTransfer();
+                            await showQrCode(qrString, context);
+                          },
+                          icon: Icons.key_rounded,
+                          label: 'Schulschlüssel\nzeigen',
+                        ),
+                        _ToolsMenuButton(
+                          onPressed: () async {
+                            if (matrixPolicyManagerIsRegistered) {
+                              Navigator.pop(context);
+                              final matrixPolicyManager =
+                                  di<MatrixPolicyManager>();
+
+                              final qrString = matrixPolicyManager
+                                  .exportMatrixCredentialsJsonForTransfer();
+                              await showQrCode(qrString, context);
+                              return;
+                            }
+
+                            if (matrixSessionIsConfigured) {
+                              Navigator.pop(context);
+                              final matrixPolicyManager = await di
+                                  .getAsync<MatrixPolicyManager>();
+
+                              final qrString = matrixPolicyManager
+                                  .exportMatrixCredentialsJsonForTransfer();
+                              await showQrCode(qrString, context);
+                              return;
+                            }
+
                             Navigator.pop(context);
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -454,27 +490,18 @@ class ToolsPage extends WatchingWidget {
                               ),
                             );
                           },
-                          icon: matrixPolicyManagerIsRegistered
+                          icon:
+                              matrixPolicyManagerIsRegistered ||
+                                  matrixSessionIsConfigured
                               ? Icons.check_circle_rounded
                               : Icons.chat_rounded,
-                          label: matrixPolicyManagerIsRegistered
+                          label:
+                              matrixPolicyManagerIsRegistered ||
+                                  matrixSessionIsConfigured
                               ? 'Matrix\ninitialisiert'
                               : 'Matrix\ninitialisieren',
                         ),
-                        _ToolsMenuButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            final Map<String, dynamic> json = di<EnvManager>()
-                                .activeEnv!
-                                .toJson();
 
-                            final String jsonString = jsonEncode(json);
-
-                            showQrCode(jsonString, context);
-                          },
-                          icon: Icons.key_rounded,
-                          label: 'Schulschlüssel\nzeigen',
-                        ),
                         _ToolsMenuButton(
                           onPressed: () async {
                             Navigator.pop(context);

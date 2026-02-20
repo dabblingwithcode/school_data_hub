@@ -7,68 +7,78 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _notificationService = di<NotificationService>();
 
 Future<void> showQrCode(String qr, BuildContext context) async {
   final qrImageKey = GlobalKey();
   final mediaQuery = MediaQuery.of(context);
-  final maxWidth =
-      mediaQuery.size.width * 0.8; // Adjust the multiplier as needed
-  final maxHeight = mediaQuery.size.height * 0.8; //
+  final maxDialogWidth = min(800.0, mediaQuery.size.width * 0.8);
+  final maxHeight = mediaQuery.size.height * 0.8;
+
+  final qrSize = min(maxDialogWidth - 40, maxHeight - 60);
+  final maxDialogHeight = qrSize * 1.2;
   //final RenderBox box = context.findRenderObject() as RenderBox;
   //final Offset offset = box.localToGlobal(Offset.zero);
   await showDialog(
     context: context,
     builder: (context) {
       return Dialog(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RepaintBoundary(
-              key: qrImageKey,
-              child: QrImageView(
-                padding: const EdgeInsets.all(20),
-                backgroundColor: Colors.white,
-                data: qr,
-                version: QrVersions.auto,
-                size: min(maxWidth, maxHeight),
+        backgroundColor: Colors.white,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: maxDialogWidth,
+            maxHeight: maxDialogHeight,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Gap(20),
+              RepaintBoundary(
+                key: qrImageKey,
+                child: QrImageView(
+                  padding: const EdgeInsets.all(20),
+                  backgroundColor: Colors.white,
+                  data: qr,
+                  version: QrVersions.auto,
+                  size: qrSize,
+                ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const SizedBox(width: 10),
-                TextButton(
-                  onPressed: () {
-                    saveQrCode(qr, context, qrImageKey);
-                  },
-                  child: const Text('speichern'),
-                ),
-                const SizedBox(width: 20),
-                TextButton(
-                  onPressed: () {
-                    copyQrCodeToClipboard(qr, context, qrImageKey);
-                  },
-                  child: const Text('kopieren'),
-                ),
-                const SizedBox(width: 20),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('fertig'),
-                ),
-                const Gap(10),
-              ],
-            ),
-          ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const SizedBox(width: 10),
+                  TextButton(
+                    onPressed: () {
+                      saveQrCode(qr, context, qrImageKey);
+                    },
+                    child: const Text('speichern'),
+                  ),
+                  const SizedBox(width: 20),
+                  TextButton(
+                    onPressed: () {
+                      copyQrCodeToClipboard(qr, context, qrImageKey);
+                    },
+                    child: const Text('kopieren'),
+                  ),
+                  const SizedBox(width: 20),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('fertig'),
+                  ),
+                  const Gap(10),
+                ],
+              ),
+            ],
+          ),
         ),
       );
     },

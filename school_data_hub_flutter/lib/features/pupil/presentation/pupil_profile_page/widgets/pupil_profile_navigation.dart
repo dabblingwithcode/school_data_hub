@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 enum ProfileNavigationState {
   info(0),
@@ -11,7 +11,7 @@ enum ProfileNavigationState {
   credit(2),
   attendance(3),
   schooldayEvent(4),
-  ogs(5),
+  afterSchoolCare(5),
   lists(6),
   authorization(7),
   learningSupport(8),
@@ -41,7 +41,7 @@ class PupilProfileNavigation extends WatchingWidget {
         return Colors.grey.shade800;
       case ProfileNavigationState.schooldayEvent:
         return AppColors.accentColor;
-      case ProfileNavigationState.ogs:
+      case ProfileNavigationState.afterSchoolCare:
         return AppColors.backgroundColor;
       case ProfileNavigationState.lists:
         return Colors.grey.shade600;
@@ -213,7 +213,7 @@ class PupilProfileNavigation extends WatchingWidget {
                     children: [
                       Expanded(
                         child: _navButton(
-                          state: ProfileNavigationState.ogs,
+                          state: ProfileNavigationState.afterSchoolCare,
                           selectedState: pupilProfileNavState,
                           padding: EdgeInsets.zero,
                           child: Text(
@@ -223,9 +223,11 @@ class PupilProfileNavigation extends WatchingWidget {
                                   di<BottomNavManager>()
                                           .pupilProfileNavState
                                           .value ==
-                                      ProfileNavigationState.ogs.value
+                                      ProfileNavigationState
+                                          .afterSchoolCare
+                                          .value
                                   ? _activeForegroundColor(
-                                      ProfileNavigationState.ogs,
+                                      ProfileNavigationState.afterSchoolCare,
                                     )
                                   : Colors.white,
                               fontWeight: FontWeight.bold,

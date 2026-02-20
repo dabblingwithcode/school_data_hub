@@ -18,9 +18,9 @@ class BottomNavManager {
     _bottomNavState.value = index;
   }
 
-  void setPupilProfileNavPage(int index) {
-    _pupilProfileNavState.value = index;
-    _log.info('PupilProfileNavPage set to $index');
+  void setPupilProfileNavPage(int page) {
+    _pupilProfileNavState.value = page;
+    _log.info('PupilProfileNavPage set to $page');
   }
 
   void dispose() {
