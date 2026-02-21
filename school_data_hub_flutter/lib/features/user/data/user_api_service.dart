@@ -1,5 +1,5 @@
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 
 /// API service for user-related operations.
 class UserApiService {
@@ -48,6 +48,7 @@ class UserApiService {
       pupilsAuth: pupilsAuth,
     );
   }
+
   /// Update user and UserInfo in one go. [userId] is the UserInfo id.
   /// [imageUrl] is stored in UserInfo when the server endpoint supports it.
   Future<void> updateUser({
@@ -80,16 +81,14 @@ class UserApiService {
     // TODO: when server supports UserInfo.imageUrl, add imageUrl to the
     // endpoint and pass it here (client must be regenerated).
   }
+
   /// Reset a user's password. Returns `true` on success.
   Future<bool> resetPassword(String userEmail, String newPassword) async {
     return _client.adminUser.resetPassword(userEmail, newPassword);
   }
 
   /// Change the current user's password. Returns `true` on success.
-  Future<bool> changePassword(
-    String oldPassword,
-    String newPassword,
-  ) async {
+  Future<bool> changePassword(String oldPassword, String newPassword) async {
     return _client.user.changePassword(oldPassword, newPassword);
   }
 

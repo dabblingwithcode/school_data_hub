@@ -390,8 +390,8 @@ class CreateOrEditUserPage extends WatchingWidget {
                                     builder: (ctx) => SelectPupilsListPage(
                                       selectablePupils: pupilManager
                                           .getPupilsNotListed(
-                                        watchedPupilsAuth.toList(),
-                                      ),
+                                            watchedPupilsAuth.toList(),
+                                          ),
                                     ),
                                   ),
                                 ) ??
@@ -427,21 +427,22 @@ class CreateOrEditUserPage extends WatchingWidget {
                             itemBuilder: (context, int index) {
                               final pupilsList = pupilManager
                                   .getPupilsFromPupilIds(
-                                watchedPupilsAuth.toList(),
-                              );
+                                    watchedPupilsAuth.toList(),
+                                  );
                               PupilProxy listedPupil = pupilsList[index];
                               return InkWell(
                                 onLongPress: () {
                                   pupilsAuth.value = watchedPupilsAuth
-                                      .where((id) => id != listedPupil.internalId)
+                                      .where(
+                                        (id) => id != listedPupil.internalId,
+                                      )
                                       .toSet();
                                 },
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (ctx) => PupilProfilePage(
-                                        pupil: listedPupil,
-                                      ),
+                                      builder: (ctx) =>
+                                          PupilProfilePage(pupil: listedPupil),
                                     ),
                                   );
                                 },
@@ -488,7 +489,8 @@ class CreateOrEditUserPage extends WatchingWidget {
                                               listedPupil.schoolGrade.name,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                color: AppColors.schoolyearColor,
+                                                color:
+                                                    AppColors.schoolyearColor,
                                                 fontSize: 18,
                                               ),
                                             ),
