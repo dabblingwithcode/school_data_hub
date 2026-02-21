@@ -61,11 +61,13 @@ class CompetenceCheckApiService {
     String competenceCheckId,
     File file,
     String createdBy,
+    String? fileInfo,
   ) async {
     final path = await ClientFileUpload.uploadFile(
       file: file,
       storageId: StorageId.private,
       folder: ServerStorageFolder.documents,
+      fileInfo: fileInfo,
     );
     final result = await ClientHelper.apiCall(
       call: () => _client.competenceCheck.addFileToCompetenceCheck(

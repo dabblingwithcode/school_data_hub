@@ -37,7 +37,9 @@ class CompetenceManager {
   ValueListenable<List<Competence>> get competences => _competences;
 
   // Learning content selection state
-  final selectedLearningContent = ValueNotifier<SelectedContent>(SelectedContent.books);
+  final selectedLearningContent = ValueNotifier<SelectedContent>(
+    SelectedContent.books,
+  );
 
   Map<int, int> _rootCompetencesMap = {};
   Map<int, int> get rootCompetencesMap => _rootCompetencesMap;
@@ -296,10 +298,11 @@ class CompetenceManager {
     required String? competenceComment,
     required String? groupId,
     String? groupCheckName,
+    String? fileInfo,
     required File file,
   }) async {
     final createdBy = di<HubSessionManager>().userName;
-    
+
     // First, create the competence check
     final PupilData? updatedPupilData = await _competenceCheckApiService
         .postCompetenceCheck(
@@ -312,16 +315,16 @@ class CompetenceManager {
           groupCheckId: groupId,
           groupCheckName: groupCheckName,
         );
-    
+
     if (updatedPupilData == null) {
       return;
     }
-    
+
     // Find the newly created competence check
     final newCheck = updatedPupilData.competenceChecks
         ?.where((check) => check.competenceId == competenceId)
         .lastOrNull;
-    
+
     if (newCheck == null) {
       _notificationService.showSnackBar(
         NotificationType.error,
@@ -329,13 +332,20 @@ class CompetenceManager {
       );
       return;
     }
-    
+
     // Encrypt and add the file
     final File encryptedFile = await customEncrypter.encryptFile(file);
     final PupilData updatedPupilDataWithFile = await _competenceCheckApiService
-        .addFileToCompetenceCheck(newCheck.checkId, encryptedFile, createdBy);
-    
-    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilDataWithFile);
+        .addFileToCompetenceCheck(
+          newCheck.checkId,
+          encryptedFile,
+          createdBy,
+          fileInfo,
+        );
+
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(
+      updatedPupilDataWithFile,
+    );
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -482,28 +492,51 @@ class CompetenceManager {
   Future<void> addFileToCompetenceCheck({
     required String competenceCheckId,
     required File file,
+    String? fileInfo,
   }) async {
-    final encryptedFile = await customEncrypter.encryptFile(file);
-    final createdBy = di<HubSessionManager>().userName;
-    final updatedPupilData = await _competenceCheckApiService
-        .addFileToCompetenceCheck(competenceCheckId, encryptedFile, createdBy!);
-    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+    try {
+      final encryptedFile = await customEncrypter.encryptFile(file);
+      final createdBy = di<HubSessionManager>().userName;
+      final updatedPupilData = await _competenceCheckApiService
+          .addFileToCompetenceCheck(
+            competenceCheckId,
+            encryptedFile,
+            createdBy!,
+            fileInfo,
+          );
+      di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Datei zum Kompetenzcheck hinzugefügt',
-    );
-
-    return;
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Datei zum Kompetenzcheck hinzugefügt',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Hochladen der Datei: $e',
+      );
+    }
   }
 
   Future<void> removeFileFromCompetenceCheck({
     required String competenceCheckId,
     required String fileId,
   }) async {
-    final updatedPupilData = await _competenceCheckApiService
-        .removeFileFromCompetenceCheck(competenceCheckId, fileId);
-    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+    try {
+      final updatedPupilData = await _competenceCheckApiService
+          .removeFileFromCompetenceCheck(competenceCheckId, fileId);
+      di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Datei vom Kompetenzcheck entfernt',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Löschen der Datei: $e',
+      );
+    }
   }
 
   Competence findCompetenceById(int competenceId) {

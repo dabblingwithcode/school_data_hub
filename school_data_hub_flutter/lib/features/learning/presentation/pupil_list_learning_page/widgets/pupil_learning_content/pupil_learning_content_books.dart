@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -19,6 +18,10 @@ class PupilLearningContentBooks extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
+    final pupilBookLendingManager = watch(di<PupilBookLendingManager>());
+    final pupilBookLendings = pupilBookLendingManager.getPupilBookLendings(
+      pupil.pupilId,
+    );
     return Column(
       children: [
         const Row(
@@ -67,17 +70,14 @@ class PupilLearningContentBooks extends WatchingWidget {
           child: const Text("BUCH AUSLEIHEN", style: AppStyles.buttonTextStyle),
         ),
         const Gap(5),
-        if (pupil.pupilBookLendings!.isNotEmpty) ...[
+        if (pupilBookLendings.isNotEmpty) ...[
           const Gap(10),
           ListView.builder(
             padding: const EdgeInsets.all(0),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: pupil.pupilBookLendings!.length,
+            itemCount: pupilBookLendings.length,
             itemBuilder: (context, int index) {
-              List<PupilBookLending> pupilBookLendings =
-                  pupil.pupilBookLendings!;
-
               return ClipRRect(
                 borderRadius: BorderRadius.circular(25.0),
                 child: Column(

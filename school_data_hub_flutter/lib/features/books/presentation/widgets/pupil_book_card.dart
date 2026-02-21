@@ -1,29 +1,20 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/audio/audio.dart';
-import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
-import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
-import 'package:school_data_hub_flutter/common/widgets/media_capture_buttons.dart';
+import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_documents_section.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
-import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 
 class PupilBookLendingCard extends StatelessWidget {
   const PupilBookLendingCard({
@@ -252,10 +243,37 @@ class PupilBookLendingCard extends StatelessWidget {
                   ),
                 ),
                 const Gap(10),
-                _DocumentsSection(
-                  pupilBookLending: pupilBookLending,
-                  pupilId: pupilId,
+                HubDocumentsSectionWidget(
+                  title: 'Dokumente:',
+                  documents: pupilBookLending.pupilBookLendingFiles,
+                  withSpacerToButtons: true,
+                  showMetadata: true,
+                  onImageFileCaptured: (file) async {
+                    if (file == null) return;
+                    await di<PupilBookLendingManager>().addPupilBookLendingFile(
+                      file,
+                      pupilBookLending: pupilBookLending,
+                    );
+                  },
+                  onAudioFileRecorded: (file, fileInfo) async {
+                    if (file == null) return;
+                    await di<PupilBookLendingManager>().addPupilBookLendingFile(
+                      file,
+                      pupilBookLending: pupilBookLending,
+                      fileInfo: fileInfo,
+                    );
+                  },
+                  onDeleteDocument: (documentId) async {
+                    await di<PupilBookLendingManager>()
+                        .deletePupilBookLendingFile(
+                          pupilBookLending: pupilBookLending,
+                          fileId: documentId,
+                        );
+                  },
+                  buttonsBackgroundColor: AppColors.backgroundColor,
+                  buttonsIconColor: Colors.white,
                 ),
+
                 const Gap(10),
                 if (pupilBookLending.returnedAt == null) ...[
                   const Gap(5),
@@ -329,16 +347,16 @@ class _BookScoreDisplay extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const Gap(8),
-          Text(
-            bookScore != null ? '$bookScore / 10' : 'Nicht bewertet',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: bookScore != null
-                  ? _bookScoreColor(bookScore!)
-                  : Colors.grey,
-            ),
-          ),
+          bookScore != null
+              ? _buildStarRow(bookScore!)
+              : const Text(
+                  'Nicht bewertet',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
           const Spacer(),
           Icon(
             Icons.edit,
@@ -389,49 +407,18 @@ class _BookScoreDialogState extends State<_BookScoreDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            '$score',
-            style: TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.bold,
-              color: _bookScoreColor(score),
-            ),
+          _buildClickableStarRow(
+            score: score,
+            onStarTapped: (newScore) {
+              setState(() {
+                _currentValue = newScore.toDouble();
+              });
+            },
           ),
-          const Gap(4),
+          const Gap(12),
           Text(
             _bookScoreLabel(score),
-            style: TextStyle(fontSize: 14, color: _bookScoreColor(score)),
-          ),
-          const Gap(16),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: _bookScoreColor(score),
-              inactiveTrackColor: Colors.grey.shade300,
-              thumbColor: _bookScoreColor(score),
-              overlayColor: _bookScoreColor(score).withValues(alpha: 0.2),
-              trackHeight: 6,
-            ),
-            child: Slider(
-              value: _currentValue,
-              min: 0,
-              max: 10,
-              divisions: 10,
-              label: score.toString(),
-              onChanged: (value) {
-                setState(() {
-                  _currentValue = value;
-                });
-              },
-            ),
-          ),
-          const Gap(4),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('0', style: TextStyle(fontSize: 12, color: Colors.grey)),
-              Text('5', style: TextStyle(fontSize: 12, color: Colors.grey)),
-              Text('10', style: TextStyle(fontSize: 12, color: Colors.grey)),
-            ],
+            style: const TextStyle(fontSize: 14, color: Colors.amber),
           ),
         ],
       ),
@@ -449,261 +436,64 @@ class _BookScoreDialogState extends State<_BookScoreDialog> {
   }
 }
 
-/// Returns a color representing the score from red (0) to green (10).
+/// Returns yellow color for selected scores.
 Color _bookScoreColor(int score) {
-  if (score <= 3) return Colors.red.shade400;
-  if (score <= 5) return Colors.orange;
-  if (score <= 7) return Colors.amber;
-  return Colors.green;
+  return Colors.amber;
 }
 
 /// Returns a descriptive label for the score.
 String _bookScoreLabel(int score) {
-  if (score == 0) return 'Nicht bewertet';
-  if (score <= 2) return 'Schlecht';
-  if (score <= 4) return 'Unterdurchschnittlich';
-  if (score <= 6) return 'Durchschnittlich';
-  if (score <= 8) return 'Gut';
-  return 'Ausgezeichnet';
+  switch (score) {
+    case 0:
+      return 'Nicht bewertet';
+    case 1:
+      return 'Schlecht';
+    case 2:
+      return 'Nicht empfohlen';
+    case 3:
+      return 'Durchschnittlich';
+    case 4:
+      return 'Gut';
+    case 5:
+      return 'Ausgezeichnet';
+    default:
+      return '';
+  }
 }
 
-/// Whether [doc] represents an audio file based on its extension.
-bool _isAudioDocument(HubDocument doc) {
-  return isAudioDocument(doc.documentId);
+/// Builds a row of 5 stars with yellow stars for achieved and grey for unachieved.
+Widget _buildStarRow(int score) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: List.generate(5, (index) {
+      final isAchieved = index < score;
+      return Icon(
+        isAchieved ? Icons.star : Icons.star_outline,
+        color: isAchieved ? Colors.amber : Colors.grey,
+        size: 20,
+      );
+    }),
+  );
 }
 
-/// Displays existing documents/audio and buttons to add new ones.
-class _DocumentsSection extends StatelessWidget {
-  const _DocumentsSection({
-    required this.pupilBookLending,
-    required this.pupilId,
-  });
-
-  final PupilBookLending pupilBookLending;
-  final int pupilId;
-
-  @override
-  Widget build(BuildContext context) {
-    final files = pupilBookLending.pupilBookLendingFiles;
-    final isAdmin = di<HubSessionManager>().isAdmin;
-    final imageFiles = files?.where((f) => !_isAudioDocument(f)).toList() ?? [];
-    final audioFiles = files?.where((f) => _isAudioDocument(f)).toList() ?? [];
-    final totalCount = (files?.length ?? 0);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Dokumente:', style: TextStyle(fontWeight: FontWeight.bold)),
-        const Gap(4),
-        Row(
-          children: [
-            for (final file in imageFiles) ...[
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    file.createdAt.formatDateForUser(),
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => Dialog(
-                          child: Container(
-                            constraints: const BoxConstraints(
-                              maxWidth: 600,
-                              maxHeight: 800,
-                            ),
-                            child: EncryptedDocumentImage(
-                              documentId: file.documentId,
-                              size: 400,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    onLongPress: () async {
-                      if (!isAdmin ||
-                          file.createdBy != di<HubSessionManager>().userName) {
-                        di<NotificationService>().showSnackBar(
-                          NotificationType.error,
-                          'Nur Admins können Dokumente löschen',
-                        );
-                        return;
-                      }
-                      final confirm = await confirmationDialog(
-                        context: context,
-                        title: 'Dokument löschen',
-                        message: 'Dokument wirklich löschen?',
-                      );
-                      if (confirm != true) return;
-
-                      await _removeFile(file);
-                    },
-                    child: EncryptedDocumentImage(
-                      documentId: file.documentId,
-                      size: 70,
-                    ),
-                  ),
-                  Text(
-                    file.createdBy,
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(10),
-            ],
-            for (final file in audioFiles) ...[
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    file.createdAt.formatDateForUser(),
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  AudioButton(file: file, onDelete: _removeFile),
-                  Text(
-                    file.createdBy,
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(10),
-            ],
-            if (totalCount < 4) ...[
-              const Spacer(),
-              MediaCaptureButtons(
-                onFileCaptured: (File? file) async {
-                  if (file == null) return;
-                  await _uploadFile(file);
-                },
-                onFileRecorded: (File? file, String? fileInfo) async {
-                  if (file == null) return;
-                  await _uploadFile(file, fileInfo: fileInfo);
-                },
-                iconSize: 20,
-                padding: const EdgeInsets.all(11),
-              ),
-              // Column(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     CameraButton(
-              //       onFileCaptured: (File? file) async {
-              //         if (file == null) return;
-              //         await _uploadFile(file);
-              //       },
-              //       iconSize: 24,
-              //       padding: const EdgeInsets.all(14),
-              //     ),
-              //   ],
-              // ),
-              // const Gap(10),
-              // Column(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     MicButton(
-              //       onFileRecorded: (File? file, String? fileInfo) async {
-              //         if (file == null) return;
-              //         await _uploadFile(file, fileInfo: fileInfo);
-              //       },
-              //       iconSize: 24,
-              //       padding: const EdgeInsets.all(14),
-              //     ),
-              //   ],
-              // ),
-            ],
-          ],
+/// Builds a clickable row of 5 stars for the dialog.
+Widget _buildClickableStarRow({
+  required int score,
+  required ValueChanged<int> onStarTapped,
+}) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: List.generate(5, (index) {
+      final starNumber = index + 1;
+      final isAchieved = index < score;
+      return GestureDetector(
+        onTap: () => onStarTapped(starNumber),
+        child: Icon(
+          isAchieved ? Icons.star : Icons.star_outline,
+          color: isAchieved ? Colors.amber : Colors.grey,
+          size: 48,
         ),
-      ],
-    );
-  }
-
-  Future<void> _uploadFile(File file, {String? fileInfo}) async {
-    final client = di<Client>();
-    final notificationService = di<NotificationService>();
-    final hubSessionManager = di<HubSessionManager>();
-    final pupilManager = di<PupilProxyManager>();
-
-    try {
-      final encryptedFile = await customEncrypter.encryptFile(file);
-      final fileResponse = await ClientFileUpload.uploadFile(
-        file: encryptedFile,
-        storageId: StorageId.private,
-        folder: ServerStorageFolder.documents,
-        fileInfo: fileInfo,
       );
-
-      if (!fileResponse.success) {
-        notificationService.showSnackBar(
-          NotificationType.error,
-          'Die Datei konnte nicht hochgeladen werden!',
-        );
-        return;
-      }
-
-      final updatedPupil = await ClientHelper.apiCall(
-        call: () => client.pupilBookLending.addFileToPupilBookLending(
-          pupilBookLending.lendingId,
-          fileResponse.path!,
-          hubSessionManager.userName!,
-        ),
-        errorMessage: 'Fehler beim Hinzufügen der Datei zur Ausleihe',
-      );
-
-      if (updatedPupil != null) {
-        await pupilManager.updatePupilData(pupilId);
-        notificationService.showSnackBar(
-          NotificationType.success,
-          'Datei zur Ausleihe hinzugefügt',
-        );
-      }
-    } catch (e) {
-      notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler beim Hochladen der Datei: $e',
-      );
-    }
-  }
-
-  Future<void> _removeFile(HubDocument file) async {
-    final client = di<Client>();
-    final notificationService = di<NotificationService>();
-    final pupilManager = di<PupilProxyManager>();
-
-    try {
-      final success = await ClientHelper.apiCall(
-        call: () => client.pupilBookLending.removeFileFromPupilBookLending(
-          pupilBookLending.lendingId,
-          file.documentId,
-        ),
-        errorMessage: 'Fehler beim Entfernen der Datei von der Ausleihe',
-      );
-
-      if (success == true) {
-        await pupilManager.updatePupilData(pupilId);
-        notificationService.showSnackBar(
-          NotificationType.success,
-          'Datei von der Ausleihe entfernt',
-        );
-      }
-    } catch (e) {
-      notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler beim Löschen der Datei: $e',
-      );
-    }
-  }
+    }),
+  );
 }

@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/learning_list_card/learning_goals_overview.dart';
@@ -33,9 +34,9 @@ class LearningListCard extends WatchingWidget {
       (m) => m.competenceChecks,
       target: pupil,
     );
-    final pupilBookLendings = watchPropertyValue(
-      (m) => m.pupilBookLendings,
-      target: pupil,
+    final pupilBookLendingManager = watch(di<PupilBookLendingManager>());
+    final pupilBookLendings = pupilBookLendingManager.getPupilBookLendings(
+      pupil.pupilId,
     );
 
     final expansionTileController = createOnce<CustomExpansionTileController>(
@@ -52,7 +53,7 @@ class LearningListCard extends WatchingWidget {
     final totalCompetencesChecked = competenceCheckstats.checked;
 
     // Calculate book lending statistics (only runs when pupilBookLendings changes via watchPropertyValue)
-    final lendings = pupilBookLendings ?? [];
+    final lendings = pupilBookLendings;
     final totalLendings = lendings.length;
     final notReturnedLendings = lendings
         .where((lending) => lending.returnedAt == null)

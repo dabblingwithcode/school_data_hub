@@ -115,7 +115,23 @@ class PupilBookLendingEndpoint extends Endpoint {
       throw Exception('Pupil book lending with id $lendingId does not exist.');
     }
 
-    await PupilBookLending.db.deleteRow(session, pupilBookLending);
+    await session.db.transaction((transaction) async {
+      // If the book was not returned, set the library book available to true
+      if (pupilBookLending.returnedAt == null) {
+        final libraryBook = await LibraryBook.db.findFirstRow(session,
+            where: (t) => t.id.equals(pupilBookLending.libraryBookId),
+            transaction: transaction);
+        if (libraryBook != null) {
+          libraryBook.available = true;
+          await LibraryBook.db
+              .updateRow(session, libraryBook, transaction: transaction);
+        }
+      }
+
+      await PupilBookLending.db
+          .deleteRow(session, pupilBookLending, transaction: transaction);
+    });
+
     return true;
   }
 

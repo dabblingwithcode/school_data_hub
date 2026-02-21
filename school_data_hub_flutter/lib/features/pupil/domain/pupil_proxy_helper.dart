@@ -2,8 +2,13 @@
 
 // TODO: these should be enums
 
+import 'dart:ui';
+
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class PupilProxyHelper {
   static String preschoolRevisionPredicate(PreSchoolMedical? preSchoolMedical) {
@@ -134,5 +139,20 @@ class PupilProxyHelper {
     }
     if (pupil.schoolyearHeldBackAt != null) base += 1;
     return base;
+  }
+
+  static Color migrationSupportEndsColor(DateTime migrationSupportEnds) {
+    final currentSchoolSemester =
+        di<SchoolCalendarManager>().currentSemester.value!;
+    if (migrationSupportEnds.isAfterDate(currentSchoolSemester.endDate)) {
+      return const Color.fromARGB(255, 0, 128, 0); // Green
+    } else if (migrationSupportEnds.isBeforeDate(
+          currentSchoolSemester.endDate,
+        ) &&
+        migrationSupportEnds.isAfterDate(currentSchoolSemester.startDate)) {
+      return const Color.fromARGB(255, 236, 158, 48); // Red
+    } else {
+      return const Color.fromARGB(255, 103, 103, 103); // Red
+    }
   }
 }

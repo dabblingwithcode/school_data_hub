@@ -56,6 +56,40 @@ class PupilBookLendingApiService {
     return lending;
   }
 
+  //- Add file to lending
+
+  Future<PupilBookLending?> addFileToPupilBookLending({
+    required String lendingId,
+    required String filePath,
+    required String addedBy,
+  }) async {
+    final lending = await ClientHelper.apiCall(
+      call: () => _client.pupilBookLending.addFileToPupilBookLending(
+        lendingId,
+        filePath,
+        addedBy,
+      ),
+      errorMessage: 'Fehler beim Hinzufügen der Datei zur Ausleihe',
+    );
+    return lending;
+  }
+
+  //- delete file from lending
+
+  Future<bool?> removeFileFromPupilBookLending({
+    required String lendingId,
+    required String fileId,
+  }) async {
+    final success = await ClientHelper.apiCall(
+      call: () => _client.pupilBookLending.removeFileFromPupilBookLending(
+        lendingId,
+        fileId,
+      ),
+      errorMessage: 'Fehler beim Entfernen der Datei von der Ausleihe',
+    );
+    return success;
+  }
+
   //- delete
 
   Future<bool?> deletePupilBookLending({required String lendingId}) async {

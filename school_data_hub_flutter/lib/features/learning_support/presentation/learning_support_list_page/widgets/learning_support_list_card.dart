@@ -9,6 +9,7 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goal_batches.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
@@ -108,12 +109,9 @@ class LearningSupportCard extends WatchingWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
-                              color:
-                                  pupil.migrationSupportEnds!.isAfter(
-                                    DateTime(2026, 08, 01),
-                                  )
-                                  ? Colors.red
-                                  : Colors.black,
+                              color: PupilProxyHelper.migrationSupportEndsColor(
+                                pupil.migrationSupportEnds!,
+                              ),
                             ),
                           ),
                         ],

@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
+import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/data/pupil_book_lending_api_service.dart';
@@ -11,6 +15,7 @@ class PupilBookLendingManager with ChangeNotifier {
 
   final Map<int, List<PupilBookLending>> _pupilBookLendings = {};
   final Map<String, PupilBookLending> _lendingIdMap = {};
+  final Map<int, List<PupilBookLending>> _isbnPupilBookLendingsMap = {};
   final _pupilBookLendingApiService = PupilBookLendingApiService();
 
   Future<PupilBookLendingManager> init() async {
@@ -45,6 +50,14 @@ class PupilBookLendingManager with ChangeNotifier {
     } else {
       _pupilBookLendings[lending.pupilId] = [lending];
     }
+    if (lending.libraryBook != null) {
+      final isbn = lending.isbn;
+      if (_isbnPupilBookLendingsMap.containsKey(isbn)) {
+        _isbnPupilBookLendingsMap[isbn]!.add(lending);
+      } else {
+        _isbnPupilBookLendingsMap[isbn] = [lending];
+      }
+    }
     // Add to lending ID map for quick lookups
     _lendingIdMap[lending.lendingId] = lending;
   }
@@ -57,6 +70,17 @@ class PupilBookLendingManager with ChangeNotifier {
       );
       if (_pupilBookLendings[lending.pupilId]!.isEmpty) {
         _pupilBookLendings.remove(lending.pupilId);
+      }
+    }
+    if (lending.libraryBook != null) {
+      final isbn = lending.isbn;
+      if (_isbnPupilBookLendingsMap.containsKey(isbn)) {
+        _isbnPupilBookLendingsMap[isbn]!.removeWhere(
+          (l) => l.lendingId == lending.lendingId,
+        );
+        if (_isbnPupilBookLendingsMap[isbn]!.isEmpty) {
+          _isbnPupilBookLendingsMap.remove(isbn);
+        }
       }
     }
     // Remove from lending ID map
@@ -76,6 +100,21 @@ class PupilBookLendingManager with ChangeNotifier {
       }
     } else {
       _pupilBookLendings[lending.pupilId] = [lending];
+    }
+    if (lending.libraryBook != null) {
+      final isbn = lending.isbn;
+      if (_isbnPupilBookLendingsMap.containsKey(isbn)) {
+        final index = _isbnPupilBookLendingsMap[isbn]!.indexWhere(
+          (l) => l.lendingId == lending.lendingId,
+        );
+        if (index != -1) {
+          _isbnPupilBookLendingsMap[isbn]![index] = lending;
+        } else {
+          _isbnPupilBookLendingsMap[isbn]!.add(lending);
+        }
+      } else {
+        _isbnPupilBookLendingsMap[isbn] = [lending];
+      }
     }
     // Update in lending ID map
     _lendingIdMap[lending.lendingId] = lending;
@@ -191,6 +230,88 @@ class PupilBookLendingManager with ChangeNotifier {
       NotificationType.success,
       'Buch zurückgegeben',
     );
+  }
+
+  //- add book lending file
+  Future<void> addPupilBookLendingFile(
+    File file, {
+    required PupilBookLending pupilBookLending,
+    String? fileInfo,
+  }) async {
+    try {
+      final encryptedFile = await customEncrypter.encryptFile(file);
+      final fileResponse = await ClientFileUpload.uploadFile(
+        file: encryptedFile,
+        storageId: StorageId.private,
+        folder: ServerStorageFolder.documents,
+        fileInfo: fileInfo,
+      );
+
+      if (!fileResponse.success) {
+        _notificationService.showSnackBar(
+          NotificationType.error,
+          'Die Datei konnte nicht hochgeladen werden!',
+        );
+        return;
+      }
+
+      final pupilBookLendingWithFile = await _pupilBookLendingApiService
+          .addFileToPupilBookLending(
+            lendingId: pupilBookLending.lendingId,
+            filePath: fileResponse.path!,
+            addedBy: _hubSessionManager.userName!,
+          );
+
+      if (pupilBookLendingWithFile == null) {
+        return;
+      }
+
+      _updatePupilBookLendingInCollections(pupilBookLendingWithFile);
+      notifyListeners();
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Datei zum Leihvorgang hinzugefügt',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Hochladen der Datei: $e',
+      );
+    }
+  }
+
+  //- delete file from lending
+  Future<void> deletePupilBookLendingFile({
+    required PupilBookLending pupilBookLending,
+    required String fileId,
+  }) async {
+    try {
+      final success = await _pupilBookLendingApiService
+          .removeFileFromPupilBookLending(
+            lendingId: pupilBookLending.lendingId,
+            fileId: fileId,
+          );
+
+      if (success == null) {
+        return;
+      }
+      pupilBookLending.pupilBookLendingFiles!.removeWhere(
+        (file) => file.documentId == fileId,
+      );
+
+      notifyListeners();
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Datei aus Leihvorgang entfernt',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Löschen der Datei: $e',
+      );
+    }
   }
 
   //- delete

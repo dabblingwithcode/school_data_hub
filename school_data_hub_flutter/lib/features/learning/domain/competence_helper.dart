@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
@@ -7,7 +8,6 @@ import 'package:school_data_hub_flutter/features/learning/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class CompetenceHelper {
   static CompetenceManager get _competenceManager => di<CompetenceManager>();
@@ -39,29 +39,6 @@ class CompetenceHelper {
       ...childCompetences,
     ];
     return sortedCompetences;
-  }
-
-  static CompetenceCheck? getLastCompetenceCheckOfCompetence(
-    PupilProxy pupil,
-    int publicId,
-  ) {
-    if (pupil.competenceChecks != null && pupil.competenceChecks!.isNotEmpty) {
-      final filteredChecks = pupil.competenceChecks!
-          .where(
-            (element) =>
-                _competenceManager
-                    .findCompetenceById(element.competenceId)
-                    .publicId ==
-                publicId,
-          )
-          .toList();
-      if (filteredChecks.isNotEmpty) {
-        return filteredChecks.reduce(
-          (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,
-        );
-      }
-    }
-    return null;
   }
 
   static CompetenceCheck? getGroupCompetenceCheckFromPupil({
@@ -201,6 +178,29 @@ class CompetenceHelper {
       width: 40,
       child: Icon(Icons.error, color: Colors.white),
     );
+  }
+
+  static CompetenceCheck? getLastCompetenceCheckOfCompetence(
+    PupilProxy pupil,
+    int publicId,
+  ) {
+    if (pupil.competenceChecks != null && pupil.competenceChecks!.isNotEmpty) {
+      final filteredChecks = pupil.competenceChecks!
+          .where(
+            (element) =>
+                _competenceManager
+                    .findCompetenceById(element.competenceId)
+                    .publicId ==
+                publicId,
+          )
+          .toList();
+      if (filteredChecks.isNotEmpty) {
+        return filteredChecks.reduce(
+          (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,
+        );
+      }
+    }
+    return null;
   }
 
   static Map<int, List<CompetenceCheck>>

@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 /// A button that displays an audio thumbnail and handles playback.
 ///
 /// On tap, it pre-loads the audio and shows the player overlay.
-/// On long press (admin only), it allows deletion of the audio file.
+/// On long press (authorized only), it allows deletion of the audio file.
 class AudioButton extends StatefulWidget {
   const AudioButton({required this.file, required this.onDelete, super.key});
 

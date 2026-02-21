@@ -546,9 +546,7 @@ class _GoalCheckEntry extends StatelessWidget {
                     supportGoalCheckId: check.id!,
                     pupilId: pupilId,
                     file: file,
-                    fileInfo: fileInfo != null
-                        ? fileInfo['info'] as String?
-                        : null,
+                    fileInfo: fileInfo,
                   );
                 },
                 onDeleteDocument: (documentId) async {

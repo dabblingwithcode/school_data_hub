@@ -215,6 +215,7 @@ class CompetenceGoalCard extends StatelessWidget {
                     await di<CompetenceManager>().addFileToCompetenceGoal(
                       publicId: pupilGoal.publicId,
                       file: file,
+                      fileInfo: fileInfo,
                     );
                   },
                   onDeleteDocument: (documentId) async {

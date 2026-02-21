@@ -337,6 +337,7 @@ class CompetenceCheckCard extends StatelessWidget {
                       await di<CompetenceManager>().addFileToCompetenceCheck(
                         competenceCheckId: competenceCheck.checkId,
                         file: file,
+                        fileInfo: fileInfo,
                       );
                     },
                     onDeleteDocument: (documentId) async {

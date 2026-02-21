@@ -1,16 +1,27 @@
-import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 
 enum BookBorrowStatus { since2Weeks, since3Weeks, since5weeks }
 
 class BookHelpers {
+  static int totalPupilBookLendings() {
+    return di<PupilBookLendingManager>().allPupilBookLendings.length;
+  }
+
+  static int totalOpenPupilBookLendings() {
+    return di<PupilBookLendingManager>().allPupilBookLendings
+        .where((lending) => lending.returnedAt == null)
+        .length;
+  }
+
   static List<PupilBookLending> pupilBookLendingsLinkedToLibraryBook({
     required int libraryBookId,
   }) {
     // Get all pupil book lendings
     final allPupilBookLendings = di<PupilProxyManager>().allPupils
-        .map((pupil) => pupil.pupilBookLendings ?? <PupilBookLending>[])
+        .map((pupil) => pupil.pupilBookLendings)
         .expand((element) => element)
         .toList();
 

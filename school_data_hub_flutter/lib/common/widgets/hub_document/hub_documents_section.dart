@@ -25,7 +25,7 @@ class HubDocumentsSectionWidget extends StatelessWidget {
   final Future<void> Function(File? file) onImageFileCaptured;
 
   /// Callback when a file is recorded (audio).
-  final Future<void> Function(File? file, Map<String, dynamic>? fileInfo)?
+  final Future<void> Function(File? file, String? fileInfo)?
   onAudioFileRecorded;
 
   /// Callback when a document should be removed.
@@ -127,14 +127,11 @@ class HubDocumentsSectionWidget extends StatelessWidget {
               const Gap(10),
             ],
             if (totalCount < maxDocuments) ...[
-              if (withSpacerToButtons) const Spacer(),
+              withSpacerToButtons ? const Spacer() : const Gap(15),
               MediaCaptureButtons(
                 onFileCaptured: onImageFileCaptured,
                 onFileRecorded: (file, fileInfo) {
-                  onAudioFileRecorded?.call(
-                    file,
-                    fileInfo != null ? {'info': fileInfo} : null,
-                  );
+                  onAudioFileRecorded?.call(file, fileInfo);
                 },
                 iconSize: 20,
                 padding: captureButtonPadding ?? const EdgeInsets.all(11),

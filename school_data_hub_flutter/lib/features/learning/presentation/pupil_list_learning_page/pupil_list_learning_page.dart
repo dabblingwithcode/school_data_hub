@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/learning_list_card/learning_list_card.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_list_learning_bottom_navbar.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar/_pupil_list_learning_search_bar.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
@@ -36,10 +36,7 @@ class PupilListLearningPage extends WatchingWidget {
               slivers: [
                 GenericSliverSearchAppBar(
                   height: 180,
-                  title: PupilListLearningSearchBar(
-                    pupils: pupils,
-                    filtersOn: filtersOn,
-                  ),
+                  title: PupilListLearningSearchBar(filtersOn: filtersOn),
                 ),
                 GenericSliverListWithEmptyListCheck(
                   items: pupils,
