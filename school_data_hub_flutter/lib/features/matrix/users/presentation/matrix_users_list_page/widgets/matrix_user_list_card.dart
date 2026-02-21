@@ -103,7 +103,11 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
             ),
           );
         },
-        child: AvatarWithBadges(pupil: linkedPupil, size: 70),
+        child: AvatarWithBadges(
+          pupil: linkedPupil,
+          size: 70,
+          heroTag: '${linkedPupil.avatar?.documentId}_matrix_${matrixUser.id}',
+        ),
       );
     }
 
@@ -336,24 +340,29 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
 
   @override
   Widget build(BuildContext context) {
-    final _tileController = createOnce(() => CustomExpansionTileController());
+    final tileController = createOnce(() => CustomExpansionTileController());
     final matrixUser = watch<MatrixUser>(widget.matrixUser);
-    // TODO: implement this
+
     final MatrixUserRelationship? userRelationship =
         MatrixUserHelper.getUserRelationship(matrixUser);
 
+    final borderColor =
+        !MatrixUserHelper.isLinkedToPupil(matrixUser) &&
+            matrixUser.id!.contains('_')
+        ? const Color.fromARGB(255, 255, 179, 64)
+        : userRelationship != null && userRelationship.isParent
+        ? Colors.grey
+        : !matrixUser.id!.contains('_')
+        ? const Color.fromARGB(255, 62, 37, 186)
+        : Colors.white;
+
     return Card(
-      color:
-          !MatrixUserHelper.isLinkedToPupil(matrixUser) &&
-              matrixUser.id!.contains('_')
-          ? const Color.fromARGB(255, 248, 179, 76)
-          : userRelationship != null && userRelationship.isParent
-          ? const Color.fromARGB(255, 202, 252, 187)
-          : !matrixUser.id!.contains('_')
-          ? const Color.fromARGB(255, 219, 170, 211)
-          : Colors.white,
+      color: Colors.white,
       surfaceTintColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: borderColor, width: 2),
+      ),
       elevation: 1.0,
       margin: const EdgeInsets.only(
         left: 4.0,
@@ -608,7 +617,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
               ),
               const Gap(10),
               InkWell(
-                onTap: () => _tileController.toggle(),
+                onTap: () => tileController.toggle(),
                 child: Column(
                   children: [
                     const Gap(20),
@@ -631,7 +640,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
           ),
           CustomExpansionTileContent(
             title: null,
-            tileController: _tileController,
+            tileController: tileController,
             widgetList: [
               if (widget.appUser != null) ...[
                 _AppUserInfoSection(appUser: widget.appUser!),

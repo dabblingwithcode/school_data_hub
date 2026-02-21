@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -7,9 +8,7 @@ import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_man
 import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class NewMatrixUserPage extends StatefulWidget {
   final String? matrixId;
@@ -29,16 +28,83 @@ class NewMatrixUserPage extends StatefulWidget {
 }
 
 class NewMatrixUserPageState extends State<NewMatrixUserPage> {
-  final _matrixUserManager = di<MatrixUserManager>();
-  final TextEditingController matrixIdController = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: di.getAsync<MatrixPolicyManager>(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Scaffold(
+            backgroundColor: AppColors.canvasColor,
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              centerTitle: true,
+              backgroundColor: AppColors.backgroundColor,
+              title: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.chat_rounded, size: 25, color: Colors.white),
+                  Gap(10),
+                  Text('Neues Matrix-Konto', style: AppStyles.appBarTextStyle),
+                ],
+              ),
+            ),
+            body: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Bitte warten',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Gap(20),
+                  CircularProgressIndicator(),
+                ],
+              ),
+            ),
+          );
+        }
 
+        return _NewMatrixUserPageContent(
+          matrixPolicyManager: snapshot.data!,
+          matrixId: widget.matrixId,
+          displayName: widget.displayName,
+          pupil: widget.pupil,
+          isParent: widget.isParent,
+        );
+      },
+    );
+  }
+}
+
+class _NewMatrixUserPageContent extends StatefulWidget {
+  final MatrixPolicyManager matrixPolicyManager;
+  final String? matrixId;
+  final String? displayName;
+  final PupilProxy? pupil;
+  final bool? isParent;
+
+  const _NewMatrixUserPageContent({
+    required this.matrixPolicyManager,
+    this.matrixId,
+    this.displayName,
+    this.pupil,
+    this.isParent,
+  });
+
+  @override
+  _NewMatrixUserPageContentState createState() =>
+      _NewMatrixUserPageContentState();
+}
+
+class _NewMatrixUserPageContentState extends State<_NewMatrixUserPageContent> {
+  final TextEditingController matrixIdController = TextEditingController();
   final TextEditingController displayNameController = TextEditingController();
-  final allRooms = di<MatrixPolicyManager>().matrixRooms.value;
+  Set<String> roomIds = {};
 
   @override
   void initState() {
     super.initState();
-    setState(() {});
     if (widget.matrixId != null) {
       matrixIdController.text = widget.matrixId!;
     }
@@ -53,12 +119,8 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
       );
     }
 
-    setState(() {
-      roomIds = rooms;
-    });
+    roomIds = rooms;
   }
-
-  Set<String> roomIds = {};
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +191,7 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
                     ),
                     const Gap(5),
                     Text(
-                      ':${di<MatrixPolicyManager>().matrixUrl.split('://').last}',
+                      ':${widget.matrixPolicyManager.matrixUrl.split('://').last}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -280,12 +342,13 @@ class NewMatrixUserPageState extends State<NewMatrixUserPage> {
                 ElevatedButton(
                   style: AppStyles.successButtonStyle,
                   onPressed: () async {
-                    final file = await _matrixUserManager.postNewMatrixUser(
-                      pupil: widget.pupil,
-                      generatedMatrixId: matrixIdController.text,
-                      displayName: displayNameController.text,
-                      roomIds: roomIds.toList(),
-                    );
+                    final file = await widget.matrixPolicyManager.users
+                        .postNewMatrixUser(
+                          pupil: widget.pupil,
+                          generatedMatrixId: matrixIdController.text,
+                          displayName: displayNameController.text,
+                          roomIds: roomIds.toList(),
+                        );
 
                     if (file != null && context.mounted) {
                       Navigator.of(context).push(

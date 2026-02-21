@@ -101,8 +101,12 @@ class MatrixUserManager {
     required List<String> roomIds,
   }) async {
     //- TODO URGENT: this is a hack for our school, add validation for the domain part
-    String matrixId =
-        '@$generatedMatrixId:${di<MatrixPolicyManager>().matrixUrl.split('://post.').last}';
+
+    final String domainPart = di<MatrixPolicyManager>().matrixUrl
+        .replaceAll('https://', '')
+        .split('post.')
+        .last;
+    String matrixId = '@$generatedMatrixId:$domainPart';
 
     List<String> roomIdsList = roomIds.toList();
     final isStaff = !matrixId.contains('_');

@@ -24,17 +24,13 @@ class MatrixCredentialsPrinter {
 
     final pdf = pw.Document();
 
-    final String matrixId = matrixUser.id!
-        .replaceAll("@", "")
-        .replaceAll(":hermannschule.de", "");
+    final String matrixId = matrixUser.id!.replaceAll("@", "").split(":").first;
 
     String qrPassword = password.substring(0, password.length - 4);
 
     String pin = password.substring(password.length - 4);
 
-    final String domain = matrixDomain
-        .replaceAll("https://", "")
-        .replaceAll("/", "");
+    final String domain = matrixDomain.replaceAll("https://", "");
     final String qrCodeData = "$matrixId:$domain*$qrPassword";
 
     _log.info('QR Code Data: $qrCodeData');

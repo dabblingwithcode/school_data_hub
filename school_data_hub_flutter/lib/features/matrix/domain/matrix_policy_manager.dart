@@ -153,9 +153,6 @@ class MatrixPolicyManager {
       applyPolicyChanges,
     );
 
-    // Register MatrixUserManager in DI container for direct access
-    di.registerSingleton<MatrixUserManager>(_userManager);
-
     await fetchMatrixPolicy();
     // Initialize the sub-managers with callback functions instead of direct ValueNotifier access
 
