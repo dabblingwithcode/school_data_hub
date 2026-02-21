@@ -87,8 +87,10 @@ void run(List<String> args) async {
   ));
 
   // If you are using any future calls, they need to be registered here.
+
   pod.registerFutureCall(
       DatabaseBackupFutureCall(), 'databaseBackupFutureCall');
+
   pod.registerFutureCall(
       IncreaseCreditFutureCall(), 'increaseCreditFutureCall');
 
@@ -103,7 +105,14 @@ void run(List<String> args) async {
 
   // Start the server.
   await pod.start();
+  await pod.cancelFutureCall('increase-credit-weekly'); // no-op if none exist
 
+  await pod.futureCallWithDelay(
+    'increaseCreditFutureCall',
+    null,
+    const Duration(days: 7),
+    identifier: 'increase-credit-weekly',
+  );
   // Create storage directories early
   createLocalStorageDirectories();
 

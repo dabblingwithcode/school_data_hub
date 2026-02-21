@@ -210,6 +210,8 @@ class _CompactInfoChips extends StatelessWidget {
           _Chip(label: 'Matrix', value: user.matrixUserId!),
         _Chip(label: 'Stunden', value: '${user.timeUnits}'),
         _Chip(label: 'Entlastung', value: '${user.reliefTimeUnits}'),
+        if (user.pupilsAuth != null && user.pupilsAuth!.isNotEmpty)
+          _Chip(label: 'Aut. Kinder', value: '${user.pupilsAuth!.length}'),
       ],
     );
   }

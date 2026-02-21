@@ -10,6 +10,11 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/widgets/scope_names_selector.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/widgets/roles_dropdown.dart';
@@ -29,6 +34,7 @@ class CreateOrEditUserPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final userManager = di<UserManager>();
+    final pupilManager = di<PupilProxyManager>();
     final user = _effectiveUser;
 
     registerHandler(
@@ -88,6 +94,10 @@ class CreateOrEditUserPage extends WatchingWidget {
     );
     final scopeNames = createOnce(() => ValueNotifier<List<String>>([]));
     final watchedScopeNames = watch(scopeNames).value;
+    final pupilsAuth = createOnce(
+      () => ValueNotifier<Set<int>>(user?.pupilsAuth ?? {}),
+    );
+    final watchedPupilsAuth = watch(pupilsAuth).value;
 
     void changeRole(Role? newRole) {
       role.value = newRole!;
@@ -360,6 +370,154 @@ class CreateOrEditUserPage extends WatchingWidget {
                   ),
                   const Gap(16),
 
+                  // Berechtigte Kinder
+                  _SectionCard(
+                    title: 'Berechtigte Kinder',
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Wählen Sie die Kinder aus, für die dieser Benutzer berechtigt ist.',
+                          style: TextStyle(fontSize: 13, color: Colors.grey),
+                        ),
+                        const Gap(12),
+                        ElevatedButton.icon(
+                          style: AppStyles.actionButtonStyle,
+                          onPressed: () async {
+                            final List<int> selectedPupilIds =
+                                await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) => SelectPupilsListPage(
+                                      selectablePupils: pupilManager
+                                          .getPupilsNotListed(
+                                        watchedPupilsAuth.toList(),
+                                      ),
+                                    ),
+                                  ),
+                                ) ??
+                                [];
+                            if (selectedPupilIds.isNotEmpty) {
+                              pupilsAuth.value = {
+                                ...watchedPupilsAuth,
+                                ...selectedPupilIds,
+                              };
+                            }
+                          },
+                          icon: const Icon(Icons.group_add_rounded),
+                          label: const Text('KINDER AUSWÄHLEN'),
+                        ),
+                        if (watchedPupilsAuth.isNotEmpty) ...[
+                          const Gap(16),
+                          Text(
+                            '${watchedPupilsAuth.length} ${watchedPupilsAuth.length == 1 ? "Kind" : "Kinder"} ausgewählt',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const Gap(8),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: pupilManager
+                                .getPupilsFromPupilIds(
+                                  watchedPupilsAuth.toList(),
+                                )
+                                .length,
+                            itemBuilder: (context, int index) {
+                              final pupilsList = pupilManager
+                                  .getPupilsFromPupilIds(
+                                watchedPupilsAuth.toList(),
+                              );
+                              PupilProxy listedPupil = pupilsList[index];
+                              return InkWell(
+                                onLongPress: () {
+                                  pupilsAuth.value = watchedPupilsAuth
+                                      .where((id) => id != listedPupil.internalId)
+                                      .toSet();
+                                },
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (ctx) => PupilProfilePage(
+                                        pupil: listedPupil,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Card(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        AvatarWithBadges(
+                                          pupil: listedPupil,
+                                          size: 50,
+                                        ),
+                                        const Gap(10),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              listedPupil.firstName,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                            Text(
+                                              listedPupil.lastName,
+                                              style: const TextStyle(),
+                                            ),
+                                          ],
+                                        ),
+                                        const Spacer(),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              listedPupil.group,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.groupColor,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                            Text(
+                                              listedPupil.schoolGrade.name,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.schoolyearColor,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const Gap(15),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ] else ...[
+                          const Gap(8),
+                          const Text(
+                            'Keine Kinder ausgewählt',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const Gap(16),
+
                   // Konto (Matrix-ID, Passwort)
                   _SectionCard(
                     title: 'Konto',
@@ -485,6 +643,7 @@ class CreateOrEditUserPage extends WatchingWidget {
                           imageUrl: imageUrlController.text.trim().isEmpty
                               ? null
                               : imageUrlController.text.trim(),
+                          pupilsAuth: watchedPupilsAuth,
                         ));
                         if (context.mounted) Navigator.pop(context);
                         return;
@@ -537,6 +696,7 @@ class CreateOrEditUserPage extends WatchingWidget {
                           scopeNames: watchedScopeNames.isNotEmpty
                               ? watchedScopeNames
                               : (watchedSetAsAdmin ? ['Serverpod.admin'] : []),
+                          pupilsAuth: watchedPupilsAuth,
                         );
                         if (context.mounted) Navigator.pop(context);
                       } catch (e) {

@@ -845,6 +845,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<int?>(),
               nullable: true,
             ),
+            'pupilsAuth': _i1.ParameterDescription(
+              name: 'pupilsAuth',
+              type: _i1.getType<Set<int>?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
@@ -865,6 +870,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 params['schooldayEventsProcessingTeam'],
             matrixUserId: params['matrixUserId'],
             credit: params['credit'],
+            pupilsAuth: params['pupilsAuth'],
           ),
         ),
         'updateUser': _i1.MethodConnector(
@@ -920,6 +926,11 @@ class Endpoints extends _i1.EndpointDispatch {
               type: _i1.getType<bool>(),
               nullable: false,
             ),
+            'pupilsAuth': _i1.ParameterDescription(
+              name: 'pupilsAuth',
+              type: _i1.getType<Set<int>?>(),
+              nullable: true,
+            ),
           },
           call: (
             _i1.Session session,
@@ -937,6 +948,7 @@ class Endpoints extends _i1.EndpointDispatch {
             reliefTimeUnits: params['reliefTimeUnits'],
             credit: params['credit'],
             isTester: params['isTester'],
+            pupilsAuth: params['pupilsAuth'],
           ),
         ),
         'resetPassword': _i1.MethodConnector(

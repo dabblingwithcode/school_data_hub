@@ -102,7 +102,7 @@ class LearningSupportCard extends WatchingWidget {
                     if (pupil.migrationSupportEnds != null)
                       Wrap(
                         children: [
-                          const Text('Ende der Erstförderung: '),
+                          const Text('Erstförderung bis: '),
                           Text(
                             pupil.migrationSupportEnds!.formatDateForUser(),
                             style: TextStyle(

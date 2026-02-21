@@ -19,6 +19,7 @@ typedef CreateUserParams = ({
   Role role,
   bool isTester,
   String? tutoring,
+  Set<int>? pupilsAuth,
 });
 
 /// Data class for resetPassword command parameters.
@@ -40,6 +41,7 @@ typedef UpdateUserParams = ({
   int credit,
   bool isTester,
   String? imageUrl,
+  Set<int>? pupilsAuth,
 });
 
 class UserManager {
@@ -144,6 +146,7 @@ class UserManager {
       reliefTimeUnits: params.reliefTimeUnits,
       scopeNames: params.scopeNames,
       isTester: params.isTester,
+      pupilsAuth: params.pupilsAuth,
     );
     final userWithDetails = await _apiService.getCurrentUser();
     _addUser(userWithDetails!);
@@ -207,6 +210,7 @@ class UserManager {
       credit: params.credit,
       isTester: params.isTester,
       imageUrl: params.imageUrl,
+      pupilsAuth: params.pupilsAuth,
     );
     await fetchUsersCommand.runAsync();
     _notificationService.showSnackBar(
@@ -255,6 +259,7 @@ class UserManager {
     required Role role,
     required bool isTester,
     String? tutoring,
+    Set<int>? pupilsAuth,
   }) async {
     await _createUser((
       userName: userName,
@@ -269,6 +274,7 @@ class UserManager {
       role: role,
       isTester: isTester,
       tutoring: tutoring,
+      pupilsAuth: pupilsAuth,
     ));
   }
 

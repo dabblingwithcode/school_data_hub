@@ -2,16 +2,38 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 
-class PupilBookApiService {
+class PupilBookLendingApiService {
   Client get _client => di<Client>();
-  //- create pupil book lending
+
+  //- read
+
+  Future<List<PupilBookLending>?> fetchAllPupilBookLendings() async {
+    final lendings = await ClientHelper.apiCall(
+      call: () => _client.pupilBookLending.fetchPupilBookLendings(),
+      errorMessage: 'Fehler beim Laden der Leihvorgänge',
+    );
+    return lendings;
+  }
+
+  Future<PupilBookLending?> fetchPupilBookLendingByLendingId(
+    String lendingId,
+  ) async {
+    final lending = await ClientHelper.apiCall(
+      call: () =>
+          _client.pupilBookLending.fetchPupilBookLendingByLendingId(lendingId),
+      errorMessage: 'Fehler beim Laden des Leihvorgangs',
+    );
+    return lending;
+  }
+
+  //- create
 
   Future<PupilBookLending?> postPupilBookLending({
     required int pupilId,
     required String libraryId,
     required String lentBy,
   }) async {
-    final pupilBookLending = await ClientHelper.apiCall(
+    final lending = await ClientHelper.apiCall(
       call: () => _client.pupilBookLending.postPupilBookLending(
         pupilId,
         libraryId,
@@ -19,24 +41,24 @@ class PupilBookApiService {
       ),
       errorMessage: 'Fehler beim Erstellen des Leihvorgangs',
     );
-    return pupilBookLending;
+    return lending;
   }
 
-  //- update pupil book lending
+  //- update
 
   Future<PupilBookLending?> updatePupilBookLending({
     required PupilBookLending bookLending,
   }) async {
-    final pupil = await ClientHelper.apiCall(
+    final lending = await ClientHelper.apiCall(
       call: () => _client.pupilBookLending.updatePupilBookLending(bookLending),
       errorMessage: 'Fehler beim Aktualisieren des Leihvorgangs',
     );
-    return pupil;
+    return lending;
   }
 
-  //- delete pupil book
+  //- delete
 
-  Future<bool?> deletePupilBookLending(String lendingId) async {
+  Future<bool?> deletePupilBookLending({required String lendingId}) async {
     final success = await ClientHelper.apiCall(
       call: () => _client.pupilBookLending.deletePupilBookLending(lendingId),
       errorMessage: 'Fehler beim Löschen des Leihvorgangs',

@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/learning_list_card/learning_goals_overview.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/learning_list_card/workbooks_info_switch.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/learning_list_card/workbooks_competence_overview.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_competence_checks/competence_checks_badges.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_books.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_goals.dart';
@@ -207,8 +207,9 @@ class LearningListCard extends WatchingWidget {
                                     CustomExpansionTileSwitch(
                                       customExpansionTileController:
                                           expansionTileController,
-                                      expansionSwitchWidget:
-                                          WorkbooksInfoSwitch(pupil: pupil),
+                                      expansionSwitchWidget: WorkbooksOverview(
+                                        pupil: pupil,
+                                      ),
                                       includeSwitch: true,
                                       switchColor: AppColors.interactiveColor,
                                     ),

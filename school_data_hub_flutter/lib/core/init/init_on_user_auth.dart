@@ -13,6 +13,7 @@ import 'package:school_data_hub_flutter/features/authorizations/domain/authoriza
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
@@ -93,6 +94,12 @@ class InitOnUserAuth {
 
     di.registerSingletonAsync<BookManager>(
       () => BookManager().init(),
+      dispose: (m) => m.dispose(),
+    );
+
+    di.registerSingletonAsync<PupilBookLendingManager>(
+      () => PupilBookLendingManager().init(),
+      dependsOn: [HubSessionManager, PupilProxyManager],
       dispose: (m) => m.dispose(),
     );
 

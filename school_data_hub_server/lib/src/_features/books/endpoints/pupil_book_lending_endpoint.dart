@@ -9,7 +9,7 @@ class PupilBookLendingEndpoint extends Endpoint {
 
   //- create
 
-  Future<PupilData> postPupilBookLending(
+  Future<PupilBookLending> postPupilBookLending(
       Session session, int pupilId, String libraryId, String lentBy) async {
     final result = await session.db.transaction((transaction) async {
       final pupil = await PupilData.db.findById(
@@ -47,12 +47,12 @@ class PupilBookLendingEndpoint extends Endpoint {
       await LibraryBook.db
           .updateRow(session, libraryBook, transaction: transaction);
 
-      final updatedPupil = await PupilData.db.findFirstRow(session,
-          where: (t) => t.id.equals(pupilBookLending.pupilId),
-          include: PupilSchemas.allInclude,
+      final createdLending = await PupilBookLending.db.findFirstRow(session,
+          where: (t) => t.lendingId.equals(pupilBookLending.lendingId),
+          include: PupilBookLendingSchemas.allInclude,
           transaction: transaction);
 
-      return updatedPupil;
+      return createdLending;
     });
 
     return result!;
@@ -62,6 +62,7 @@ class PupilBookLendingEndpoint extends Endpoint {
   Future<List<PupilBookLending>> fetchPupilBookLendings(Session session) async {
     final pupilBookLendings = await PupilBookLending.db.find(
       session,
+      include: PupilBookLendingSchemas.allInclude,
     );
     return pupilBookLendings;
   }
@@ -73,12 +74,13 @@ class PupilBookLendingEndpoint extends Endpoint {
     final pupilBookLending = await PupilBookLending.db.findFirstRow(
       session,
       where: (t) => t.lendingId.equals(lendingId),
+      include: PupilBookLendingSchemas.allInclude,
     );
     return pupilBookLending;
   }
 
   //-update
-  Future<PupilData> updatePupilBookLending(
+  Future<PupilBookLending> updatePupilBookLending(
       Session session, PupilBookLending pupilBookLending) async {
     return await session.db.transaction((transaction) async {
       final updatedPupilBookLending = await PupilBookLending.db
@@ -94,17 +96,16 @@ class PupilBookLendingEndpoint extends Endpoint {
             .updateRow(session, libraryBook, transaction: transaction);
       }
 
-      final pupil = await PupilData.db.findFirstRow(session,
-          where: (t) => t.id.equals(updatedPupilBookLending.pupilId),
-          include: PupilSchemas.allInclude,
+      final lending = await PupilBookLending.db.findFirstRow(session,
+          where: (t) => t.lendingId.equals(updatedPupilBookLending.lendingId),
+          include: PupilBookLendingSchemas.allInclude,
           transaction: transaction);
-      return pupil!;
+      return lending!;
     });
   }
 
   //- delete
-  Future<PupilData> deletePupilBookLending(
-      Session session, String lendingId) async {
+  Future<bool> deletePupilBookLending(Session session, String lendingId) async {
     // Check if the pupil book lending exists
     final pupilBookLending = await PupilBookLending.db.findFirstRow(
       session,
@@ -115,16 +116,13 @@ class PupilBookLendingEndpoint extends Endpoint {
     }
 
     await PupilBookLending.db.deleteRow(session, pupilBookLending);
-    final pupil = await PupilData.db.findFirstRow(session,
-        where: (t) => t.id.equals(pupilBookLending.pupilId),
-        include: PupilSchemas.allInclude);
-    return pupil!;
+    return true;
   }
 
   //- files
 
   /// Add a file to a PupilBookLending record
-  Future<PupilData> addFileToPupilBookLending(
+  Future<PupilBookLending> addFileToPupilBookLending(
     Session session,
     String lendingId,
     String filePath,
@@ -161,13 +159,13 @@ class PupilBookLendingEndpoint extends Endpoint {
         transaction: transaction,
       );
 
-      final pupil = await PupilData.db.findFirstRow(
+      final lending = await PupilBookLending.db.findFirstRow(
         session,
-        where: (t) => t.id.equals(pupilBookLending.pupilId),
-        include: PupilSchemas.allInclude,
+        where: (t) => t.lendingId.equals(lendingId),
+        include: PupilBookLendingSchemas.allInclude,
         transaction: transaction,
       );
-      return pupil!;
+      return lending!;
     });
   }
 

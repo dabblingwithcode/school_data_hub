@@ -7,6 +7,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
@@ -256,7 +257,8 @@ class PupilProxy with ChangeNotifier {
   List<PupilWorkbook>? get pupilWorkbooks =>
       di<PupilWorkbookManager>().getPupilWorkbooks(pupilId);
 
-  List<PupilBookLending>? get pupilBookLendings => _pupilData.pupilBookLendings;
+  List<PupilBookLending> get pupilBookLendings =>
+      di<PupilBookLendingManager>().getPupilBookLendings(pupilId);
 
   // learning support related
 

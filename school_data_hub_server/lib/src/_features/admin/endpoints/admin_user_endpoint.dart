@@ -26,6 +26,7 @@ class AdminUserEndpoint extends Endpoint {
     String? schooldayEventsProcessingTeam,
     String? matrixUserId,
     int? credit,
+    Set<int>? pupilsAuth,
   }) async {
     session.log('Creating user: $userName, $email');
     final UserInfo? userInfo =
@@ -64,7 +65,7 @@ class AdminUserEndpoint extends Endpoint {
           changedPassword: false,
           madeFirstSteps: false,
         ),
-        pupilsAuth: {},
+        pupilsAuth: pupilsAuth ?? {},
         role: role,
         timeUnits: timeUnits,
         reliefTimeUnits: reliefTimeUnits,
@@ -92,6 +93,7 @@ class AdminUserEndpoint extends Endpoint {
     required int reliefTimeUnits,
     required int credit,
     required bool isTester,
+    Set<int>? pupilsAuth,
   }) async {
     final user = await User.db
         .findFirstRow(session, where: (t) => t.userInfoId.equals(userId));
@@ -112,6 +114,9 @@ class AdminUserEndpoint extends Endpoint {
       user.reliefTimeUnits = reliefTimeUnits;
       user.credit = credit;
       user.userFlags = user.userFlags.copyWith(isTester: isTester);
+      if (pupilsAuth != null) {
+        user.pupilsAuth = pupilsAuth;
+      }
       await User.db.updateRow(session, user, transaction: transaction);
       return user;
     });

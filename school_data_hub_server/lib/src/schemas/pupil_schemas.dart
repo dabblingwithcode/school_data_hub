@@ -33,10 +33,6 @@ class PupilSchemas {
         documents: HubDocument.includeList(),
       ),
     ),
-    pupilBookLendings: PupilBookLending.includeList(
-        include: PupilBookLending.include(
-      pupilBookLendingFiles: HubDocument.includeList(),
-    )),
   );
 }
 
@@ -50,5 +46,12 @@ class LibraryBookSchemas {
       ),
     ),
     location: LibraryBookLocation.include(),
+  );
+}
+
+class PupilBookLendingSchemas {
+  static PupilBookLendingInclude allInclude = PupilBookLending.include(
+    pupilBookLendingFiles: HubDocument.includeList(),
+    libraryBook: LibraryBookSchemas.allInclude,
   );
 }

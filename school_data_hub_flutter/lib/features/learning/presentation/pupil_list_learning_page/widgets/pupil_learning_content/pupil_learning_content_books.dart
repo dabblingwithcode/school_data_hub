@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/widgets/pupil_book_card.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilLearningContentBooks extends WatchingWidget {
   final PupilProxy pupil;
@@ -57,7 +57,7 @@ class PupilLearningContentBooks extends WatchingWidget {
               );
             }
             if (bookId != null) {
-              di<PupilProxyManager>().postPupilBookLending(
+              di<PupilBookLendingManager>().postPupilBookLending(
                 pupilId: pupil.pupilId,
                 libraryId: bookId,
               );

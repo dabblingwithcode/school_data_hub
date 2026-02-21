@@ -336,6 +336,7 @@ class EndpointAdminUser extends _i1.EndpointRef {
     String? schooldayEventsProcessingTeam,
     String? matrixUserId,
     int? credit,
+    Set<int>? pupilsAuth,
   }) =>
       caller.callServerEndpoint<_i11.User>(
         'adminUser',
@@ -353,6 +354,7 @@ class EndpointAdminUser extends _i1.EndpointRef {
           'schooldayEventsProcessingTeam': schooldayEventsProcessingTeam,
           'matrixUserId': matrixUserId,
           'credit': credit,
+          'pupilsAuth': pupilsAuth,
         },
       );
 
@@ -368,6 +370,7 @@ class EndpointAdminUser extends _i1.EndpointRef {
     required int reliefTimeUnits,
     required int credit,
     required bool isTester,
+    Set<int>? pupilsAuth,
   }) =>
       caller.callServerEndpoint<_i11.User>(
         'adminUser',
@@ -383,6 +386,7 @@ class EndpointAdminUser extends _i1.EndpointRef {
           'reliefTimeUnits': reliefTimeUnits,
           'credit': credit,
           'isTester': isTester,
+          'pupilsAuth': pupilsAuth,
         },
       );
 
@@ -898,12 +902,12 @@ class EndpointPupilBookLending extends _i1.EndpointRef {
   @override
   String get name => 'pupilBookLending';
 
-  _i2.Future<_i7.PupilData> postPupilBookLending(
+  _i2.Future<_i29.PupilBookLending> postPupilBookLending(
     int pupilId,
     String libraryId,
     String lentBy,
   ) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+      caller.callServerEndpoint<_i29.PupilBookLending>(
         'pupilBookLending',
         'postPupilBookLending',
         {
@@ -928,28 +932,28 @@ class EndpointPupilBookLending extends _i1.EndpointRef {
         {'lendingId': lendingId},
       );
 
-  _i2.Future<_i7.PupilData> updatePupilBookLending(
+  _i2.Future<_i29.PupilBookLending> updatePupilBookLending(
           _i29.PupilBookLending pupilBookLending) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+      caller.callServerEndpoint<_i29.PupilBookLending>(
         'pupilBookLending',
         'updatePupilBookLending',
         {'pupilBookLending': pupilBookLending},
       );
 
-  _i2.Future<_i7.PupilData> deletePupilBookLending(String lendingId) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+  _i2.Future<bool> deletePupilBookLending(String lendingId) =>
+      caller.callServerEndpoint<bool>(
         'pupilBookLending',
         'deletePupilBookLending',
         {'lendingId': lendingId},
       );
 
   /// Add a file to a PupilBookLending record
-  _i2.Future<_i7.PupilData> addFileToPupilBookLending(
+  _i2.Future<_i29.PupilBookLending> addFileToPupilBookLending(
     String lendingId,
     String filePath,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+      caller.callServerEndpoint<_i29.PupilBookLending>(
         'pupilBookLending',
         'addFileToPupilBookLending',
         {

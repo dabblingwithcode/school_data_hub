@@ -13,8 +13,8 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
+import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/media_capture_buttons.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
@@ -22,6 +22,7 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
+import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 
 class PupilBookLendingCard extends StatelessWidget {
@@ -39,14 +40,14 @@ class PupilBookLendingCard extends StatelessWidget {
       pupilBookLending.libraryBookId,
     )!;
     void updatePupilBookRating(int rating) {
-      di<PupilProxyManager>().updatePupilBookLending(
+      di<PupilBookLendingManager>().updatePupilBookLending(
         pupilBookLending: pupilBookLending,
         score: (value: rating),
       );
     }
 
     void updateBookScore(int? score) {
-      di<PupilProxyManager>().updatePupilBookLending(
+      di<PupilBookLendingManager>().updatePupilBookLending(
         pupilBookLending: pupilBookLending,
         bookScore: (value: score),
       );
@@ -76,7 +77,7 @@ class PupilBookLendingCard extends StatelessWidget {
               message: 'Ausleihe von "${book.title}" wirklich löschen?',
             );
             if (result == true) {
-              di<PupilProxyManager>().deletePupilBookLending(
+              di<PupilBookLendingManager>().deletePupilBookLending(
                 lendingId: pupilBookLending.lendingId,
               );
             }
@@ -218,7 +219,7 @@ class PupilBookLendingCard extends StatelessWidget {
                         result.value == pupilBookLending.status) {
                       return;
                     }
-                    await di<PupilProxyManager>().updatePupilBookLending(
+                    await di<PupilBookLendingManager>().updatePupilBookLending(
                       pupilBookLending: pupilBookLending,
                       status: (value: result.value),
                     );
@@ -276,7 +277,7 @@ class PupilBookLendingCard extends StatelessWidget {
                                     'Buch "${book.title}" wirklich zurückgeben?',
                               );
                               if (result!) {
-                                di<PupilProxyManager>().returnLibraryBook(
+                                di<PupilBookLendingManager>().returnLibraryBook(
                                   pupilBookLending: pupilBookLending,
                                 );
                               }

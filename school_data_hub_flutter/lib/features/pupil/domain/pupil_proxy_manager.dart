@@ -8,7 +8,6 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/books/data/pupil_book_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
@@ -23,8 +22,6 @@ class PupilProxyManager extends ChangeNotifier {
   final _hubSessionManager = di<HubSessionManager>();
 
   final _pupilDataApiService = PupilDataApiService();
-
-  final _pupilBookApiService = PupilBookApiService();
 
   final _pupilIdPupilsMap = <int, PupilProxy>{};
 
@@ -390,8 +387,6 @@ class PupilProxyManager extends ChangeNotifier {
     }
   }
 
-  //-TODO: These functions should be somewhere else
-
   Future<void> updateSchoolyearHeldBackDate({
     required int pupilId,
     required ({DateTime? value}) date,
@@ -402,90 +397,5 @@ class PupilProxyManager extends ChangeNotifier {
       return;
     }
     updatePupilProxyWithPupilData(updatedPupil);
-  }
-
-  Future<void> postPupilBookLending({
-    required int pupilId,
-    required String libraryId,
-  }) async {
-    final userName = _hubSessionManager.userName;
-
-    final PupilData? updatedPupil = await _pupilBookApiService
-        .postPupilBookLending(
-          pupilId: pupilId,
-          libraryId: libraryId,
-          lentBy: userName!,
-        );
-    if (updatedPupil == null) {
-      return;
-    }
-    _pupilIdPupilsMap[pupilId]!.updatePupil(updatedPupil);
-
-    return;
-  }
-
-  Future<void> deletePupilBookLending({required String lendingId}) async {
-    final pupil = await _pupilBookApiService.deletePupilBookLending(lendingId);
-    if (pupil == null) {
-      return;
-    }
-    _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
-
-    return;
-  }
-
-  Future<void> returnLibraryBook({
-    required PupilBookLending pupilBookLending,
-  }) async {
-    final updatedBookLending = pupilBookLending.copyWith(
-      returnedAt: DateTime.now().toUtc(),
-      receivedBy: _hubSessionManager.userName,
-    );
-
-    final pupil = await _pupilBookApiService.updatePupilBookLending(
-      bookLending: updatedBookLending,
-    );
-    if (pupil == null) {
-      return;
-    }
-    _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
-
-    return;
-  }
-
-  Future<void> updatePupilBookLending({
-    required PupilBookLending pupilBookLending,
-    DateTime? lentAt,
-    String? lentBy,
-    ({String? value})? status,
-    ({int? value})? score,
-    ({int? value})? bookScore,
-    ({DateTime? value})? returnedAt,
-    ({String? value})? receivedBy,
-  }) async {
-    final updatedBookLending = pupilBookLending.copyWith(
-      lentAt: lentAt ?? pupilBookLending.lentAt,
-      lentBy: lentBy ?? pupilBookLending.lentBy,
-      status: status != null ? status.value : pupilBookLending.status,
-      score: score != null ? score.value : pupilBookLending.score,
-      bookScore: bookScore != null
-          ? bookScore.value
-          : pupilBookLending.bookScore,
-      returnedAt: returnedAt != null
-          ? returnedAt.value
-          : pupilBookLending.returnedAt,
-      receivedBy: receivedBy != null
-          ? receivedBy.value
-          : pupilBookLending.receivedBy,
-    );
-    final pupil = await _pupilBookApiService.updatePupilBookLending(
-      bookLending: updatedBookLending,
-    );
-    if (pupil == null) {
-      return;
-    }
-    _pupilIdPupilsMap[pupil.id!]!.updatePupil(pupil);
-
-    return;
   }
 }

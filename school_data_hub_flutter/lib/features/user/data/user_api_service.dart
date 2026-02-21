@@ -32,6 +32,7 @@ class UserApiService {
     required int reliefTimeUnits,
     required List<String> scopeNames,
     required bool isTester,
+    Set<int>? pupilsAuth,
   }) async {
     await _client.adminUser.createUser(
       userName: userName,
@@ -44,6 +45,7 @@ class UserApiService {
       reliefTimeUnits: reliefTimeUnits,
       scopeNames: scopeNames,
       isTester: isTester,
+      pupilsAuth: pupilsAuth,
     );
   }
   /// Update user and UserInfo in one go. [userId] is the UserInfo id.
@@ -60,6 +62,7 @@ class UserApiService {
     required int credit,
     required bool isTester,
     String? imageUrl,
+    Set<int>? pupilsAuth,
   }) async {
     await _client.adminUser.updateUser(
       userId,
@@ -72,6 +75,7 @@ class UserApiService {
       reliefTimeUnits: reliefTimeUnits,
       credit: credit,
       isTester: isTester,
+      pupilsAuth: pupilsAuth,
     );
     // TODO: when server supports UserInfo.imageUrl, add imageUrl to the
     // endpoint and pass it here (client must be regenerated).

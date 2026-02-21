@@ -12,7 +12,6 @@ import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_do
 import 'package:school_data_hub_flutter/common/widgets/media_capture_buttons.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 
 /// A reusable widget for displaying and managing document collections.
 ///
@@ -86,6 +85,28 @@ class HubDocumentsSectionWidget extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (totalCount == 0)
+              SizedBox(
+                height: 70,
+                width: (21 / 30) * 70,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 221, 221, 221),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      'Keine\nDokumente',
+                      style: TextStyle(
+                        fontSize: 8,
+                        color: Color.fromARGB(255, 110, 110, 110),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             for (final file in imageFiles) ...[
               _DocumentItem(
                 file: file,

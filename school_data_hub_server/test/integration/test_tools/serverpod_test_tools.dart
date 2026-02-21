@@ -1009,6 +1009,7 @@ class _AdminUserEndpoint {
     String? schooldayEventsProcessingTeam,
     String? matrixUserId,
     int? credit,
+    Set<int>? pupilsAuth,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1034,6 +1035,7 @@ class _AdminUserEndpoint {
             'schooldayEventsProcessingTeam': schooldayEventsProcessingTeam,
             'matrixUserId': matrixUserId,
             'credit': credit,
+            'pupilsAuth': pupilsAuth,
           }),
           serializationManager: _serializationManager,
         );
@@ -1060,6 +1062,7 @@ class _AdminUserEndpoint {
     required int reliefTimeUnits,
     required int credit,
     required bool isTester,
+    Set<int>? pupilsAuth,
   }) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -1083,6 +1086,7 @@ class _AdminUserEndpoint {
             'reliefTimeUnits': reliefTimeUnits,
             'credit': credit,
             'isTester': isTester,
+            'pupilsAuth': pupilsAuth,
           }),
           serializationManager: _serializationManager,
         );
@@ -2606,7 +2610,7 @@ class _PupilBookLendingEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<_i8.PupilData> postPupilBookLending(
+  _i3.Future<_i30.PupilBookLending> postPupilBookLending(
     _i1.TestSessionBuilder sessionBuilder,
     int pupilId,
     String libraryId,
@@ -2633,7 +2637,7 @@ class _PupilBookLendingEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i8.PupilData>);
+        ) as _i3.Future<_i30.PupilBookLending>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2697,7 +2701,7 @@ class _PupilBookLendingEndpoint {
     });
   }
 
-  _i3.Future<_i8.PupilData> updatePupilBookLending(
+  _i3.Future<_i30.PupilBookLending> updatePupilBookLending(
     _i1.TestSessionBuilder sessionBuilder,
     _i30.PupilBookLending pupilBookLending,
   ) async {
@@ -2719,7 +2723,7 @@ class _PupilBookLendingEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i8.PupilData>);
+        ) as _i3.Future<_i30.PupilBookLending>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2727,7 +2731,7 @@ class _PupilBookLendingEndpoint {
     });
   }
 
-  _i3.Future<_i8.PupilData> deletePupilBookLending(
+  _i3.Future<bool> deletePupilBookLending(
     _i1.TestSessionBuilder sessionBuilder,
     String lendingId,
   ) async {
@@ -2748,7 +2752,7 @@ class _PupilBookLendingEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i8.PupilData>);
+        ) as _i3.Future<bool>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -2756,7 +2760,7 @@ class _PupilBookLendingEndpoint {
     });
   }
 
-  _i3.Future<_i8.PupilData> addFileToPupilBookLending(
+  _i3.Future<_i30.PupilBookLending> addFileToPupilBookLending(
     _i1.TestSessionBuilder sessionBuilder,
     String lendingId,
     String filePath,
@@ -2783,7 +2787,7 @@ class _PupilBookLendingEndpoint {
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i8.PupilData>);
+        ) as _i3.Future<_i30.PupilBookLending>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
