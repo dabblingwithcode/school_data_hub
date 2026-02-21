@@ -13,7 +13,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/media_capture_buttons.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
@@ -76,7 +76,7 @@ class PupilBookLendingCard extends StatelessWidget {
               message: 'Ausleihe von "${book.title}" wirklich löschen?',
             );
             if (result == true) {
-              di<PupilProxyManager>().deletePupilBook(
+              di<PupilProxyManager>().deletePupilBookLending(
                 lendingId: pupilBookLending.lendingId,
               );
             }

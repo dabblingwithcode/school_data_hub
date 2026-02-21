@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
-class AppAsyncActionButton extends StatelessWidget {
+class GenericAsyncActionButton extends StatelessWidget {
   final Future function;
   final String title;
-  const AppAsyncActionButton({
+  const GenericAsyncActionButton({
     super.key,
     required this.function,
     required this.title,
@@ -20,15 +20,13 @@ class AppAsyncActionButton extends StatelessWidget {
         width: double.infinity,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.appStyleButtonColor,
-              minimumSize: const Size.fromHeight(50)),
+            backgroundColor: AppColors.appStyleButtonColor,
+            minimumSize: const Size.fromHeight(50),
+          ),
           onPressed: () async {
             await function;
           },
-          child: Text(
-            title,
-            style: const TextStyle(fontSize: 17.0),
-          ),
+          child: Text(title, style: const TextStyle(fontSize: 17.0)),
         ),
       ),
     );

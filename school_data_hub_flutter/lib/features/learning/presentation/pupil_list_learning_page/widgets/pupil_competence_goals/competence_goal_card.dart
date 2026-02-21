@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/growth_score_dropdown.dart';
-import 'package:school_data_hub_flutter/common/widgets/hub_documents_section.dart';
+import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_documents_section.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
@@ -199,18 +199,18 @@ class CompetenceGoalCard extends StatelessWidget {
                 const Gap(5),
                 _AchievedAtRow(pupilGoal: pupilGoal),
                 const Gap(10),
-                HubDocumentsSection(
+                HubDocumentsSectionWidget(
                   documents: pupilGoal.documents,
-                  withSpacer: true,
+                  withSpacerToButtons: true,
                   title: 'Dokumente:',
-                  onFileCaptured: (file) async {
+                  onImageFileCaptured: (file) async {
                     if (file == null) return;
                     await di<CompetenceManager>().addFileToCompetenceGoal(
                       publicId: pupilGoal.publicId,
                       file: file,
                     );
                   },
-                  onFileRecorded: (file, fileInfo) async {
+                  onAudioFileRecorded: (file, fileInfo) async {
                     if (file == null) return;
                     await di<CompetenceManager>().addFileToCompetenceGoal(
                       publicId: pupilGoal.publicId,

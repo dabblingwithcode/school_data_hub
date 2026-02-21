@@ -1,21 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
-import 'package:school_data_hub_flutter/app_utils/record_audio_file.dart';
 import 'package:school_data_hub_flutter/common/audio/audio.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_documents_section.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
@@ -533,212 +527,50 @@ class _GoalCheckEntry extends StatelessWidget {
                 ],
               ),
               const Gap(8),
-              _GoalCheckDocumentsSection(
-                check: check,
-                supportGoalId: supportGoalId,
-                pupilId: pupilId,
+              HubDocumentsSectionWidget(
+                documents: check.documents ?? [],
+                withSpacerToButtons: true,
+                onImageFileCaptured: (file) async {
+                  if (file == null) return;
+                  await learningSupportManager.addFileToSupportGoalCheck(
+                    supportGoalId: supportGoalId,
+                    supportGoalCheckId: check.id!,
+                    pupilId: pupilId,
+                    file: file,
+                  );
+                },
+                onAudioFileRecorded: (file, fileInfo) async {
+                  if (file == null) return;
+                  await learningSupportManager.addFileToSupportGoalCheck(
+                    supportGoalId: supportGoalId,
+                    supportGoalCheckId: check.id!,
+                    pupilId: pupilId,
+                    file: file,
+                    fileInfo: fileInfo != null
+                        ? fileInfo['info'] as String?
+                        : null,
+                  );
+                },
+                onDeleteDocument: (documentId) async {
+                  final confirm = await confirmationDialog(
+                    context: context,
+                    title: 'Dokument löschen',
+                    message: 'Dieses Dokument wirklich löschen?',
+                  );
+                  if (confirm != true) return;
+
+                  await learningSupportManager.removeFileFromSupportGoalCheck(
+                    supportGoalId: supportGoalId,
+                    supportGoalCheckId: check.id!,
+                    pupilId: pupilId,
+                    documentId: documentId,
+                  );
+                },
               ),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Displays existing documents/audio and buttons to add new ones for a
-/// support goal check.
-class _GoalCheckDocumentsSection extends StatelessWidget {
-  const _GoalCheckDocumentsSection({
-    required this.check,
-    required this.supportGoalId,
-    required this.pupilId,
-  });
-
-  final SupportGoalCheck check;
-  final int supportGoalId;
-  final int pupilId;
-
-  @override
-  Widget build(BuildContext context) {
-    final files = check.documents;
-    final isAdmin = di<HubSessionManager>().isAdmin;
-    final imageFiles = files?.where((f) => !_isAudioDocument(f)).toList() ?? [];
-    final audioFiles = files?.where((f) => _isAudioDocument(f)).toList() ?? [];
-    final totalCount = files?.length ?? 0;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Dokumente:',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-        ),
-        const Gap(4),
-        Row(
-          children: [
-            for (final file in imageFiles) ...[
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    file.createdAt.formatDateForUser(),
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => Dialog(
-                          child: Container(
-                            constraints: const BoxConstraints(
-                              maxWidth: 600,
-                              maxHeight: 800,
-                            ),
-                            child: EncryptedDocumentImage(
-                              documentId: file.documentId,
-                              size: 400,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    onLongPress: () async {
-                      if (!isAdmin) {
-                        di<NotificationService>().showSnackBar(
-                          NotificationType.error,
-                          'Nur Admins können Dokumente löschen',
-                        );
-                        return;
-                      }
-                      final confirm = await confirmationDialog(
-                        context: context,
-                        title: 'Dokument löschen',
-                        message: 'Dokument wirklich löschen?',
-                      );
-                      if (confirm != true) return;
-
-                      await di<LearningSupportManager>()
-                          .removeFileFromSupportGoalCheck(
-                            supportGoalId: supportGoalId,
-                            supportGoalCheckId: check.id!,
-                            pupilId: pupilId,
-                            documentId: file.documentId,
-                          );
-                    },
-                    child: EncryptedDocumentImage(
-                      documentId: file.documentId,
-                      size: 70,
-                    ),
-                  ),
-                  Text(
-                    file.createdBy,
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(10),
-            ],
-            for (final file in audioFiles) ...[
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    file.createdAt.formatDateForUser(),
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  AudioButton(
-                    file: file,
-                    onDelete: (file) async {
-                      await di<LearningSupportManager>()
-                          .removeFileFromSupportGoalCheck(
-                            supportGoalId: supportGoalId,
-                            supportGoalCheckId: check.id!,
-                            pupilId: pupilId,
-                            documentId: file.documentId,
-                          );
-                    },
-                  ),
-                  Text(
-                    file.createdBy,
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(10),
-            ],
-            if (totalCount < 4) ...[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      final File? file = await createAndCropImageFile(context);
-                      if (file == null) return;
-
-                      await di<LearningSupportManager>()
-                          .addFileToSupportGoalCheck(
-                            supportGoalId: supportGoalId,
-                            supportGoalCheckId: check.id!,
-                            pupilId: pupilId,
-                            file: file,
-                          );
-                    },
-                    child: SizedBox(
-                      height: 70,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.asset('assets/document_camera.png'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(10),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      final ({File? file, String? fileInfo})? result =
-                          await recordAudioFile(context);
-                      if (result == null) return;
-
-                      await di<LearningSupportManager>()
-                          .addFileToSupportGoalCheck(
-                            supportGoalId: supportGoalId,
-                            supportGoalCheckId: check.id!,
-                            pupilId: pupilId,
-                            file: result.file!,
-                            fileInfo: result.fileInfo!,
-                          );
-                    },
-                    child: SizedBox(
-                      height: 70,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.asset('assets/document_mic.png'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ],
-        ),
-      ],
     );
   }
 }

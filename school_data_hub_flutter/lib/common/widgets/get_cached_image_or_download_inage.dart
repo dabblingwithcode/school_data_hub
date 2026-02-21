@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-Future<Image> cachedImageOrDownloadImage({
+Future<Image> getCachedImageOrDownloadImage({
   required String documentId,
   required bool decrypt,
 }) async {

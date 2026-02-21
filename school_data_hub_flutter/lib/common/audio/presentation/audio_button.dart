@@ -6,18 +6,14 @@ import 'package:school_data_hub_flutter/common/audio/presentation/widgets/audio_
 import 'package:school_data_hub_flutter/common/audio/presentation/widgets/audio_thumbnail.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 
 /// A button that displays an audio thumbnail and handles playback.
 ///
 /// On tap, it pre-loads the audio and shows the player overlay.
 /// On long press (admin only), it allows deletion of the audio file.
 class AudioButton extends StatefulWidget {
-  const AudioButton({
-    required this.file,
-    required this.onDelete,
-    super.key,
-  });
+  const AudioButton({required this.file, required this.onDelete, super.key});
 
   /// The audio document to display and play.
   final HubDocument file;
@@ -73,7 +69,7 @@ class _AudioButtonState extends State<AudioButton> {
   }
 
   Future<void> _handleLongPress() async {
-    if (!di<HubSessionManager>().isAdmin) {
+    if (!AuthClearanceHelper.isCreatorOrAdmin(widget.file.createdBy)) {
       di<NotificationService>().showSnackBar(
         NotificationType.error,
         'Nur Admins können Dokumente löschen',

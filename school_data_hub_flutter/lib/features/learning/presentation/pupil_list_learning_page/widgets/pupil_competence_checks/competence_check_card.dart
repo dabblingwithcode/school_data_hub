@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_di
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
-import 'package:school_data_hub_flutter/common/widgets/hub_documents_section.dart';
+import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_documents_section.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
@@ -321,18 +321,18 @@ class CompetenceCheckCard extends StatelessWidget {
                   // Value Factor Display
                   const Spacer(),
 
-                  HubDocumentsSection(
+                  HubDocumentsSectionWidget(
                     documents: competenceCheck.documents,
-                    withSpacer: false,
+                    withSpacerToButtons: false,
                     showMetadata: true,
-                    onFileCaptured: (file) async {
+                    onImageFileCaptured: (file) async {
                       if (file == null) return;
                       await di<CompetenceManager>().addFileToCompetenceCheck(
                         competenceCheckId: competenceCheck.checkId,
                         file: file,
                       );
                     },
-                    onFileRecorded: (file, fileInfo) async {
+                    onAudioFileRecorded: (file, fileInfo) async {
                       if (file == null) return;
                       await di<CompetenceManager>().addFileToCompetenceCheck(
                         competenceCheckId: competenceCheck.checkId,
@@ -346,8 +346,8 @@ class CompetenceCheckCard extends StatelessWidget {
                             fileId: documentId,
                           );
                     },
-                    captureButtonBackgroundColor: AppColors.backgroundColor,
-                    captureButtonIconColor: Colors.white,
+                    buttonsBackgroundColor: AppColors.backgroundColor,
+                    buttonsIconColor: Colors.white,
                   ),
                 ],
               ),

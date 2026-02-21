@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/cached_image_or_download_inage.dart';
+import 'package:school_data_hub_flutter/common/widgets/get_cached_image_or_download_inage.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
@@ -41,7 +41,7 @@ class AvatarImage extends WatchingWidget {
                 heroAnimationTag:
                     heroTag ?? '${avatar.documentId}_${pupil.pupilId}',
                 zoomWidget: FutureBuilder<Widget>(
-                  future: cachedImageOrDownloadImage(
+                  future: getCachedImageOrDownloadImage(
                     documentId: avatar.documentId,
                     decrypt: true,
                   ),

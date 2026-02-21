@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/grades_widget.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_grades_widget.dart';
 
 class LastChildCompetenceCardSortable extends StatelessWidget {
   final Competence competence;

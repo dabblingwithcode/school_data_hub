@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/grades_widget.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_grades_widget.dart';
 
 class LastChildCompetenceCard extends StatelessWidget {
   final Competence competence;
   final Function({int? competenceId, Competence? competence})
-      navigateToNewOrPatchCompetencePage;
-  const LastChildCompetenceCard(
-      {required this.competence,
-      required this.navigateToNewOrPatchCompetencePage,
-      super.key});
+  navigateToNewOrPatchCompetencePage;
+  const LastChildCompetenceCard({
+    required this.competence,
+    required this.navigateToNewOrPatchCompetencePage,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -29,9 +28,11 @@ class LastChildCompetenceCard extends StatelessWidget {
                 Flexible(
                   child: InkWell(
                     onTap: () => navigateToNewOrPatchCompetencePage(
-                        competence: competence),
+                      competence: competence,
+                    ),
                     onLongPress: () => navigateToNewOrPatchCompetencePage(
-                        competenceId: competence.publicId),
+                      competenceId: competence.publicId,
+                    ),
                     child: Text(
                       competence.name,
                       textAlign: TextAlign.start,
@@ -54,9 +55,10 @@ class LastChildCompetenceCard extends StatelessWidget {
                   Text(
                     'Indikatoren:',
                     style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic),
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ],
               ),
@@ -64,10 +66,7 @@ class LastChildCompetenceCard extends StatelessWidget {
               Text(
                 competence.indicators!.join(),
                 textAlign: TextAlign.start,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 15,
-                ),
+                style: const TextStyle(color: Colors.black, fontSize: 15),
               ),
             ],
             competence.level != null
@@ -77,8 +76,10 @@ class LastChildCompetenceCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Flexible(
-                            child: GradesWidget(
-                                stringWithGrades: competence.level!.join())),
+                          child: GradesWidget(
+                            stringWithGrades: competence.level!.join(),
+                          ),
+                        ),
                         const Gap(10),
                       ],
                     ),

@@ -424,8 +424,8 @@ class PupilProxyManager extends ChangeNotifier {
     return;
   }
 
-  Future<void> deletePupilBook({required String lendingId}) async {
-    final pupil = await _pupilBookApiService.deletePupilBook(lendingId);
+  Future<void> deletePupilBookLending({required String lendingId}) async {
+    final pupil = await _pupilBookApiService.deletePupilBookLending(lendingId);
     if (pupil == null) {
       return;
     }

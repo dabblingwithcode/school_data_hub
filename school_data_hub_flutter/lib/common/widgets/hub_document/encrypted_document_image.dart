@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/cached_image_or_download_inage.dart';
-import 'package:watch_it/watch_it.dart';
+import 'package:school_data_hub_flutter/common/widgets/get_cached_image_or_download_inage.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 
 class EncryptedDocumentImage extends WatchingWidget {
@@ -29,7 +29,7 @@ class EncryptedDocumentImage extends WatchingWidget {
             WidgetZoom(
               heroAnimationTag: '$documentId$randomPart',
               zoomWidget: FutureBuilder<Image>(
-                future: cachedImageOrDownloadImage(
+                future: getCachedImageOrDownloadImage(
                   documentId: documentId,
                   decrypt: true,
                 ),

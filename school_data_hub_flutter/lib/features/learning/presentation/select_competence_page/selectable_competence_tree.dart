@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/grades_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/presentation/select_competence_page/select_competence_view_model.dart';
+import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_grades_widget.dart';
 
 List<Widget> selectableCompetenceTree({
   //required BuildContext context,
@@ -20,8 +20,9 @@ List<Widget> selectableCompetenceTree({
 
   for (Competence competence in competences) {
     if (backGroundColor == null) {
-      competenceBackgroundColor =
-          CompetenceHelper.getCompetenceColor(competence.publicId);
+      competenceBackgroundColor = CompetenceHelper.getCompetenceColor(
+        competence.publicId,
+      );
     } else {
       competenceBackgroundColor = backGroundColor;
     }
@@ -46,7 +47,8 @@ List<Widget> selectableCompetenceTree({
                       color: competenceBackgroundColor,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       clipBehavior: Clip.hardEdge,
                       margin: EdgeInsets.zero,
                       child: ExpansionTile(
@@ -84,15 +86,17 @@ List<Widget> selectableCompetenceTree({
                                   Flexible(
                                     child: InkWell(
                                       onTap: () => viewModel.selectCompetence(
-                                          competence.publicId),
+                                        competence.publicId,
+                                      ),
                                       child: Text(
                                         competence.name,
                                         maxLines: 4,
                                         textAlign: TextAlign.start,
                                         style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -137,12 +141,12 @@ List<Widget> selectableCompetenceTree({
                                 //         null
                                 //     ?
                                 Radio(
-                              value: competence.publicId,
-                              groupValue: viewModel.selectedCompetenceId,
-                              onChanged: (value) {
-                                viewModel.selectCompetence(value!);
-                              },
-                            ),
+                                  value: competence.publicId,
+                                  groupValue: viewModel.selectedCompetenceId,
+                                  onChanged: (value) {
+                                    viewModel.selectCompetence(value!);
+                                  },
+                                ),
                             // : const Row(children: [
                             //     Gap(7),
                             //     Icon(
@@ -154,16 +158,18 @@ List<Widget> selectableCompetenceTree({
                           const Gap(5),
                           Flexible(
                             child: InkWell(
-                              onTap: () => viewModel
-                                  .selectCompetence(competence.publicId),
+                              onTap: () => viewModel.selectCompetence(
+                                competence.publicId,
+                              ),
                               child: Text(
                                 competence.name,
                                 maxLines: 4,
                                 textAlign: TextAlign.start,
                                 style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -177,9 +183,11 @@ List<Widget> selectableCompetenceTree({
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Flexible(
-                                      child: GradesWidget(
-                                          stringWithGrades:
-                                              competence.level!.toString())),
+                                    child: GradesWidget(
+                                      stringWithGrades: competence.level!
+                                          .toString(),
+                                    ),
+                                  ),
                                   const Gap(10),
                                 ],
                               ),

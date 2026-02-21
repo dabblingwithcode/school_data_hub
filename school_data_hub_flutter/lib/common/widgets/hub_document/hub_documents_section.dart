@@ -8,8 +8,9 @@ import 'package:school_data_hub_flutter/common/audio/audio.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/media_capture_buttons.dart';
+import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 
@@ -17,16 +18,16 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 ///
 /// Supports both image and audio documents, with optional metadata display
 /// (creation date and creator) and admin-controlled deletion.
-class HubDocumentsSection extends StatelessWidget {
+class HubDocumentsSectionWidget extends StatelessWidget {
   /// The list of documents to display.
   final List<HubDocument>? documents;
 
-  /// Callback when a file is captured (photo/video).
-  final Future<void> Function(File? file) onFileCaptured;
+  /// Callback when an image file is captured.
+  final Future<void> Function(File? file) onImageFileCaptured;
 
   /// Callback when a file is recorded (audio).
   final Future<void> Function(File? file, Map<String, dynamic>? fileInfo)?
-  onFileRecorded;
+  onAudioFileRecorded;
 
   /// Callback when a document should be removed.
   final Future<void> Function(String documentId) onDeleteDocument;
@@ -34,8 +35,8 @@ class HubDocumentsSection extends StatelessWidget {
   /// Maximum number of documents allowed (default: 4).
   final int maxDocuments;
 
-  /// Wether ro have a spacer between domuments and buttons
-  final bool withSpacer;
+  /// Wether to have a spacer between domuments and buttons
+  final bool withSpacerToButtons;
 
   /// Whether to show metadata (date, creator) under each document.
   final bool showMetadata;
@@ -47,30 +48,30 @@ class HubDocumentsSection extends StatelessWidget {
   final EdgeInsets? captureButtonPadding;
 
   /// Optional background color for MediaCaptureButtons.
-  final Color? captureButtonBackgroundColor;
+  final Color? buttonsBackgroundColor;
 
   /// Optional icon color for MediaCaptureButtons.
-  final Color? captureButtonIconColor;
+  final Color? buttonsIconColor;
 
-  const HubDocumentsSection({
+  const HubDocumentsSectionWidget({
     required this.documents,
-    required this.withSpacer,
-    required this.onFileCaptured,
+    required this.withSpacerToButtons,
+    required this.onImageFileCaptured,
     required this.onDeleteDocument,
-    this.onFileRecorded,
+    this.onAudioFileRecorded,
     this.maxDocuments = 4,
     this.showMetadata = true,
     this.title,
     this.captureButtonPadding,
-    this.captureButtonBackgroundColor,
-    this.captureButtonIconColor,
+    this.buttonsBackgroundColor,
+    this.buttonsIconColor,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     final files = documents;
-    final isAdmin = di<HubSessionManager>().isAdmin;
+
     final imageFiles = files?.where((f) => !_isAudioDocument(f)).toList() ?? [];
     final audioFiles = files?.where((f) => _isAudioDocument(f)).toList() ?? [];
     final totalCount = (files?.length ?? 0);
@@ -88,7 +89,9 @@ class HubDocumentsSection extends StatelessWidget {
             for (final file in imageFiles) ...[
               _DocumentItem(
                 file: file,
-                isAdmin: isAdmin,
+                isAuthorizedToDelete: AuthClearanceHelper.isCreatorOrAdmin(
+                  file.createdBy,
+                ),
                 showMetadata: showMetadata,
                 onDelete: () => onDeleteDocument(file.documentId),
               ),
@@ -103,11 +106,11 @@ class HubDocumentsSection extends StatelessWidget {
               const Gap(10),
             ],
             if (totalCount < maxDocuments) ...[
-              if (withSpacer) const Spacer(),
+              if (withSpacerToButtons) const Spacer(),
               MediaCaptureButtons(
-                onFileCaptured: onFileCaptured,
+                onFileCaptured: onImageFileCaptured,
                 onFileRecorded: (file, fileInfo) {
-                  onFileRecorded?.call(
+                  onAudioFileRecorded?.call(
                     file,
                     fileInfo != null ? {'info': fileInfo} : null,
                   );
@@ -115,8 +118,8 @@ class HubDocumentsSection extends StatelessWidget {
                 iconSize: 20,
                 padding: captureButtonPadding ?? const EdgeInsets.all(11),
                 backgroundColor:
-                    captureButtonBackgroundColor ?? AppColors.backgroundColor,
-                iconColor: captureButtonIconColor ?? Colors.white,
+                    buttonsBackgroundColor ?? AppColors.backgroundColor,
+                iconColor: buttonsIconColor ?? Colors.white,
               ),
             ],
           ],
@@ -134,13 +137,13 @@ class HubDocumentsSection extends StatelessWidget {
 /// Displays a single image document with optional metadata.
 class _DocumentItem extends StatelessWidget {
   final HubDocument file;
-  final bool isAdmin;
+  final bool isAuthorizedToDelete;
   final bool showMetadata;
   final VoidCallback onDelete;
 
   const _DocumentItem({
     required this.file,
-    required this.isAdmin,
+    required this.isAuthorizedToDelete,
     required this.showMetadata,
     required this.onDelete,
   });
@@ -174,7 +177,7 @@ class _DocumentItem extends StatelessWidget {
             );
           },
           onLongPress: () async {
-            if (!isAdmin) {
+            if (!isAuthorizedToDelete) {
               di<NotificationService>().showSnackBar(
                 NotificationType.error,
                 'Nur Admins können Dokumente löschen',

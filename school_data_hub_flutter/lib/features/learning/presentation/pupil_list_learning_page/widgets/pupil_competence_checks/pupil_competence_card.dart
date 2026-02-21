@@ -52,7 +52,9 @@ class PupilCompetenceCard extends WatchingWidget {
               Text(
                 competence.name,
                 style: TextStyle(
-                  color: competenceColor,
+                  color: AppColors.readableOnWhiteBackgroungColor(
+                    competenceColor,
+                  ),
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
@@ -62,7 +64,7 @@ class PupilCompetenceCard extends WatchingWidget {
                 width: 23.0,
                 height: 23.0,
                 decoration: BoxDecoration(
-                  color: isReport ? Colors.white : competenceColor,
+                  color: competenceColor,
                   shape: BoxShape.circle,
                   // border: Border.all(
                   //   color: Colors.white,
@@ -73,8 +75,10 @@ class PupilCompetenceCard extends WatchingWidget {
                   child: Text(
                     competenceChecks.length.toString(),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppColors.bestContrastCompetenceFontColor(
+                        competenceColor,
+                      ),
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
