@@ -1,18 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
-import 'package:school_data_hub_flutter/app_utils/record_audio_file.dart';
-import 'package:school_data_hub_flutter/common/audio/audio.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
-import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/growth_score_dropdown.dart';
+import 'package:school_data_hub_flutter/common/widgets/hub_documents_section.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_helper.dart';
@@ -205,7 +199,31 @@ class CompetenceGoalCard extends StatelessWidget {
                 const Gap(5),
                 _AchievedAtRow(pupilGoal: pupilGoal),
                 const Gap(10),
-                _GoalDocumentsSection(pupilGoal: pupilGoal),
+                HubDocumentsSection(
+                  documents: pupilGoal.documents,
+                  withSpacer: true,
+                  title: 'Dokumente:',
+                  onFileCaptured: (file) async {
+                    if (file == null) return;
+                    await di<CompetenceManager>().addFileToCompetenceGoal(
+                      publicId: pupilGoal.publicId,
+                      file: file,
+                    );
+                  },
+                  onFileRecorded: (file, fileInfo) async {
+                    if (file == null) return;
+                    await di<CompetenceManager>().addFileToCompetenceGoal(
+                      publicId: pupilGoal.publicId,
+                      file: file,
+                    );
+                  },
+                  onDeleteDocument: (documentId) async {
+                    await di<CompetenceManager>().removeFileFromCompetenceGoal(
+                      publicId: pupilGoal.publicId,
+                      documentId: documentId,
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -265,189 +283,6 @@ class _AchievedAtRow extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Whether [doc] represents an audio file based on its extension.
-bool _isAudioDocument(HubDocument doc) {
-  return isAudioDocument(doc.documentId);
-}
-
-/// Displays existing documents/audio and buttons to add new ones for a
-/// competence goal.
-class _GoalDocumentsSection extends StatelessWidget {
-  const _GoalDocumentsSection({required this.pupilGoal});
-
-  final CompetenceGoal pupilGoal;
-
-  @override
-  Widget build(BuildContext context) {
-    final files = pupilGoal.documents;
-    final isAdmin = di<HubSessionManager>().isAdmin;
-    final imageFiles = files?.where((f) => !_isAudioDocument(f)).toList() ?? [];
-    final audioFiles = files?.where((f) => _isAudioDocument(f)).toList() ?? [];
-    final totalCount = (files?.length ?? 0);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Dokumente:', style: TextStyle(fontWeight: FontWeight.bold)),
-        const Gap(4),
-        Row(
-          children: [
-            for (final file in imageFiles) ...[
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    file.createdAt.formatDateForUser(),
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => Dialog(
-                          child: Container(
-                            constraints: const BoxConstraints(
-                              maxWidth: 600,
-                              maxHeight: 800,
-                            ),
-                            child: EncryptedDocumentImage(
-                              documentId: file.documentId,
-                              size: 400,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                    onLongPress: () async {
-                      if (!isAdmin) {
-                        di<NotificationService>().showSnackBar(
-                          NotificationType.error,
-                          'Nur Admins können Dokumente löschen',
-                        );
-                        return;
-                      }
-                      final confirm = await confirmationDialog(
-                        context: context,
-                        title: 'Dokument löschen',
-                        message: 'Dokument wirklich löschen?',
-                      );
-                      if (confirm != true) return;
-
-                      await di<CompetenceManager>()
-                          .removeFileFromCompetenceGoal(
-                            publicId: pupilGoal.publicId,
-                            documentId: file.documentId,
-                          );
-                    },
-                    child: EncryptedDocumentImage(
-                      documentId: file.documentId,
-                      size: 70,
-                    ),
-                  ),
-                  Text(
-                    file.createdBy,
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(10),
-            ],
-            for (final file in audioFiles) ...[
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    file.createdAt.formatDateForUser(),
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  AudioButton(
-                    file: file,
-                    onDelete: (file) async {
-                      await di<CompetenceManager>()
-                          .removeFileFromCompetenceGoal(
-                            publicId: pupilGoal.publicId,
-                            documentId: file.documentId,
-                          );
-                    },
-                  ),
-                  Text(
-                    file.createdBy,
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(10),
-            ],
-            if (totalCount < 4) ...[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      final File? file = await createAndCropImageFile(context);
-                      if (file == null) return;
-
-                      await di<CompetenceManager>().addFileToCompetenceGoal(
-                        publicId: pupilGoal.publicId,
-                        file: file,
-                      );
-                    },
-                    child: SizedBox(
-                      height: 70,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.asset('assets/document_camera.png'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(10),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      final ({File? file, String? fileInfo})? result =
-                          await recordAudioFile(context);
-                      if (result == null) return;
-
-                      await di<CompetenceManager>().addFileToCompetenceGoal(
-                        publicId: pupilGoal.publicId,
-                        file: result.file!,
-                        fileInfo: result.fileInfo!,
-                      );
-                    },
-                    child: SizedBox(
-                      height: 70,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.asset('assets/document_mic.png'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ],
-        ),
-      ],
     );
   }
 }

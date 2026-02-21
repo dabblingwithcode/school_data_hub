@@ -3,11 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/app_utils/record_audio_file.dart';
 import 'package:school_data_hub_flutter/common/audio/audio.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -18,6 +15,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialo
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
+import 'package:school_data_hub_flutter/common/widgets/media_capture_buttons.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -572,10 +570,7 @@ class _DocumentsSection extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  AudioButton(
-                    file: file,
-                    onDelete: _removeFile,
-                  ),
+                  AudioButton(file: file, onDelete: _removeFile),
                   Text(
                     file.createdBy,
                     style: const TextStyle(
@@ -588,51 +583,46 @@ class _DocumentsSection extends StatelessWidget {
               const Gap(10),
             ],
             if (totalCount < 4) ...[
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      final File? file = await createAndCropImageFile(context);
-                      if (file == null) return;
-
-                      await _uploadFile(file);
-                    },
-                    child: SizedBox(
-                      height: 70,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.asset('assets/document_camera.png'),
-                      ),
-                    ),
-                  ),
-                ],
+              const Spacer(),
+              MediaCaptureButtons(
+                onFileCaptured: (File? file) async {
+                  if (file == null) return;
+                  await _uploadFile(file);
+                },
+                onFileRecorded: (File? file, String? fileInfo) async {
+                  if (file == null) return;
+                  await _uploadFile(file, fileInfo: fileInfo);
+                },
+                iconSize: 20,
+                padding: const EdgeInsets.all(11),
               ),
-              const Gap(10),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      final ({File? file, String? fileInfo})? result =
-                          await recordAudioFile(context);
-                      if (result == null) return;
-
-                      await _uploadFile(
-                        result.file!,
-                        fileInfo: result.fileInfo,
-                      );
-                    },
-                    child: SizedBox(
-                      height: 70,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.asset('assets/document_mic.png'),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // Column(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     CameraButton(
+              //       onFileCaptured: (File? file) async {
+              //         if (file == null) return;
+              //         await _uploadFile(file);
+              //       },
+              //       iconSize: 24,
+              //       padding: const EdgeInsets.all(14),
+              //     ),
+              //   ],
+              // ),
+              // const Gap(10),
+              // Column(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     MicButton(
+              //       onFileRecorded: (File? file, String? fileInfo) async {
+              //         if (file == null) return;
+              //         await _uploadFile(file, fileInfo: fileInfo);
+              //       },
+              //       iconSize: 24,
+              //       padding: const EdgeInsets.all(14),
+              //     ),
+              //   ],
+              // ),
             ],
           ],
         ),
@@ -716,4 +706,3 @@ class _DocumentsSection extends StatelessWidget {
     }
   }
 }
-

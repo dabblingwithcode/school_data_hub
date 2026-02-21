@@ -41,18 +41,18 @@ class GrowthDropdown extends StatelessWidget {
   }
 }
 
+const _itemPadding = EdgeInsets.all(4.0);
+
 List<DropdownMenuItem<int>> competenceCheckDropdownItems = [
   const DropdownMenuItem(
     value: 0,
     alignment: AlignmentDirectional.center,
-    child: Center(
-      child: Icon(Icons.question_mark_rounded, color: Colors.black, size: 50),
-    ),
+    child: Icon(Icons.question_mark_rounded, color: Colors.black, size: 50),
   ),
   DropdownMenuItem(
     value: 1,
     child: Padding(
-      padding: const EdgeInsets.all(4),
+      padding: _itemPadding,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.growthIconColor1,
@@ -69,7 +69,7 @@ List<DropdownMenuItem<int>> competenceCheckDropdownItems = [
   DropdownMenuItem(
     value: 2,
     child: Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: _itemPadding,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.growthIconColor2,
@@ -86,7 +86,7 @@ List<DropdownMenuItem<int>> competenceCheckDropdownItems = [
   DropdownMenuItem(
     value: 3,
     child: Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: _itemPadding,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.growthIconColor3,
@@ -103,7 +103,7 @@ List<DropdownMenuItem<int>> competenceCheckDropdownItems = [
   DropdownMenuItem(
     value: 4,
     child: Padding(
-      padding: const EdgeInsets.all(2.0),
+      padding: _itemPadding,
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.growthIconColor4,

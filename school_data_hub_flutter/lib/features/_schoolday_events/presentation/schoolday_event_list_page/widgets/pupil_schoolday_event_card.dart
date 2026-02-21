@@ -309,6 +309,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        const Gap(13),
                         InkWell(
                           onTap: () async {
                             final File? file = await createAndCropImageFile(
@@ -366,6 +367,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                   ),
                                 ),
                         ),
+                        const Gap(13),
                       ],
                     ),
                   const Gap(10),

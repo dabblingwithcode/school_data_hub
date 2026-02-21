@@ -18,9 +18,11 @@ import 'package:widget_zoom/widget_zoom.dart';
 class AvatarImage extends WatchingWidget {
   final PupilProxy pupil;
   final double size;
+  final String? heroTag;
   const AvatarImage({
     required this.pupil,
     required this.size,
+    this.heroTag,
     super.key,
     Key? customKey,
   });
@@ -36,7 +38,8 @@ class AvatarImage extends WatchingWidget {
       child: Center(
         child: avatar != null
             ? WidgetZoom(
-                heroAnimationTag: avatar.documentId,
+                heroAnimationTag:
+                    heroTag ?? '${avatar.documentId}_${pupil.pupilId}',
                 zoomWidget: FutureBuilder<Widget>(
                   future: cachedImageOrDownloadImage(
                     documentId: avatar.documentId,
@@ -102,7 +105,13 @@ class AvatarWithBadges extends WatchingWidget {
 
   final PupilProxy pupil;
   final double size;
-  const AvatarWithBadges({required this.pupil, required this.size, super.key});
+  final String? heroTag;
+  const AvatarWithBadges({
+    required this.pupil,
+    required this.size,
+    this.heroTag,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +183,11 @@ class AvatarWithBadges extends WatchingWidget {
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(_avatarPadding),
-                  child: AvatarImage(pupil: pupil, size: size),
+                  child: AvatarImage(
+                    pupil: pupil,
+                    size: size,
+                    heroTag: heroTag,
+                  ),
                 ),
               ),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
@@ -23,7 +24,6 @@ import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profil
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/widgets/pupil_media_auth_values.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfileInfosContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -249,9 +249,9 @@ class PupilProfileInfosContent extends WatchingWidget {
                               }
                               final confirm = await confirmationDialog(
                                 context: context,
-                                title: 'Matrix-Admindaten erstellen',
+                                title: 'Matrix-Konto erstellen',
                                 message:
-                                    'Möchten Sie die Matrix-Admindaten wirklich erstellen?',
+                                    'Möchten Sie ein neues Matrix-Konto wirklich erstellen?',
                               );
                               if (confirm != true) return;
                               if (context.mounted) {
@@ -271,7 +271,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               }
                             },
                             icon: Icon(
-                              Icons.add_circle_outline,
+                              Icons.add_circle_rounded,
                               size: 24,
                               color: AppColors.interactiveColor,
                             ),
@@ -390,7 +390,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               );
                             },
                             icon: Icon(
-                              Icons.add_circle_outline,
+                              Icons.add_circle_rounded,
                               size: 24,
                               color: AppColors.interactiveColor,
                             ),
