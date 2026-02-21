@@ -81,6 +81,11 @@ class ChartPageBottomBar extends StatelessWidget {
                         selectedIcon: Icon(Icons.menu_book),
                         label: 'Ausleihen',
                       ),
+                      NavigationDestination(
+                        icon: Icon(Icons.account_balance_wallet_outlined),
+                        selectedIcon: Icon(Icons.account_balance_wallet),
+                        label: 'Kredite',
+                      ),
                     ],
                   ),
                 ),

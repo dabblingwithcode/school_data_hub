@@ -52,6 +52,9 @@ class _ChartPageControllerState extends State<ChartPageController> {
 
   Map<DateTime, ({int currentlyLent})> _bookLendingChartData = {};
 
+  Map<DateTime, ({int incoming, int outgoing, int balance})>
+  _creditTransactionsChartData = {};
+
   @override
   void initState() {
     super.initState();
@@ -128,6 +131,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
           _eventChartData = {};
           _attendanceChartData = {};
           _bookLendingChartData = {};
+          _creditTransactionsChartData = {};
           _isLoading = false;
         });
       }
@@ -153,7 +157,8 @@ class _ChartPageControllerState extends State<ChartPageController> {
     // 3b. Pre-process Book Lendings
     // Normalize each lending to (lentDate, returnedDate?) for efficient
     // per-schoolday counting of currently outstanding books.
-    final normalizedLendings = <({DateTime lentDate, DateTime? returnedDate})>[];
+    final normalizedLendings =
+        <({DateTime lentDate, DateTime? returnedDate})>[];
     for (final pupil in _pupilManager.allPupils) {
       final lendings = pupil.pupilBookLendings;
       if (lendings == null) continue;
@@ -256,6 +261,8 @@ class _ChartPageControllerState extends State<ChartPageController> {
     final attendanceChartData =
         <DateTime, ({int excused, int unexcused, int goneHome})>{};
     final bookLendingChartData = <DateTime, ({int currentlyLent})>{};
+    final creditTransactionsChartData =
+        <DateTime, ({int incoming, int outgoing, int balance})>{};
 
     // 5. Iterate Schooldays
     for (final schoolday in schooldays) {
@@ -416,9 +423,10 @@ class _ChartPageControllerState extends State<ChartPageController> {
       // lentAt <= dayDate AND (returnedAt is null OR returnedAt > dayDate)
       int currentlyLent = 0;
       for (final lending in normalizedLendings) {
-        final lentOnOrBefore = lending.lentDate.isBefore(dayDate) ||
-            lending.lentDate == dayDate;
-        final notYetReturned = lending.returnedDate == null ||
+        final lentOnOrBefore =
+            lending.lentDate.isBefore(dayDate) || lending.lentDate == dayDate;
+        final notYetReturned =
+            lending.returnedDate == null ||
             lending.returnedDate!.isAfter(dayDate);
         if (lentOnOrBefore && notYetReturned) {
           currentlyLent++;
@@ -427,6 +435,42 @@ class _ChartPageControllerState extends State<ChartPageController> {
 
       bookLendingChartData[schoolday.schoolday] = (
         currentlyLent: currentlyLent,
+      );
+
+      // --- Credit Transactions ---
+      int incoming = 0;
+      int outgoing = 0;
+      int balance = 0;
+
+      for (final pupil in pupils) {
+        final transactions = pupil.creditTransactions;
+        if (transactions == null) continue;
+
+        for (final transaction in transactions) {
+          final transactionDate = transaction.dateTime.toLocal();
+          final txDate = DateTime(
+            transactionDate.year,
+            transactionDate.month,
+            transactionDate.day,
+          );
+
+          // Only count transactions for this schoolday
+          if (txDate != dayDate) continue;
+
+          if (transaction.amount > 0) {
+            incoming += transaction.amount;
+            balance += transaction.amount;
+          } else if (transaction.amount < 0) {
+            outgoing += transaction.amount.abs();
+            balance += transaction.amount;
+          }
+        }
+      }
+
+      creditTransactionsChartData[schoolday.schoolday] = (
+        incoming: incoming,
+        outgoing: outgoing,
+        balance: balance,
       );
     }
 
@@ -437,6 +481,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
         _eventChartData = eventChartData;
         _attendanceChartData = attendanceChartData;
         _bookLendingChartData = bookLendingChartData;
+        _creditTransactionsChartData = creditTransactionsChartData;
         _isLoading = false;
       });
     }
@@ -495,6 +540,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
       eventChartData: _eventChartData,
       attendanceChartData: _attendanceChartData,
       bookLendingChartData: _bookLendingChartData,
+      creditTransactionsChartData: _creditTransactionsChartData,
       schooldays: _schooldays,
     );
   }

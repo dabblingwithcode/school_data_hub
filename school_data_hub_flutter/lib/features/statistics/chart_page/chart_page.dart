@@ -7,6 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/attendance_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/book_lending_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/chart_page_bottom_bar.dart';
+import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/credit_transactions_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/event_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/pupil_stats_view.dart';
 
@@ -36,6 +37,8 @@ class ChartPage extends WatchingWidget {
   final Map<DateTime, ({int excused, int unexcused, int goneHome})>
   attendanceChartData;
   final Map<DateTime, ({int currentlyLent})> bookLendingChartData;
+  final Map<DateTime, ({int incoming, int outgoing, int balance})>
+  creditTransactionsChartData;
   final List<Schoolday> schooldays;
 
   const ChartPage({
@@ -44,6 +47,7 @@ class ChartPage extends WatchingWidget {
     required this.eventChartData,
     required this.attendanceChartData,
     required this.bookLendingChartData,
+    required this.creditTransactionsChartData,
     required this.schooldays,
   });
 
@@ -112,6 +116,11 @@ class ChartPage extends WatchingWidget {
         return BookLendingStatsView(
           sortedSchooldays: sortedSchooldays,
           bookLendingChartData: bookLendingChartData,
+        );
+      case 4:
+        return CreditTransactionsStatsView(
+          sortedSchooldays: sortedSchooldays,
+          creditTransactionsChartData: creditTransactionsChartData,
         );
       default:
         return const SizedBox.shrink();

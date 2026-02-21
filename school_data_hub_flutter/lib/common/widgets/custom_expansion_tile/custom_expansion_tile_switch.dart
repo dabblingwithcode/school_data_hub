@@ -32,17 +32,20 @@ class CustomExpansionTileSwitch extends WatchingWidget {
           expansionSwitchWidget != null &&
               includeSwitch != null &&
               includeSwitch == true
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                expansionSwitchWidget!,
-                const Gap(10),
-                AnimatedRotation(
-                  turns: isExpanded ? 0.5 : 0.0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Icon(Icons.keyboard_arrow_down, color: switchColor!),
-                ),
-              ],
+          ? SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  expansionSwitchWidget!,
+                  const Gap(10),
+                  AnimatedRotation(
+                    turns: isExpanded ? 0.5 : 0.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(Icons.keyboard_arrow_down, color: switchColor!),
+                  ),
+                ],
+              ),
             )
           : expansionSwitchWidget != null && includeSwitch != true
           ? expansionSwitchWidget
