@@ -2,14 +2,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 
 class SchoolListFilterManager {
   SchoolListManager get _schoolListManager => di<SchoolListManager>();
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
   PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
+  HubSessionManager get _hubSessionManager => di<HubSessionManager>();
+
   final _filteredSchoolLists = ValueNotifier<List<SchoolList>>([]);
   ValueListenable<List<SchoolList>> get filteredSchoolLists =>
       _filteredSchoolLists;
@@ -17,9 +21,16 @@ class SchoolListFilterManager {
   ValueListenable<bool> get filterState => _filterState;
   final _filterState = ValueNotifier<bool>(false);
 
+  final _schoolListFilterState = ValueNotifier<Map<SchoolListFilter, bool>>(
+    initialSchoolListFilterValues,
+  );
+  ValueListenable<Map<SchoolListFilter, bool>> get schoolListFilterState =>
+      _schoolListFilterState;
+
   void dispose() {
     _filteredSchoolLists.dispose();
     _filterState.dispose();
+    _schoolListFilterState.dispose();
     _schoolListManager.removeListener(_onSchoolListsChanged);
 
     return;
@@ -33,19 +44,8 @@ class SchoolListFilterManager {
   }
 
   void _onSchoolListsChanged() {
-    // If we have an active filter, reapply it to the new data
-    if (_filterState.value) {
-      _filteredSchoolLists.value = _schoolListManager.schoolLists
-          .where(
-            (element) => element.name.toLowerCase().contains(
-              _filteredSchoolLists.value.first.name.toLowerCase(),
-            ),
-          )
-          .toList();
-    } else {
-      // Otherwise, just update with the new full list
-      _filteredSchoolLists.value = _schoolListManager.schoolLists;
-    }
+    // Reapply active filters when school lists data changes
+    _applyActiveFilters();
   }
 
   void updateFilteredSchoolLists(List<SchoolList> schoolLists) {
@@ -54,6 +54,7 @@ class SchoolListFilterManager {
 
   void resetFilters() {
     _filterState.value = false;
+    _schoolListFilterState.value = Map.from(initialSchoolListFilterValues);
     _filteredSchoolLists.value = _schoolListManager.schoolLists;
     _filtersStateManager.setFilterState(
       filterState: FilterState.schoolList,
@@ -61,7 +62,7 @@ class SchoolListFilterManager {
     );
   }
 
-  void onSearchEnter(String text) {
+  void onSearchTextSchoolListsFilter(String text) {
     if (text.isEmpty) {
       _filteredSchoolLists.value = _schoolListManager.schoolLists;
       return;
@@ -75,6 +76,77 @@ class SchoolListFilterManager {
     _filteredSchoolLists.value = _schoolListManager.schoolLists
         .where((element) => element.name.toLowerCase().contains(lowerCaseText))
         .toList();
+  }
+
+  /// Toggle filter for public school lists
+  void togglePublicListsFilter() {
+    final currentValue =
+        _schoolListFilterState.value[SchoolListFilter.publicLists] ?? false;
+    _setMutuallyExclusiveFilter(SchoolListFilter.publicLists, !currentValue);
+  }
+
+  /// Toggle filter for user's own lists
+  void toggleMyListsFilter() {
+    final currentValue =
+        _schoolListFilterState.value[SchoolListFilter.myLists] ?? false;
+    _setMutuallyExclusiveFilter(SchoolListFilter.myLists, !currentValue);
+  }
+
+  /// Toggle filter for other users' lists (not public and not created by current user)
+  void toggleOtherListsFilter() {
+    final currentValue =
+        _schoolListFilterState.value[SchoolListFilter.otherLists] ?? false;
+    _setMutuallyExclusiveFilter(SchoolListFilter.otherLists, !currentValue);
+  }
+
+  /// Set a mutually exclusive filter, ensuring only one filter is active at a time
+  void _setMutuallyExclusiveFilter(SchoolListFilter filter, bool value) {
+    final newState = Map<SchoolListFilter, bool>.from(
+      initialSchoolListFilterValues,
+    );
+
+    if (value) {
+      // If turning on this filter, turn off all others
+      newState[filter] = true;
+    }
+    // If value is false, all filters remain false (from initialValues)
+
+    _schoolListFilterState.value = newState;
+    _applyActiveFilters();
+  }
+
+  /// Apply the currently active filters to the school lists
+  void _applyActiveFilters() {
+    final userName = _hubSessionManager.userName;
+    List<SchoolList> filteredLists = _schoolListManager.schoolLists;
+    bool anyFilterActive = false;
+
+    if (_schoolListFilterState.value[SchoolListFilter.publicLists] == true) {
+      filteredLists = filteredLists
+          .where((list) => list.public == true)
+          .toList();
+      anyFilterActive = true;
+    } else if (_schoolListFilterState.value[SchoolListFilter.myLists] == true &&
+        userName != null) {
+      filteredLists = filteredLists
+          .where((list) => list.createdBy == userName)
+          .toList();
+      anyFilterActive = true;
+    } else if (_schoolListFilterState.value[SchoolListFilter.otherLists] ==
+            true &&
+        userName != null) {
+      filteredLists = filteredLists
+          .where((list) => list.public == false && list.createdBy != userName)
+          .toList();
+      anyFilterActive = true;
+    }
+
+    _filteredSchoolLists.value = filteredLists;
+    _filterState.value = anyFilterActive;
+    _filtersStateManager.setFilterState(
+      filterState: FilterState.schoolList,
+      value: anyFilterActive,
+    );
   }
 
   List<PupilListEntry> addPupilEntryFiltersToFilteredPupils(
@@ -109,12 +181,12 @@ class SchoolListFilterManager {
       }
       filteredPupilEntries.add(pupilEntry);
     }
-    //- TODO: Implement filterState, FlutterError (setState() or markNeedsBuild() called during build.
-    // if (filterIsOn) {
-    //   _filterState.value = true;
-    // } else {
-    //   _filterState.value = false;
-    // }
+
+    if (filterIsOn) {
+      _filterState.value = true;
+    } else {
+      _filterState.value = false;
+    }
 
     return filteredPupilEntries;
   }

@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
-import 'package:school_data_hub_flutter/common/widgets/media_capture_buttons.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/media_capture_buttons.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 

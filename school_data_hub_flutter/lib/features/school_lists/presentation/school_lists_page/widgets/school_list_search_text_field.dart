@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _schoolListFilterManager = di<SchoolListFilterManager>();
 final _filtersStateManager = di<FiltersStateManager>();
@@ -38,7 +38,8 @@ class _SchoolListSearchTextFieldState extends State<SchoolListSearchTextField> {
       focusNode: focusNode,
       controller: textEditingController,
       textInputAction: TextInputAction.search,
-      onChanged: (value) => _schoolListFilterManager.onSearchEnter(value),
+      onChanged: (value) =>
+          _schoolListFilterManager.onSearchTextSchoolListsFilter(value),
       decoration: InputDecoration(
         fillColor: const Color.fromARGB(255, 255, 255, 255),
         filled: true,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
@@ -9,7 +10,6 @@ import 'package:school_data_hub_flutter/features/school_lists/domain/school_list
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/widgets/school_list_card.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/widgets/school_list_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/widgets/school_lists_bottom_navbar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SchoolListsPage extends WatchingWidget {
   const SchoolListsPage({super.key});
@@ -64,6 +64,7 @@ class SchoolListsPage extends WatchingWidget {
                           fontSize: 20,
                         ),
                       ),
+                      const Spacer(),
                     ],
                   ),
                 ),
@@ -97,6 +98,8 @@ class SchoolListsPage extends WatchingWidget {
                     ],
                   ),
                 ),
+
+                const Gap(10),
                 filteredSchoolLists.isEmpty
                     ? const Center(
                         child: Padding(
