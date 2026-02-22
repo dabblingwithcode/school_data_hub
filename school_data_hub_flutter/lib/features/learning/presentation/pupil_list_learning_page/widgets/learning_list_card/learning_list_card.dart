@@ -30,10 +30,7 @@ class LearningListCard extends WatchingWidget {
     // Watch only the specific properties this widget uses directly
     final firstName = watchPropertyValue((m) => m.firstName, target: pupil);
     final lastName = watchPropertyValue((m) => m.lastName, target: pupil);
-    final competenceChecks = watchPropertyValue(
-      (m) => m.competenceChecks,
-      target: pupil,
-    );
+
     final pupilBookLendingManager = watch(di<PupilBookLendingManager>());
     final pupilBookLendings = pupilBookLendingManager.getPupilBookLendings(
       pupil.pupilId,

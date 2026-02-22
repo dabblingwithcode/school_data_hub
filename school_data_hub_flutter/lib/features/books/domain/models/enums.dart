@@ -39,3 +39,40 @@ enum ReadingLevel {
 
   const ReadingLevel(this.value);
 }
+
+enum BookFilter {
+  all('Alle'),
+  available('Verfügbar'),
+  borrowed('Ausgeliehen');
+
+  final String value;
+  const BookFilter(this.value);
+}
+
+Map<BookFilter, bool> initialBookFilterValues = {
+  BookFilter.all: true,
+  BookFilter.available: false,
+  BookFilter.borrowed: false,
+};
+
+enum PupilBookLendingFilter {
+  all,
+  currentlyBorrowed,
+  returned,
+  lastSevenDays,
+  lastThirtyDays,
+  highScore,
+  lowScore,
+  noScore,
+}
+
+Map<PupilBookLendingFilter, bool> initialPupilBookLendingFilterValues = {
+  PupilBookLendingFilter.all: false,
+  PupilBookLendingFilter.currentlyBorrowed: false,
+  PupilBookLendingFilter.returned: false,
+  PupilBookLendingFilter.lastSevenDays: false,
+  PupilBookLendingFilter.lastThirtyDays: false,
+  PupilBookLendingFilter.highScore: false,
+  PupilBookLendingFilter.lowScore: false,
+  PupilBookLendingFilter.noScore: false,
+};

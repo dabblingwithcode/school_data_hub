@@ -36,8 +36,9 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                     onPressed: () {
                       if (selectedContent !=
                           SelectedContent.competenceStatuses) {
-                        di<CompetenceManager>().selectedLearningContent.value =
-                            SelectedContent.competenceStatuses;
+                        di<CompetenceManager>().setSelectedContent(
+                          SelectedContent.competenceStatuses,
+                        );
 
                         return;
                       }
@@ -72,8 +73,9 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                     ),
                     onPressed: () {
                       if (selectedContent != SelectedContent.competenceGoals) {
-                        di<CompetenceManager>().selectedLearningContent.value =
-                            SelectedContent.competenceGoals;
+                        di<CompetenceManager>().setSelectedContent(
+                          SelectedContent.competenceGoals,
+                        );
 
                         return;
                       }
@@ -106,8 +108,9 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                     ),
                     onPressed: () {
                       if (selectedContent != SelectedContent.workbooks) {
-                        di<CompetenceManager>().selectedLearningContent.value =
-                            SelectedContent.workbooks;
+                        di<CompetenceManager>().setSelectedContent(
+                          SelectedContent.workbooks,
+                        );
 
                         return;
                       }
@@ -133,8 +136,9 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                   selectedIcon: Icon(Icons.book, color: AppColors.accentColor),
                   onPressed: () {
                     if (selectedContent != SelectedContent.books) {
-                      di<CompetenceManager>().selectedLearningContent.value =
-                          SelectedContent.books;
+                      di<CompetenceManager>().setSelectedContent(
+                        SelectedContent.books,
+                      );
 
                       return;
                     }

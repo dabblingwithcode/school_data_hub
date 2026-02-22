@@ -5,6 +5,7 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/filters/atte
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
@@ -20,6 +21,7 @@ enum FilterState {
   matrixUser,
   matrixRoom,
   user,
+  pupilBookLending,
 }
 
 const Map<FilterState, bool> _initialFilterGlobalValues = {
@@ -32,6 +34,7 @@ const Map<FilterState, bool> _initialFilterGlobalValues = {
   FilterState.matrixUser: false,
   FilterState.matrixRoom: false,
   FilterState.user: false,
+  FilterState.pupilBookLending: false,
 };
 
 abstract class FiltersStateManager {
@@ -114,6 +117,7 @@ class FiltersStateManagerImplementation implements FiltersStateManager {
     di<AuthorizationFilterManager>().resetFilters();
     di<PupilAuthorizationFilterManager>().resetFilters();
     di<LearningSupportFilterManager>().resetFilters();
+    di<PupilBookLendingFilterManager>().resetFilters();
 
     _filterStates.value = {..._initialFilterGlobalValues};
     _filtersActive.value = false;

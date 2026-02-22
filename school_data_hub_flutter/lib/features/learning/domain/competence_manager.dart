@@ -35,9 +35,10 @@ class CompetenceManager {
   final _competenceGoalApiService = CompetenceGoalApiService();
   final _competences = ValueNotifier<List<Competence>>([]);
   ValueListenable<List<Competence>> get competences => _competences;
-
+  ValueListenable<SelectedContent> get selectedLearningContent =>
+      _selectedLearningContent;
   // Learning content selection state
-  final selectedLearningContent = ValueNotifier<SelectedContent>(
+  final _selectedLearningContent = ValueNotifier<SelectedContent>(
     SelectedContent.books,
   );
 
@@ -53,7 +54,7 @@ class CompetenceManager {
   CompetenceManager();
   void dispose() {
     _competences.dispose();
-    selectedLearningContent.dispose();
+    _selectedLearningContent.dispose();
 
     return;
   }
@@ -66,6 +67,10 @@ class CompetenceManager {
 
   void clearData() {
     _competences.value = [];
+  }
+
+  void setSelectedContent(SelectedContent selectedContent) {
+    _selectedLearningContent.value = selectedContent;
   }
 
   //-TODO: Workaround to avoid registration error

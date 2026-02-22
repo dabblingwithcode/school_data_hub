@@ -3,8 +3,9 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
+import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 
 class LearningFilterBottomSheet extends WatchingWidget {
@@ -12,31 +13,25 @@ class LearningFilterBottomSheet extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final learningSupportFilterManager = di<LearningSupportFilterManager>();
-    Map<SupportLevelType, bool> supportLevelFilters = watchValue(
-      (LearningSupportFilterManager x) => x.supportLevelFilterState,
+    final selectedContent = watchValue(
+      (CompetenceManager m) => m.selectedLearningContent,
     );
-    Map<SupportArea, bool> supportAreaFilters = watchValue(
-      (LearningSupportFilterManager x) => x.supportAreaFilterState,
+    final pupilBookLendingFilterManager = di<PupilBookLendingFilterManager>();
+    Map<PupilBookLendingFilter, bool> bookLendingFilters = watchValue(
+      (PupilBookLendingFilterManager x) => x.pupilBookLendingFilterState,
     );
-    bool valueSpecialNeeds =
-        supportLevelFilters[SupportLevelType.specialNeeds]!;
-    bool valueSupportLevel1 =
-        supportLevelFilters[SupportLevelType.supportLevel1]!;
-    bool valueSupportLevel2 =
-        supportLevelFilters[SupportLevelType.supportLevel2]!;
-    bool valueSupportLevel3 =
-        supportLevelFilters[SupportLevelType.supportLevel3]!;
-    bool valueSupportLevel4 =
-        supportLevelFilters[SupportLevelType.supportLevel4]!;
-    bool valueMigrationSupport =
-        supportLevelFilters[SupportLevelType.migrationSupport]!;
-    bool valueSupportAreaMotorics = supportAreaFilters[SupportArea.motorics]!;
-    bool valueSupportAreaEmotions = supportAreaFilters[SupportArea.emotions]!;
-    bool valueSupportAreaMath = supportAreaFilters[SupportArea.math]!;
-    bool valueSupportAreaLearning = supportAreaFilters[SupportArea.learning]!;
-    bool valueSupportAreaGerman = supportAreaFilters[SupportArea.german]!;
-    bool valueSupportAreaLanguage = supportAreaFilters[SupportArea.language]!;
+
+    bool valueAll = bookLendingFilters[PupilBookLendingFilter.all]!;
+    bool valueCurrentlyBorrowed =
+        bookLendingFilters[PupilBookLendingFilter.currentlyBorrowed]!;
+    bool valueReturned = bookLendingFilters[PupilBookLendingFilter.returned]!;
+    bool valueLastSevenDays =
+        bookLendingFilters[PupilBookLendingFilter.lastSevenDays]!;
+    bool valueLastThirtyDays =
+        bookLendingFilters[PupilBookLendingFilter.lastThirtyDays]!;
+    bool valueHighScore = bookLendingFilters[PupilBookLendingFilter.highScore]!;
+    bool valueLowScore = bookLendingFilters[PupilBookLendingFilter.lowScore]!;
+    bool valueNoScore = bookLendingFilters[PupilBookLendingFilter.noScore]!;
 
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20, top: 8),
@@ -49,7 +44,9 @@ class LearningFilterBottomSheet extends WatchingWidget {
                 children: [
                   const CommonPupilFiltersWidget(),
                   const Row(
-                    children: [Text('Förderebene', style: AppStyles.subtitle)],
+                    children: [
+                      Text('Bücher Status', style: AppStyles.subtitle),
+                    ],
                   ),
                   const Gap(5),
                   Wrap(
@@ -58,13 +55,25 @@ class LearningFilterBottomSheet extends WatchingWidget {
                     alignment: WrapAlignment.center,
                     children: [
                       ThemedFilterChip(
-                        label: 'Ebene 1',
-                        selected: valueSupportLevel1,
+                        label: 'Alle',
+                        selected: valueAll,
                         onSelected: (val) {
-                          learningSupportFilterManager.setSupportLevelFilter(
-                            supportLevelFilterRecords: [
+                          pupilBookLendingFilterManager.setFilter(
+                            pupilBookLendingFilters: [
+                              (filter: PupilBookLendingFilter.all, value: val),
+                            ],
+                          );
+                        },
+                      ),
+                      ThemedFilterChip(
+                        label: 'Ausgeliehen',
+                        selected: valueCurrentlyBorrowed,
+                        onSelected: (val) {
+                          pupilBookLendingFilterManager.setFilter(
+                            pupilBookLendingFilters: [
                               (
-                                filter: SupportLevelType.supportLevel1,
+                                filter:
+                                    PupilBookLendingFilter.currentlyBorrowed,
                                 value: val,
                               ),
                             ],
@@ -72,41 +81,13 @@ class LearningFilterBottomSheet extends WatchingWidget {
                         },
                       ),
                       ThemedFilterChip(
-                        label: 'Ebene 2',
-                        selected: valueSupportLevel2,
+                        label: 'Zurückgegeben',
+                        selected: valueReturned,
                         onSelected: (val) {
-                          learningSupportFilterManager.setSupportLevelFilter(
-                            supportLevelFilterRecords: [
+                          pupilBookLendingFilterManager.setFilter(
+                            pupilBookLendingFilters: [
                               (
-                                filter: SupportLevelType.supportLevel2,
-                                value: val,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      ThemedFilterChip(
-                        label: 'Ebene 3',
-                        selected: valueSupportLevel3,
-                        onSelected: (val) {
-                          learningSupportFilterManager.setSupportLevelFilter(
-                            supportLevelFilterRecords: [
-                              (
-                                filter: SupportLevelType.supportLevel3,
-                                value: val,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      ThemedFilterChip(
-                        label: 'Regenbogen',
-                        selected: valueSupportLevel4,
-                        onSelected: (val) {
-                          learningSupportFilterManager.setSupportLevelFilter(
-                            supportLevelFilterRecords: [
-                              (
-                                filter: SupportLevelType.supportLevel4,
+                                filter: PupilBookLendingFilter.returned,
                                 value: val,
                               ),
                             ],
@@ -116,9 +97,7 @@ class LearningFilterBottomSheet extends WatchingWidget {
                     ],
                   ),
                   const Row(
-                    children: [
-                      Text('Förderbereich', style: AppStyles.subtitle),
-                    ],
+                    children: [Text('Zeitraum', style: AppStyles.subtitle)],
                   ),
                   const Gap(5),
                   Wrap(
@@ -127,92 +106,13 @@ class LearningFilterBottomSheet extends WatchingWidget {
                     alignment: WrapAlignment.center,
                     children: [
                       ThemedFilterChip(
-                        label: 'Motorik',
-                        selected: valueSupportAreaMotorics,
+                        label: 'Letzte 7 Tage',
+                        selected: valueLastSevenDays,
                         onSelected: (val) {
-                          learningSupportFilterManager.setSupportAreaFilter(
-                            supportAreaFilterRecords: [
-                              (filter: SupportArea.motorics, value: val),
-                            ],
-                          );
-                        },
-                      ),
-                      ThemedFilterChip(
-                        label: 'ES',
-                        selected: valueSupportAreaEmotions,
-                        onSelected: (val) {
-                          learningSupportFilterManager.setSupportAreaFilter(
-                            supportAreaFilterRecords: [
-                              (filter: SupportArea.emotions, value: val),
-                            ],
-                          );
-                        },
-                      ),
-                      ThemedFilterChip(
-                        label: 'Mathe',
-                        selected: valueSupportAreaMath,
-                        onSelected: (val) {
-                          learningSupportFilterManager.setSupportAreaFilter(
-                            supportAreaFilterRecords: [
-                              (filter: SupportArea.math, value: val),
-                            ],
-                          );
-                        },
-                      ),
-                      ThemedFilterChip(
-                        label: 'Lernen',
-                        selected: valueSupportAreaLearning,
-                        onSelected: (val) {
-                          learningSupportFilterManager.setSupportAreaFilter(
-                            supportAreaFilterRecords: [
-                              (filter: SupportArea.learning, value: val),
-                            ],
-                          );
-                        },
-                      ),
-                      ThemedFilterChip(
-                        label: 'Deutsch',
-                        selected: valueSupportAreaGerman,
-                        onSelected: (val) {
-                          learningSupportFilterManager.setSupportAreaFilter(
-                            supportAreaFilterRecords: [
-                              (filter: SupportArea.german, value: val),
-                            ],
-                          );
-                        },
-                      ),
-                      ThemedFilterChip(
-                        label: 'Sprache',
-                        selected: valueSupportAreaLanguage,
-                        onSelected: (val) {
-                          learningSupportFilterManager.setSupportAreaFilter(
-                            supportAreaFilterRecords: [
-                              (filter: SupportArea.language, value: val),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                  const Row(
-                    children: [
-                      Text('Besondere Förderung', style: AppStyles.subtitle),
-                    ],
-                  ),
-                  const Gap(5),
-                  Wrap(
-                    spacing: 5,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      ThemedFilterChip(
-                        label: 'Erstförderung',
-                        selected: valueMigrationSupport,
-                        onSelected: (val) {
-                          learningSupportFilterManager.setSupportLevelFilter(
-                            supportLevelFilterRecords: [
+                          pupilBookLendingFilterManager.setFilter(
+                            pupilBookLendingFilters: [
                               (
-                                filter: SupportLevelType.migrationSupport,
+                                filter: PupilBookLendingFilter.lastSevenDays,
                                 value: val,
                               ),
                             ],
@@ -220,13 +120,66 @@ class LearningFilterBottomSheet extends WatchingWidget {
                         },
                       ),
                       ThemedFilterChip(
-                        label: 'AO-SF',
-                        selected: valueSpecialNeeds,
+                        label: 'Letzte 30 Tage',
+                        selected: valueLastThirtyDays,
                         onSelected: (val) {
-                          learningSupportFilterManager.setSupportLevelFilter(
-                            supportLevelFilterRecords: [
+                          pupilBookLendingFilterManager.setFilter(
+                            pupilBookLendingFilters: [
                               (
-                                filter: SupportLevelType.specialNeeds,
+                                filter: PupilBookLendingFilter.lastThirtyDays,
+                                value: val,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const Row(
+                    children: [Text('Bewertung', style: AppStyles.subtitle)],
+                  ),
+                  const Gap(5),
+                  Wrap(
+                    spacing: 5,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      ThemedFilterChip(
+                        label: 'Hohe Bewertung (≥3)',
+                        selected: valueHighScore,
+                        onSelected: (val) {
+                          pupilBookLendingFilterManager.setFilter(
+                            pupilBookLendingFilters: [
+                              (
+                                filter: PupilBookLendingFilter.highScore,
+                                value: val,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      ThemedFilterChip(
+                        label: 'Niedrige Bewertung (1-2)',
+                        selected: valueLowScore,
+                        onSelected: (val) {
+                          pupilBookLendingFilterManager.setFilter(
+                            pupilBookLendingFilters: [
+                              (
+                                filter: PupilBookLendingFilter.lowScore,
+                                value: val,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      ThemedFilterChip(
+                        label: 'Keine Bewertung',
+                        selected: valueNoScore,
+                        onSelected: (val) {
+                          pupilBookLendingFilterManager.setFilter(
+                            pupilBookLendingFilters: [
+                              (
+                                filter: PupilBookLendingFilter.noScore,
                                 value: val,
                               ),
                             ],

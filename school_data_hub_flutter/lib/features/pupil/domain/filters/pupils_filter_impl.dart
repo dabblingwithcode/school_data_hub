@@ -7,6 +7,7 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_s
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
@@ -146,7 +147,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
           (x) => x == true,
         ) ||
         _learningSupportFilterManager.currentLearningSupportPlanFiltersActive ||
-        _filtersStateManager.getFilterState(FilterState.attendance);
+        _filtersStateManager.getFilterState(FilterState.attendance) ||
+        _filtersStateManager.getFilterState(FilterState.pupilBookLending);
 
     // If no filters are active, just sort
 
@@ -266,6 +268,19 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       )) {
         if (!di<SchooldayEventFilterManager>()
             .pupilIdsWithFilteredSchooldayEvents
+            .value
+            .contains(pupil.pupilId)) {
+          if (filtersOn == false) filtersOn = true;
+          continue;
+        }
+      }
+
+      // Pupil book lending filters
+      if (di<FiltersStateManager>().getFilterState(
+        FilterState.pupilBookLending,
+      )) {
+        if (!di<PupilBookLendingFilterManager>()
+            .pupilIdsWithFilteredPupilBookLendings
             .value
             .contains(pupil.pupilId)) {
           if (filtersOn == false) filtersOn = true;
