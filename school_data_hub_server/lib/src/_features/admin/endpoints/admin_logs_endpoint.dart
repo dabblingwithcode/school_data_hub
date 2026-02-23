@@ -1,6 +1,6 @@
-import 'package:serverpod/serverpod.dart';
 import 'package:serverpod/protocol.dart'
     show SessionLogEntry, LogEntry, QueryLogEntry;
+import 'package:serverpod/serverpod.dart';
 
 import '../../../generated/protocol.dart';
 

@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:command_it/command_it.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 
@@ -44,6 +43,7 @@ class ServerLogsManager extends ChangeNotifier {
 
   late final deleteCommand = Command.createAsync<int, void>(
     _deleteSessionLog,
+    initialValue: null,
     errorFilter: const GlobalIfNoLocalErrorFilter(),
   );
 
@@ -89,7 +89,7 @@ class ServerLogsManager extends ChangeNotifier {
   Future<void> _deleteSessionLog(int sessionLogId) async {
     final api = di<ServerLogsApiService>();
     await api.deleteSessionLog(sessionLogId);
-    
+
     // Remove from local list
     _sessionLogs.value = _sessionLogs.value
         .where((log) => log.sessionLogEntry.sessionId != sessionLogId)
@@ -100,7 +100,7 @@ class ServerLogsManager extends ChangeNotifier {
   Future<void> _deleteAllSessionLogs() async {
     final api = di<ServerLogsApiService>();
     await api.deleteAllSessionLogs();
-    
+
     // Clear local list
     _sessionLogs.value = [];
     _hasMore.value = false;
@@ -109,16 +109,18 @@ class ServerLogsManager extends ChangeNotifier {
 
   void setEndpointFilter(String? value) {
     final normalized = value?.trim();
-    _endpointFilter.value =
-        (normalized != null && normalized.isEmpty) ? null : normalized;
+    _endpointFilter.value = (normalized != null && normalized.isEmpty)
+        ? null
+        : normalized;
     _updateFiltersActive();
     fetchCommand.run();
   }
 
   void setMethodFilter(String? value) {
     final normalized = value?.trim();
-    _methodFilter.value =
-        (normalized != null && normalized.isEmpty) ? null : normalized;
+    _methodFilter.value = (normalized != null && normalized.isEmpty)
+        ? null
+        : normalized;
     _updateFiltersActive();
     fetchCommand.run();
   }
@@ -152,7 +154,8 @@ class ServerLogsManager extends ChangeNotifier {
   }
 
   void _updateFiltersActive() {
-    _filtersActive.value = _endpointFilter.value != null ||
+    _filtersActive.value =
+        _endpointFilter.value != null ||
         _methodFilter.value != null ||
         _slowFilter.value ||
         _errorFilter.value ||

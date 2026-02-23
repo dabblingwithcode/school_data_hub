@@ -6,11 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
 class SessionLogCard extends StatelessWidget {
-  const SessionLogCard({
-    super.key,
-    required this.info,
-    this.onDelete,
-  });
+  const SessionLogCard({super.key, required this.info, this.onDelete});
 
   final HubSessionLogInfo info;
   final VoidCallback? onDelete;
@@ -41,7 +37,10 @@ class SessionLogCard extends StatelessWidget {
 
     void copyToClipboard() {
       Clipboard.setData(
-        ClipboardData(text: info.sessionLogEntry.error ?? 'kein Inhalt'),
+        ClipboardData(
+          text:
+              '${info.sessionLogEntry.endpoint}/n${info.sessionLogEntry.error}',
+        ),
       );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -53,12 +52,14 @@ class SessionLogCard extends StatelessWidget {
 
     void handleLongPress() {
       if (onDelete == null) return;
-      
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Eintrag löschen'),
-          content: const Text('Möchten Sie diesen Log-Eintrag wirklich löschen?'),
+          content: const Text(
+            'Möchten Sie diesen Log-Eintrag wirklich löschen?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -119,14 +120,22 @@ class SessionLogCard extends StatelessWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  Icon(Icons.access_time, size: 14, color: Colors.black54),
+                  const Icon(
+                    Icons.access_time,
+                    size: 14,
+                    color: Colors.black54,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     timestamp,
                     style: AppStyles.textLabel.copyWith(color: Colors.black54),
                   ),
                   const Spacer(),
-                  Icon(Icons.timer_outlined, size: 14, color: Colors.black54),
+                  const Icon(
+                    Icons.timer_outlined,
+                    size: 14,
+                    color: Colors.black54,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     durationMs,
@@ -134,11 +143,17 @@ class SessionLogCard extends StatelessWidget {
                   ),
                   if (entry.numQueries != null) ...[
                     const SizedBox(width: 12),
-                    Icon(Icons.storage_outlined, size: 14, color: Colors.black54),
+                    const Icon(
+                      Icons.storage_outlined,
+                      size: 14,
+                      color: Colors.black54,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '${entry.numQueries} Q',
-                      style: AppStyles.textLabel.copyWith(color: Colors.black54),
+                      style: AppStyles.textLabel.copyWith(
+                        color: Colors.black54,
+                      ),
                     ),
                     const Gap(20),
                     IconButton(
