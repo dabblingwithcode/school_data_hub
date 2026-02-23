@@ -100,6 +100,51 @@ class MatrixEventReportDetailSheet extends StatelessWidget {
                   ),
                   _DetailLine(label: 'Grund', value: report.reason ?? '-'),
                   const Gap(16),
+                  Card(
+                    color: Colors.grey[100],
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _resolveMxIdToName(
+                                    matrixPolicyManager,
+                                    report.sender,
+                                  ),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                _formatTimestamp(report.receivedTs),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Gap(8),
+                          Text(
+                            _extractMessageContent(eventJson),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Gap(16),
                   const Text(
                     'event_json',
                     style: TextStyle(fontWeight: FontWeight.bold),
@@ -129,6 +174,19 @@ class MatrixEventReportDetailSheet extends StatelessWidget {
     final hh = dt.hour.toString().padLeft(2, '0');
     final min = dt.minute.toString().padLeft(2, '0');
     return '$dd.$mm.${dt.year} $hh:$min';
+  }
+
+  static String _extractMessageContent(Map<String, dynamic>? eventJson) {
+    if (eventJson == null) return '-';
+
+    // Try to get the message body from the event content
+    final content = eventJson['content'];
+    if (content is Map<String, dynamic>) {
+      final body = content['body'];
+      if (body is String) return body;
+    }
+
+    return '-';
   }
 
   static String _resolveMxIdToName(
