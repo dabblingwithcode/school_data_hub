@@ -22,6 +22,7 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
     required this.createdAt,
     required this.score,
     required this.comment,
+    this.print,
     this.documents,
     required this.supportGoalId,
     this.supportGoal,
@@ -34,6 +35,7 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
     required DateTime createdAt,
     required int score,
     required String comment,
+    bool? print,
     List<_i2.HubDocument>? documents,
     required int supportGoalId,
     _i3.SupportGoal? supportGoal,
@@ -48,6 +50,7 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['createdAt']),
       score: jsonSerialization['score'] as int,
       comment: jsonSerialization['comment'] as String,
+      print: jsonSerialization['print'] as bool?,
       documents: (jsonSerialization['documents'] as List?)
           ?.map((e) => _i2.HubDocument.fromJson((e as Map<String, dynamic>)))
           .toList(),
@@ -74,6 +77,8 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
 
   String comment;
 
+  bool? print;
+
   List<_i2.HubDocument>? documents;
 
   int supportGoalId;
@@ -90,6 +95,7 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
     DateTime? createdAt,
     int? score,
     String? comment,
+    bool? print,
     List<_i2.HubDocument>? documents,
     int? supportGoalId,
     _i3.SupportGoal? supportGoal,
@@ -103,6 +109,7 @@ abstract class SupportGoalCheck implements _i1.SerializableModel {
       'createdAt': createdAt.toJson(),
       'score': score,
       'comment': comment,
+      if (print != null) 'print': print,
       if (documents != null)
         'documents': documents?.toJson(valueToJson: (v) => v.toJson()),
       'supportGoalId': supportGoalId,
@@ -126,6 +133,7 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
     required DateTime createdAt,
     required int score,
     required String comment,
+    bool? print,
     List<_i2.HubDocument>? documents,
     required int supportGoalId,
     _i3.SupportGoal? supportGoal,
@@ -136,6 +144,7 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
           createdAt: createdAt,
           score: score,
           comment: comment,
+          print: print,
           documents: documents,
           supportGoalId: supportGoalId,
           supportGoal: supportGoal,
@@ -152,6 +161,7 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
     DateTime? createdAt,
     int? score,
     String? comment,
+    Object? print = _Undefined,
     Object? documents = _Undefined,
     int? supportGoalId,
     Object? supportGoal = _Undefined,
@@ -163,6 +173,7 @@ class _SupportGoalCheckImpl extends SupportGoalCheck {
       createdAt: createdAt ?? this.createdAt,
       score: score ?? this.score,
       comment: comment ?? this.comment,
+      print: print is bool? ? print : this.print,
       documents: documents is List<_i2.HubDocument>?
           ? documents
           : this.documents?.map((e0) => e0.copyWith()).toList(),

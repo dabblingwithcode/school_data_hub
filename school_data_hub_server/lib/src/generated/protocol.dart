@@ -4384,6 +4384,12 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'String',
         ),
         _i2.ColumnDefinition(
+          name: 'print',
+          columnType: _i2.ColumnType.boolean,
+          isNullable: true,
+          dartType: 'bool?',
+        ),
+        _i2.ColumnDefinition(
           name: 'supportGoalId',
           columnType: _i2.ColumnType.bigint,
           isNullable: false,

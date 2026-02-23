@@ -6,5 +6,6 @@ fields:
   createdAt: DateTime
   score: int
   comment: String
+  print: bool?
   documents: List<HubDocument>?, relation
   supportGoal: SupportGoal?, relation(onDelete=Cascade)

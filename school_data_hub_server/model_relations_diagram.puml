@@ -471,6 +471,7 @@ class SupportGoalCheck <<table: <b>support_goal_check</b>>> #e2f0fb##[bold] {
   <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
   <i>score</i>: <b><color:#ff962f>int</color></b>
   <i>comment</i>: <b><color:#ff962f>String</color></b>
+  <i>print</i>: <b><color:#ff962f>bool?</color></b>
  ➡️ <i>documents</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b>
  ➡️ <i>supportGoal</i> : <b><color:#ff962f>SupportGoal?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>onDelete</color></b><color:#ff962f>=</color>Cascade<color:#ff962f>)</color>
 
