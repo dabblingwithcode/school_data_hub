@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
-import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/widgets/school_data_form.dart';
+import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/widgets/school_data_form_page.dart';
 
 class EditSchoolDataPage extends WatchingWidget {
   const EditSchoolDataPage({super.key});
@@ -65,7 +65,7 @@ class EditSchoolDataPage extends WatchingWidget {
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
 
-                const SchoolDataForm(),
+                const SchoolDataFormPage(),
                 const Gap(24),
                 Row(
                   children: [

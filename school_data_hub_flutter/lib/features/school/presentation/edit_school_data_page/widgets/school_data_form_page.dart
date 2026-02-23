@@ -9,8 +9,8 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 
-class SchoolDataForm extends WatchingWidget {
-  const SchoolDataForm({super.key});
+class SchoolDataFormPage extends WatchingWidget {
+  const SchoolDataFormPage({super.key});
 
   @override
   Widget build(BuildContext context) {
