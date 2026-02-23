@@ -6,9 +6,14 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
 class SessionLogCard extends StatelessWidget {
-  const SessionLogCard({super.key, required this.info});
+  const SessionLogCard({
+    super.key,
+    required this.info,
+    this.onDelete,
+  });
 
   final HubSessionLogInfo info;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -46,88 +51,120 @@ class SessionLogCard extends StatelessWidget {
       );
     }
 
-    return Card(
-      color: AppColors.cardInCardColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: borderColor, width: 2),
-      ),
-      elevation: 1,
-      child: ExpansionTile(
-        tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-        childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
-        shape: const Border(),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                _StatusBadge(
-                  hasError: hasError,
-                  isSlow: isSlow,
-                  isOpen: isOpen,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    endpointLabel,
-                    style: AppStyles.subtitle.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
+    void handleLongPress() {
+      if (onDelete == null) return;
+      
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Eintrag löschen'),
+          content: const Text('Möchten Sie diesen Log-Eintrag wirklich löschen?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Abbrechen'),
             ),
-            const SizedBox(height: 6),
-            Row(
-              children: [
-                Icon(Icons.access_time, size: 14, color: Colors.black54),
-                const SizedBox(width: 4),
-                Text(
-                  timestamp,
-                  style: AppStyles.textLabel.copyWith(color: Colors.black54),
-                ),
-                const Spacer(),
-                Icon(Icons.timer_outlined, size: 14, color: Colors.black54),
-                const SizedBox(width: 4),
-                Text(
-                  durationMs,
-                  style: AppStyles.textLabel.copyWith(color: Colors.black54),
-                ),
-                if (entry.numQueries != null) ...[
-                  const SizedBox(width: 12),
-                  Icon(Icons.storage_outlined, size: 14, color: Colors.black54),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${entry.numQueries} Q',
-                    style: AppStyles.textLabel.copyWith(color: Colors.black54),
-                  ),
-                  const Gap(20),
-                  IconButton(
-                    icon: const Icon(Icons.copy, size: 20),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: copyToClipboard,
-                    tooltip: 'Kopieren',
-                  ),
-                ],
-              ],
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                onDelete?.call();
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.dangerButtonColor,
+              ),
+              child: const Text('Löschen'),
             ),
-            if (hasError) ...[
-              const SizedBox(height: 6),
-              _ExpandableErrorText(error: entry.error!),
-            ],
           ],
         ),
-        children: [
-          if (info.logs.isNotEmpty) _LogEntriesSection(logs: info.logs),
-          if (info.queries.isNotEmpty)
-            _QueryEntriesSection(queries: info.queries),
-          if (entry.stackTrace != null)
-            _StackTraceSection(stackTrace: entry.stackTrace!),
-        ],
+      );
+    }
+
+    return InkWell(
+      onLongPress: onDelete != null ? handleLongPress : null,
+      borderRadius: BorderRadius.circular(16),
+      child: Card(
+        color: AppColors.cardInCardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: borderColor, width: 2),
+        ),
+        elevation: 1,
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+          childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+          shape: const Border(),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  _StatusBadge(
+                    hasError: hasError,
+                    isSlow: isSlow,
+                    isOpen: isOpen,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      endpointLabel,
+                      style: AppStyles.subtitle.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Icon(Icons.access_time, size: 14, color: Colors.black54),
+                  const SizedBox(width: 4),
+                  Text(
+                    timestamp,
+                    style: AppStyles.textLabel.copyWith(color: Colors.black54),
+                  ),
+                  const Spacer(),
+                  Icon(Icons.timer_outlined, size: 14, color: Colors.black54),
+                  const SizedBox(width: 4),
+                  Text(
+                    durationMs,
+                    style: AppStyles.textLabel.copyWith(color: Colors.black54),
+                  ),
+                  if (entry.numQueries != null) ...[
+                    const SizedBox(width: 12),
+                    Icon(Icons.storage_outlined, size: 14, color: Colors.black54),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${entry.numQueries} Q',
+                      style: AppStyles.textLabel.copyWith(color: Colors.black54),
+                    ),
+                    const Gap(20),
+                    IconButton(
+                      icon: const Icon(Icons.copy, size: 20),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: copyToClipboard,
+                      tooltip: 'Kopieren',
+                    ),
+                  ],
+                ],
+              ),
+              if (hasError) ...[
+                const SizedBox(height: 6),
+                _ExpandableErrorText(error: entry.error!),
+              ],
+            ],
+          ),
+          children: [
+            if (info.logs.isNotEmpty) _LogEntriesSection(logs: info.logs),
+            if (info.queries.isNotEmpty)
+              _QueryEntriesSection(queries: info.queries),
+            if (entry.stackTrace != null)
+              _StackTraceSection(stackTrace: entry.stackTrace!),
+          ],
+        ),
       ),
     );
   }

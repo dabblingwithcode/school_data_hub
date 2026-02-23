@@ -166,6 +166,19 @@ class EndpointAdminLogs extends _i1.EndpointRef {
         'getSessionLogs',
         {'filter': filter},
       );
+
+  _i2.Future<void> deleteSessionLog(int sessionLogId) =>
+      caller.callServerEndpoint<void>(
+        'adminLogs',
+        'deleteSessionLog',
+        {'sessionLogId': sessionLogId},
+      );
+
+  _i2.Future<void> deleteAllSessionLogs() => caller.callServerEndpoint<void>(
+        'adminLogs',
+        'deleteAllSessionLogs',
+        {},
+      );
 }
 
 /// {@category Endpoint}

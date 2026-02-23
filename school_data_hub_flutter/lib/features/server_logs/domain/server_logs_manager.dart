@@ -42,6 +42,16 @@ class ServerLogsManager extends ChangeNotifier {
     restriction: fetchCommand.isRunning,
   );
 
+  late final deleteCommand = Command.createAsync<int, void>(
+    _deleteSessionLog,
+    errorFilter: const GlobalIfNoLocalErrorFilter(),
+  );
+
+  late final deleteAllCommand = Command.createAsyncNoParamNoResult(
+    _deleteAllSessionLogs,
+    errorFilter: const GlobalIfNoLocalErrorFilter(),
+  );
+
   HubSessionLogFilter _buildFilter({int? lastSessionLogId}) {
     return HubSessionLogFilter(
       endpoint: _endpointFilter.value,
@@ -73,6 +83,27 @@ class ServerLogsManager extends ChangeNotifier {
 
     _sessionLogs.value = [...currentLogs, ...result.sessionLog];
     _hasMore.value = result.sessionLog.length >= 100;
+    notifyListeners();
+  }
+
+  Future<void> _deleteSessionLog(int sessionLogId) async {
+    final api = di<ServerLogsApiService>();
+    await api.deleteSessionLog(sessionLogId);
+    
+    // Remove from local list
+    _sessionLogs.value = _sessionLogs.value
+        .where((log) => log.sessionLogEntry.sessionId != sessionLogId)
+        .toList();
+    notifyListeners();
+  }
+
+  Future<void> _deleteAllSessionLogs() async {
+    final api = di<ServerLogsApiService>();
+    await api.deleteAllSessionLogs();
+    
+    // Clear local list
+    _sessionLogs.value = [];
+    _hasMore.value = false;
     notifyListeners();
   }
 

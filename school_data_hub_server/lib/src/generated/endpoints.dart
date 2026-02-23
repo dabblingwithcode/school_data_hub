@@ -463,7 +463,36 @@ class Endpoints extends _i1.EndpointDispatch {
             session,
             params['filter'],
           ),
-        )
+        ),
+        'deleteSessionLog': _i1.MethodConnector(
+          name: 'deleteSessionLog',
+          params: {
+            'sessionLogId': _i1.ParameterDescription(
+              name: 'sessionLogId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['adminLogs'] as _i3.AdminLogsEndpoint)
+                  .deleteSessionLog(
+            session,
+            params['sessionLogId'],
+          ),
+        ),
+        'deleteAllSessionLogs': _i1.MethodConnector(
+          name: 'deleteAllSessionLogs',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['adminLogs'] as _i3.AdminLogsEndpoint)
+                  .deleteAllSessionLogs(session),
+        ),
       },
     );
     connectors['adminPupil'] = _i1.EndpointConnector(

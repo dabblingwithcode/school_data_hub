@@ -3,6 +3,8 @@ adminCategories:
   - importSupportCategoriesFromJsonFile:
 adminLogs:
   - getSessionLogs:
+  - deleteSessionLog:
+  - deleteAllSessionLogs:
 adminPupil:
   - updateBackendPupilDataState:
 adminSchoolData:

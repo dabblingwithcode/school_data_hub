@@ -36,6 +36,32 @@ class ServerLogsPage extends WatchingWidget {
       },
     );
 
+    registerHandler(
+      select: (ServerLogsManager m) => m.deleteCommand.errors,
+      handler: (context, error, _) {
+        if (error == null) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fehler beim Löschen: ${error.error}'),
+            backgroundColor: AppColors.dangerButtonColor,
+          ),
+        );
+      },
+    );
+
+    registerHandler(
+      select: (ServerLogsManager m) => m.deleteAllCommand.errors,
+      handler: (context, error, _) {
+        if (error == null) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fehler beim Löschen aller Einträge: ${error.error}'),
+            backgroundColor: AppColors.dangerButtonColor,
+          ),
+        );
+      },
+    );
+
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: const GenericAppBar(
@@ -46,6 +72,7 @@ class ServerLogsPage extends WatchingWidget {
         filtersActive: filtersActive,
         onShowFilters: () => showServerLogsFilterBottomSheet(context),
         onResetFilters: manager.resetFilters,
+        onDeleteAll: () => _showDeleteAllDialog(context, manager),
       ),
       body: Center(
         child: ConstrainedBox(
@@ -64,7 +91,12 @@ class ServerLogsPage extends WatchingWidget {
                       horizontal: 8,
                       vertical: 2,
                     ),
-                    child: SessionLogCard(info: info),
+                    child: SessionLogCard(
+                      info: info,
+                      onDelete: () => manager.deleteCommand.run(
+                        info.sessionLogEntry.sessionId,
+                      ),
+                    ),
                   ),
                 ),
                 if (hasMore && logs.isNotEmpty)
@@ -98,16 +130,46 @@ class ServerLogsPage extends WatchingWidget {
   }
 }
 
+void _showDeleteAllDialog(BuildContext context, ServerLogsManager manager) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Alle Logs löschen'),
+      content: const Text(
+        'Möchten Sie wirklich ALLE Server-Logs löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Abbrechen'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            manager.deleteAllCommand.run();
+          },
+          style: TextButton.styleFrom(
+            foregroundColor: AppColors.dangerButtonColor,
+          ),
+          child: const Text('Alle löschen'),
+        ),
+      ],
+    ),
+  );
+}
+
 class _ServerLogsBottomNavBar extends StatelessWidget {
   const _ServerLogsBottomNavBar({
     required this.filtersActive,
     required this.onShowFilters,
     required this.onResetFilters,
+    required this.onDeleteAll,
   });
 
   final bool filtersActive;
   final VoidCallback onShowFilters;
   final VoidCallback onResetFilters;
+  final VoidCallback onDeleteAll;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +183,12 @@ class _ServerLogsBottomNavBar extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 800),
           child: Row(
             children: [
+              IconButton(
+                tooltip: 'Alle löschen',
+                icon: const Icon(Icons.delete_sweep, size: 30),
+                onPressed: onDeleteAll,
+                color: AppColors.dangerButtonColor,
+              ),
               const Spacer(),
               IconButton(
                 tooltip: 'zurück',

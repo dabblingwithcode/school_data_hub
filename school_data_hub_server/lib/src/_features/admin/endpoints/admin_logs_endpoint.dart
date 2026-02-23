@@ -105,4 +105,47 @@ class AdminLogsEndpoint extends Endpoint {
 
     return HubSessionLogResult(sessionLog: sessionLogInfoList);
   }
+
+  Future<void> deleteSessionLog(
+    Session session,
+    int sessionLogId,
+  ) async {
+    // Delete associated log entries first
+    await LogEntry.db.deleteWhere(
+      session,
+      where: (t) => t.sessionLogId.equals(sessionLogId),
+    );
+
+    // Delete associated query log entries
+    await QueryLogEntry.db.deleteWhere(
+      session,
+      where: (t) => t.sessionLogId.equals(sessionLogId),
+    );
+
+    // Delete the session log entry itself
+    await SessionLogEntry.db.deleteWhere(
+      session,
+      where: (t) => t.id.equals(sessionLogId),
+    );
+  }
+
+  Future<void> deleteAllSessionLogs(Session session) async {
+    // Delete all log entries
+    await LogEntry.db.deleteWhere(
+      session,
+      where: (t) => Constant.bool(true),
+    );
+
+    // Delete all query log entries
+    await QueryLogEntry.db.deleteWhere(
+      session,
+      where: (t) => Constant.bool(true),
+    );
+
+    // Delete all session log entries
+    await SessionLogEntry.db.deleteWhere(
+      session,
+      where: (t) => Constant.bool(true),
+    );
+  }
 }
