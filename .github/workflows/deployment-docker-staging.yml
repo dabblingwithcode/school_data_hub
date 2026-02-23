@@ -4,7 +4,9 @@
 name: Deploy to Docker Staging
 on:
   push:
-    branches: [develop, staging]
+    branches: [staging]
+    paths:
+      - "school_data_hub_server/**"
   workflow_dispatch:
     inputs:
       target:
@@ -26,7 +28,6 @@ env:
 
 jobs:
   build-and-push-image:
-    if: contains(github.event.head_commit.message, '[deploy]')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -72,7 +73,6 @@ jobs:
           platforms: linux/arm/v7, linux/arm64/v8
 
   deploy:
-    if: contains(github.event.head_commit.message, '[deploy]')
     needs: build-and-push-image
     name: deploy to staging
     runs-on: ubuntu-latest
