@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
 
@@ -18,7 +20,7 @@ class PupilListLearningContentNavBar extends WatchingWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            if (di<HubSessionManager>().isAdmin)
+            if (di<EnvManager>().activeEnv!.runMode != HubRunMode.production)
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -56,7 +58,7 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                   ),
                 ],
               ),
-            if (di<HubSessionManager>().isTester)
+            if (di<EnvManager>().activeEnv!.runMode != HubRunMode.production)
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

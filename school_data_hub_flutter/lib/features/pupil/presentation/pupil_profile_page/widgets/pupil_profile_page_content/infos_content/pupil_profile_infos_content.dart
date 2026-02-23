@@ -120,54 +120,61 @@ class PupilProfileInfosContent extends WatchingWidget {
                     propertyValue: (value: null),
                   );
                 },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: pupil.specialInformation != null
-                        ? AppColors.backgroundColor.withValues(alpha: 0.05)
-                        : AppColors.interactiveColor.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: pupil.specialInformation != null
-                          ? AppColors.backgroundColor.withValues(alpha: 0.2)
-                          : AppColors.interactiveColor.withValues(alpha: 0.2),
-                      width: 1,
-                    ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 5.0,
+                    right: 5,
+                    bottom: 5,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        specialInfo ??
-                            'Tippen Sie hier, um besondere Informationen hinzuzufügen',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: specialInfo != null
-                              ? FontWeight.w500
-                              : FontWeight.normal,
-                          color: specialInfo != null
-                              ? AppColors.backgroundColor
-                              : AppColors.interactiveColor,
-                          fontStyle: specialInfo == null
-                              ? FontStyle.italic
-                              : FontStyle.normal,
-                        ),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: pupil.specialInformation != null
+                          ? AppColors.backgroundColor.withValues(alpha: 0.05)
+                          : AppColors.interactiveColor.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: pupil.specialInformation != null
+                            ? AppColors.backgroundColor.withValues(alpha: 0.2)
+                            : AppColors.interactiveColor.withValues(alpha: 0.2),
+                        width: 1,
                       ),
-                      if (specialInfoCreatedBy != null &&
-                          specialInfoCreatedAt != null) ...[
-                        const Gap(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          'Erstellt von $specialInfoCreatedBy am $specialInfoCreatedAt',
+                          specialInfo ??
+                              'Tippen Sie hier, um besondere Informationen hinzuzufügen',
                           style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.backgroundColor.withValues(
-                              alpha: 0.6,
-                            ),
+                            fontSize: 16,
+                            fontWeight: specialInfo != null
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                            color: specialInfo != null
+                                ? AppColors.backgroundColor
+                                : AppColors.interactiveColor,
+                            fontStyle: specialInfo == null
+                                ? FontStyle.italic
+                                : FontStyle.normal,
                           ),
                         ),
+                        if (specialInfoCreatedBy != null &&
+                            specialInfoCreatedAt != null) ...[
+                          const Gap(8),
+                          Text(
+                            'Erstellt von $specialInfoCreatedBy am $specialInfoCreatedAt',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.backgroundColor.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),

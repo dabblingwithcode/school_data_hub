@@ -4,6 +4,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
@@ -75,58 +76,51 @@ class WorkbookCard extends WatchingWidget {
                 Row(
                   children: [
                     const Gap(15),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Gap(10),
-                        WorkbookImage(workbook: workbook),
-                      ],
+                    Expanded(
+                      child: InkWell(
+                        onLongPress: (di<HubSessionManager>().isAdmin)
+                            ? () async {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) => NewWorkbookPage(
+                                      workbook: workbook,
+                                      isbn: workbook.isbn,
+                                      isEdit: true,
+                                    ),
+                                  ),
+                                );
+                              }
+                            : () {},
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Text(
+                            workbook.name,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
+                    const Gap(10),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Gap(15),
+                    WorkbookImage(workbook: workbook),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(
-                          top: 8.0,
+                          top: 2,
                           left: 15,
                           bottom: 8,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: InkWell(
-                                    onLongPress:
-                                        (di<HubSessionManager>().isAdmin)
-                                        ? () async {
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (ctx) =>
-                                                    NewWorkbookPage(
-                                                      workbook: workbook,
-                                                      isbn: workbook.isbn,
-                                                      isEdit: true,
-                                                    ),
-                                              ),
-                                            );
-                                          }
-                                        : () {},
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Text(
-                                        workbook.name,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const Gap(10),
-                              ],
-                            ),
-                            const Gap(5),
                             Row(
                               children: [
                                 const Text('ISBN:'),
@@ -139,59 +133,51 @@ class WorkbookCard extends WatchingWidget {
                                     color: Colors.black,
                                   ),
                                 ),
-                                const Gap(20),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (ctx) => NewWorkbookPage(
-                                          workbook: workbook,
-                                          isbn: workbook.isbn,
-                                          isEdit: true,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  icon: const Icon(Icons.edit),
-                                ),
                               ],
                             ),
                             const Gap(5),
-                            Row(
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 5,
+                              crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
                                 const Text('Kompetenzbereich(e):'),
-                                const Gap(10),
-                                Image.asset(
-                                  workbook.subject != null
-                                      ? SubjectEnum.values
-                                                .firstWhereOrNull(
-                                                  (element) =>
-                                                      element.name ==
-                                                      workbook.subject,
-                                                )
-                                                ?.imagePath ??
-                                            'assets/images/learning_icons/unknown.png'
-                                      : 'assets/images/learning_icons/unknown.png',
-                                  width: 30,
-                                  height: 30,
-                                ),
-                                const Gap(5),
-                                Text(
-                                  workbook.subject ?? 'nicht angegeben',
-                                  overflow: TextOverflow.fade,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.asset(
+                                      workbook.subject != null
+                                          ? SubjectEnum.values
+                                                    .firstWhereOrNull(
+                                                      (element) =>
+                                                          element.name ==
+                                                          workbook.subject,
+                                                    )
+                                                    ?.imagePath ??
+                                                'assets/images/learning_icons/unknown.png'
+                                          : 'assets/images/learning_icons/unknown.png',
+                                      width: 30,
+                                      height: 30,
+                                    ),
+                                    const Gap(5),
+                                    Text(
+                                      workbook.subject ?? 'nicht angegeben',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                             const Gap(5),
-                            Row(
+                            Wrap(
+                              runSpacing: 5,
                               children: [
                                 const Text('Kompetenzstufe:'),
-                                const Gap(10),
+                                const SizedBox(width: 5),
                                 workbook.level != null
                                     ? GradesWidget(
                                         stringWithGrades: workbook.level!,
@@ -223,9 +209,8 @@ class WorkbookCard extends WatchingWidget {
                                 ),
                                 const Spacer(),
                                 CustomExpansionTileSwitch(
-                                  expansionSwitchWidget: const Icon(
-                                    Icons.arrow_downward,
-                                  ),
+                                  includeSwitch: true,
+                                  switchColor: AppColors.backgroundColor,
                                   customExpansionTileController:
                                       expansionTileController,
                                 ),

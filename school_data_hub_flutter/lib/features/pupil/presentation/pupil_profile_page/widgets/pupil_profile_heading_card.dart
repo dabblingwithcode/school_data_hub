@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfileHeadingCard extends WatchingWidget {
   final PupilProxy passedPupil;
@@ -56,16 +56,6 @@ class PupilProfileHeadingCard extends WatchingWidget {
                 ),
                 Row(
                   children: [
-                    Text(
-                      'FE  ${pupil.latestSupportLevel?.level ?? '0'}',
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18.0,
-                      ),
-                    ),
-                    const Gap(15),
                     pupil.specialNeeds != null
                         ? Text(
                             pupil.schoolGrade.name,
@@ -78,9 +68,8 @@ class PupilProfileHeadingCard extends WatchingWidget {
                           )
                         : const SizedBox.shrink(),
                     const Gap(15),
-                    if (pupil.specialInformation != null)
-                      const Icon(Icons.warning_rounded, color: Colors.red),
-                    if (hubSessionManager.isAdmin == true) ...<Widget>[
+
+                    if (hubSessionManager.isAdmin == true) ...[
                       const Gap(10),
                       Text(
                         '${pupil.internalId}',

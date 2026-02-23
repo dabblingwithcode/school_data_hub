@@ -17,7 +17,3 @@ class EditBookHelper {
     );
   }
 }
-
-
-
-

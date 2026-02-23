@@ -68,7 +68,7 @@ class PupilProfileContentSection extends StatelessWidget {
           color: AppColors.backgroundColor.withValues(alpha: 0.2),
           width: 1.5,
         ),
-        color: AppColors.cardInCardColor,
+        color: Colors.white,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,68 +137,74 @@ class PupilProfileContentRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
-      decoration: BoxDecoration(
-        color: AppColors.pupilProfileCardColor.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: AppColors.backgroundColor.withValues(alpha: 0.1),
-          width: 1,
+    return Padding(
+      padding: const EdgeInsets.only(left: 5.0, right: 5, bottom: 5),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+        decoration: BoxDecoration(
+          color: AppColors.pupilProfileCardColor.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: AppColors.backgroundColor.withValues(alpha: 0.1),
+            width: 1,
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                color: AppColors.backgroundColor.withValues(alpha: 0.7),
-                size: 18,
-              ),
-              const Gap(8),
-              Text(
-                '$label:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.backgroundColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  icon,
+                  color: AppColors.backgroundColor.withValues(alpha: 0.7),
+                  size: 18,
                 ),
-              ),
-              if (actionButton != null) ...[const Spacer(), actionButton!],
-            ],
-          ),
-          const Gap(6),
-          InkWell(
-            onTap: onTap,
-            onLongPress: onLongPress,
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              decoration: BoxDecoration(
-                color: onTap != null
-                    ? AppColors.interactiveColor.withValues(alpha: 0.1)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child:
-                  valueWidget ??
-                  Text(
-                    value!,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: onTap != null
-                          ? AppColors.interactiveColor
-                          : Colors.black87,
-                    ),
+                const Gap(8),
+                Text(
+                  '$label:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.backgroundColor,
                   ),
+                ),
+                if (actionButton != null) ...[const Spacer(), actionButton!],
+              ],
             ),
-          ),
-          const Gap(10),
-        ],
+            const Gap(6),
+            InkWell(
+              onTap: onTap,
+              onLongPress: onLongPress,
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: onTap != null
+                      ? AppColors.interactiveColor.withValues(alpha: 0.1)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child:
+                    valueWidget ??
+                    Text(
+                      value!,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: onTap != null
+                            ? AppColors.interactiveColor
+                            : Colors.black87,
+                      ),
+                    ),
+              ),
+            ),
+            const Gap(10),
+          ],
+        ),
       ),
     );
   }

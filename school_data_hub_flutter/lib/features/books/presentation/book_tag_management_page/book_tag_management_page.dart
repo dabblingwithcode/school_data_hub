@@ -9,7 +9,11 @@ class BookTagManagementPage extends StatelessWidget {
   final BookTagManagementController controller;
   final List<BookTag> bookTags;
 
-  const BookTagManagementPage(this.controller, {required this.bookTags, super.key});
+  const BookTagManagementPage(
+    this.controller, {
+    required this.bookTags,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

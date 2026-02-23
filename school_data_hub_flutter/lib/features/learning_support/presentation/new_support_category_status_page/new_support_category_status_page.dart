@@ -3,13 +3,13 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/select_support_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/goal_examples_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_widgets/support_category_status_dropdown.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 
 class NewSupportCategoryStatusPage extends StatelessWidget {
@@ -174,28 +174,15 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               const Gap(10),
-                              //- TODO: use int in categoryStatus and a  GrowthDropdown(dropdownValue: controller.categoryStatusValue, onChangedFunction: onChangedFunction)
                               Padding(
                                 padding: const EdgeInsets.only(right: 5.0),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<int>(
-                                    itemHeight: 70,
-                                    icon: const Visibility(
-                                      visible: false,
-                                      child: Icon(Icons.arrow_downward),
-                                    ),
-                                    onTap: () {
-                                      FocusManager.instance.primaryFocus!
-                                          .unfocus();
-                                    },
-                                    value: controller.categoryStatusValue,
-                                    items: supportCategoryStatusDropdownItems,
-                                    onChanged: (newValue) {
-                                      controller.setCategoryStatusValue(
-                                        newValue!,
-                                      );
-                                    },
-                                  ),
+                                child: GrowthDropdown(
+                                  dropdownValue: controller.categoryStatusValue,
+                                  onChangedFunction: (newValue) {
+                                    controller.setCategoryStatusValue(newValue);
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                  },
                                 ),
                               ),
                             ],

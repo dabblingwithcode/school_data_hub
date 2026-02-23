@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/edit_book_page/book_tag_selection_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/edit_book_page/edit_book_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('EditBookController');
 
@@ -71,6 +73,39 @@ class EditBookController extends State<EditBook> {
     });
   }
 
+  Future<void> openBookTagSelection(BuildContext context) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Buch-Tags verwalten'),
+          content: SingleChildScrollView(
+            child: Wrap(
+              spacing: 5,
+              runSpacing: 5,
+              children: bookTagSelection.entries.map((entry) {
+                return ThemedFilterChip(
+                  label: entry.key.name,
+                  selected: entry.value,
+                  onSelected: (bool selected) {
+                    switchBookTagSelection(entry.key);
+                    (context as Element).markNeedsBuild();
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Schließen'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -80,14 +115,12 @@ class EditBookController extends State<EditBook> {
   }
 
   void _initializeFormData() {
-    // Initialize form fields with current book data
     bookTitleTextFieldController.text = libraryBook.title;
     authorTextFieldController.text = libraryBook.author;
     bookDescriptionTextFieldController.text = libraryBook.description;
     readingLevel = libraryBook.readingLevel ?? ReadingLevel.notSet.value;
     imagePath = libraryBook.imagePath;
 
-    // Initialize book tag selection
     _initializeBookTagSelection();
   }
 
@@ -95,7 +128,6 @@ class EditBookController extends State<EditBook> {
     final currentBookTags = libraryBook.bookTags;
     final allBookTags = di<BookManager>().bookTags.value;
 
-    // Debug logging
     _log.info(
       'DEBUG: Current book tags: ${currentBookTags.map((t) => '${t.name} (id: ${t.id})').toList()}',
     );
@@ -103,11 +135,9 @@ class EditBookController extends State<EditBook> {
       'DEBUG: All available tags: ${allBookTags.map((t) => '${t.name} (id: ${t.id})').toList()}',
     );
 
-    // Clear and reinitialize the selection map
     bookTagSelection.clear();
 
     for (var tag in allBookTags) {
-      // Compare by ID since BookTag doesn't have custom equality
       final isSelected = currentBookTags.any(
         (currentTag) => currentTag.id == tag.id,
       );
@@ -126,11 +156,9 @@ class EditBookController extends State<EditBook> {
     final currentLocation = libraryBook.location;
     final allLocations = di<BookManager>().locations.value;
 
-    // Find the matching location in the dropdown items
     selectedLocation = allLocations.firstWhere(
       (location) => location.id == currentLocation.id,
-      orElse: () =>
-          currentLocation, // Fallback to current location if not found
+      orElse: () => currentLocation,
     );
   }
 
@@ -149,16 +177,13 @@ class EditBookController extends State<EditBook> {
   final List<DropdownMenuItem<LibraryBookLocation>> locationDropdownItems = [];
 
   void _createDropdownItems() {
-    // Clear existing items to avoid duplicates
     locationDropdownItems.clear();
 
     final allLocations = di<BookManager>().locations.value.toList();
     final currentLocation = libraryBook.location;
 
-    // Create a set to track added locations by ID to prevent duplicates
     final addedLocationIds = <int>{};
 
-    // Add all locations from the manager's list
     for (final location in allLocations) {
       if (!addedLocationIds.contains(location.id)) {
         locationDropdownItems.add(
@@ -168,7 +193,6 @@ class EditBookController extends State<EditBook> {
       }
     }
 
-    // Only add current location if it's not already in the list
     if (!addedLocationIds.contains(currentLocation.id)) {
       locationDropdownItems.add(
         DropdownMenuItem(
@@ -215,7 +239,6 @@ class EditBookController extends State<EditBook> {
         'Tag "$newTagName" wurde erfolgreich erstellt',
       );
 
-      // Refresh the book tags
       await di<BookManager>().fetchBookTags();
       setState(() {
         _initializeBookTagSelection();
@@ -229,11 +252,37 @@ class EditBookController extends State<EditBook> {
       MaterialPageRoute(builder: (context) => const BookTagManagement()),
     );
 
-    // Refresh the book tags after returning from tag management
     if (result == true || result == null) {
       await di<BookManager>().fetchBookTags();
       setState(() {
         _initializeBookTagSelection();
+      });
+    }
+  }
+
+  Future<void> openBookTagSelectionPage(BuildContext context) async {
+    final allTags = di<BookManager>().bookTags.value;
+    final selectedTagIds = bookTagSelection.entries
+        .where((e) => e.value)
+        .map((e) => e.key.id!)
+        .toSet();
+
+    final result = await Navigator.push<Set<int>>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookTagSelectionPage(
+          allTags: allTags,
+          selectedTagIds: selectedTagIds,
+        ),
+      ),
+    );
+
+    if (result != null) {
+      final freshTags = di<BookManager>().bookTags.value;
+      setState(() {
+        bookTagSelection = {
+          for (final tag in freshTags) tag: result.contains(tag.id),
+        };
       });
     }
   }
@@ -243,13 +292,11 @@ class EditBookController extends State<EditBook> {
       return;
     }
 
-    // Get selected tags
     final selectedTags = bookTagSelection.entries
         .where((entry) => entry.value)
         .map((entry) => entry.key)
         .toList();
 
-    // Update the book properties
     await di<BookManager>().updateLibraryBookAndBookProperties(
       isbn: libraryBook.isbn,
       libraryId: libraryBook.libraryId,
@@ -289,7 +336,6 @@ class EditBookController extends State<EditBook> {
 
   @override
   void dispose() {
-    // Clean up the controllers when the widget is removed from the tree
     bookTitleTextFieldController.dispose();
     authorTextFieldController.dispose();
     bookDescriptionTextFieldController.dispose();

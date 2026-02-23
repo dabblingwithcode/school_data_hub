@@ -30,6 +30,7 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
+import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/widgets/learning_support_plans_section.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
@@ -251,7 +252,10 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         ),
         const Gap(10),
         // Learning Support Plans Section
-        _buildLearningSupportPlansSection(context, plansExpansionController),
+        LearningSupportPlansSection(
+          pupil: pupil,
+          plansExpansionController: plansExpansionController,
+        ),
         const Gap(10),
         if (hasActivePlan()) ...[
           ...[
@@ -324,117 +328,6 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         SupportCategoryStatusesList(pupil: pupil),
 
         const Gap(5),
-      ],
-    );
-  }
-
-  /// Build the learning support plans section with active plan and expansion tile
-  Widget _buildLearningSupportPlansSection(
-    BuildContext context,
-    CustomExpansionTileController _plansExpansionController,
-  ) {
-    final schoolCalendarManager = di<SchoolCalendarManager>();
-    final currentSemester = schoolCalendarManager.currentSemester.value;
-
-    // Find the active plan (current semester) and other plans
-    LearningSupportPlan? activePlan;
-    List<LearningSupportPlan> otherPlans = [];
-
-    if (pupil.learningSupportPlans != null && currentSemester != null) {
-      for (final plan in pupil.learningSupportPlans!) {
-        if (plan.schoolSemesterId == currentSemester.id) {
-          activePlan = plan;
-        } else {
-          otherPlans.add(plan);
-        }
-      }
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Title row with expansion switch
-        Row(
-          children: [
-            const Text(
-              'Förderpläne',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const Spacer(),
-            CustomExpansionTileSwitch(
-              customExpansionTileController: _plansExpansionController,
-              switchColor: AppColors.interactiveColor,
-            ),
-          ],
-        ),
-        const Gap(10),
-
-        // Active plan card (always visible)
-        if (activePlan != null)
-          LearningSupportPlanCard(plan: activePlan, pupil: pupil)
-        else
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Kein aktiver Förderplan verfügbar',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-
-        // Other plans in expansion tile
-        CustomExpansionTileContent(
-          tileController: _plansExpansionController,
-          widgetList: [
-            if (otherPlans.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Keine weiteren Förderpläne verfügbar',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              )
-            else
-              ...otherPlans.map(
-                (plan) => LearningSupportPlanCard(plan: plan, pupil: pupil),
-              ),
-            const Gap(10),
-
-            // New Learning Support Plan Button
-            if (AuthClearanceHelper.isTutorOrAdmin(pupil))
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ElevatedButton(
-                  style: AppStyles.actionButtonStyle,
-                  onPressed: () {
-                    if (pupil.supportLevelHistory == null ||
-                        pupil.supportLevelHistory!.isEmpty) {
-                      di<NotificationService>().showInformationDialog(
-                        'Förderebene nicht festgelegt',
-                      );
-                      return;
-                    }
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) => NewLearningSupportPlan(pupil: pupil),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "NEUER FÖRDERPLAN",
-                    style: AppStyles.buttonTextStyle,
-                  ),
-                ),
-              ),
-          ],
-        ),
       ],
     );
   }

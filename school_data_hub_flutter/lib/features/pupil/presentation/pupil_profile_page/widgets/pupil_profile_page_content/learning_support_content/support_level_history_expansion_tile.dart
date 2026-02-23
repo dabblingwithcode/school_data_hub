@@ -22,73 +22,115 @@ class SupportLevelHistoryExpansionTile extends StatefulWidget {
 
 class _SupportLevelHistoryExpansionTileState
     extends State<SupportLevelHistoryExpansionTile> {
-  late ExpansibleController _tileController;
+  bool _isExpanded = false;
 
-  @override
-  void initState() {
-    _tileController = ExpansibleController();
-    super.initState();
+  String _supportLevelText(SupportLevel? level) {
+    if (level == null) return 'kein Eintrag';
+    return switch (level.level) {
+      0 => 'Förderebene 0',
+      1 => 'Förderebene 1',
+      2 => 'Förderebene 2',
+      3 => 'Förderebene 3',
+      4 => 'Regenbogenförderung',
+      _ => 'unbekannt',
+    };
   }
 
   @override
   Widget build(BuildContext context) {
     final PupilProxy pupil = widget.pupil;
     final List<SupportLevel> plans = pupil.supportLevelHistory!;
-    return ListTileTheme(
-      contentPadding: const EdgeInsets.all(0),
-      dense: true,
-      horizontalTitleGap: 0.0,
-      minLeadingWidth: 0,
-      minVerticalPadding: 0,
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          collapsedBackgroundColor: Colors.transparent,
-          tilePadding: const EdgeInsets.all(0),
-          title: Row(
-            children: [
-              const Text('Förderebene:', style: TextStyle(fontSize: 15.0)),
-              const Gap(10),
-              InkWell(
-                onTap: () => supportLevelDialog(
-                  context,
-                  pupil,
-                  pupil.latestSupportLevel!.level,
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 5.0, right: 5, bottom: 5),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+        decoration: BoxDecoration(
+          color: AppColors.pupilProfileCardColor.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: AppColors.backgroundColor.withValues(alpha: 0.1),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.layers_outlined,
+                  color: AppColors.backgroundColor.withValues(alpha: 0.7),
+                  size: 18,
+                ),
+                const Gap(8),
+                Text(
+                  'Förderebene:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.backgroundColor,
+                  ),
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: Icon(
+                    _isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: AppColors.backgroundColor.withValues(alpha: 0.7),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                    });
+                  },
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
+            const Gap(6),
+            InkWell(
+              onTap: () => supportLevelDialog(
+                context,
+                pupil,
+                pupil.latestSupportLevel?.level,
+              ),
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.interactiveColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  pupil.latestSupportLevel == null
-                      ? 'kein Eintrag'
-                      : pupil.latestSupportLevel!.level == 1
-                      ? 'Förderebene 1'
-                      : pupil.latestSupportLevel!.level == 2
-                      ? 'Förderebene 2'
-                      : pupil.latestSupportLevel!.level == 3
-                      ? 'Förderebene 3'
-                      : '🌈-Förderung',
+                  _supportLevelText(pupil.latestSupportLevel),
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.interactiveColor,
                   ),
                 ),
               ),
+            ),
+            if (_isExpanded) ...[
+              const Gap(10),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: widget.pupil.supportLevelHistory!.length,
+                itemBuilder: (context, index) {
+                  return SupportLevelHistoryItemCard(
+                    pupil: pupil,
+                    supportLevel: plans[index],
+                  );
+                },
+              ),
             ],
-          ),
-          controller: _tileController,
-          children: [
-            pupil.supportLevelHistory != null
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: widget.pupil.supportLevelHistory!.length,
-                    itemBuilder: (context, index) {
-                      return SupportLevelHistoryItemCard(
-                        pupil: pupil,
-                        supportLevel: plans[index],
-                      );
-                    },
-                  )
-                : const Text('keine Einträge'),
+            const Gap(10),
           ],
         ),
       ),
@@ -106,111 +148,113 @@ class SupportLevelHistoryItemCard extends StatelessWidget {
     super.key,
   });
 
+  String _supportLevelText(int level) {
+    return switch (level) {
+      0 => 'Förderebene 0',
+      1 => 'Förderebene 1',
+      2 => 'Förderebene 2',
+      3 => 'Förderebene 3',
+      4 => 'Regenbogenförderung',
+      _ => 'unbekannt',
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final hubSessionManager = di<HubSessionManager>();
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1.0),
-      child: Card(
-        child: InkWell(
-          onTap: () {
-            if (hubSessionManager.isAdmin) {
-              supportLevelDialog(
-                context,
-                pupil,
-                supportLevel.level,
-                existingSupportLevel: supportLevel,
-              );
-            }
-          },
-          onLongPress: () async {
-            if (!hubSessionManager.isAdmin) return;
-            final confirmation = await confirmationDialog(
-              context: context,
-              title: 'Eintrag löschen',
-              message: 'Eintrag wirklich löschen?',
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: InkWell(
+        onTap: () {
+          if (hubSessionManager.isAdmin) {
+            supportLevelDialog(
+              context,
+              pupil,
+              supportLevel.level,
+              existingSupportLevel: supportLevel,
             );
-            if (confirmation != true) return;
-            PupilMutator().deleteSupportLevelHistoryItem(
-              pupilId: pupil.pupilId,
-              supportLevelId: supportLevel.id!,
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
+          }
+        },
+        onLongPress: () async {
+          if (!hubSessionManager.isAdmin) return;
+          final confirmation = await confirmationDialog(
+            context: context,
+            title: 'Eintrag löschen',
+            message: 'Eintrag wirklich löschen?',
+          );
+          if (confirmation != true) return;
+          PupilMutator().deleteSupportLevelHistoryItem(
+            pupilId: pupil.pupilId,
+            supportLevelId: supportLevel.id!,
+          );
+        },
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            color: hubSessionManager.isAdmin
+                ? AppColors.interactiveColor.withValues(alpha: 0.05)
+                : Colors.grey.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: AppColors.backgroundColor.withValues(alpha: 0.1),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    supportLevel.createdAt.formatDateForUser(),
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const Gap(2),
+                  Text(
+                    supportLevel.createdBy,
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+              const Gap(20),
+              Expanded(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          supportLevel.createdAt.formatDateForUser(),
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      _supportLevelText(supportLevel.level),
+                      style: TextStyle(
+                        color: AppColors.backgroundColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
                     ),
-
-                    Row(
-                      children: [
-                        Text(
-                          supportLevel.createdBy,
-                          style: TextStyle(
-                            color: Colors.grey[400],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
+                    if (supportLevel.comment.isNotEmpty) ...[
+                      const Gap(4),
+                      Text(
+                        customEncrypter.decryptString(supportLevel.comment),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.black87,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ],
                 ),
-                const Gap(20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'Förderebene ',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          Text(
-                            supportLevel.level.toString(),
-                            style: TextStyle(
-                              color: AppColors.backgroundColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (supportLevel.comment.isNotEmpty)
-                        Text(
-                          customEncrypter.decryptString(supportLevel.comment),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                    ],
-                  ),
-                ),
-
-                const Gap(10),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

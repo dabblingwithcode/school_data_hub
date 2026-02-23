@@ -28,8 +28,14 @@ class AuthClearanceHelper {
 
   static bool isTutorOrAdmin(PupilProxy pupil) {
     final currentUser = di<HubSessionManager>().user!;
-    return pupil.groupTutor == currentUser.userInfo!.userName ||
+    final isAuthorized = currentUser.pupilsAuth?.contains(pupil.pupilId);
+
+    final isTutor =
+        pupil.groupTutor == currentUser.userInfo!.userName ||
         di<HubSessionManager>().isAdmin;
+    final isAdmin = di<HubSessionManager>().isAdmin;
+
+    return isAuthorized == true || isTutor || isAdmin;
   }
 
   static bool isCreatorOrAdmin(String? createdBy) {

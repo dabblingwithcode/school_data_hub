@@ -21,9 +21,7 @@ class GrowthDropdown extends StatelessWidget {
               visible: false,
               child: Icon(Icons.arrow_downward),
             ),
-            onTap: () {
-              FocusManager.instance.primaryFocus!.unfocus();
-            },
+            focusColor: Colors.transparent,
             value: dropdownValue,
             items: competenceCheckDropdownItems,
             onChanged: (value) {

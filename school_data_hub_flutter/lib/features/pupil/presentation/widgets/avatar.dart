@@ -3,9 +3,9 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/get_cached_image_or_download_inage.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/get_cached_image_or_download_inage.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -122,7 +122,7 @@ class AvatarWithBadges extends WatchingWidget {
         ? pupil.specialNeeds!.contains('*')
               ? '${pupil.specialNeeds!.split('*').first.replaceAll('ESE', 'ES')}\n${pupil.specialNeeds!.split('*').last.replaceAll('ESE', 'ES')}'
               : pupil.specialNeeds!.replaceAll('ESE', 'ES')
-        : '';
+        : null;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -215,7 +215,7 @@ class AvatarWithBadges extends WatchingWidget {
                   ),
                 ),
               ),
-            if (pupil.specialNeeds != null)
+            if (pupil.specialNeeds != null || pupil.latestSupportLevel != null)
               Positioned(
                 top: 0,
                 bottom: 0,
@@ -226,11 +226,14 @@ class AvatarWithBadges extends WatchingWidget {
                     alignment: Alignment.center,
                     children: [
                       Text(
-                        specialNeedsText,
+                        specialNeedsText ??
+                            (pupil.latestSupportLevel != null
+                                ? pupil.latestSupportLevel!.level.toString()
+                                : ''),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 17,
+                          fontSize: specialNeedsText != null ? 17 : 18,
                           foreground: Paint()
                             ..style = PaintingStyle.stroke
                             ..strokeWidth = 4
@@ -240,12 +243,17 @@ class AvatarWithBadges extends WatchingWidget {
 
                       const SizedBox(),
                       Text(
-                        specialNeedsText,
+                        specialNeedsText ??
+                            (pupil.latestSupportLevel != null
+                                ? pupil.latestSupportLevel!.level.toString()
+                                : ''),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: AppColors.groupColor,
+                          fontSize: specialNeedsText != null ? 17 : 18,
+                          color: specialNeedsText != null
+                              ? AppColors.groupColor
+                              : AppColors.accentColor,
                         ),
                       ),
                     ],

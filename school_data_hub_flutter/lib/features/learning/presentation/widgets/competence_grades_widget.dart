@@ -20,6 +20,7 @@ class GradesWidget extends StatelessWidget {
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
         for (int i = 0; i < matchedGrades.length; i++) ...[
           Image.asset(matchedGrades[i].imagePath, width: 25),

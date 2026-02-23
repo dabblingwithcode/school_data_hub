@@ -20,6 +20,7 @@ class AppColorPalette {
     required this.gridViewColor,
     required this.pupilProfileBackgroundColor,
     required this.pupilProfileCardColor,
+    required this.cardColor,
     required this.cardInCardColor,
     required this.cardInCardBorderColor,
     required this.notProcessedColor,
@@ -84,6 +85,7 @@ class AppColorPalette {
   final Color gridViewColor;
   final Color pupilProfileBackgroundColor;
   final Color pupilProfileCardColor;
+  final Color cardColor;
   final Color cardInCardColor;
   final Color cardInCardBorderColor;
   final Color notProcessedColor;
@@ -148,6 +150,7 @@ class AppColorPalette {
     Color? gridViewColor,
     Color? pupilProfileBackgroundColor,
     Color? pupilProfileCardColor,
+    Color? cardColor,
     Color? cardInCardColor,
     Color? cardInCardBorderColor,
     Color? notProcessedColor,
@@ -214,6 +217,7 @@ class AppColorPalette {
           pupilProfileBackgroundColor ?? this.pupilProfileBackgroundColor,
       pupilProfileCardColor:
           pupilProfileCardColor ?? this.pupilProfileCardColor,
+      cardColor: cardColor ?? this.cardColor,
       cardInCardColor: cardInCardColor ?? this.cardInCardColor,
       cardInCardBorderColor:
           cardInCardBorderColor ?? this.cardInCardBorderColor,
@@ -296,6 +300,7 @@ class AppColorPalettes {
     gridViewColor: Color.fromRGBO(252, 160, 39, 1),
     pupilProfileBackgroundColor: Color.fromARGB(255, 215, 215, 235),
     pupilProfileCardColor: Color(0xfff2f2f7),
+    cardColor: Color.fromARGB(255, 255, 255, 255),
     cardInCardColor: Color.fromARGB(255, 248, 248, 255),
     cardInCardBorderColor: Color.fromARGB(255, 195, 195, 253),
     notProcessedColor: Color.fromARGB(255, 249, 202, 131),
@@ -435,6 +440,7 @@ class AppColors {
   static Color get pupilProfileBackgroundColor =>
       palette.pupilProfileBackgroundColor;
   static Color get pupilProfileCardColor => palette.pupilProfileCardColor;
+  static Color get cardColor => palette.cardColor;
   static Color get cardInCardColor => palette.cardInCardColor;
   static Color get cardInCardBorderColor => palette.cardInCardBorderColor;
   static Color get notProcessedColor => palette.notProcessedColor;
