@@ -595,6 +595,44 @@ class Endpoints extends _i1.EndpointDispatch {
             params['createdBy'],
           ),
         ),
+        'deleteLogo': _i1.MethodConnector(
+          name: 'deleteLogo',
+          params: {
+            'schoolDataId': _i1.ParameterDescription(
+              name: 'schoolDataId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['adminSchoolData'] as _i5.AdminSchoolDataEndpoint)
+                  .deleteLogo(
+            session,
+            params['schoolDataId'],
+          ),
+        ),
+        'deleteOfficialSeal': _i1.MethodConnector(
+          name: 'deleteOfficialSeal',
+          params: {
+            'schoolDataId': _i1.ParameterDescription(
+              name: 'schoolDataId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['adminSchoolData'] as _i5.AdminSchoolDataEndpoint)
+                  .deleteOfficialSeal(
+            session,
+            params['schoolDataId'],
+          ),
+        ),
       },
     );
     connectors['adminSchoolDay'] = _i1.EndpointConnector(

@@ -236,6 +236,22 @@ class EndpointAdminSchoolData extends _i1.EndpointRef {
           'createdBy': createdBy,
         },
       );
+
+  /// Delete the logo from SchoolData
+  _i2.Future<_i8.SchoolData> deleteLogo(int schoolDataId) =>
+      caller.callServerEndpoint<_i8.SchoolData>(
+        'adminSchoolData',
+        'deleteLogo',
+        {'schoolDataId': schoolDataId},
+      );
+
+  /// Delete the official seal from SchoolData
+  _i2.Future<_i8.SchoolData> deleteOfficialSeal(int schoolDataId) =>
+      caller.callServerEndpoint<_i8.SchoolData>(
+        'adminSchoolData',
+        'deleteOfficialSeal',
+        {'schoolDataId': schoolDataId},
+      );
 }
 
 /// {@category Endpoint}

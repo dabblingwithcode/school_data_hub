@@ -10,6 +10,8 @@ adminSchoolData:
   - updateSchoolData:
   - uploadLogo:
   - uploadOfficialSeal:
+  - deleteLogo:
+  - deleteOfficialSeal:
 adminSchoolDay:
   - createSchoolSemester:
   - updateSchoolSemester:

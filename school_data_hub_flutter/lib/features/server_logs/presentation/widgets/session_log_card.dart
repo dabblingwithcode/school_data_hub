@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -31,6 +33,18 @@ class SessionLogCard extends StatelessWidget {
     final durationMs = entry.duration != null
         ? '${entry.duration!.toStringAsFixed(0)} ms'
         : 'offen';
+
+    void copyToClipboard() {
+      Clipboard.setData(
+        ClipboardData(text: info.sessionLogEntry.error ?? 'kein Inhalt'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('In Zwischenablage kopiert'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
 
     return Card(
       color: AppColors.cardInCardColor,
@@ -90,6 +104,14 @@ class SessionLogCard extends StatelessWidget {
                     '${entry.numQueries} Q',
                     style: AppStyles.textLabel.copyWith(color: Colors.black54),
                   ),
+                  const Gap(20),
+                  IconButton(
+                    icon: const Icon(Icons.copy, size: 20),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: copyToClipboard,
+                    tooltip: 'Kopieren',
+                  ),
                 ],
               ],
             ),
@@ -148,17 +170,24 @@ class _ExpandableMonoTextState extends State<_ExpandableMonoText> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => setState(() => _expanded = !_expanded),
-      child: SelectableText(
-        widget.text,
-        maxLines: _expanded ? null : 2,
-        style: TextStyle(
-          fontFamily: 'monospace',
-          fontSize: 12,
-          color: widget.color,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Text(
+              widget.text,
+              maxLines: _expanded ? null : 2,
+              style: TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 12,
+                color: widget.color,
+              ),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

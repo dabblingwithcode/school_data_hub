@@ -61,14 +61,8 @@ class AdminSchoolDataEndpoint extends Endpoint {
         throw Exception('SchoolData not found');
       }
 
-      // Delete old logo if exists
-      if (schoolData.logoId != null && schoolData.logo != null) {
-        await HubDocumentHelper().deleteHubDocumentAndFile(
-          session: session,
-          documentId: schoolData.logo!.documentId,
-          transaction: transaction,
-        );
-      }
+      // Store old logo document for deletion
+      final oldLogoDocument = schoolData.logo;
 
       // Create new HubDocument for the logo
       final document = HubDocumentHelper().createHubDocumentObject(
@@ -91,6 +85,15 @@ class AdminSchoolDataEndpoint extends Endpoint {
         updatedSchoolData,
         transaction: transaction,
       );
+
+      // Delete old logo if exists (after updating the foreign key)
+      if (oldLogoDocument != null) {
+        await HubDocumentHelper().deleteHubDocumentAndFile(
+          session: session,
+          documentId: oldLogoDocument.documentId,
+          transaction: transaction,
+        );
+      }
 
       // Return the updated SchoolData with includes
       return await SchoolData.db.findById(
@@ -125,15 +128,8 @@ class AdminSchoolDataEndpoint extends Endpoint {
         throw Exception('SchoolData not found');
       }
 
-      // Delete old seal if exists
-      if (schoolData.officialSealId != null &&
-          schoolData.officialSeal != null) {
-        await HubDocumentHelper().deleteHubDocumentAndFile(
-          session: session,
-          documentId: schoolData.officialSeal!.documentId,
-          transaction: transaction,
-        );
-      }
+      // Store old seal document for deletion
+      final oldSealDocument = schoolData.officialSeal;
 
       // Create new HubDocument for the seal
       final document = HubDocumentHelper().createHubDocumentObject(
@@ -156,6 +152,121 @@ class AdminSchoolDataEndpoint extends Endpoint {
         updatedSchoolData,
         transaction: transaction,
       );
+
+      // Delete old seal if exists (after updating the foreign key)
+      if (oldSealDocument != null) {
+        await HubDocumentHelper().deleteHubDocumentAndFile(
+          session: session,
+          documentId: oldSealDocument.documentId,
+          transaction: transaction,
+        );
+      }
+
+      // Return the updated SchoolData with includes
+      return await SchoolData.db.findById(
+        session,
+        schoolDataId,
+        include: SchoolData.include(
+          logo: HubDocument.include(),
+          officialSeal: HubDocument.include(),
+        ),
+        transaction: transaction,
+      );
+    });
+    return result!;
+  }
+
+  /// Delete the logo from SchoolData
+  Future<SchoolData> deleteLogo(
+    Session session,
+    int schoolDataId,
+  ) async {
+    final result = await session.db.transaction((transaction) async {
+      // Fetch SchoolData inside transaction
+      final schoolData = await SchoolData.db.findById(
+        session,
+        schoolDataId,
+        include: SchoolData.include(logo: HubDocument.include()),
+        transaction: transaction,
+      );
+      if (schoolData == null) {
+        throw Exception('SchoolData not found');
+      }
+
+      // Store logo document for deletion
+      final logoDocument = schoolData.logo;
+
+      // Update SchoolData to remove logoId reference
+      final updatedSchoolData = schoolData.copyWith(
+        logoId: null,
+      );
+      await SchoolData.db.updateRow(
+        session,
+        updatedSchoolData,
+        transaction: transaction,
+      );
+
+      // Delete logo document and file if exists
+      if (logoDocument != null) {
+        await HubDocumentHelper().deleteHubDocumentAndFile(
+          session: session,
+          documentId: logoDocument.documentId,
+          transaction: transaction,
+        );
+      }
+
+      // Return the updated SchoolData with includes
+      return await SchoolData.db.findById(
+        session,
+        schoolDataId,
+        include: SchoolData.include(
+          logo: HubDocument.include(),
+          officialSeal: HubDocument.include(),
+        ),
+        transaction: transaction,
+      );
+    });
+    return result!;
+  }
+
+  /// Delete the official seal from SchoolData
+  Future<SchoolData> deleteOfficialSeal(
+    Session session,
+    int schoolDataId,
+  ) async {
+    final result = await session.db.transaction((transaction) async {
+      // Fetch SchoolData inside transaction
+      final schoolData = await SchoolData.db.findById(
+        session,
+        schoolDataId,
+        include: SchoolData.include(officialSeal: HubDocument.include()),
+        transaction: transaction,
+      );
+      if (schoolData == null) {
+        throw Exception('SchoolData not found');
+      }
+
+      // Store seal document for deletion
+      final sealDocument = schoolData.officialSeal;
+
+      // Update SchoolData to remove officialSealId reference
+      final updatedSchoolData = schoolData.copyWith(
+        officialSealId: null,
+      );
+      await SchoolData.db.updateRow(
+        session,
+        updatedSchoolData,
+        transaction: transaction,
+      );
+
+      // Delete seal document and file if exists
+      if (sealDocument != null) {
+        await HubDocumentHelper().deleteHubDocumentAndFile(
+          session: session,
+          documentId: sealDocument.documentId,
+          transaction: transaction,
+        );
+      }
 
       // Return the updated SchoolData with includes
       return await SchoolData.db.findById(
