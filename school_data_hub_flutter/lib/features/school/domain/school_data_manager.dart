@@ -213,6 +213,70 @@ class SchoolDataMainManager {
     }
   }
 
+  /// Delete logo
+  Future<void> deleteLogo() async {
+    final currentSchoolData = _dataManager.schoolData.value;
+    if (currentSchoolData?.id == null) {
+      throw Exception('SchoolData must exist to delete logo');
+    }
+
+    _dataManager.setSaving(true);
+    try {
+      final updatedSchoolData = await _crudManager.deleteLogo(
+        currentSchoolData!.id!,
+      );
+      if (updatedSchoolData == null) {
+        throw Exception('Logo deletion returned no updated SchoolData');
+      }
+
+      _log.info('Logo deleted successfully');
+      // Update local state with the returned SchoolData
+      _dataManager.setSchoolData(updatedSchoolData);
+      // Clear the logo image from memory
+      _dataManager.setLogoImage(null);
+      // Re-initialize the form so it reflects the updated SchoolData
+      _uiManager.initializeForm(updatedSchoolData);
+    } catch (e) {
+      _log.severe('Error deleting logo: $e');
+      rethrow;
+    } finally {
+      _dataManager.setSaving(false);
+    }
+  }
+
+  /// Delete official seal
+  Future<void> deleteOfficialSeal() async {
+    final currentSchoolData = _dataManager.schoolData.value;
+    if (currentSchoolData?.id == null) {
+      throw Exception('SchoolData must exist to delete official seal');
+    }
+
+    _dataManager.setSaving(true);
+    try {
+      final updatedSchoolData = await _crudManager.deleteOfficialSeal(
+        currentSchoolData!.id!,
+      );
+      if (updatedSchoolData == null) {
+        throw Exception(
+          'Official seal deletion returned no updated SchoolData',
+        );
+      }
+
+      _log.info('Official seal deleted successfully');
+      // Update local state with the returned SchoolData
+      _dataManager.setSchoolData(updatedSchoolData);
+      // Clear the seal image from memory
+      _dataManager.setOfficialSealImage(null);
+      // Re-initialize the form so it reflects the updated SchoolData
+      _uiManager.initializeForm(updatedSchoolData);
+    } catch (e) {
+      _log.severe('Error deleting official seal: $e');
+      rethrow;
+    } finally {
+      _dataManager.setSaving(false);
+    }
+  }
+
   // UI Management Methods
   void initializeForm() {
     _uiManager.initializeForm(_dataManager.schoolData.value);

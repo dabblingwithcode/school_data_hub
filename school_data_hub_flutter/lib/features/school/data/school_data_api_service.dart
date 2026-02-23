@@ -113,6 +113,24 @@ class SchoolDataApiService {
     throw Exception('Official seal upload failed before linking to SchoolData');
   }
 
+  /// Delete school logo
+  Future<SchoolData?> deleteLogo(int schoolDataId) async {
+    final updatedSchoolData = await ClientHelper.apiCall(
+      call: () => _client.adminSchoolData.deleteLogo(schoolDataId),
+      errorMessage: 'Fehler beim Löschen des Logos',
+    );
+    return updatedSchoolData;
+  }
+
+  /// Delete official seal
+  Future<SchoolData?> deleteOfficialSeal(int schoolDataId) async {
+    final updatedSchoolData = await ClientHelper.apiCall(
+      call: () => _client.adminSchoolData.deleteOfficialSeal(schoolDataId),
+      errorMessage: 'Fehler beim Löschen des Dienstsiegels',
+    );
+    return updatedSchoolData;
+  }
+
   /// Get school logo image with caching
   Future<ByteData?> getLogoImage(String documentId) async {
     // Check cache first

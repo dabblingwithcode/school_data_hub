@@ -95,6 +95,7 @@ class SchoolDataForm extends WatchingWidget {
               label: 'Schullogo',
               imageData: logoImage,
               onUpload: (file) => schoolDataManager.uploadLogo(file),
+              onDelete: () => schoolDataManager.deleteLogo(),
               isSaving: isSaving,
             ),
             const Gap(24),
@@ -103,6 +104,7 @@ class SchoolDataForm extends WatchingWidget {
               label: 'Offizielles Dienstsiegel',
               imageData: sealImage,
               onUpload: (file) => schoolDataManager.uploadOfficialSeal(file),
+              onDelete: () => schoolDataManager.deleteOfficialSeal(),
               isSaving: isSaving,
             ),
           ],
@@ -116,6 +118,7 @@ class SchoolDataForm extends WatchingWidget {
     required String label,
     required ByteData? imageData,
     required Future<void> Function(File) onUpload,
+    required Future<void> Function() onDelete,
     required bool isSaving,
   }) {
     return Column(
@@ -147,53 +150,122 @@ class SchoolDataForm extends WatchingWidget {
                   : const Icon(Icons.image, color: Colors.grey, size: 40),
             ),
             const Gap(16),
-            ElevatedButton.icon(
-              onPressed: isSaving
-                  ? null
-                  : () async {
-                      final picker = ImagePicker();
-                      final XFile? image = await picker.pickImage(
-                        source: ImageSource.gallery,
-                      );
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: isSaving
+                      ? null
+                      : () async {
+                          final picker = ImagePicker();
+                          final XFile? image = await picker.pickImage(
+                            source: ImageSource.gallery,
+                          );
 
-                      if (image != null) {
-                        try {
-                          await onUpload(File(image.path));
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Bildupload erfolgreich'),
-                                backgroundColor: Colors.green,
+                          if (image != null) {
+                            try {
+                              await onUpload(File(image.path));
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Bildupload erfolgreich'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Fehler beim Upload: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          }
+                        },
+                  icon: isSaving
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        )
+                      : const Icon(Icons.upload),
+                  label: Text(isSaving ? 'Lädt...' : 'Bild hochladen'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.interactiveColor,
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+                if (imageData != null) ...[
+                  const Gap(8),
+                  ElevatedButton.icon(
+                    onPressed: isSaving
+                        ? null
+                        : () async {
+                            // Show confirmation dialog
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Bild löschen?'),
+                                content: const Text(
+                                  'Möchten Sie dieses Bild wirklich löschen?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                    child: const Text('Abbrechen'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                    child: const Text('Löschen'),
+                                  ),
+                                ],
                               ),
                             );
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Fehler beim Upload: $e'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                        }
-                      }
-                    },
-              icon: isSaving
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : const Icon(Icons.upload),
-              label: Text(isSaving ? 'Lädt...' : 'Bild hochladen'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.interactiveColor,
-                foregroundColor: Colors.white,
-              ),
+
+                            if (confirmed == true) {
+                              try {
+                                await onDelete();
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Bild erfolgreich gelöscht',
+                                      ),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Fehler beim Löschen: $e'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          },
+                    icon: const Icon(Icons.delete),
+                    label: const Text('Bild löschen'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ],
         ),

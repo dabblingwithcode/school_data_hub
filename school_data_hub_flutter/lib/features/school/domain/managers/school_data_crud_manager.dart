@@ -43,7 +43,9 @@ class SchoolInfoDataManager {
     try {
       final updatedSchoolData = await _apiService.updateSchoolData(schoolData);
       if (updatedSchoolData != null) {
-        _log.info('School data updated successfully: ${updatedSchoolData.name}');
+        _log.info(
+          'School data updated successfully: ${updatedSchoolData.name}',
+        );
       }
       return updatedSchoolData;
     } catch (e) {
@@ -96,6 +98,36 @@ class SchoolInfoDataManager {
       return updatedSchoolData;
     } catch (e) {
       _log.info('Error uploading official seal: $e');
+      rethrow;
+    }
+  }
+
+  /// Delete school logo
+  Future<SchoolData?> deleteLogo(int schoolDataId) async {
+    try {
+      final updatedSchoolData = await _apiService.deleteLogo(schoolDataId);
+      if (updatedSchoolData != null) {
+        _log.info('Logo deleted successfully');
+      }
+      return updatedSchoolData;
+    } catch (e) {
+      _log.info('Error deleting logo: $e');
+      rethrow;
+    }
+  }
+
+  /// Delete official seal
+  Future<SchoolData?> deleteOfficialSeal(int schoolDataId) async {
+    try {
+      final updatedSchoolData = await _apiService.deleteOfficialSeal(
+        schoolDataId,
+      );
+      if (updatedSchoolData != null) {
+        _log.info('Official seal deleted successfully');
+      }
+      return updatedSchoolData;
+    } catch (e) {
+      _log.info('Error deleting official seal: $e');
       rethrow;
     }
   }
