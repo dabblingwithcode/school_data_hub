@@ -49,16 +49,18 @@ class AdminSchoolDataEndpoint extends Endpoint {
     String filePath,
     String createdBy,
   ) async {
-    final schoolData = await SchoolData.db.findById(
-      session,
-      schoolDataId,
-      include: SchoolData.include(logo: HubDocument.include()),
-    );
-    if (schoolData == null) {
-      throw Exception('SchoolData not found');
-    }
-
     final result = await session.db.transaction((transaction) async {
+      // Fetch SchoolData inside transaction
+      final schoolData = await SchoolData.db.findById(
+        session,
+        schoolDataId,
+        include: SchoolData.include(logo: HubDocument.include()),
+        transaction: transaction,
+      );
+      if (schoolData == null) {
+        throw Exception('SchoolData not found');
+      }
+
       // Delete old logo if exists
       if (schoolData.logoId != null && schoolData.logo != null) {
         await HubDocumentHelper().deleteHubDocumentAndFile(
@@ -111,16 +113,18 @@ class AdminSchoolDataEndpoint extends Endpoint {
     String filePath,
     String createdBy,
   ) async {
-    final schoolData = await SchoolData.db.findById(
-      session,
-      schoolDataId,
-      include: SchoolData.include(officialSeal: HubDocument.include()),
-    );
-    if (schoolData == null) {
-      throw Exception('SchoolData not found');
-    }
-
     final result = await session.db.transaction((transaction) async {
+      // Fetch SchoolData inside transaction
+      final schoolData = await SchoolData.db.findById(
+        session,
+        schoolDataId,
+        include: SchoolData.include(officialSeal: HubDocument.include()),
+        transaction: transaction,
+      );
+      if (schoolData == null) {
+        throw Exception('SchoolData not found');
+      }
+
       // Delete old seal if exists
       if (schoolData.officialSealId != null &&
           schoolData.officialSeal != null) {
