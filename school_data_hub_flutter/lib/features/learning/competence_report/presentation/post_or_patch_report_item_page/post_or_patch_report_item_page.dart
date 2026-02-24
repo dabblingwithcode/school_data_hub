@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/competence_report/domain/report_item_list_scope_state.dart';
 
 Set<int> _getDescendantIds(int publicId, List<CompetenceReportItem> allItems) {
   final descendants = <int>{};
@@ -42,6 +44,12 @@ class PostOrPatchReportItemPage extends WatchingWidget {
             initial.add(SchoolGrade.fromJson(value));
           } catch (_) {}
         }
+      } else {
+        final scopeState = di.maybeGet<ReportItemListScopeState>();
+        if (scopeState != null) {
+          Logger('Scoped grades: ${scopeState.lastGrades.value}').info;
+          initial.addAll(scopeState.lastGrades.value);
+        }
       }
       return ValueNotifier<Set<SchoolGrade>>(initial);
     });
@@ -71,8 +79,7 @@ class PostOrPatchReportItemPage extends WatchingWidget {
       selectedGrades.value = updated;
     }
 
-    List<String> gradeValues() =>
-        grades.map((g) => g.name).toList();
+    List<String> gradeValues() => grades.map((g) => g.name).toList();
 
     void postNew() async {
       if (grades.isEmpty) {
@@ -88,6 +95,9 @@ class PostOrPatchReportItemPage extends WatchingWidget {
         parentItem: selectedParent.value,
         name: nameController.text,
         level: gradeValues(),
+      );
+      di.maybeGet<ReportItemListScopeState>()?.lastGrades.value = Set.from(
+        grades,
       );
     }
 

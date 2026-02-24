@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_page/widgets/competence_report_item_tree.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_page/widgets/report_item_list_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/post_or_patch_report_item_page/post_or_patch_report_item_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class CompetenceReportItemListPage extends WatchingWidget {
   const CompetenceReportItemListPage({super.key});
@@ -13,9 +13,7 @@ class CompetenceReportItemListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final manager = di<CompetenceReportItemManager>();
-    final items = watchValue(
-      (CompetenceReportItemManager x) => x.items,
-    );
+    final items = watchValue((CompetenceReportItemManager x) => x.items);
 
     void navigateToPostOrPatch({
       int? parentItemId,
@@ -23,10 +21,8 @@ class CompetenceReportItemListPage extends WatchingWidget {
     }) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (ctx) => PostOrPatchReportItemPage(
-            parentItem: parentItemId,
-            item: item,
-          ),
+          builder: (ctx) =>
+              PostOrPatchReportItemPage(parentItem: parentItemId, item: item),
         ),
       );
     }

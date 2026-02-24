@@ -21,7 +21,9 @@ class GrowthDropdown extends StatelessWidget {
               visible: false,
               child: Icon(Icons.arrow_downward),
             ),
-            focusColor: Colors.transparent,
+            // dropdownColor: Colors.transparent,
+            // elevation: 0,
+            // focusColor: Colors.transparent,
             value: dropdownValue,
             items: competenceCheckDropdownItems,
             onChanged: (value) {
