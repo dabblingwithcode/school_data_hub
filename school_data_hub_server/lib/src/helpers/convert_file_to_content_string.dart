@@ -22,5 +22,7 @@ Future<String> convertFileToContentString(
 
   // Decode bytes to string (UTF-8 is common, but you can use other encodings)
   final content = utf8.decode(uint8List);
+  // We don't need the file anymore, so we delete it
+  await session.storage.deleteFile(storageId: 'private', path: filePath);
   return content;
 }
