@@ -1,0 +1,13 @@
+class: CompetenceReportCheck
+table: competence_report_check
+fields:
+  publicId: String
+  achievement: int
+  comment: String
+  createdBy: String
+  createdAt: DateTime
+  shouldPrint: bool?
+  pupil: PupilData?, relation(name=competence_report_check_pupil)
+  ## TODO: this field should be renamed to avoid confusion betweesn CompetenceReport and CompetenceReportItem
+  competence: CompetenceReportItem?, relation(name=competence_report_item_competence_report_check, onDelete=Cascade)
+  competenceReport: CompetenceReport?, relation(name=competence_report_check_report, onDelete=Cascade)

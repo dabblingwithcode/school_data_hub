@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -7,8 +8,8 @@ import 'package:school_data_hub_flutter/features/books/data/book_api_service.dar
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/edit_book_page/book_tag_selection_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class NewBook extends WatchingStatefulWidget {
   final String? bookTitle;
@@ -278,6 +279,33 @@ class NewBookController extends State<NewBook> {
     }
   }
 
+  Future<void> openBookTagSelectionPage(BuildContext context) async {
+    final allTags = di<BookManager>().bookTags.value;
+    final selectedTagIds = bookTagSelection.entries
+        .where((e) => e.value)
+        .map((e) => e.key.id!)
+        .toSet();
+
+    final result = await Navigator.push<Set<int>>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookTagSelectionPage(
+          allTags: allTags,
+          selectedTagIds: selectedTagIds,
+        ),
+      ),
+    );
+
+    if (result != null) {
+      final freshTags = di<BookManager>().bookTags.value;
+      setState(() {
+        bookTagSelection = {
+          for (final tag in freshTags) tag: result.contains(tag.id),
+        };
+      });
+    }
+  }
+
   Future<void> submitBook() async {
     if (!validateRequestDataPayload()) {
       return;
@@ -299,8 +327,12 @@ class NewBookController extends State<NewBook> {
       readingLevel: readingLevel,
       author: authorTextFieldController.text,
     );
-    if (bookTags.isNotEmpty) {
-      await di<BookManager>().updateBookTags(widget.isbn, bookTags);
+    final selectedTags = bookTagSelection.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+    if (selectedTags.isNotEmpty) {
+      await di<BookManager>().updateBookTags(widget.isbn, selectedTags);
     }
 
     Navigator.pop(context);

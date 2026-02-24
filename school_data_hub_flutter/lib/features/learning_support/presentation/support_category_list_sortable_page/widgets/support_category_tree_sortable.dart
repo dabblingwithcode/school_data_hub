@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_reorderable_list_view.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/widgets/support_category_card_sortable.dart';
@@ -9,10 +10,7 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/s
 class SupportCategoryTreeSortable extends StatefulWidget {
   final List<SupportCategory> categories;
 
-  const SupportCategoryTreeSortable({
-    super.key,
-    required this.categories,
-  });
+  const SupportCategoryTreeSortable({super.key, required this.categories});
 
   @override
   State<SupportCategoryTreeSortable> createState() =>
@@ -38,17 +36,16 @@ class _SupportCategoryTreeSortableState
   }
 
   List<int> _buildRootOrder() {
-    final roots = widget.categories
-        .where((c) => c.parentCategory == null)
-        .toList()
-      ..sort((a, b) {
-        if (a.order != null && b.order != null) {
-          return a.order!.compareTo(b.order!);
-        }
-        if (a.order != null) return -1;
-        if (b.order != null) return 1;
-        return a.categoryId.compareTo(b.categoryId);
-      });
+    final roots =
+        widget.categories.where((c) => c.parentCategory == null).toList()
+          ..sort((a, b) {
+            if (a.order != null && b.order != null) {
+              return a.order!.compareTo(b.order!);
+            }
+            if (a.order != null) return -1;
+            if (b.order != null) return 1;
+            return a.categoryId.compareTo(b.categoryId);
+          });
     return roots.map((c) => c.categoryId).toList();
   }
 
@@ -78,8 +75,7 @@ class _SupportCategoryTreeSortableState
     final category = widget.categories.firstWhere(
       (c) => c.categoryId == categoryId,
     );
-    final color =
-        LearningSupportHelper.getRootSupportCategoryColor(category);
+    final color = LearningSupportHelper.getRootSupportCategoryColor(category);
     final hasChildren = widget.categories.any(
       (c) => c.parentCategory == categoryId,
     );
@@ -106,10 +102,7 @@ class _SupportCategoryTreeSortableState
 
   @override
   Widget build(BuildContext context) {
-    return ReorderableListView(
-      buildDefaultDragHandles: false,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+    return GenericReorderableListView(
       onReorder: _onReorder,
       children: [
         for (int i = 0; i < _rootOrder.length; i++)

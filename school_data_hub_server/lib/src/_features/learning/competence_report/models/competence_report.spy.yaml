@@ -1,0 +1,20 @@
+class: CompetenceReport
+table: competence_report
+fields:
+  reportId: String
+  createdBy: String
+  createdAt: DateTime
+  ## TODO: modifiedBy should have been nullable, this was a mistake
+  ## roll this back to nullable and force a migration
+  ## can't be addressed at this time considering that the vps deployment of the live instances
+  ## can't force a migration as of today
+  ## For, now, we'll hack a default value and rely on modifiedAt to know if the field has been modified
+  ## This should be investigated: https://docs.serverpod.dev/concepts/database/migrations
+  modifiedBy: String
+  modifiedAt: DateTime?
+  achievement: String
+  achievedAt: DateTime
+  indicators: List<String>?
+  pupil: PupilData?, relation(name=competence_report_pupil)
+  competenceReportChecks: List<CompetenceReportCheck>?, relation(name=competence_report_check_report)
+  schoolSemester: SchoolSemester?, relation(name=competence_report_semester)

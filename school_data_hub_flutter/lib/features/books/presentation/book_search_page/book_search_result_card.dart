@@ -3,6 +3,9 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
@@ -22,8 +25,8 @@ class BookSearchResultCard extends WatchingWidget {
 
     final List<LibraryBookProxy> books = group;
     final LibraryBookProxy bookProxy = books.first;
-    final descriptionTileController = createOnce<ExpansibleController>(
-      () => ExpansibleController(),
+    final descriptionTileController = createOnce<CustomExpansionTileController>(
+      () => CustomExpansionTileController(),
     );
     watch(bookProxy);
     return ClipRRect(
@@ -33,39 +36,42 @@ class BookSearchResultCard extends WatchingWidget {
         surfaceTintColor: Colors.white,
         child: InkWell(
           onLongPress: () async {},
-          child: Padding(
-            padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              EditBook(libraryBook: bookProxy),
-                        ),
-                      );
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EditBook(libraryBook: bookProxy),
+                      ),
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Text(
                           bookProxy.title,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                SingleChildScrollView(
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15),
+                child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -80,99 +86,106 @@ class BookSearchResultCard extends WatchingWidget {
                     ],
                   ),
                 ),
-                const Gap(5),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Book image on the left side
-                    UnencryptedImageInCard(
+              ),
+              const Gap(5),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Book image on the left side
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15),
+
+                    child: UnencryptedImageInCard(
                       cacheKey: bookProxy.isbn.toString(),
                       path: bookProxy.imagePath,
                       size: 100,
                     ),
-                    const Gap(15),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Text('ISBN:'),
-                                const Gap(10),
-                                Text(
-                                  bookProxy.isbn.displayAsIsbn(),
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
+                  ),
+                  const Gap(15),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Text('ISBN:'),
+                              const Gap(10),
+                              Text(
+                                bookProxy.isbn.displayAsIsbn(),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                const Text('LeseStufe:'),
-                                const Gap(10),
-                                Text(
-                                  bookProxy.readingLevel ??
-                                      ReadingLevel.notSet.value,
-                                  overflow: TextOverflow.fade,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Text('LeseStufe:'),
+                              const Gap(10),
+                              Text(
+                                bookProxy.readingLevel ??
+                                    ReadingLevel.notSet.value,
+                                overflow: TextOverflow.fade,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
-                              ],
-                            ),
-                            const Gap(5),
-                            Wrap(
-                              spacing: 2,
-                              children: [
-                                const Text('Tags: '),
-                                if (bookProxy.bookTags.isEmpty)
-                                  const Text(
-                                    'Keine Tags',
-                                    style: TextStyle(
+                              ),
+                            ],
+                          ),
+                          const Gap(5),
+                          Wrap(
+                            spacing: 2,
+                            children: [
+                              const Text('Tags: '),
+                              if (bookProxy.bookTags.isEmpty)
+                                const Text(
+                                  'Keine Tags',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                )
+                              else
+                                for (final tag in bookProxy.bookTags) ...[
+                                  const Gap(5),
+                                  Chip(
+                                    padding: const EdgeInsets.all(4),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    labelStyle: const TextStyle(
                                       fontSize: 12,
-                                      color: Colors.grey,
-                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
                                     ),
-                                  )
-                                else
-                                  for (final tag in bookProxy.bookTags) ...[
-                                    const Gap(5),
-                                    Chip(
-                                      padding: const EdgeInsets.all(4),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      labelStyle: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white,
-                                      ),
-                                      label: Text(tag.name),
-                                      backgroundColor:
-                                          AppColors.interactiveColor,
-                                    ),
-                                  ],
-                              ],
-                            ),
-                            const Gap(10),
-                          ],
-                        ),
+                                    label: Text(tag.name),
+                                    backgroundColor: AppColors.interactiveColor,
+                                  ),
+                                ],
+                            ],
+                          ),
+                          const Gap(10),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                ExpansionTile(
-                  tilePadding: const EdgeInsets.all(0),
-                  controller: descriptionTileController,
-                  title: const Text(
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15),
+                child: CustomExpansionTileSwitch(
+                  customExpansionTileController: descriptionTileController,
+                  includeSwitch: true,
+                  switchColor: AppColors.backgroundColor,
+                  expansionSwitchWidget: const Text(
                     'Beschreibung:',
                     style: TextStyle(
                       fontSize: 14,
@@ -180,7 +193,13 @@ class BookSearchResultCard extends WatchingWidget {
                       color: Colors.black,
                     ),
                   ),
-                  children: [
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15),
+                child: CustomExpansionTileContent(
+                  tileController: descriptionTileController,
+                  widgetList: [
                     InkWell(
                       onTap: () async {
                         final result = await longTextFieldDialog(
@@ -209,25 +228,25 @@ class BookSearchResultCard extends WatchingWidget {
                     ),
                   ],
                 ),
-                Column(
-                  children: books
-                      .fold<List<LibraryBookProxy>>([], (uniqueBooks, book) {
-                        // Only add if libraryId is not already in the list
-                        if (!uniqueBooks.any(
-                          (existing) => existing.libraryId == book.libraryId,
-                        )) {
-                          uniqueBooks.add(book);
-                        }
-                        return uniqueBooks;
-                      })
-                      .map((book) {
-                        return LibraryBookCard(libraryBookProxy: book);
-                      })
-                      .toList(),
-                ),
-                const Gap(10),
-              ],
-            ),
+              ),
+              Column(
+                children: books
+                    .fold<List<LibraryBookProxy>>([], (uniqueBooks, book) {
+                      // Only add if libraryId is not already in the list
+                      if (!uniqueBooks.any(
+                        (existing) => existing.libraryId == book.libraryId,
+                      )) {
+                        uniqueBooks.add(book);
+                      }
+                      return uniqueBooks;
+                    })
+                    .map((book) {
+                      return LibraryBookCard(libraryBookProxy: book);
+                    })
+                    .toList(),
+              ),
+              const Gap(10),
+            ],
           ),
         ),
       ),

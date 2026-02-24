@@ -8,7 +8,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
@@ -253,6 +253,11 @@ class PupilProxy with ChangeNotifier {
   List<CompetenceCheck>? get competenceChecks => _pupilData.competenceChecks;
 
   List<CompetenceGoal>? get competenceGoals => _pupilData.competenceGoals;
+
+  List<CompetenceReport>? get competenceReports => _pupilData.competenceReports;
+
+  List<CompetenceReportCheck>? get competenceReportChecks =>
+      _pupilData.competenceReportChecks;
 
   List<PupilWorkbook>? get pupilWorkbooks =>
       di<PupilWorkbookManager>().getPupilWorkbooks(pupilId);

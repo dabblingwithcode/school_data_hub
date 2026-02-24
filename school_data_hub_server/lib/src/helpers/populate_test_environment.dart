@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
-import 'package:school_data_hub_server/src/_features/learning/helpers/import_competences_from_json_file.dart';
+import 'package:school_data_hub_server/src/_features/learning/competence/helpers/import_competences_from_json_file.dart';
 import 'package:school_data_hub_server/src/_features/learning_support/helpers/import_support_categories_from_file_content_json.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/convert_file_to_content_string.dart';

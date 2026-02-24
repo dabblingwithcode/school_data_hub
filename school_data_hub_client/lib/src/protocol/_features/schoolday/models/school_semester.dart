@@ -12,7 +12,8 @@
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import '../../../_features/timetable/models/timetable.dart' as _i2;
 import '../../../_features/schoolday/models/schoolday.dart' as _i3;
-import '../../../_features/learning/models/competence_report.dart' as _i4;
+import '../../../_features/learning/competence_report/models/competence_report.dart'
+    as _i4;
 import '../../../_features/learning_support/models/learning_support_plan.dart'
     as _i5;
 

@@ -4,7 +4,8 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/books_main_menu_page/books_main_menu_page.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/competence_list_page/competence_list_page.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_page/competence_list_page.dart';
+import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_page/competence_report_item_list_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/controller/category_list_controller.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
@@ -26,7 +27,7 @@ class LearnResourcesMenuPage extends StatelessWidget {
       body: Center(
         child: SizedBox(
           width: 380,
-          height: 380,
+          height: 560,
           child: GridView.count(
             shrinkWrap: true,
             crossAxisCount: 2,
@@ -169,6 +170,43 @@ class LearnResourcesMenuPage extends StatelessWidget {
                         const Gap(10),
                         const Text(
                           'Bücherei',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Card(
+                  color: AppColors.backgroundColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (ctx) =>
+                              const CompetenceReportItemListPage(),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.assignment,
+                          size: 50,
+                          color: AppColors.gridViewColor,
+                        ),
+                        const Gap(10),
+                        const Text(
+                          'Zeugniskompetenzen',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

@@ -104,6 +104,20 @@ competenceGoal:
   - deleteCompetenceGoal:
   - addFileToCompetenceGoal:
   - removeFileFromCompetenceGoal:
+competenceReportCheck:
+  - postCompetenceReportCheck:
+  - updateCompetenceReportCheck:
+  - deleteCompetenceReportCheck:
+competenceReport:
+  - postCompetenceReport:
+  - fetchCompetenceReports:
+  - updateCompetenceReport:
+  - deleteCompetenceReport:
+competenceReportItem:
+  - postCompetenceReportItem:
+  - fetchAllCompetenceReportItems:
+  - updateCompetenceReportItem:
+  - deleteCompetenceReportItem:
 learningSupportPlan:
   - fetchLearningSupportPlans:
   - createLearningSupportPlan:

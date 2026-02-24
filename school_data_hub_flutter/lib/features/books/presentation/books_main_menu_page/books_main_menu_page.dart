@@ -143,7 +143,7 @@ class BookActionButton extends StatelessWidget {
     required this.onTap,
     this.onLongPress,
     this.minWidth = 120,
-    this.maxWidth = 160,
+    this.maxWidth = 120,
   });
 
   @override
@@ -152,8 +152,8 @@ class BookActionButton extends StatelessWidget {
       onTap: onTap,
       onLongPress: onLongPress,
       borderRadius: BorderRadius.circular(12),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minWidth: minWidth, maxWidth: maxWidth),
+      child: SizedBox(
+        width: maxWidth,
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(

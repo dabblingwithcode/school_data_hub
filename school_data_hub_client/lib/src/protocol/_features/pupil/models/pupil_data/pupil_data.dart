@@ -36,10 +36,13 @@ import '../../../../_features/timetable/models/scheduled_lesson/lesson_group_mem
     as _i14;
 import '../../../../_features/timetable/models/lesson/lesson_attendance.dart'
     as _i15;
-import '../../../../_features/learning/models/competence_goal.dart' as _i16;
-import '../../../../_features/learning/models/competence_check.dart' as _i17;
-import '../../../../_features/learning/models/competence_report.dart' as _i18;
-import '../../../../_features/learning/models/competence_report_check.dart'
+import '../../../../_features/learning/competence/models/competence_goal.dart'
+    as _i16;
+import '../../../../_features/learning/competence/models/competence_check.dart'
+    as _i17;
+import '../../../../_features/learning/competence_report/models/competence_report.dart'
+    as _i18;
+import '../../../../_features/learning/competence_report/models/competence_report_check.dart'
     as _i19;
 import '../../../../_features/workbooks/models/pupil_workbook.dart' as _i20;
 import '../../../../_features/books/models/pupil_book_lending.dart' as _i21;

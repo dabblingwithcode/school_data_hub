@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "../../school_data_hub_server"
+		},
+		{
+			"path": "../../docs"
 		}
 	],
 	"settings": {}

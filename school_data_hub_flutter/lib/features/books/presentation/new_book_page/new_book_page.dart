@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -8,7 +9,6 @@ import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_controller.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class NewBookPage extends StatelessWidget {
   final NewBookController controller;
@@ -188,19 +188,11 @@ class NewBookPage extends StatelessWidget {
                       ),
 
                       const Gap(10),
-                      InkWell(
-                        onTap: () => controller.createNewTag(context),
-                        child: Icon(
-                          Icons.add,
-                          color: AppColors.interactiveColor,
-                          size: 20,
-                        ),
-                      ),
-                      const Gap(5),
+
                       InkWell(
                         onTap: () => controller.openTagManagement(context),
                         child: Icon(
-                          Icons.settings,
+                          Icons.bookmark_add_rounded,
                           color: AppColors.interactiveColor,
                           size: 20,
                         ),

@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/missed
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/birthday_date_range_dialog.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';

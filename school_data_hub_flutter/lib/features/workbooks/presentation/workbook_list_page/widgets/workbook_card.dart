@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/widgets/competence_grades_widget.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/widgets/competence_grades_widget.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';

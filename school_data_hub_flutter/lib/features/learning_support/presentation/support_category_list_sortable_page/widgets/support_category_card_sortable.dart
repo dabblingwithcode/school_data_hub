@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_reorderable_list_view.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/select_parent_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/widgets/support_category_leaf_card_sortable.dart';
@@ -206,10 +207,7 @@ class _SupportCategoryCardSortableState
               CustomExpansionTileContent(
                 tileController: _expansionController,
                 widgetList: [
-                  ReorderableListView(
-                    buildDefaultDragHandles: false,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
+                  GenericReorderableListView(
                     onReorder: _onReorder,
                     children: [
                       for (int i = 0; i < _childOrder.length; i++)

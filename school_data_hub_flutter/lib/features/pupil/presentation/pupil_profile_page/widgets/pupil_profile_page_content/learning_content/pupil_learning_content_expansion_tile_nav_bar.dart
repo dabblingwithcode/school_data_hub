@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/features/learning/domain/competence_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_books.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_goals.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_statuses.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_workbooks.dart';
-import 'package:school_data_hub_flutter/features/learning/presentation/pupil_list_learning_page/widgets/pupil_list_learning_content_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_books.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_goals.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_statuses.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_workbooks.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_list_learning_content_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/pupil_competence_report_page/pupil_competence_report_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
@@ -27,15 +28,28 @@ class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
         const PupilListLearningContentNavBar(),
         Padding(
           padding: const EdgeInsets.only(top: 5),
-          child: (selectedContent == SelectedContent.competenceStatuses)
-              ? PupilLearningContentCompetenceStatuses(pupil: pupil)
-              : (selectedContent == SelectedContent.competenceGoals)
-              ? PupilLearningContentCompetenceGoals(pupil: pupil)
-              : (selectedContent == SelectedContent.workbooks)
-              ? PupilLearningContentWorkbooks(pupil: pupil)
-              :
-                //  (selectedContent == SelectedContent.books):
-                PupilLearningContentBooks(pupil: pupil),
+          child: switch (selectedContent) {
+            SelectedContent.competenceStatuses =>
+              PupilLearningContentCompetenceStatuses(pupil: pupil),
+            SelectedContent.competenceGoals =>
+              PupilLearningContentCompetenceGoals(pupil: pupil),
+            SelectedContent.competenceReports => ElevatedButton.icon(
+              icon: const Icon(Icons.assignment),
+              label: const Text('Zeugnisse öffnen'),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => PupilCompetenceReportPage(pupil: pupil),
+                  ),
+                );
+              },
+            ),
+            SelectedContent.workbooks =>
+              PupilLearningContentWorkbooks(pupil: pupil),
+            SelectedContent.books =>
+              PupilLearningContentBooks(pupil: pupil),
+            SelectedContent.none => const SizedBox.shrink(),
+          },
         ),
       ],
     );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_helper.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
@@ -28,71 +28,79 @@ class LibraryBookCard extends WatchingWidget {
         : bookBorrowStatus == BookBorrowStatus.since3Weeks
         ? Colors.orange
         : Colors.red;
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text('Buch-ID:'),
-            const Gap(10),
-            Text(
-              libraryBookProxy.libraryId,
-              overflow: TextOverflow.fade,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const Gap(10),
-            const Text('Ablageort:'),
-            const Gap(10),
-            Text(
-              libraryBookProxy.location.location,
-              overflow: TextOverflow.fade,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const Spacer(),
-            CustomExpansionTileSwitch(
-              customExpansionTileController: tileController,
-              expansionSwitchWidget: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: borrowedColor,
-                  shape: BoxShape.circle,
+    return Padding(
+      padding: const EdgeInsets.only(left: 15, right: 15),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text('Buch-ID:'),
+              const Gap(10),
+              Text(
+                libraryBookProxy.libraryId,
+                overflow: TextOverflow.fade,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
-            ),
-          ],
-        ),
-        CustomExpansionTileContent(
-          title: null,
-          tileController: tileController,
-          widgetList: bookPupilLendings.isEmpty
-              ? [
-                  const Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: Text(
-                      'Keine Ausleihen',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+              const Gap(10),
+
+              const Spacer(),
+              CustomExpansionTileSwitch(
+                customExpansionTileController: tileController,
+                expansionSwitchWidget: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: borrowedColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('Ablageort:'),
+              const Gap(10),
+              Text(
+                libraryBookProxy.location.location,
+                overflow: TextOverflow.fade,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+          CustomExpansionTileContent(
+            title: null,
+            tileController: tileController,
+            widgetList: bookPupilLendings.isEmpty
+                ? [
+                    const Padding(
+                      padding: EdgeInsets.all(15.0),
+                      child: Text(
+                        'Keine Ausleihen',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
-                  ),
-                ]
-              : bookPupilLendings.map((pupilBook) {
-                  return BookLendingPupilCard(passedPupilBook: pupilBook);
-                }).toList(),
-        ),
-        const Gap(5),
-      ],
+                  ]
+                : bookPupilLendings.map((pupilBook) {
+                    return BookLendingPupilCard(passedPupilBook: pupilBook);
+                  }).toList(),
+          ),
+          const Gap(5),
+        ],
+      ),
     );
   }
 }

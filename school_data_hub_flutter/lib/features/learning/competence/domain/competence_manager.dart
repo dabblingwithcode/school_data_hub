@@ -1,0 +1,601 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
+import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/data/competence_api_service.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/data/competence_check_api_service.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/data/competence_goal_api_service.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_helper.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/domain/filters/competence_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
+
+enum SelectedContent {
+  competenceStatuses,
+  competenceGoals,
+  competenceReports,
+  workbooks,
+  books,
+  none,
+}
+
+class CompetenceManager {
+  final _envManager = di<EnvManager>();
+
+  final _competenceApiService = CompetenceApiService();
+
+  final _notificationService = di<NotificationService>();
+
+  final _competenceCheckApiService = CompetenceCheckApiService();
+  final _competenceGoalApiService = CompetenceGoalApiService();
+  final _competences = ValueNotifier<List<Competence>>([]);
+  ValueListenable<List<Competence>> get competences => _competences;
+  ValueListenable<SelectedContent> get selectedLearningContent =>
+      _selectedLearningContent;
+  // Learning content selection state
+  final _selectedLearningContent = ValueNotifier<SelectedContent>(
+    SelectedContent.books,
+  );
+
+  Map<int, int> _rootCompetencesMap = {};
+  Map<int, int> get rootCompetencesMap => _rootCompetencesMap;
+
+  Competence getCompetenceById(int publicId) {
+    return _competences.value.firstWhere(
+      (element) => element.publicId == publicId,
+    );
+  }
+
+  CompetenceManager();
+  void dispose() {
+    _competences.dispose();
+    _selectedLearningContent.dispose();
+
+    return;
+  }
+
+  Future<CompetenceManager> init() async {
+    await firstFetchCompetences();
+
+    return this;
+  }
+
+  void clearData() {
+    _competences.value = [];
+  }
+
+  void setSelectedContent(SelectedContent selectedContent) {
+    _selectedLearningContent.value = selectedContent;
+  }
+
+  //-TODO: Workaround to avoid registration error
+  //- when inclduing the CompetenceFilterManager because
+  //- the CompetenceFilterManager is not registered in the di yet
+
+  Future<void> firstFetchCompetences() async {
+    final List<Competence> competences = await _competenceApiService
+        .getAllCompetences();
+    if (competences.isNotEmpty) {
+      _competences.value = competences;
+
+      _envManager.setPopulatedEnvServerData(competences: true);
+
+      _rootCompetencesMap.clear();
+
+      _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+        competences,
+      );
+    }
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenzen aktualisiert!',
+    );
+
+    return;
+  }
+
+  Future<void> fetchCompetences() async {
+    final List<Competence> competences = await _competenceApiService
+        .getAllCompetences();
+
+    final sortedCompetences = CompetenceHelper.sortCompetences(competences);
+    _competences.value = sortedCompetences;
+
+    _rootCompetencesMap.clear();
+
+    _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+      competences,
+    );
+
+    di<CompetenceFilterManager>().refreshFilteredCompetences(competences);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenzen aktualisiert!',
+    );
+
+    return;
+  }
+
+  Future<void> postNewCompetence({
+    int? parentCompetence,
+    required String competenceName,
+    required List<String> competenceLevel,
+    required List<String> indicators,
+  }) async {
+    final newCompetence = await _competenceApiService.postCompetence(
+      name: competenceName,
+      level: competenceLevel,
+      indicators: indicators,
+    );
+
+    _competences.value = CompetenceHelper.sortCompetences([
+      ..._competences.value,
+      newCompetence,
+    ]);
+    di<CompetenceFilterManager>().refreshFilteredCompetences(
+      _competences.value,
+    );
+    _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+      _competences.value,
+    );
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenz erstellt',
+    );
+
+    return;
+  }
+
+  Future<void> importCompetencesFromFile() async {
+    final fileResponse = await ClientFileUpload.uploadFile(
+      storageId: StorageId.private,
+      folder: ServerStorageFolder.temp,
+    );
+
+    if (fileResponse.success == false) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Die Datei konnte nicht hochgeladen werden!',
+      );
+      return;
+    }
+    final List<Competence> importedCompetences = await _competenceApiService
+        .importCompetencesFromJsonFile(fileResponse.path!);
+
+    final sortedCompetences = CompetenceHelper.sortCompetences(
+      importedCompetences,
+    );
+    _competences.value = sortedCompetences;
+
+    _rootCompetencesMap.clear();
+
+    _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+      sortedCompetences,
+    );
+
+    di<CompetenceFilterManager>().refreshFilteredCompetences(sortedCompetences);
+    _envManager.setPopulatedEnvServerData(competences: true);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenzen importiert',
+    );
+  }
+
+  Future<void> updateCompetenceOrder({
+    required int publicId,
+    required int order,
+  }) async {
+    final index = _competences.value.indexWhere(
+      (c) => c.publicId == publicId,
+    );
+    if (index == -1) return;
+
+    final competence = _competences.value[index];
+    final updatedCompetence = competence.copyWith(order: order);
+    final verifiedUpdated = await _competenceApiService.updateCompetence(
+      updatedCompetence,
+    );
+    // Update in-place without notifying listeners.
+    // The sortable widgets manage their own visual order via local state.
+    // Call sortAndNotifyCompetences() when done (e.g. on page dispose)
+    // to commit the sorted order for other widgets.
+    _competences.value[index] = verifiedUpdated;
+  }
+
+  /// Sorts the competences list by order and notifies listeners.
+  /// Call this after order updates are complete (e.g. when leaving the
+  /// sortable page) so other pages see the correct order.
+  void sortAndNotifyCompetences() {
+    final competences = CompetenceHelper.sortCompetences(
+      List<Competence>.from(_competences.value),
+    );
+    _competences.value = competences;
+    di<CompetenceFilterManager>().refreshFilteredCompetences(competences);
+  }
+
+  Future<void> updateCompetenceProperty({
+    required int publicId,
+    String? competenceName,
+    ({List<String>? value})? competenceLevel,
+    ({List<String>? value})? indicators,
+    ({int? value})? order,
+  }) async {
+    final competenceListIndex = _competences.value.indexWhere(
+      (element) => element.publicId == publicId,
+    );
+    final competence = competenceListIndex != -1
+        ? _competences.value[competenceListIndex]
+        : null;
+    if (competence == null) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Kompetenz nicht gefunden',
+      );
+      return;
+    }
+
+    final updatedCompetence = competence.copyWith(
+      name: competenceName ?? competence.name,
+      level: competenceLevel != null ? competenceLevel.value : competence.level,
+      indicators: indicators != null ? indicators.value : competence.indicators,
+      order: order != null ? order.value : competence.order,
+    );
+    final verifiedUpdatedCompetence = await _competenceApiService
+        .updateCompetence(updatedCompetence);
+
+    final List<Competence> competences = List.from(_competences.value);
+
+    competences[competenceListIndex] = verifiedUpdatedCompetence;
+
+    _competences.value = competences;
+
+    di<CompetenceFilterManager>().refreshFilteredCompetences(
+      _competences.value,
+    );
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenz aktualisiert',
+    );
+
+    return;
+  }
+
+  Future<void> deleteCompetence(int publicId) async {
+    final bool success = await _competenceApiService.deleteCompetence(publicId);
+
+    if (success) {
+      final List<Competence> competences = List.from(_competences.value);
+
+      competences.removeWhere((element) => element.publicId == publicId);
+
+      _competences.value = competences;
+
+      di<CompetenceFilterManager>().refreshFilteredCompetences(
+        _competences.value,
+      );
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Kompetenz gelöscht',
+      );
+    } else {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Löschen der Kompetenz',
+      );
+    }
+  }
+
+  Future<void> postCompetenceCheck({
+    required int pupilId,
+    required int competenceId,
+    required int score,
+    required String? competenceComment,
+    required String? groupId,
+    String? groupCheckName,
+  }) async {
+    final createdBy = di<HubSessionManager>().userName;
+    final PupilData? updatedPupilData = await _competenceCheckApiService
+        .postCompetenceCheck(
+          pupilId: pupilId,
+          competenceId: competenceId,
+          createdBy: createdBy!,
+          comment: competenceComment,
+          score: score,
+          valueFactor: 1,
+          groupCheckId: groupId,
+          groupCheckName: groupCheckName,
+        );
+    if (updatedPupilData == null) {
+      return;
+    }
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenzcheck erstellt',
+    );
+
+    return;
+  }
+
+  Future<void> postCompetenceCheckWithFile({
+    required int pupilId,
+    required int competenceId,
+    required int score,
+    required String? competenceComment,
+    required String? groupId,
+    String? groupCheckName,
+    String? fileInfo,
+    required File file,
+  }) async {
+    final createdBy = di<HubSessionManager>().userName;
+
+    // First, create the competence check
+    final PupilData? updatedPupilData = await _competenceCheckApiService
+        .postCompetenceCheck(
+          pupilId: pupilId,
+          competenceId: competenceId,
+          createdBy: createdBy!,
+          comment: competenceComment,
+          score: score,
+          valueFactor: 1,
+          groupCheckId: groupId,
+          groupCheckName: groupCheckName,
+        );
+
+    if (updatedPupilData == null) {
+      return;
+    }
+
+    // Find the newly created competence check
+    final newCheck = updatedPupilData.competenceChecks
+        ?.where((check) => check.competenceId == competenceId)
+        .lastOrNull;
+
+    if (newCheck == null) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Erstellen des Kompetenzchecks',
+      );
+      return;
+    }
+
+    // Encrypt and add the file
+    final File encryptedFile = await customEncrypter.encryptFile(file);
+    final PupilData updatedPupilDataWithFile = await _competenceCheckApiService
+        .addFileToCompetenceCheck(
+          newCheck.checkId,
+          encryptedFile,
+          createdBy,
+          fileInfo,
+        );
+
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(
+      updatedPupilDataWithFile,
+    );
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenzcheck mit Datei erstellt',
+    );
+
+    return;
+  }
+
+  Future<void> postCompetenceGoal({
+    required int pupilId,
+    required int competenceId,
+    required String description,
+    required List<String> strategies,
+  }) async {
+    final pupilData = await _competenceGoalApiService.postCompetenceGoal(
+      pupilId: pupilId,
+      competenceId: competenceId,
+      description: description,
+      strategies: strategies,
+    );
+    if (pupilData == null) {
+      return;
+    }
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(pupilData);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Lernziel erstellt',
+    );
+
+    return;
+  }
+
+  Future<void> updateCompetenceGoal({
+    required String publicId,
+    ({int? value})? score,
+    ({DateTime? value})? achievedAt,
+    ({String value})? description,
+    ({List<String>? value})? strategies,
+  }) async {
+    final updatedPupilData = await _competenceGoalApiService
+        .updateCompetenceGoal(
+          publicId: publicId,
+          score: score,
+          achievedAt: achievedAt,
+          description: description,
+          strategies: strategies,
+        );
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Lernziel aktualisiert',
+    );
+
+    return;
+  }
+
+  Future<void> deleteCompetenceGoal(String publicId) async {
+    final PupilData pupilData = await _competenceGoalApiService
+        .deleteCompetenceGoal(publicId);
+
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(pupilData);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Lernziel gelöscht',
+    );
+
+    return;
+  }
+
+  Future<void> addFileToCompetenceGoal({
+    required String publicId,
+    required File file,
+    String? fileInfo,
+  }) async {
+    final encryptedFile = await customEncrypter.encryptFile(file);
+    final createdBy = di<HubSessionManager>().userName;
+    final updatedPupilData = await _competenceGoalApiService
+        .addFileToCompetenceGoal(publicId, encryptedFile, createdBy!, fileInfo);
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Datei zum Lernziel hinzugefügt',
+    );
+
+    return;
+  }
+
+  Future<void> removeFileFromCompetenceGoal({
+    required String publicId,
+    required String documentId,
+  }) async {
+    final updatedPupilData = await _competenceGoalApiService
+        .removeFileFromCompetenceGoal(publicId, documentId);
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+  }
+
+  Future<void> updateCompetenceCheck({
+    required String competenceCheckId,
+    ({int value})? score,
+    ({String? value})? competenceComment,
+    ({DateTime? value})? createdAt,
+    ({String value})? createdBy,
+    ({bool? value})? isReport,
+    ({double value})? valueFactor,
+  }) async {
+    final updatedPupilData = await _competenceCheckApiService
+        .updateCompetenceCheck(
+          competenceCheckId: competenceCheckId,
+          score: score,
+          createdAt: createdAt,
+          createdBy: createdBy,
+          competenceComment: competenceComment,
+          valueFactor: valueFactor,
+        );
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenzcheck aktualisiert',
+    );
+
+    return;
+  }
+
+  Future<void> deleteCompetenceCheck(String competenceCheckId) async {
+    final PupilData pupilData = await _competenceCheckApiService
+        .deleteCompetenceCheck(competenceCheckId);
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Kompetenzcheck gelöscht',
+    );
+
+    di<PupilProxyManager>().updatePupilProxyWithPupilData(pupilData);
+
+    return;
+  }
+
+  Future<void> addFileToCompetenceCheck({
+    required String competenceCheckId,
+    required File file,
+    String? fileInfo,
+  }) async {
+    try {
+      final encryptedFile = await customEncrypter.encryptFile(file);
+      final createdBy = di<HubSessionManager>().userName;
+      final updatedPupilData = await _competenceCheckApiService
+          .addFileToCompetenceCheck(
+            competenceCheckId,
+            encryptedFile,
+            createdBy!,
+            fileInfo,
+          );
+      di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Datei zum Kompetenzcheck hinzugefügt',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Hochladen der Datei: $e',
+      );
+    }
+  }
+
+  Future<void> removeFileFromCompetenceCheck({
+    required String competenceCheckId,
+    required String fileId,
+  }) async {
+    try {
+      final updatedPupilData = await _competenceCheckApiService
+          .removeFileFromCompetenceCheck(competenceCheckId, fileId);
+      di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Datei vom Kompetenzcheck entfernt',
+      );
+    } catch (e) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Löschen der Datei: $e',
+      );
+    }
+  }
+
+  Competence findCompetenceById(int competenceId) {
+    final Competence competence = _competences.value.firstWhere(
+      (element) => element.publicId == competenceId,
+    );
+
+    return competence;
+  }
+
+  Competence findRootCompetence(Competence competence) {
+    return findCompetenceById(_rootCompetencesMap[competence.publicId]!);
+  }
+
+  Competence findRootCompetenceById(int competenceId) {
+    return findCompetenceById(_rootCompetencesMap[competenceId]!);
+  }
+
+  bool isCompetenceWithChildren(Competence competence) {
+    return _competences.value.any(
+      (element) => element.parentCompetence == competence.publicId,
+    );
+  }
+}

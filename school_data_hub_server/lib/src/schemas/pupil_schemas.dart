@@ -33,6 +33,11 @@ class PupilSchemas {
         documents: HubDocument.includeList(),
       ),
     ),
+    competenceReports: CompetenceReport.includeList(
+      include: CompetenceReport.include(
+        competenceReportChecks: CompetenceReportCheck.includeList(),
+      ),
+    ),
   );
 }
 
