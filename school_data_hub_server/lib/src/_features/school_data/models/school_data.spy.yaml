@@ -3,6 +3,7 @@ table: school_data
 fields:
   name: String
   officialName: String
+  extraName: String?
   address: String
   ## TODO: zipCode is optional to avoid a forced migration
   ## This should be fixed in a future migration
@@ -14,6 +15,7 @@ fields:
   telephoneNumber: String
   email: String
   website: String
+  principalName: String?
   logo: HubDocument?, relation(optional)
   officialSeal: HubDocument?, relation(optional)
   

@@ -17,6 +17,7 @@ abstract class SchoolData implements _i1.SerializableModel {
     this.id,
     required this.name,
     required this.officialName,
+    this.extraName,
     required this.address,
     this.zipCode,
     this.city,
@@ -24,6 +25,7 @@ abstract class SchoolData implements _i1.SerializableModel {
     required this.telephoneNumber,
     required this.email,
     required this.website,
+    this.principalName,
     this.logoId,
     this.logo,
     this.officialSealId,
@@ -34,6 +36,7 @@ abstract class SchoolData implements _i1.SerializableModel {
     int? id,
     required String name,
     required String officialName,
+    String? extraName,
     required String address,
     String? zipCode,
     String? city,
@@ -41,6 +44,7 @@ abstract class SchoolData implements _i1.SerializableModel {
     required String telephoneNumber,
     required String email,
     required String website,
+    String? principalName,
     int? logoId,
     _i2.HubDocument? logo,
     int? officialSealId,
@@ -52,6 +56,7 @@ abstract class SchoolData implements _i1.SerializableModel {
       id: jsonSerialization['id'] as int?,
       name: jsonSerialization['name'] as String,
       officialName: jsonSerialization['officialName'] as String,
+      extraName: jsonSerialization['extraName'] as String?,
       address: jsonSerialization['address'] as String,
       zipCode: jsonSerialization['zipCode'] as String?,
       city: jsonSerialization['city'] as String?,
@@ -59,6 +64,7 @@ abstract class SchoolData implements _i1.SerializableModel {
       telephoneNumber: jsonSerialization['telephoneNumber'] as String,
       email: jsonSerialization['email'] as String,
       website: jsonSerialization['website'] as String,
+      principalName: jsonSerialization['principalName'] as String?,
       logoId: jsonSerialization['logoId'] as int?,
       logo: jsonSerialization['logo'] == null
           ? null
@@ -81,6 +87,8 @@ abstract class SchoolData implements _i1.SerializableModel {
 
   String officialName;
 
+  String? extraName;
+
   String address;
 
   String? zipCode;
@@ -94,6 +102,8 @@ abstract class SchoolData implements _i1.SerializableModel {
   String email;
 
   String website;
+
+  String? principalName;
 
   int? logoId;
 
@@ -110,6 +120,7 @@ abstract class SchoolData implements _i1.SerializableModel {
     int? id,
     String? name,
     String? officialName,
+    String? extraName,
     String? address,
     String? zipCode,
     String? city,
@@ -117,6 +128,7 @@ abstract class SchoolData implements _i1.SerializableModel {
     String? telephoneNumber,
     String? email,
     String? website,
+    String? principalName,
     int? logoId,
     _i2.HubDocument? logo,
     int? officialSealId,
@@ -128,6 +140,7 @@ abstract class SchoolData implements _i1.SerializableModel {
       if (id != null) 'id': id,
       'name': name,
       'officialName': officialName,
+      if (extraName != null) 'extraName': extraName,
       'address': address,
       if (zipCode != null) 'zipCode': zipCode,
       if (city != null) 'city': city,
@@ -135,6 +148,7 @@ abstract class SchoolData implements _i1.SerializableModel {
       'telephoneNumber': telephoneNumber,
       'email': email,
       'website': website,
+      if (principalName != null) 'principalName': principalName,
       if (logoId != null) 'logoId': logoId,
       if (logo != null) 'logo': logo?.toJson(),
       if (officialSealId != null) 'officialSealId': officialSealId,
@@ -155,6 +169,7 @@ class _SchoolDataImpl extends SchoolData {
     int? id,
     required String name,
     required String officialName,
+    String? extraName,
     required String address,
     String? zipCode,
     String? city,
@@ -162,6 +177,7 @@ class _SchoolDataImpl extends SchoolData {
     required String telephoneNumber,
     required String email,
     required String website,
+    String? principalName,
     int? logoId,
     _i2.HubDocument? logo,
     int? officialSealId,
@@ -170,6 +186,7 @@ class _SchoolDataImpl extends SchoolData {
           id: id,
           name: name,
           officialName: officialName,
+          extraName: extraName,
           address: address,
           zipCode: zipCode,
           city: city,
@@ -177,6 +194,7 @@ class _SchoolDataImpl extends SchoolData {
           telephoneNumber: telephoneNumber,
           email: email,
           website: website,
+          principalName: principalName,
           logoId: logoId,
           logo: logo,
           officialSealId: officialSealId,
@@ -191,6 +209,7 @@ class _SchoolDataImpl extends SchoolData {
     Object? id = _Undefined,
     String? name,
     String? officialName,
+    Object? extraName = _Undefined,
     String? address,
     Object? zipCode = _Undefined,
     Object? city = _Undefined,
@@ -198,6 +217,7 @@ class _SchoolDataImpl extends SchoolData {
     String? telephoneNumber,
     String? email,
     String? website,
+    Object? principalName = _Undefined,
     Object? logoId = _Undefined,
     Object? logo = _Undefined,
     Object? officialSealId = _Undefined,
@@ -207,6 +227,7 @@ class _SchoolDataImpl extends SchoolData {
       id: id is int? ? id : this.id,
       name: name ?? this.name,
       officialName: officialName ?? this.officialName,
+      extraName: extraName is String? ? extraName : this.extraName,
       address: address ?? this.address,
       zipCode: zipCode is String? ? zipCode : this.zipCode,
       city: city is String? ? city : this.city,
@@ -214,6 +235,8 @@ class _SchoolDataImpl extends SchoolData {
       telephoneNumber: telephoneNumber ?? this.telephoneNumber,
       email: email ?? this.email,
       website: website ?? this.website,
+      principalName:
+          principalName is String? ? principalName : this.principalName,
       logoId: logoId is int? ? logoId : this.logoId,
       logo: logo is _i2.HubDocument? ? logo : this.logo?.copyWith(),
       officialSealId:

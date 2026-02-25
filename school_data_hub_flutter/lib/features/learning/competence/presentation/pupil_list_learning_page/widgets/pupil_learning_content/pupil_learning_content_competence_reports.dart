@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
+import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -44,14 +45,34 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
 
     final checks = report.competenceReportChecks ?? [];
 
-    return _ReportCheckTree(
-      items: reportItems,
-      parentId: null,
-      isFirstLevel: true,
-      checks: checks,
-      pupilId: pupil.pupilId,
-      reportId: report.id!,
-      reportManager: reportManager,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) =>
+                      CompetenceReportPdfViewPage(pupil: pupil, report: report),
+                ),
+              );
+            },
+            icon: const Icon(Icons.picture_as_pdf),
+            label: const Text('PDF erstellen'),
+          ),
+        ),
+        _ReportCheckTree(
+          items: reportItems,
+          parentId: null,
+          isFirstLevel: true,
+          checks: checks,
+          pupilId: pupil.pupilId,
+          reportId: report.id!,
+          reportManager: reportManager,
+        ),
+      ],
     );
   }
 }
@@ -129,6 +150,7 @@ int _countChecksUnderBranch(
       }
     }
   }
+
   addDescendants(branchPublicId);
   return checks.where((c) => descendantIds.contains(c.competenceId)).length;
 }

@@ -310,8 +310,56 @@ class PupilBookLending <<table: <b>pupil_book_lending</b>>> #e2f0fb##[bold] {
 
 }
 
+class Competence <<table: <b>competence</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/learning/competence/models/competence.spy.yaml</size></b>
+--
+  <i>publicId</i>: <b><color:#ff962f>int</color></b>
+  <i>parentCompetence</i>: <b><color:#ff962f>int?</color></b>
+  <i>name</i>: <b><color:#ff962f>String</color></b>
+  <i>level</i>: <b><color:#ff962f>List<String>?</color></b>
+  <i>indicators</i>: <b><color:#ff962f>List<String>?</color></b>
+  <i>order</i>: <b><color:#ff962f>int?</color></b>
+ ➡️ <i>competenceGoals</i> : <b><color:#ff962f>List<CompetenceGoal>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_competence<color:#ff962f>)</color>
+ ➡️ <i>competenceChecks</i> : <b><color:#ff962f>List<CompetenceCheck>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_check_competence<color:#ff962f>)</color>
+
+}
+
+class CompetenceCheck <<table: <b>competence_check</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/learning/competence/models/competence_check.spy.yaml</size></b>
+--
+  <i>checkId</i>: <b><color:#ff962f>String</color></b>
+  <i>score</i>: <b><color:#ff962f>int</color></b>
+  <i>comment</i>: <b><color:#ff962f>String?</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>valueFactor</i>: <b><color:#ff962f>double</color></b>
+  <i>groupCheckId</i>: <b><color:#ff962f>String? ## in case it is a check for a group of pupils</color></b>
+  <i>groupCheckName</i>: <b><color:#ff962f>String?</color></b>
+ ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_check_pupil<color:#ff962f>)</color>
+ ➡️ <i>competence</i> : <b><color:#ff962f>Competence?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_check_competence<color:#ff962f>)</color>
+ ➡️ <i>documents</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b>
+
+}
+
+class CompetenceGoal <<table: <b>competence_goal</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/learning/competence/models/competence_goal.spy.yaml</size></b>
+--
+  <i>publicId</i>: <b><color:#ff962f>String</color></b>
+  <i>description</i>: <b><color:#ff962f>String</color></b>
+  <i>strategies</i>: <b><color:#ff962f>List<String>?</color></b>
+  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
+  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
+  <i>modifiedBy</i>: <b><color:#ff962f>String?</color></b>
+  <i>score</i>: <b><color:#ff962f>int?</color></b>
+  <i>achievedAt</i>: <b><color:#ff962f>DateTime?</color></b>
+ ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_pupil<color:#ff962f>)</color>
+ ➡️ <i>competence</i> : <b><color:#ff962f>Competence?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_competence<color:#ff962f>)</color>
+ ➡️ <i>documents</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b>
+
+}
+
 class CompetenceReport <<table: <b>competence_report</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/learning/competence/models/competence_report.spy.yaml</size></b>
+<size:14>📁</size> <b><size:12> /_features/learning/competence_report/models/competence_report.spy.yaml</size></b>
 --
   <i>reportId</i>: <b><color:#ff962f>String</color></b>
   <i>createdBy</i>: <b><color:#ff962f>String</color></b>
@@ -334,7 +382,7 @@ class CompetenceReport <<table: <b>competence_report</b>>> #e2f0fb##[bold] {
 }
 
 class CompetenceReportCheck <<table: <b>competence_report_check</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/learning/competence/models/competence_report_check.spy.yaml</size></b>
+<size:14>📁</size> <b><size:12> /_features/learning/competence_report/models/competence_report_check.spy.yaml</size></b>
 --
   <i>publicId</i>: <b><color:#ff962f>String</color></b>
   <i>achievement</i>: <b><color:#ff962f>int</color></b>
@@ -350,7 +398,7 @@ class CompetenceReportCheck <<table: <b>competence_report_check</b>>> #e2f0fb##[
 }
 
 class CompetenceReportItem <<table: <b>competence_report_item</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/learning/competence/models/competence_report_item.spy.yaml</size></b>
+<size:14>📁</size> <b><size:12> /_features/learning/competence_report/models/competence_report_item.spy.yaml</size></b>
 --
   <i>publicId</i>: <b><color:#ff962f>int</color></b>
   <i>parentItem</i>: <b><color:#ff962f>int?</color></b>
@@ -358,54 +406,6 @@ class CompetenceReportItem <<table: <b>competence_report_item</b>>> #e2f0fb##[bo
   <i>level</i>: <b><color:#ff962f>List<String>?</color></b>
   <i>order</i>: <b><color:#ff962f>int?</color></b>
  ➡️ <i>competenceReportchecks</i> : <b><color:#ff962f>List<CompetenceReportCheck>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_report_item_competence_report_check<color:#ff962f>)</color>
-
-}
-
-class Competence <<table: <b>competence</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/learning/competence_report/models/competence.spy.yaml</size></b>
---
-  <i>publicId</i>: <b><color:#ff962f>int</color></b>
-  <i>parentCompetence</i>: <b><color:#ff962f>int?</color></b>
-  <i>name</i>: <b><color:#ff962f>String</color></b>
-  <i>level</i>: <b><color:#ff962f>List<String>?</color></b>
-  <i>indicators</i>: <b><color:#ff962f>List<String>?</color></b>
-  <i>order</i>: <b><color:#ff962f>int?</color></b>
- ➡️ <i>competenceGoals</i> : <b><color:#ff962f>List<CompetenceGoal>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_competence<color:#ff962f>)</color>
- ➡️ <i>competenceChecks</i> : <b><color:#ff962f>List<CompetenceCheck>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_check_competence<color:#ff962f>)</color>
-
-}
-
-class CompetenceCheck <<table: <b>competence_check</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/learning/competence_report/models/competence_check.spy.yaml</size></b>
---
-  <i>checkId</i>: <b><color:#ff962f>String</color></b>
-  <i>score</i>: <b><color:#ff962f>int</color></b>
-  <i>comment</i>: <b><color:#ff962f>String?</color></b>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>valueFactor</i>: <b><color:#ff962f>double</color></b>
-  <i>groupCheckId</i>: <b><color:#ff962f>String? ## in case it is a check for a group of pupils</color></b>
-  <i>groupCheckName</i>: <b><color:#ff962f>String?</color></b>
- ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_check_pupil<color:#ff962f>)</color>
- ➡️ <i>competence</i> : <b><color:#ff962f>Competence?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_check_competence<color:#ff962f>)</color>
- ➡️ <i>documents</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b>
-
-}
-
-class CompetenceGoal <<table: <b>competence_goal</b>>> #e2f0fb##[bold] {
-<size:14>📁</size> <b><size:12> /_features/learning/competence_report/models/competence_goal.spy.yaml</size></b>
---
-  <i>publicId</i>: <b><color:#ff962f>String</color></b>
-  <i>description</i>: <b><color:#ff962f>String</color></b>
-  <i>strategies</i>: <b><color:#ff962f>List<String>?</color></b>
-  <i>createdBy</i>: <b><color:#ff962f>String</color></b>
-  <i>createdAt</i>: <b><color:#ff962f>DateTime</color></b>
-  <i>modifiedBy</i>: <b><color:#ff962f>String?</color></b>
-  <i>score</i>: <b><color:#ff962f>int?</color></b>
-  <i>achievedAt</i>: <b><color:#ff962f>DateTime?</color></b>
- ➡️ <i>pupil</i> : <b><color:#ff962f>PupilData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_pupil<color:#ff962f>)</color>
- ➡️ <i>competence</i> : <b><color:#ff962f>Competence?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>competence_goal_competence<color:#ff962f>)</color>
- ➡️ <i>documents</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b>
 
 }
 
@@ -855,6 +855,7 @@ class SchoolData <<table: <b>school_data</b>>> #e2f0fb##[bold] {
 --
   <i>name</i>: <b><color:#ff962f>String</color></b>
   <i>officialName</i>: <b><color:#ff962f>String</color></b>
+  <i>extraName</i>: <b><color:#ff962f>String?</color></b>
   <i>address</i>: <b><color:#ff962f>String</color></b>
 <color:#93c47d>## TODO: zipCode is optional to avoid a forced migration</color>
 <color:#93c47d>## This should be fixed in a future migration</color>
@@ -866,6 +867,7 @@ class SchoolData <<table: <b>school_data</b>>> #e2f0fb##[bold] {
   <i>telephoneNumber</i>: <b><color:#ff962f>String</color></b>
   <i>email</i>: <b><color:#ff962f>String</color></b>
   <i>website</i>: <b><color:#ff962f>String</color></b>
+  <i>principalName</i>: <b><color:#ff962f>String?</color></b>
  ➡️ <i>logo</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
  ➡️ <i>officialSeal</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
 
@@ -1172,17 +1174,17 @@ enum MemberOperation #ece4ff ##[bold] {
  LibraryBook::lending "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4682B4,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilBookLending 
  PupilBookLending::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
  PupilBookLending::pupilBookLendingFiles "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#008000,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ Competence::competenceGoals "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4169E1,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceGoal 
+ Competence::competenceChecks "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceCheck 
+ CompetenceCheck::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
+ CompetenceCheck::documents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4682B4,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ CompetenceGoal::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
+ CompetenceGoal::documents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#008000,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
  CompetenceReport::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
  CompetenceReport::competenceReportChecks "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceReportCheck 
  CompetenceReport::schoolSemester "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchoolSemester 
  CompetenceReportCheck::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
  CompetenceReportCheck::competence "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceReportItem 
- Competence::competenceGoals "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#008000,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceGoal 
- Competence::competenceChecks "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4169E1,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" CompetenceCheck 
- CompetenceCheck::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
- CompetenceCheck::documents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#8A2BE2,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
- CompetenceGoal::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
- CompetenceGoal::documents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FF4500,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
  LearningSupportPlan::learningSupportLevel "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SupportLevel 
  LearningSupportPlan::pupil "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilData 
  LearningSupportPlan::supportCategoryStatuses "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SupportCategoryStatus 

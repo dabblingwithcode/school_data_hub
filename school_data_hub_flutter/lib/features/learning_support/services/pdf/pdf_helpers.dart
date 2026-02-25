@@ -3,6 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/services/pdf_helpers.dart' as common;
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
@@ -10,12 +11,67 @@ import 'package:school_data_hub_flutter/features/user/domain/user_helper.dart';
 
 final _log = Logger('PdfHelpers');
 
-/// Shared helpers used by all PDF page builders.
+/// Learning-support (Förderplan) specific PDF helpers. Generic helpers are
+/// in [common.CommonPdfHelpers].
 class PdfHelpers {
   PdfHelpers._();
 
-  /// Resolve a userName to the user's fullName via UserHelper.
-  /// Falls back to the raw value if the user is not found.
+  // --- Delegations to common (so existing callers keep using PdfHelpers.*) ---
+  static String formatDate(DateTime dt) => common.CommonPdfHelpers.formatDate(dt);
+  static String checkbox(bool checked) => common.CommonPdfHelpers.checkbox(checked);
+  static pw.Widget fillField({
+    String text = '',
+    pw.Font? font,
+    double? width,
+    double height = 16,
+    double fontSize = 12,
+  }) =>
+      common.CommonPdfHelpers.fillField(
+        text: text,
+        font: font,
+        width: width,
+        height: height,
+        fontSize: fontSize,
+      );
+  static pw.Widget tableHeaderCell(String text, pw.Font fontBold) =>
+      common.CommonPdfHelpers.tableHeaderCell(text, fontBold);
+  static pw.Widget tableHeaderCell2TextStyles({
+    required String text1,
+    required pw.Font font1,
+    required String text2,
+    required pw.Font font2,
+  }) =>
+      common.CommonPdfHelpers.tableHeaderCell2TextStyles(
+        text1: text1,
+        font1: font1,
+        text2: text2,
+        font2: font2,
+      );
+  static pw.Widget tableDataCell(
+    String text,
+    pw.Font fontRegular, {
+    double minHeight = 0,
+  }) =>
+      common.CommonPdfHelpers.tableDataCell(text, fontRegular, minHeight: minHeight);
+  static pw.Widget checkboxWidget({
+    required bool checked,
+    required String label,
+    required pw.MemoryImage checkboxImage,
+    required pw.MemoryImage checkboxCheckImage,
+    required pw.Font font,
+    double fontSize = 8,
+  }) =>
+      common.CommonPdfHelpers.checkboxWidget(
+        checked: checked,
+        label: label,
+        checkboxImage: checkboxImage,
+        checkboxCheckImage: checkboxCheckImage,
+        font: font,
+        fontSize: fontSize,
+      );
+
+  // --- Förderplan-specific helpers ---
+
   static String resolveUserName(String? userName) {
     if (userName == null || userName.isEmpty) return '';
     final user = UserHelper.getUserByUserName(userName);
@@ -23,19 +79,14 @@ class PdfHelpers {
     return user?.userInfo?.fullName ?? userName;
   }
 
-  /// Calculate "Lernjahr Deutsch" (1..4 where 4 means >3).
-  /// Returns null if the pupil is not a migration pupil.
   static int? calculateLernjahr(PupilProxy pupil) {
     return PupilProxyHelper.calculateLernjahr(pupil);
   }
 
-  /// Calculate the "Schulbesuchsjahr" from the pupil's school grade,
-  /// adding one extra year if the pupil was held back.
   static int calculateSchulbesuchsjahr(PupilProxy pupil) {
     return PupilProxyHelper.calculateSchulbesuchsjahr(pupil);
   }
 
-  /// Background color for PDF growth icons, matching AppColors.growthIconColor.
   static PdfColor getGrowthIconBackgroundColor(int score) {
     return switch (score) {
       1 => const PdfColor.fromInt(0xFFFF8C00),
@@ -49,11 +100,11 @@ class PdfHelpers {
   static String getStatusSymbol(int score) {
     switch (score) {
       case 1:
-        return '\u2713'; // ✓ Achieved
+        return '\u2713';
       case 2:
-        return '\u25CB'; // ○ In Progress
+        return '\u25CB';
       case 3:
-        return '\u2717'; // ✗ Not Achieved
+        return '\u2717';
       default:
         return '-';
     }
@@ -72,136 +123,23 @@ class PdfHelpers {
     }
   }
 
-  static String formatDate(DateTime dt) {
-    return '${dt.day.toString().padLeft(2, '0')}.${dt.month.toString().padLeft(2, '0')}.${dt.year}';
-  }
-
-  /// Checkbox character: filled square if checked, empty square if not.
-  /// Uses geometric shapes that Roboto renders cleanly.
-  static String checkbox(bool checked) => checked ? 'X' : '0';
-
-  /// Build a standard underlined fill field.
-  /// When [text] is non-empty the underline is omitted and plain text is
-  /// returned so it aligns vertically with adjacent label text.
-  static pw.Widget fillField({
-    String text = '',
-    pw.Font? font,
-    double? width,
-    double height = 16,
-    double fontSize = 12,
-  }) {
-    // Filled: plain text, no underline
-    if (text.isNotEmpty) {
-      final textWidget = pw.Text(
-        text,
-        style: pw.TextStyle(font: font, fontSize: fontSize),
-      );
-      return width != null
-          ? pw.SizedBox(width: width, child: textWidget)
-          : pw.Expanded(child: textWidget);
-    }
-    // Empty: underlined placeholder for hand-writing
-    final child = pw.Container(
-      height: height,
-      width: width,
-      decoration: const pw.BoxDecoration(
-        border: pw.Border(
-          bottom: pw.BorderSide(color: PdfColors.black, width: 0.5),
-        ),
-      ),
-    );
-    return width != null ? child : pw.Expanded(child: child);
-  }
-
-  /// Build the template header line for every page.
+  /// Build the template header line for every Förderplan page.
   static pw.Widget buildTemplateHeader({
     required PupilProxy pupil,
     required LearningSupportPlan plan,
     required int pageNumber,
     required pw.Font fontRegular,
   }) {
-    final schoolYear = plan.schoolSemester?.schoolYear ?? '';
-    return pw.Row(
-      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-      children: [
-        pw.Text(
-          di<SchoolDataMainManager>().schoolData.value!.officialName,
-          style: pw.TextStyle(font: fontRegular, fontSize: 9),
-        ),
-        pw.Text(
-          'Förderplan Nr. ${plan.number}  |  ${pupil.firstName} ${pupil.lastName}  |  Stand ${formatDate(plan.createdAt)}',
-          style: pw.TextStyle(font: fontRegular, fontSize: 9),
-        ),
-        pw.Text(
-          'Seite $pageNumber von 4',
-          style: pw.TextStyle(font: fontRegular, fontSize: 9),
-        ),
-      ],
-    );
-  }
-
-  /// Table header cell used on Page 3.
-  static pw.Widget tableHeaderCell(String text, pw.Font fontBold) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.all(4),
-      child: pw.Text(text, style: pw.TextStyle(font: fontBold, fontSize: 7)),
-    );
-  }
-
-  static pw.Widget tableHeaderCell2TextStyles({
-    required String text1,
-    required pw.Font font1,
-    required String text2,
-    required pw.Font font2,
-  }) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.all(4),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(text1, style: pw.TextStyle(font: font1, fontSize: 7)),
-          pw.Text(text2, style: pw.TextStyle(font: font2, fontSize: 6)),
-        ],
-      ),
-    );
-  }
-
-  /// Table data cell used on Page 3.
-  static pw.Widget tableDataCell(
-    String text,
-    pw.Font fontRegular, {
-    double minHeight = 0,
-  }) {
-    return pw.Container(
-      constraints: pw.BoxConstraints(minHeight: minHeight),
-      padding: const pw.EdgeInsets.all(4),
-      child: pw.Text(text, style: pw.TextStyle(font: fontRegular, fontSize: 7)),
-    );
-  }
-
-  /// Checkbox widget for PDF forms.
-  static pw.Widget checkboxWidget({
-    required bool checked,
-    required String label,
-    required pw.MemoryImage checkboxImage,
-    required pw.MemoryImage checkboxCheckImage,
-    required pw.Font font,
-    double fontSize = 8,
-  }) {
-    return pw.Row(
-      mainAxisSize: pw.MainAxisSize.min,
-      children: [
-        pw.Image(
-          checked ? checkboxCheckImage : checkboxImage,
-          width: fontSize + 2,
-          height: fontSize + 2,
-        ),
-        pw.SizedBox(width: 3),
-        pw.Text(
-          label,
-          style: pw.TextStyle(font: font, fontSize: fontSize),
-        ),
-      ],
+    final schoolName =
+        di<SchoolDataMainManager>().schoolData.value!.officialName;
+    final centerText =
+        'Förderplan Nr. ${plan.number}  |  ${pupil.firstName} ${pupil.lastName}  |  Stand ${formatDate(plan.createdAt)}';
+    return common.CommonPdfHelpers.buildGenericPageHeader(
+      schoolName: schoolName,
+      centerText: centerText,
+      pageNumber: pageNumber,
+      totalPages: 4,
+      font: fontRegular,
     );
   }
 }
