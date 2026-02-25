@@ -354,6 +354,12 @@ class CompetenceReportPdfGenerator {
                 sections: pageSections,
                 fontRegular: fontRegular,
                 fontBold: fontBold,
+                checkboxImage: checkboxImage,
+                checkboxCheckImage: checkboxCheckImage,
+                growthOneImage: growthOneImage,
+                growthTwoImage: growthTwoImage,
+                growthThreeImage: growthThreeImage,
+                growthFourImage: growthFourImage,
               )
             : p == 3
             ? CompetenceReportPdfPage3.build(
@@ -364,6 +370,12 @@ class CompetenceReportPdfGenerator {
                 sections: pageSections,
                 fontRegular: fontRegular,
                 fontBold: fontBold,
+                checkboxImage: checkboxImage,
+                checkboxCheckImage: checkboxCheckImage,
+                growthOneImage: growthOneImage,
+                growthTwoImage: growthTwoImage,
+                growthThreeImage: growthThreeImage,
+                growthFourImage: growthFourImage,
               )
             : CompetenceReportPdfPage4.build(
                 pageNumber: p,
@@ -373,6 +385,12 @@ class CompetenceReportPdfGenerator {
                 sections: pageSections,
                 fontRegular: fontRegular,
                 fontBold: fontBold,
+                checkboxImage: checkboxImage,
+                checkboxCheckImage: checkboxCheckImage,
+                growthOneImage: growthOneImage,
+                growthTwoImage: growthTwoImage,
+                growthThreeImage: growthThreeImage,
+                growthFourImage: growthFourImage,
               );
         pdf.addPage(page);
         sectionIndex = end;

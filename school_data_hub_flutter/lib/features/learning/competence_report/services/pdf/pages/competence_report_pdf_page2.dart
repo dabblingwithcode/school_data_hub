@@ -2,6 +2,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_helpers.dart';
+import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pdf_widgets/competence_report_criteria_table.dart';
 
 /// Page 2: Header and continued section blocks.
 class CompetenceReportPdfPage2 {
@@ -15,6 +16,12 @@ class CompetenceReportPdfPage2 {
     required List<ReportSectionData> sections,
     required pw.Font fontRegular,
     required pw.Font fontBold,
+    required pw.MemoryImage checkboxImage,
+    required pw.MemoryImage checkboxCheckImage,
+    required pw.MemoryImage growthOneImage,
+    required pw.MemoryImage growthTwoImage,
+    required pw.MemoryImage growthThreeImage,
+    required pw.MemoryImage growthFourImage,
   }) {
     return pw.Page(
       pageFormat: PdfPageFormat.a4,
@@ -33,7 +40,19 @@ class CompetenceReportPdfPage2 {
             pw.SizedBox(height: 8),
             pw.Divider(color: PdfColors.black, thickness: 0.5),
             pw.SizedBox(height: 12),
-            ...sections.expand((s) => _sectionBlock(s, fontRegular, fontBold)),
+            ...sections.expand(
+              (s) => _sectionBlock(
+                s,
+                fontRegular,
+                fontBold,
+                checkboxImage,
+                checkboxCheckImage,
+                growthOneImage,
+                growthTwoImage,
+                growthThreeImage,
+                growthFourImage,
+              ),
+            ),
           ],
         );
       },
@@ -44,22 +63,25 @@ class CompetenceReportPdfPage2 {
     ReportSectionData section,
     pw.Font fontRegular,
     pw.Font fontBold,
+    pw.MemoryImage checkboxImage,
+    pw.MemoryImage checkboxCheckImage,
+    pw.MemoryImage growthOneImage,
+    pw.MemoryImage growthTwoImage,
+    pw.MemoryImage growthThreeImage,
+    pw.MemoryImage growthFourImage,
   ) {
     return [
       pw.Text(section.title, style: pw.TextStyle(font: fontBold, fontSize: 11)),
       pw.SizedBox(height: 4),
-      pw.Text(
-        'Ihr Kind…',
-        style: pw.TextStyle(font: fontRegular, fontSize: 10),
-      ),
-      ...section.criteria.map(
-        (c) => pw.Padding(
-          padding: const pw.EdgeInsets.only(left: 12, top: 2),
-          child: pw.Text(
-            c,
-            style: pw.TextStyle(font: fontRegular, fontSize: 10),
-          ),
-        ),
+      CompetenceReportCriteriaTable.build(
+        rows: section.criteriaRows,
+        fontRegular: fontRegular,
+        checkboxImage: checkboxImage,
+        checkboxCheckImage: checkboxCheckImage,
+        growthOneImage: growthOneImage,
+        growthTwoImage: growthTwoImage,
+        growthThreeImage: growthThreeImage,
+        growthFourImage: growthFourImage,
       ),
       pw.SizedBox(height: 4),
       pw.Text(

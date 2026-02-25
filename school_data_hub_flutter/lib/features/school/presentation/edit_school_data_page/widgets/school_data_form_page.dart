@@ -34,21 +34,28 @@ class SchoolDataFormPage extends WatchingWidget {
             const Text('Grundinformationen', style: AppStyles.subtitle),
             const Gap(16),
             _buildTextField(
-              label: 'Name',
+              label: 'Name *',
               value: formData?.name ?? '',
               onChanged: (value) =>
                   schoolDataManager.updateFormField(name: value),
             ),
             const Gap(16),
             _buildTextField(
-              label: 'Offizieller Name',
+              label: 'Offizieller Name *',
               value: formData?.officialName ?? '',
               onChanged: (value) =>
                   schoolDataManager.updateFormField(officialName: value),
             ),
             const Gap(16),
             _buildTextField(
-              label: 'Adresse',
+              label: 'Zusatzname',
+              value: formData?.extraName ?? '',
+              onChanged: (value) =>
+                  schoolDataManager.updateFormField(extraName: value),
+            ),
+            const Gap(16),
+            _buildTextField(
+              label: 'Adresse *',
               value: formData?.address ?? '',
               onChanged: (value) =>
                   schoolDataManager.updateFormField(address: value),
@@ -56,16 +63,37 @@ class SchoolDataFormPage extends WatchingWidget {
             ),
             const Gap(16),
             _buildTextField(
-              label: 'Schulnummer',
+              label: 'PLZ *',
+              value: formData?.zipCode ?? '',
+              onChanged: (value) =>
+                  schoolDataManager.updateFormField(zipCode: value),
+            ),
+            const Gap(16),
+            _buildTextField(
+              label: 'Stadt *',
+              value: formData?.city ?? '',
+              onChanged: (value) =>
+                  schoolDataManager.updateFormField(city: value),
+            ),
+            const Gap(16),
+            _buildTextField(
+              label: 'Schulnummer *',
               value: formData?.schoolNumber ?? '',
               onChanged: (value) =>
                   schoolDataManager.updateFormField(schoolNumber: value),
+            ),
+            const Gap(16),
+            _buildTextField(
+              label: 'Schulleitung',
+              value: formData?.principalName ?? '',
+              onChanged: (value) =>
+                  schoolDataManager.updateFormField(principalName: value),
             ),
             const Gap(24),
             const Text('Kontaktinformationen', style: AppStyles.subtitle),
             const Gap(16),
             _buildTextField(
-              label: 'Telefon',
+              label: 'Telefon *',
               value: formData?.telephoneNumber ?? '',
               onChanged: (value) =>
                   schoolDataManager.updateFormField(telephoneNumber: value),
@@ -73,7 +101,7 @@ class SchoolDataFormPage extends WatchingWidget {
             ),
             const Gap(16),
             _buildTextField(
-              label: 'E-Mail',
+              label: 'E-Mail *',
               value: formData?.email ?? '',
               onChanged: (value) =>
                   schoolDataManager.updateFormField(email: value),
@@ -81,7 +109,7 @@ class SchoolDataFormPage extends WatchingWidget {
             ),
             const Gap(16),
             _buildTextField(
-              label: 'Website',
+              label: 'Website *',
               value: formData?.website ?? '',
               onChanged: (value) =>
                   schoolDataManager.updateFormField(website: value),

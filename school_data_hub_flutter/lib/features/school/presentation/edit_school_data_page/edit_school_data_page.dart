@@ -61,7 +61,7 @@ class EditSchoolDataPage extends WatchingWidget {
                 ),
                 const Gap(8),
                 const Text(
-                  'Bearbeiten Sie die Informationen Ihrer Schule. Alle Felder sind Pflichtfelder.',
+                  'Bearbeiten Sie die Informationen Ihrer Schule. Felder mit * sind Pflichtfelder.',
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
 

@@ -51,8 +51,12 @@ class SchoolDataUiManager {
   void updateFormField({
     String? name,
     String? officialName,
+    String? extraName,
     String? address,
+    String? city,
+    String? zipCode,
     String? schoolNumber,
+    String? principalName,
     String? telephoneNumber,
     String? email,
     String? website,
@@ -61,23 +65,32 @@ class SchoolDataUiManager {
 
     // If no form data exists, create a default one
     currentData ??= SchoolData(
-        name: '',
-        officialName: '',
-        address: '',
-        schoolNumber: '',
-        telephoneNumber: '',
-        email: '',
-        website: '',
-      );
+      name: '',
+      officialName: '',
+      extraName: '',
+      address: '',
+      city: '',
+      zipCode: '',
+      schoolNumber: '',
+      principalName: '',
+      telephoneNumber: '',
+      email: '',
+      website: '',
+    );
 
+    // Use current value for any parameter not supplied, so copyWith doesn't overwrite with null
     final updatedData = currentData.copyWith(
-      name: name,
-      officialName: officialName,
-      address: address,
-      schoolNumber: schoolNumber,
-      telephoneNumber: telephoneNumber,
-      email: email,
-      website: website,
+      name: name ?? currentData.name,
+      officialName: officialName ?? currentData.officialName,
+      extraName: extraName ?? currentData.extraName,
+      address: address ?? currentData.address,
+      city: city ?? currentData.city,
+      zipCode: zipCode ?? currentData.zipCode,
+      schoolNumber: schoolNumber ?? currentData.schoolNumber,
+      principalName: principalName ?? currentData.principalName,
+      telephoneNumber: telephoneNumber ?? currentData.telephoneNumber,
+      email: email ?? currentData.email,
+      website: website ?? currentData.website,
     );
     _formData.value = updatedData;
     _isFormDirty.value = true;

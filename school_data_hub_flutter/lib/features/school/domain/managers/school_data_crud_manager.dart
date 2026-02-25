@@ -5,6 +5,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/school/data/school_data_api_service.dart';
 
+// TODO: Is this layer necessary?
 /// Manages CRUD operations for school data
 class SchoolInfoDataManager {
   final _apiService = SchoolDataApiService();

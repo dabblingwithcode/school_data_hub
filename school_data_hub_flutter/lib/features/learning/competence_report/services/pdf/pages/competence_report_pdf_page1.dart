@@ -4,6 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/pdf_helpers.dart'
     as common_pdf;
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pdf_widgets/competence_report_criteria_table.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 /// Page 1: School header, Zeugnis title, pupil block, missed hours, first section blocks.
@@ -29,6 +30,7 @@ class CompetenceReportPdfPage1 {
     required pw.MemoryImage growthFourImage,
   }) {
     final schoolName = schoolData.officialName;
+    final schoolExtraName = schoolData.extraName;
     final pupilName = '${pupil.firstName} ${pupil.lastName}';
 
     return pw.Page(
@@ -51,6 +53,14 @@ class CompetenceReportPdfPage1 {
                     style: pw.TextStyle(font: fontBold, fontSize: 20),
                   ),
                 ),
+                schoolExtraName != null
+                    ? pw.Center(
+                        child: pw.Text(
+                          schoolExtraName,
+                          style: pw.TextStyle(font: fontBold, fontSize: 10),
+                        ),
+                      )
+                    : pw.SizedBox.shrink(),
                 pw.SizedBox(height: 4),
                 pw.Center(
                   child: schoolData.address.isNotEmpty
@@ -158,6 +168,10 @@ class CompetenceReportPdfPage1 {
                     fontBold,
                     checkboxImage,
                     checkboxCheckImage,
+                    growthOneImage,
+                    growthTwoImage,
+                    growthThreeImage,
+                    growthFourImage,
                     isLastSection: e.key == sections.length - 1,
                   ),
                 ),
@@ -180,15 +194,13 @@ class CompetenceReportPdfPage1 {
     pw.Font fontRegular,
     pw.Font fontBold,
     pw.MemoryImage checkboxImage,
-    pw.MemoryImage checkboxCheckImage, {
+    pw.MemoryImage checkboxCheckImage,
+    pw.MemoryImage growthOneImage,
+    pw.MemoryImage growthTwoImage,
+    pw.MemoryImage growthThreeImage,
+    pw.MemoryImage growthFourImage, {
     required bool isLastSection,
   }) {
-    const boxSize = 30.0;
-    bool isChecked(int columnIndex, int achievement) {
-      if (achievement == 0) return true;
-      return achievement == columnIndex + 1;
-    }
-
     final widgets = <pw.Widget>[
       pw.Text(section.title, style: pw.TextStyle(font: fontBold, fontSize: 11)),
       pw.SizedBox(height: 4),
@@ -208,70 +220,15 @@ class CompetenceReportPdfPage1 {
       }
       if (sub.rows.isEmpty) continue;
       widgets.add(
-        pw.Table(
-          columnWidths: {
-            0: const pw.FlexColumnWidth(4),
-            1: const pw.FixedColumnWidth(boxSize + 4),
-            2: const pw.FixedColumnWidth(boxSize + 4),
-            3: const pw.FixedColumnWidth(boxSize + 4),
-            4: const pw.FixedColumnWidth(boxSize + 4),
-          },
-          border: pw.TableBorder.all(color: PdfColors.black, width: 0.5),
-          children: [
-            pw.TableRow(
-              decoration: const pw.BoxDecoration(color: PdfColors.grey200),
-              children: [
-                pw.Padding(
-                  padding: const pw.EdgeInsets.all(4),
-                  child: pw.Text(
-                    'Ihr Kind…',
-                    style: pw.TextStyle(font: fontRegular, fontSize: 10),
-                  ),
-                ),
-                _tableHeaderCell('1', fontBold),
-                _tableHeaderCell('2', fontBold),
-                _tableHeaderCell('3', fontBold),
-                _tableHeaderCell('4', fontBold),
-              ],
-            ),
-            ...sub.rows.map(
-              (row) => pw.TableRow(
-                children: [
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(4),
-                    child: pw.Text(
-                      row.predicate,
-                      style: pw.TextStyle(font: fontRegular, fontSize: 9),
-                    ),
-                  ),
-                  _checkboxCell(
-                    isChecked(0, row.achievement),
-                    checkboxImage,
-                    checkboxCheckImage,
-                    boxSize,
-                  ),
-                  _checkboxCell(
-                    isChecked(1, row.achievement),
-                    checkboxImage,
-                    checkboxCheckImage,
-                    boxSize,
-                  ),
-                  _checkboxCell(
-                    isChecked(2, row.achievement),
-                    checkboxImage,
-                    checkboxCheckImage,
-                    boxSize,
-                  ),
-                  _checkboxCell(
-                    isChecked(3, row.achievement),
-                    checkboxImage,
-                    checkboxCheckImage,
-                    boxSize,
-                  ),
-                ],
-              ),
-            ),
-          ],
+        CompetenceReportCriteriaTable.build(
+          rows: sub.rows,
+          fontRegular: fontRegular,
+          checkboxImage: checkboxImage,
+          checkboxCheckImage: checkboxCheckImage,
+          growthOneImage: growthOneImage,
+          growthTwoImage: growthTwoImage,
+          growthThreeImage: growthThreeImage,
+          growthFourImage: growthFourImage,
         ),
       );
       widgets.add(pw.SizedBox(height: 4));
@@ -289,54 +246,45 @@ class CompetenceReportPdfPage1 {
       height: isLastSection ? null : fixedHeight,
       alignment: pw.Alignment.topLeft,
       child: pw.Text(
-        'Weitere Hinweise: ${section.weitereHinweise}',
+        section.weitereHinweise,
         style: pw.TextStyle(font: fontRegular, fontSize: 10),
       ),
     );
 
-    final hinweiseBox = isLastSection
+    final remarksBox = isLastSection
         ? pw.Expanded(
             child: pw.ConstrainedBox(
               constraints: const pw.BoxConstraints(minHeight: minHeight),
-              child: hinweiseContent,
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text(
+                    'Weitere Hinweise:',
+                    style: pw.TextStyle(font: fontBold, fontSize: 12),
+                  ),
+                  pw.SizedBox(height: 4),
+                  hinweiseContent,
+                ],
+              ),
             ),
           )
-        : hinweiseContent;
+        : pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                textAlign: pw.TextAlign.left,
+                'Weitere Hinweise:',
+                style: pw.TextStyle(font: fontBold, fontSize: 10),
+              ),
+              pw.SizedBox(height: 4),
+              hinweiseContent,
+            ],
+          );
 
-    widgets.add(hinweiseBox);
+    widgets.add(remarksBox);
     if (!isLastSection) {
       widgets.add(pw.SizedBox(height: 12));
     }
     return widgets;
-  }
-
-  static pw.Widget _tableHeaderCell(String label, pw.Font fontBold) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.all(4),
-      child: pw.Center(
-        child: pw.Text(label, style: pw.TextStyle(font: fontBold, fontSize: 9)),
-      ),
-    );
-  }
-
-  static pw.Widget _checkboxCell(
-    bool checked,
-    pw.MemoryImage checkboxImage,
-    pw.MemoryImage checkboxCheckImage,
-    double size,
-  ) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.all(2),
-      child: pw.Center(
-        child: pw.SizedBox(
-          height: 10,
-          child: pw.Image(
-            checked ? checkboxCheckImage : checkboxImage,
-            width: size,
-            height: size,
-          ),
-        ),
-      ),
-    );
   }
 }
