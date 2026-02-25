@@ -1,7 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
@@ -42,6 +47,7 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
     return _ReportCheckTree(
       items: reportItems,
       parentId: null,
+      isFirstLevel: true,
       checks: checks,
       pupilId: pupil.pupilId,
       reportId: report.id!,
@@ -53,6 +59,7 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
 class _ReportCheckTree extends StatelessWidget {
   final List<CompetenceReportItem> items;
   final int? parentId;
+  final bool isFirstLevel;
   final List<CompetenceReportCheck> checks;
   final int pupilId;
   final int reportId;
@@ -61,6 +68,7 @@ class _ReportCheckTree extends StatelessWidget {
   const _ReportCheckTree({
     required this.items,
     required this.parentId,
+    this.isFirstLevel = false,
     required this.checks,
     required this.pupilId,
     required this.reportId,
@@ -82,16 +90,158 @@ class _ReportCheckTree extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        for (final item in children)
-          _ReportCheckNode(
-            item: item,
-            allItems: items,
-            checks: checks,
-            pupilId: pupilId,
-            reportId: reportId,
-            reportManager: reportManager,
-          ),
+        for (final item in children) ...[
+          if (isFirstLevel && items.any((i) => i.parentItem == item.publicId))
+            _FirstLevelBranchNode(
+              item: item,
+              items: items,
+              checks: checks,
+              pupilId: pupilId,
+              reportId: reportId,
+              reportManager: reportManager,
+            )
+          else
+            _ReportCheckNode(
+              item: item,
+              allItems: items,
+              checks: checks,
+              pupilId: pupilId,
+              reportId: reportId,
+              reportManager: reportManager,
+            ),
+        ],
       ],
+    );
+  }
+}
+
+int _countChecksUnderBranch(
+  int branchPublicId,
+  List<CompetenceReportItem> allItems,
+  List<CompetenceReportCheck> checks,
+) {
+  final descendantIds = <int>{branchPublicId};
+  void addDescendants(int parentId) {
+    for (final i in allItems) {
+      if (i.parentItem == parentId) {
+        descendantIds.add(i.publicId);
+        addDescendants(i.publicId);
+      }
+    }
+  }
+  addDescendants(branchPublicId);
+  return checks.where((c) => descendantIds.contains(c.competenceId)).length;
+}
+
+class _FirstLevelBranchNode extends WatchingWidget {
+  final CompetenceReportItem item;
+  final List<CompetenceReportItem> items;
+  final List<CompetenceReportCheck> checks;
+  final int pupilId;
+  final int reportId;
+  final CompetenceReportManager reportManager;
+
+  const _FirstLevelBranchNode({
+    required this.item,
+    required this.items,
+    required this.checks,
+    required this.pupilId,
+    required this.reportId,
+    required this.reportManager,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final tileController = createOnce(() => CustomExpansionTileController());
+    final color = AppColors.interactiveColor;
+    final totalChecks = _countChecksUnderBranch(item.publicId, items, checks);
+    final initial = item.name.isNotEmpty ? item.name[0].toUpperCase() : '';
+
+    return Card(
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () => tileController.toggle(),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40.0,
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        initial,
+                        style: TextStyle(
+                          color: AppColors.bestContrastCompetenceFontColor(
+                            color,
+                          ),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Gap(10),
+                  Expanded(
+                    child: Text(
+                      item.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                  const Gap(10),
+                  Text(
+                    totalChecks.toString(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                  const Gap(10),
+                  CustomExpansionTileSwitch(
+                    customExpansionTileController: tileController,
+                    switchColor: color,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          CustomExpansionTileContent(
+            tileController: tileController,
+            widgetList: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 4.0,
+                ),
+                child: _ReportCheckTree(
+                  items: items,
+                  parentId: item.publicId,
+                  isFirstLevel: false,
+                  checks: checks,
+                  pupilId: pupilId,
+                  reportId: reportId,
+                  reportManager: reportManager,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -132,6 +282,7 @@ class _ReportCheckNode extends StatelessWidget {
               child: _ReportCheckTree(
                 items: allItems,
                 parentId: item.publicId,
+                isFirstLevel: false,
                 checks: checks,
                 pupilId: pupilId,
                 reportId: reportId,

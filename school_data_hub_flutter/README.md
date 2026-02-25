@@ -1,5 +1,7 @@
 # School Data Hub Flutter Client
 
+## *Warning: This README file was generated with a language model.*
+
 The Flutter cross-platform client application for School Data Hub. This app provides the user interface for managing school information flows, working in conjunction with the School Data Hub Server.
 
 ## Overview
@@ -34,7 +36,7 @@ It implements a privacy-first architecture where sensitive pupil data is stored 
    flutter pub get
    ```
 
-3. Ensure the `school_data_hub_client` package is generated. You may need to run `serverpod generate` in the parent directory first.
+3. Ensure the `school_data_hub_client` package is generated. You may need to run `serverpod generate` in the server directory first.
 
 ### Running the App
 
@@ -77,32 +79,6 @@ Configure this in your school key JSON during initial setup.
 
 The project follows a feature-based architecture:
 
-```
-lib/
-├── app_utils/          # Application-level utilities
-├── common/             # Shared widgets and utilities
-├── core/               # Core functionality (DI, session, env)
-├── features/           # Feature modules
-│   ├── _attendance/    # Attendance management
-│   ├── _schoolday_events/  # Schoolday events
-│   ├── app_entry_point/    # Login and entry flow
-│   ├── app_main_navigation/  # Main navigation
-│   ├── app_settings/   # Settings
-│   ├── authorizations/ # Authorization management
-│   ├── books/          # Library management
-│   ├── learning/       # Competence tracking
-│   ├── learning_support/  # Learning support plans
-│   ├── matrix/         # Matrix integration
-│   ├── pupil/          # Pupil profiles and data
-│   ├── school/         # School data management
-│   ├── school_calendar/  # Calendar management
-│   ├── school_lists/   # School lists
-│   ├── timetable/      # Timetable management
-│   ├── user/           # User management
-│   └── workbooks/      # Workbook management
-└── l10n/               # Localization files
-```
-
 Each feature follows a clean architecture pattern:
 - `data/` - API services and data access
 - `domain/` - Business logic and managers
@@ -110,10 +86,9 @@ Each feature follows a clean architecture pattern:
 
 ### State Management
 
-The project uses `watch_it` (1.7.0) for dependency injection and state management:
+The project uses `flutter_it` for dependency injection and state management:
 - Dependency injection via `watch_it`'s `di` container
 - ValueListenable-based reactive state management
-- Watching widgets with `WatchItMixin`
 
 ### Key Technologies
 

@@ -6,12 +6,7 @@ A comprehensive software tool for managing school information flows between teac
 
 School Data Hub integrates with data exported from the NRW Education ministry software ([SVWS](https://www.svws.nrw.de/)) to build extended models of pupils in the backend without uploading any personal data to the server. The backend models are then used to add and manage additional information collaboratively.
 
-## Technology Stack
 
-- **Client**: Flutter (cross-platform mobile and desktop application)
-- **Backend**: Serverpod 2.9.1 (Dart-based server framework)
-- **Programming Language**: Dart (SDK >=3.8.0)
-- **State Management**: watch_it 1.7.0
 
 ## Architecture & Data Protection
 
@@ -27,13 +22,13 @@ School Data Hub implements a unique privacy-first architecture by **decoupling p
 
 3. **Authentication**: After scanning the keys, users can log in with their credentials. However, even after login, no pupil data will be available.
 
-4. **Pupil Data Import**: Users must obtain pupil credentials by transferring them from another device (typically from a desktop version of the app). These credentials are stored in secure storage. API calls require both pupil data and JWT tokens for authentication.
+4. **Pupil Data Import**: Users must obtain pupil credentials by transferring them from another device (typically from a desktop version of the app). These credentials are stored in secure storage. API calls require both authenticated access **and** the pupil's internal id.
 
 ### Encrypted Data
 
 The following data is encrypted:
-- All stored images
-- Sensitive information, including special needs support strings
+- All stored files on the server
+- Sensitive information text, like special needs support strings
 
 ## Features
 
@@ -84,16 +79,42 @@ Access special information - authorized by parents/guardians - that all staff ne
 - Medical conditions (e.g., epilepsy risk)
 - Other critical health or safety information
 
-### Individual Learning Support (WIP)
+### Individual Learning Support
 
 Document and track individual learning support plans for pupils. This feature supports inclusive education by:
 
 - **Flexible Support Category System**: Works with any category tree structure, allowing schools to use their own categorization system
 - **Status Tracking**: Document category statuses as estimated by the responsible teacher
-- **Collaborative Progress**: Enable multiple colleagues to track and share progress
-- **Development Goals**: Document educational goals, ideally formulated together with the pupil
+- **Development Goals**: Document educational learning support goals that are accessible for colleagues teaching the pupil.
+- **Collaborative Progress**: Enable multiple colleagues to share documentation about the goals' progress over time.
 
-### Pupil Profile (WIP)
+### Workbooks
+
+Manage educational workbooks used by students:
+- Track workbook assignments to pupils
+- Manage workbook inventory
+- Associate workbooks with pupils
+
+### Competence Management and Report
+
+Track and manage student competencies:
+- Competence tree structure
+- Competence checks per pupil
+- Competence-based assessments
+- Progress tracking
+- Semester-based reporting
+  
+### Library Books Management
+
+Digital library management system for tracking books:
+- Book catalog with ISBN support
+- Location tracking for library books
+- Book tagging system
+- Lending management
+- Book search functionality
+- Multiple book instances per ISBN
+
+### Pupil Profile 
 
 Comprehensive pupil profile view consolidating all information about a student, including:
 - Parents' language proficiency in German (important for multilingual families)
@@ -112,32 +133,6 @@ Complete timetable management system for scheduling and organizing classes:
 - Create, edit, and delete scheduled lessons
 - Filter by weekday and lesson group
 
-### Library Books Management (WIP)
-
-Digital library management system for tracking books:
-- Book catalog with ISBN support
-- Location tracking for library books
-- Book tagging system
-- Lending management
-- Book search functionality
-- Multiple book instances per ISBN
-
-### Workbooks (WIP)
-
-Manage educational workbooks used by students:
-- Track workbook assignments to pupils
-- Manage workbook inventory
-- Associate workbooks with pupils
-
-### Competence Management and Report (WIP)
-
-Track and manage student competencies:
-- Competence tree structure
-- Competence checks per pupil
-- Competence-based assessments
-- Progress tracking
-- Semester-based reporting
-
 ### School Calendar
 
 Manage school calendar and semesters:
@@ -145,6 +140,7 @@ Manage school calendar and semesters:
 - Add and delete schooldays
 - View attendance lists for selected dates
 - Semester management
+
 
 ### User Management
 
@@ -187,7 +183,18 @@ Advanced filtering and sorting capabilities:
 
 Email notification system for various events and updates.
 
+### (admin/dev) Logs
 
+- UI implemented to acces and/or delete client and server side logs.
+- Copy-to-clipboard buttons to make log sharing easier.
+
+## Technology Stack
+
+- **Client**: Flutter (cross-platform mobile and desktop application)
+- **Backend**: Serverpod 2.9.1 (Dart-based server framework)
+- **Programming Language**: Dart (SDK >=3.8.0)
+- **State Management**: watch_it 1.7.0
+ 
 ## Setup
 
 ### Prerequisites
@@ -218,25 +225,17 @@ When setting up a local development environment, the `server_url` depends on whi
 - **Windows**: `http://127.0.0.1:5000/api`
 - **Android Emulator**: `http://10.0.2.2:5000/api`
 
-## Roadmap
+## Contributing
 
-### Planned Features
-
-- Enhanced semester management UI
-- Competence reports for school semesters with PDF export
-- QR sticker generation as shortcuts for documenting features
-- Additional backend models not yet implemented in the client
-
-### Technical Improvements
+These are some areas where the code should be reviewed, (pull requests welcome):
 
 - **Code Quality**: Migrate pupils' filter architecture to `PupilsFilter` (work in progress)
-- **Architecture**: Replace hard-coded enum filters for class and school grade with a dynamic solution to support different schools
-- **Error Handling**: Improve error handling in API calls
-- **State Management**: Review state management across pages
-- **Offline Support**: Handle 'no internet connection' scenarios
+- **Architecture**: Review domain layers, review presentation layers.
+- **State Management (client)**: Review state management across pages
+- **Error Handling (client, server)**: Improve error handling in API calls
 - **Navigation**: Review and improve navigation patterns
-- **Internationalization**: Add multi-language support
-- **Design**: Review widget design and implement a comprehensive theme system
+- **Internationalization (client)**: Add multi-language support (WIP)
+- **Design (client)**: Review widget layout/design, implement a comprehensive theme system
 
 ## Credits
 
@@ -244,4 +243,4 @@ Thanks to the open source community for the excellent tools and libraries that m
 
 Original code written by [@dabblingwithcode](https://github.com/dabblingwithcode).
 
-Special thanks to [@escamoteur](https://github.com/escamoteur) (developer of `get_it` and `watch_it`) for kindly answering questions and providing guidance on state management, the PupilProxy model, and its filters.
+Special thanks to [@escamoteur](https://github.com/escamoteur) (developer of `get_it` and `watch_it`) for kindly answering questions and supporting through designing the PupilProxy model and its filters.
