@@ -14,6 +14,11 @@ class MatrixEndpoint extends Endpoint {
     return compulsoryRooms;
   }
 
+  Future<CompulsoryRoom?> createCompulsoryRoom(
+      Session session, CompulsoryRoom compulsoryRoom) async {
+    return await CompulsoryRoom.db.insertRow(session, compulsoryRoom);
+  }
+
   Future<List<CompulsoryRoom>> setCompulsoryRooms(
       Session session, List<CompulsoryRoom> compulsoryRooms) async {
     await session.db.transaction((transaction) async {

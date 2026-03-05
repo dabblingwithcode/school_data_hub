@@ -3875,6 +3875,24 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['matrix'] as _i26.MatrixEndpoint)
                   .getCompulsoryRooms(session),
         ),
+        'createCompulsoryRoom': _i1.MethodConnector(
+          name: 'createCompulsoryRoom',
+          params: {
+            'compulsoryRoom': _i1.ParameterDescription(
+              name: 'compulsoryRoom',
+              type: _i1.getType<_i66.CompulsoryRoom>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['matrix'] as _i26.MatrixEndpoint).createCompulsoryRoom(
+            session,
+            params['compulsoryRoom'],
+          ),
+        ),
         'setCompulsoryRooms': _i1.MethodConnector(
           name: 'setCompulsoryRooms',
           params: {

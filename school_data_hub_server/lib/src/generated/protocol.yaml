@@ -154,6 +154,7 @@ supportCategory:
   - deleteSupportCategory:
 matrix:
   - getCompulsoryRooms:
+  - createCompulsoryRoom:
   - setCompulsoryRooms:
   - deleteCompulsoryRoom:
 pupil:

@@ -1808,6 +1808,14 @@ class EndpointMatrix extends _i1.EndpointRef {
         {},
       );
 
+  _i2.Future<_i39.CompulsoryRoom?> createCompulsoryRoom(
+          _i39.CompulsoryRoom compulsoryRoom) =>
+      caller.callServerEndpoint<_i39.CompulsoryRoom?>(
+        'matrix',
+        'createCompulsoryRoom',
+        {'compulsoryRoom': compulsoryRoom},
+      );
+
   _i2.Future<List<_i39.CompulsoryRoom>> setCompulsoryRooms(
           List<_i39.CompulsoryRoom> compulsoryRooms) =>
       caller.callServerEndpoint<List<_i39.CompulsoryRoom>>(
