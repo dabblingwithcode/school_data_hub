@@ -3,15 +3,18 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/data/matrix_api_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/pdf_service/matrix_bulk_new_credentials_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/pdf_service/matrix_credentials_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 
@@ -100,8 +103,6 @@ class MatrixUserManager {
     required String displayName,
     required List<String> roomIds,
   }) async {
-    //- TODO URGENT: this is a hack for our school, add validation for the domain part
-
     final String domainPart =
         di<MatrixPolicyManager>().userServerAddress ??
         di<MatrixPolicyManager>().matrixUrl.replaceAll('https://', '');
@@ -267,58 +268,190 @@ class MatrixUserManager {
     return _matrixApiService.userApi.fetchUserAvatarUrl(userId);
   }
 
+  /// Returns managed room IDs the user should be in based on compulsory room
+  /// types and, for group rooms, whether the room name matches.
+  /// When [familyCode] is set, group rooms match if the room name contains any
+  /// of that family's groups; otherwise [group] is used.
+  /// For pupil: globalChildrem, contacts, and groupChildren.
+  /// For parent: those plus globalParents and groupParents.
+  List<String> roomIdsForPupilOrParent({
+    String? familyCode,
+    required MatrixRoomManager roomManager,
+    required String group,
+    required bool isParent,
+  }) {
+    final roomIds = <String>[];
+    final List<String> familyGroups = familyCode != null
+        ? PupilIdentityHelper.getFamilyGroups(familyCode)
+        : [];
+    final rooms = roomManager.matrixRooms.value;
+
+    for (final room in rooms) {
+      final compulsory = roomManager.getCompulsoryRoomFor(room.id);
+      if (compulsory == null) continue;
+      final roomName = room.name ?? '';
+      switch (compulsory.roomType) {
+        case MatrixRoomType.contacts:
+        case MatrixRoomType.globalChildrem:
+          roomIds.add(room.id);
+          break;
+        case MatrixRoomType.groupChildren:
+          if (familyGroups.isNotEmpty
+              ? familyGroups.any((g) => roomName.contains(g))
+              : roomName.contains(group)) {
+            roomIds.add(room.id);
+          }
+          break;
+        case MatrixRoomType.globalParents:
+          if (isParent) roomIds.add(room.id);
+          break;
+        case MatrixRoomType.groupParents:
+          if (isParent &&
+              (familyGroups.isNotEmpty
+                  ? familyGroups.any((g) => roomName.contains(g))
+                  : roomName.contains(group))) {
+            roomIds.add(room.id);
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    return roomIds;
+  }
+
   /// Creates Matrix accounts for pupils with no contact info and returns a
   /// bulk PDF of the new credentials. Caller should open the file (e.g. with
   /// [PdfViewerPage]) when non-null.
   Future<File?> createMatrixCredentialsForPupilsWithoutContactInfo() async {
-    final List<PupilProxy> pupils = di<PupilProxyManager>().allPupils;
-    final List<Map<String, dynamic>> userCredentials = [];
+    _notificationService.setHeavyLoadingValue(true);
+    try {
+      final List<PupilProxy> pupils = di<PupilProxyManager>().allPupils;
+      final List<Map<String, dynamic>> userCredentials = [];
 
-    for (PupilProxy pupil in pupils) {
-      if (pupil.contact == null) {
-        final displayName =
-            '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})';
-        final generatedMatrixId = MatrixPolicyHelper.generateMatrixId(
-          isParent: false,
-        );
-        final password = MatrixPolicyHelper.generatePassword();
+      for (PupilProxy pupil in pupils) {
+        if (pupil.contact == null) {
+          final displayName =
+              '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})';
+          final generatedMatrixId = MatrixPolicyHelper.generateMatrixId(
+            isParent: false,
+          );
+          final password = MatrixPolicyHelper.generatePassword();
 
-        final String domainPart =
-            di<MatrixPolicyManager>().userServerAddress ??
-            di<MatrixPolicyManager>().matrixUrl.replaceAll('https://', '');
-        String matrixId = '@$generatedMatrixId:$domainPart';
+          final String domainPart =
+              di<MatrixPolicyManager>().userServerAddress ??
+              di<MatrixPolicyManager>().matrixUrl.replaceAll('https://', '');
+          String matrixId = '@$generatedMatrixId:$domainPart';
 
-        final MatrixUser? newUser = await _matrixApiService.userApi
-            .createNewMatrixUser(
-              matrixId: matrixId,
-              displayName: displayName,
-              password: password,
-            );
+          final MatrixUser? newUser = await _matrixApiService.userApi
+              .createNewMatrixUser(
+                matrixId: matrixId,
+                displayName: displayName,
+                password: password,
+              );
 
-        if (newUser == null) {
-          continue;
+          // now we need to add the user to the compulsoryrooms
+
+          if (newUser == null) {
+            continue;
+          }
+
+          _matrixUsers.value = [..._matrixUsers.value, newUser];
+
+          // Add user to compulsory rooms: globalChildrem, contacts, groupChildren (name contains pupil.group)
+          final roomManager = di<MatrixPolicyManager>().rooms;
+          final roomIdsToAdd = roomIdsForPupilOrParent(
+            roomManager: roomManager,
+            group: pupil.group,
+            isParent: false,
+          );
+          final userId = newUser.id!;
+
+          addMatrixUserToRooms(userId, roomIdsToAdd);
+
+          userCredentials.add({'user': newUser, 'password': password});
+          await PupilMutator().updateStringProperty(
+            pupilId: pupil.pupilId,
+            property: PupilStringProperty.contact,
+            propertyValue: (value: matrixId),
+          );
+
+          // Ensure pupil has TutorInfo with parentsContact: clone from sibling or create parent Matrix user
+          if (pupil.tutorInfo?.parentsContact == null) {
+            final siblings = di<PupilProxyManager>().getSiblings(pupil);
+            PupilProxy? siblingWithParentsContact;
+            for (final s in siblings) {
+              if (s.tutorInfo?.parentsContact != null) {
+                siblingWithParentsContact = s;
+                break;
+              }
+            }
+            if (siblingWithParentsContact != null) {
+              final clonedTutorInfo = siblingWithParentsContact.tutorInfo!
+                  .copyWith();
+              await PupilMutator().updateTutorInfo(
+                pupilId: pupil.pupilId,
+                tutorInfo: clonedTutorInfo,
+              );
+            } else {
+              // No sibling with parentsContact: create new parent Matrix user
+              final parentDisplayName = 'Fa. ${pupil.lastName} (E)';
+              final parentGeneratedId = MatrixPolicyHelper.generateMatrixId(
+                isParent: true,
+              );
+              final parentPassword = MatrixPolicyHelper.generatePassword();
+              final parentMatrixId = '@$parentGeneratedId:$domainPart';
+
+              final MatrixUser? newParentUser = await _matrixApiService.userApi
+                  .createNewMatrixUser(
+                    matrixId: parentMatrixId,
+                    displayName: parentDisplayName,
+                    password: parentPassword,
+                  );
+
+              if (newParentUser != null) {
+                _matrixUsers.value = [..._matrixUsers.value, newParentUser];
+                final parentRoomIds = roomIdsForPupilOrParent(
+                  familyCode: pupil.family,
+                  roomManager: roomManager,
+                  group: pupil.group,
+                  isParent: true,
+                );
+                final parentUserId = newParentUser.id!;
+
+                addMatrixUserToRooms(parentUserId, parentRoomIds);
+                userCredentials.add({
+                  'user': newParentUser,
+                  'password': parentPassword,
+                });
+                await PupilMutator().updateParentsContact(pupil, (
+                  value: parentMatrixId,
+                ));
+              }
+            }
+          }
+          await Future<void>.delayed(const Duration(milliseconds: 100));
         }
-
-        userCredentials.add({'user': newUser, 'password': password});
-        PupilMutator().updateStringProperty(
-          pupilId: pupil.pupilId,
-          property: PupilStringProperty.contact,
-          propertyValue: (value: matrixId),
-        );
-        _matrixUsers.value = [..._matrixUsers.value, newUser];
       }
-    }
 
-    if (userCredentials.isEmpty) {
+      if (userCredentials.isEmpty) {
+        return null;
+      }
+
+      await di<MatrixPolicyManager>().applyPolicyChanges();
+
+      return MatrixBulkCredentialsService.generateBulkCredentialsPdf(
+        matrixDomain: _matrixUrl,
+        userCredentials: userCredentials,
+        isStaff: false,
+      );
+    } catch (e) {
+      _log.severe(
+        'Error creating matrix credentials for pupils without contact info: $e',
+      );
       return null;
+    } finally {
+      _notificationService.setHeavyLoadingValue(false);
     }
-
-    await di<MatrixPolicyManager>().applyPolicyChanges();
-
-    return MatrixBulkCredentialsService.generateBulkCredentialsPdf(
-      matrixDomain: _matrixUrl,
-      userCredentials: userCredentials,
-      isStaff: false,
-    );
   }
 }

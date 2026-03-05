@@ -1,0 +1,6 @@
+enum: HubObjectType
+values:
+  - pupilData
+  - missedSchoolday
+  - schooldayEvent
+  - schoolList

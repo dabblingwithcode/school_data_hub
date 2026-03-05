@@ -12,6 +12,7 @@ class PupilUpdateEndpoint extends Endpoint {
 
   Future<PupilData> updatePupil(Session session, PupilData pupil) async {
     final updatedPupil = await PupilData.db.updateRow(session, pupil);
+    session.messages.postMessage('hub_events_stream', updatedPupil);
     return updatedPupil;
   }
 
@@ -27,13 +28,13 @@ class PupilUpdateEndpoint extends Endpoint {
 
     // Update the pupil in the database
     await PupilData.db.updateRow(session, pupil);
-    // Fetch the object again with the relation included
     final updatedPupilWithRelation = await PupilData.db.findById(
       session,
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    return updatedPupilWithRelation!;
+    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    return updatedPupilWithRelation;
   }
 
   Future<PupilData> updateTutorInfo(
@@ -44,16 +45,14 @@ class PupilUpdateEndpoint extends Endpoint {
       throw Exception('Pupil not found');
     }
     pupil.tutorInfo = tutorInfo;
-    // Update the pupil in the database
     await PupilData.db.updateRow(session, pupil);
-    // Fetch the object again with the relation included
     final updatedPupilWithRelation = await PupilData.db.findById(
       session,
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-
-    return updatedPupilWithRelation!;
+    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    return updatedPupilWithRelation;
   }
 
   Future<PupilData> updateKindergardenData(
@@ -64,15 +63,14 @@ class PupilUpdateEndpoint extends Endpoint {
       throw Exception('Pupil not found');
     }
     pupil.kindergardenData = kindergardenData;
-    // Update the pupil in the database
     await PupilData.db.updateRow(session, pupil);
-    // Fetch the object again with the relation included
     final updatedPupilWithRelation = await PupilData.db.findById(
       session,
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    return updatedPupilWithRelation!;
+    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    return updatedPupilWithRelation;
   }
 
   Future<List<PupilData>> updateSiblingsTutorInfo(
@@ -93,12 +91,14 @@ class PupilUpdateEndpoint extends Endpoint {
       // await PupilData.db.updateRow(session, pupil);
     }
     await PupilData.db.update(session, updatedSiblings);
-    // Fetch the object again with the relation included
     final updatedSiblingsWithRelation = await PupilData.db.find(
       session,
       where: (t) => t.id.inSet(siblingsTutorInfo.siblingsIds),
       include: PupilSchemas.allInclude,
     );
+    for (final sibling in updatedSiblingsWithRelation) {
+      session.messages.postMessage('hub_events_stream', sibling);
+    }
     return updatedSiblingsWithRelation;
   }
 
@@ -237,6 +237,7 @@ class PupilUpdateEndpoint extends Endpoint {
         .findById(session, pupil.id!, include: PupilSchemas.allInclude);
 
     _log.fine('Updated pupil : ${updatedPupil!.toJson()}');
+    session.messages.postMessage('hub_events_stream', updatedPupil);
     return updatedPupil;
   }
 
@@ -261,13 +262,13 @@ class PupilUpdateEndpoint extends Endpoint {
         throw Exception('Invalid property name');
     }
     await session.db.updateRow(pupil);
-    // Fetch the object again with the relation included
     final updatedPupil = await PupilData.db.findById(
       session,
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    return updatedPupil!;
+    session.messages.postMessage('hub_events_stream', updatedPupil!);
+    return updatedPupil;
   }
 
   Future<PupilData> updateCredit(Session session, int pupilId, int value,
@@ -308,7 +309,8 @@ class PupilUpdateEndpoint extends Endpoint {
         include: PupilSchemas.allInclude,
         transaction: transaction,
       );
-      return updatedPupil!;
+      session.messages.postMessage('hub_events_stream', updatedPupil!);
+      return updatedPupil;
     });
   }
 
@@ -355,7 +357,8 @@ class PupilUpdateEndpoint extends Endpoint {
         include: PupilSchemas.allInclude,
         transaction: transaction,
       );
-      return updatedPupil!;
+      session.messages.postMessage('hub_events_stream', updatedPupil!);
+      return updatedPupil;
     });
   }
 
@@ -369,13 +372,13 @@ class PupilUpdateEndpoint extends Endpoint {
     }
     pupil.publicMediaAuth = publicMediaAuth;
     await PupilData.db.updateRow(session, pupil);
-    // Fetch the object again with the relation included
     final updatedPupilWithRelation = await PupilData.db.findById(
       session,
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    return updatedPupilWithRelation!;
+    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    return updatedPupilWithRelation;
   }
 
   Future<PupilData> updateSupportLevel(
@@ -394,14 +397,15 @@ class PupilUpdateEndpoint extends Endpoint {
           session, pupil, supportLevelInDatabase,
           transaction: transaction);
 
-      // Fetch the object again with the relation included
       final updatedPupilWithRelation = await PupilData.db.findById(
         session,
         pupil.id!,
         include: PupilSchemas.allInclude,
         transaction: transaction,
       );
-      return updatedPupilWithRelation!;
+      session.messages
+          .postMessage('hub_events_stream', updatedPupilWithRelation!);
+      return updatedPupilWithRelation;
     });
   }
 
@@ -415,13 +419,13 @@ class PupilUpdateEndpoint extends Endpoint {
     }
     pupil.schoolyearHeldBackAt = schoolyearHeldBackDate.value;
     await PupilData.db.updateRow(session, pupil);
-    // Fetch the object again with the relation included
     final updatedPupilWithRelation = await PupilData.db.findById(
       session,
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    return updatedPupilWithRelation!;
+    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    return updatedPupilWithRelation;
   }
 
   Future<PupilData> updateAfterSchoolCare(
@@ -433,12 +437,12 @@ class PupilUpdateEndpoint extends Endpoint {
     }
     pupil.afterSchoolCare = afterSchoolCare;
     await PupilData.db.updateRow(session, pupil);
-    // Fetch the object again with the relation included
     final updatedPupilWithRelation = await PupilData.db.findById(
       session,
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    return updatedPupilWithRelation!;
+    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    return updatedPupilWithRelation;
   }
 }

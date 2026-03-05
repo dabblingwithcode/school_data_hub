@@ -72,8 +72,9 @@ class MatrixRoomManager {
         roomType: markAsCompulsoryWithType,
       );
       final updated = [...current, newEntry];
-      final result = await CompulsoryRoomApiService.instance
-          .setCompulsoryRooms(updated);
+      final result = await CompulsoryRoomApiService.instance.setCompulsoryRooms(
+        updated,
+      );
       if (result != null) {
         _compulsoryRooms.value = result;
       }
@@ -118,18 +119,42 @@ class MatrixRoomManager {
     }
   }
 
-  Future<void> addManagedRoom(MatrixRoom newRoom) async {
+  Future<void> addManagedRoom(MatrixRoom newRoom, {String? successMessage}) {
     final matrixRooms = [..._matrixRooms.value, newRoom];
     _matrixRooms.value = matrixRooms;
     di<MatrixPolicyManager>().applyPolicyChanges();
     // _onPolicyChanges(true);
     _notificationService.showSnackBar(
       NotificationType.success,
-      'Raum ${newRoom.name} erstellt',
+      successMessage ?? 'Raum ${newRoom.name} erstellt',
+    );
+    return Future.value();
+  }
+
+  Future<void> addExistingRoomById(String roomId) async {
+    final trimmed = roomId.trim();
+    if (trimmed.isEmpty) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Bitte geben Sie eine Matrix-Raum-ID ein',
+      );
+      return;
+    }
+    if (_matrixRooms.value.any((r) => r.id == trimmed)) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Raum ist bereits in der Policy',
+      );
+      return;
+    }
+    final room = await _matrixApiService.roomApi.fetchAdditionalRoomInfos(trimmed);
+    await addManagedRoom(
+      room,
+      successMessage: 'Raum ${room.name ?? room.id} zur Policy hinzugefügt',
     );
   }
 
-  Future<void> removeManagedRoom(MatrixRoom room) async {
+  Future<void> removeManagedRoom(MatrixRoom room, {bool? purgeRoom}) async {
     final matrixPolicyManager = di<MatrixPolicyManager>();
     final matrixRooms = _matrixRooms.value
         .where((r) => r.id != room.id)
@@ -140,6 +165,10 @@ class MatrixRoomManager {
     matrixPolicyManager.users.removeRoomFromUsers(room);
 
     matrixPolicyManager.pendingChangesHandler(true);
+
+    if (purgeRoom == true) {
+      await _matrixApiService.roomApi.purgeRoom(roomId: room.id);
+    }
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -315,8 +344,8 @@ class MatrixRoomManager {
     rooms.sort((a, b) => a.name!.compareTo(b.name!));
     setRooms(rooms);
 
-    final compulsory =
-        await CompulsoryRoomApiService.instance.getCompulsoryRooms();
+    final compulsory = await CompulsoryRoomApiService.instance
+        .getCompulsoryRooms();
     _compulsoryRooms.value = compulsory ?? [];
 
     _notificationService.showSnackBar(

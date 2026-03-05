@@ -24,8 +24,8 @@ class SchoolListManager with ChangeNotifier {
   @override
   void dispose() {
     clearData();
+    _schoolLists.dispose();
     super.dispose();
-    return;
   }
 
   Future<SchoolListManager> init() async {
@@ -33,10 +33,11 @@ class SchoolListManager with ChangeNotifier {
     return this;
   }
 
-  final Map<int, SchoolList> _schoolListMap =
-      {}; //-When created, copyWith with pupilEntries = null to avoid redundance!
+  final Map<int, SchoolList> _schoolListMap = {};
+  final _schoolLists = ListNotifier<SchoolList>();
 
-  List<SchoolList> get schoolLists => _schoolListMap.values.toList();
+  /// Reactive list of school lists (without pupil entries embedded).
+  ValueListenable<List<SchoolList>> get schoolLists => _schoolLists;
 
   final Map<int, SchoolListPupilEntriesProxyMap> _schoolListIdPupilEntriesMap =
       {};
@@ -46,6 +47,7 @@ class SchoolListManager with ChangeNotifier {
 
   void clearData() {
     _schoolListMap.clear();
+    _schoolLists.clear();
     _schoolListIdPupilEntriesMap.clear();
   }
 
@@ -94,20 +96,23 @@ class SchoolListManager with ChangeNotifier {
     bool notify = true,
   }) {
     final listId = schoolList.id!;
-    // First extract the pupil lists from the school list
     final List<PupilListEntry> pupilEntries = schoolList.pupilEntries ?? [];
+    final storedList = schoolList.copyWith(pupilEntries: null);
 
-    // Now add the school list to the map
-    // setting pupilEntries to null to avoid redundancy
-    _schoolListMap[listId] = schoolList.copyWith(pupilEntries: null);
+    _schoolListMap[listId] = storedList;
 
-    // Next, we update the pupil entries map for the school list
-    // with the key being the pupilId
+    final existingIndex =
+        _schoolLists.value.indexWhere((l) => l.id == listId);
+    if (existingIndex != -1) {
+      _schoolLists[existingIndex] = storedList;
+    } else {
+      _schoolLists.add(storedList);
+    }
+
     final proxyMap = _schoolListIdPupilEntriesMap.putIfAbsent(
       listId,
       () => SchoolListPupilEntriesProxyMap(),
     );
-
     proxyMap.setPupilEntries(pupilEntries);
 
     if (notify) {
@@ -116,6 +121,26 @@ class SchoolListManager with ChangeNotifier {
     _log.info(
       'Updated School list $listId with ${pupilEntries.length} pupil entries',
     );
+  }
+
+  //- Stream entry points (called by HubStreamService)
+
+  void upsertFromStream(SchoolList schoolList) {
+    _log.fine('[STREAM] upsert schoolList ${schoolList.id}');
+    _updateCollectionsFromSchoolList(schoolList);
+  }
+
+  void deleteFromStream(int id) {
+    _log.fine('[STREAM] delete schoolList $id');
+    if (_schoolListMap.containsKey(id)) {
+      _schoolListMap.remove(id);
+      _schoolListIdPupilEntriesMap.remove(id);
+      final index = _schoolLists.value.indexWhere((l) => l.id == id);
+      if (index != -1) {
+        _schoolLists.removeAt(index);
+      }
+      notifyListeners();
+    }
   }
 
   //- API calls
@@ -131,14 +156,13 @@ class SchoolListManager with ChangeNotifier {
       '${responseSchoolLists.length} Schullisten geladen!',
     );
 
+    _schoolLists.startTransAction();
     for (final schoolList in responseSchoolLists) {
-      // go through the pupil lists and add them to the map
-      // with the key being the pupilId
       _updateCollectionsFromSchoolList(schoolList, notify: false);
     }
+    _schoolLists.endTransAction();
 
     notifyListeners();
-    return;
   }
 
   Future<void> updateSchoolListProperty({
@@ -149,8 +173,8 @@ class SchoolListManager with ChangeNotifier {
     ({String? value})? authorizedUsers,
     ({List<int> pupilIds, MemberOperation operation})? operation,
   }) async {
-    final SchoolList? updatedSchoolList = await _apiSchoolListService
-        .updateSchoolListProperty(
+    final SchoolList? updatedSchoolList =
+        await _apiSchoolListService.updateSchoolListProperty(
           listId: listId,
           name: name,
           description: description,
@@ -168,8 +192,6 @@ class SchoolListManager with ChangeNotifier {
       NotificationType.success,
       'Schulliste erfolgreich aktualisiert',
     );
-
-    return;
   }
 
   Future<void> updatePupilListEntry({
@@ -183,8 +205,8 @@ class SchoolListManager with ChangeNotifier {
       entryBy: di<HubSessionManager>().userName,
     );
 
-    final PupilListEntry? updatedEntry = await _apiSchoolListService
-        .updatePupilEntry(entry: entryToUpdate);
+    final PupilListEntry? updatedEntry =
+        await _apiSchoolListService.updatePupilEntry(entry: entryToUpdate);
     if (updatedEntry == null) {
       _log.warning('Failed to update pupil entry ${entry.id}');
       return;
@@ -193,8 +215,6 @@ class SchoolListManager with ChangeNotifier {
       updatedEntry,
     );
     _log.info('Updated pupil entry ${updatedEntry.id}');
-
-    return;
   }
 
   Future<void> deleteSchoolList(int listId) async {
@@ -205,11 +225,14 @@ class SchoolListManager with ChangeNotifier {
     }
     _schoolListMap.remove(listId);
     _schoolListIdPupilEntriesMap.remove(listId);
+    final index = _schoolLists.value.indexWhere((l) => l.id == listId);
+    if (index != -1) {
+      _schoolLists.removeAt(index);
+    }
     _notificationService.showSnackBar(
       NotificationType.success,
       'Schulliste erfolgreich gelöscht',
     );
-
     _log.info('Deleted school list $listId');
     notifyListeners();
   }
@@ -233,7 +256,6 @@ class SchoolListManager with ChangeNotifier {
       _log.warning('Failed to create new school list');
       return;
     }
-    _schoolListMap[schoolList.id!] = schoolList;
     _updateCollectionsFromSchoolList(schoolList);
 
     _notificationService.showSnackBar(
@@ -241,7 +263,5 @@ class SchoolListManager with ChangeNotifier {
       'Schulliste erfolgreich erstellt',
     );
     _log.info('Created new school list ${schoolList.id}');
-
-    return;
   }
 }

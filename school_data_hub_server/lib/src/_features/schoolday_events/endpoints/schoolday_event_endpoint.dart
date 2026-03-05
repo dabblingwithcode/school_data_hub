@@ -62,6 +62,7 @@ class SchooldayEventEndpoint extends Endpoint {
         dateAsString: dateAsString,
       ),
     );
+    session.messages.postMessage('hub_events_stream', eventWithSchoolday);
     return eventWithSchoolday;
   }
 
@@ -117,7 +118,9 @@ class SchooldayEventEndpoint extends Endpoint {
         changedProcessedStatus: changedProcessedStatus,
       ));
     }
-    return updatedSchooldayEventInDatabase!;
+    session.messages
+        .postMessage('hub_events_stream', updatedSchooldayEventInDatabase!);
+    return updatedSchooldayEventInDatabase;
   }
 
   Future<bool> deleteSchooldayEvent(
@@ -162,6 +165,13 @@ class SchooldayEventEndpoint extends Endpoint {
       await SchooldayEvent.db
           .deleteRow(session, schooldayEvent, transaction: transaction);
     });
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(
+        objectType: HubObjectType.schooldayEvent,
+        id: schooldayEventId,
+      ),
+    );
     return true;
   }
 
@@ -265,6 +275,7 @@ class SchooldayEventEndpoint extends Endpoint {
             ));
 
     _log.fine('Updated event : ${updatedEvent!.toJson()}');
+    session.messages.postMessage('hub_events_stream', updatedEvent);
     return updatedEvent;
   }
 
@@ -329,6 +340,7 @@ class SchooldayEventEndpoint extends Endpoint {
     if (updatedSchooldayEvent == null) {
       throw Exception('Schoolday event not found');
     }
+    session.messages.postMessage('hub_events_stream', updatedSchooldayEvent);
     return updatedSchooldayEvent;
   }
 }

@@ -17,6 +17,17 @@ import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manage
 final _log = Logger('PupilIdentityHelper');
 
 class PupilIdentityHelper {
+  static List<String> getFamilyGroups(String familyCode) {
+    final pupilIdentityManager = di<PupilIdentityManager>();
+    final pupilIdentities = pupilIdentityManager.pupilIdentities;
+    final familyGroups = pupilIdentities
+        .where((pupilIdentity) => pupilIdentity.family == familyCode)
+        .map((pupilIdentity) => pupilIdentity.group)
+        .toList();
+
+    return familyGroups;
+  }
+
   //- LOCAL STORAGE HELPERS
 
   static Future<Map<int, PupilIdentity>> readPupilIdentitiesFromStorage({

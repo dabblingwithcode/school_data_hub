@@ -141,7 +141,7 @@ class _ChartPageControllerState extends State<ChartPageController> {
     // 2. Pre-process Events
     final allEvents = _schooldayEventManager.schooldayEvents;
     final eventsById = <int, List<SchooldayEvent>>{};
-    for (final event in allEvents) {
+    for (final event in allEvents.value) {
       eventsById.putIfAbsent(event.schooldayId, () => []).add(event);
     }
     final eventsByDateMap = _schooldayEventManager.schooldayEventsByDate;

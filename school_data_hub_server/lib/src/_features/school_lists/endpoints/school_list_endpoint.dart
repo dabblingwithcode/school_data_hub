@@ -65,7 +65,8 @@ class SchoolListEndpoint extends Endpoint {
       where: (t) => t.id.equals(schoolListInDatabase.id!),
       include: SchoolList.include(pupilEntries: PupilListEntry.includeList()),
     );
-    return schoolListWithPupilEntries!;
+    session.messages.postMessage('hub_events_stream', schoolListWithPupilEntries!);
+    return schoolListWithPupilEntries;
   }
 
   Future<SchoolList> updateSchoolList(
@@ -138,6 +139,7 @@ class SchoolListEndpoint extends Endpoint {
       if (updatedSchoolList == null) {
         throw Exception('Failed to update SchoolList');
       }
+      session.messages.postMessage('hub_events_stream', updatedSchoolList);
       return updatedSchoolList;
     });
   }
@@ -148,13 +150,25 @@ class SchoolListEndpoint extends Endpoint {
       throw Exception('SchoolList not found');
     }
 
-    // Delete the SchoolList itself
     await SchoolList.db.deleteRow(session, schoolList);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.schoolList, id: listId),
+    );
     return true;
   }
 
   Future<PupilListEntry> updatePupilListEntry(
       Session session, PupilListEntry entry) async {
-    return await session.db.updateRow(entry);
+    final updatedEntry = await session.db.updateRow(entry);
+    final schoolList = await SchoolList.db.findById(
+      session,
+      entry.schoolListId,
+      include: SchoolList.include(pupilEntries: PupilListEntry.includeList()),
+    );
+    if (schoolList != null) {
+      session.messages.postMessage('hub_events_stream', schoolList);
+    }
+    return updatedEntry;
   }
 }

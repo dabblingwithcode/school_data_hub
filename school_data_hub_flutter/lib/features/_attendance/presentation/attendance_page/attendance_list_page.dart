@@ -1,10 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:logging/logging.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
@@ -20,8 +16,6 @@ import 'package:school_data_hub_flutter/features/app_entry_point/login_page/logi
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-
-final _log = Logger('AttendanceListPage');
 
 class AttendanceListPage extends WatchingWidget {
   const AttendanceListPage({super.key});
@@ -48,15 +42,6 @@ class AttendanceListPage extends WatchingWidget {
       // Return an empty container or loading indicator while navigating
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    createOnce<StreamSubscription<MissedSchooldayDto>>(
-      () {
-        return attendanceManager.missedSchooldayStreamSubscription();
-      },
-      dispose: (value) {
-        _log.info('Cancelling missed class stream subscription');
-        value.cancel();
-      },
-    );
     DateTime thisDate = watchValue(
       (SchoolCalendarManager x) => x.thisDate,
     ).toLocal();

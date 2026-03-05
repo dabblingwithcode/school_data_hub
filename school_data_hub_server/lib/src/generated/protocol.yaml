@@ -33,7 +33,6 @@ adminUser:
   - getUserById:
   - setUserPupilsAuth:
 missedSchoolday:
-  - streamMissedSchooldays:
   - postMissedSchoolday:
   - postMissedSchooldays:
   - fetchAllMissedSchooldays:
@@ -87,6 +86,8 @@ pupilBookLending:
   - deletePupilBookLending:
   - addFileToPupilBookLending:
   - removeFileFromPupilBookLending:
+hub:
+  - streamHubEvents:
 competenceCheck:
   - postCompetenceCheck:
   - updateCompetenceCheck:

@@ -11,6 +11,7 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/data/schoolda
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/pupil_schoolday_events_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:listen_it/listen_it.dart';
 
 class SchooldayEventManager with ChangeNotifier {
   final _cacheManager = di<DefaultCacheManager>();
@@ -24,28 +25,30 @@ class SchooldayEventManager with ChangeNotifier {
   final _schooldayEventApiService = SchooldayEventApiService();
 
   final Map<int, SchooldayEvent> _schooldayEventsMap = {};
+  final _schooldayEvents = ListNotifier<SchooldayEvent>();
 
-  List<SchooldayEvent> get schooldayEvents =>
-      _schooldayEventsMap.values.toList();
+  ValueListenable<List<SchooldayEvent>> get schooldayEvents => _schooldayEvents;
 
   final Map<int, PupilSchooldayEventsProxy> _pupilSchooldayEventsMap = {};
+
+  ListenableSubscription? _pupilManagerSubscription;
 
   SchooldayEventManager() {
     init();
   }
+
   @override
   void dispose() {
-    _pupilManager.removeListener(_updatePupilProxies);
+    _pupilManagerSubscription?.cancel();
     _pupilSchooldayEventsMap.clear();
     _schooldayEventsMap.clear();
+    _schooldayEvents.dispose();
     super.dispose();
-    return;
   }
 
   Future<void> init() async {
-    _pupilManager.addListener(_updatePupilProxies);
+    _pupilManagerSubscription = _pupilManager.listen((_) => _updatePupilProxies());
     _updatePupilProxies();
-    // Defer fetching events until next frame to ensure proxies are ready
     Future.microtask(() => fetchSchooldayEvents());
     _log.info('SchooldayEventManager initialized');
   }
@@ -72,7 +75,7 @@ class SchooldayEventManager with ChangeNotifier {
   /// Schoolday events grouped by date (local date-only key). Null schoolday skipped.
   Map<DateTime, List<SchooldayEvent>> get schooldayEventsByDate {
     final byDate = <DateTime, List<SchooldayEvent>>{};
-    for (final event in schooldayEvents) {
+    for (final event in _schooldayEvents.value) {
       if (event.schoolday == null) continue;
       final d = event.schoolday!.schoolday.toLocal();
       final key = DateTime(d.year, d.month, d.day);
@@ -89,45 +92,56 @@ class SchooldayEventManager with ChangeNotifier {
 
   void _updateSchooldayEventCollections(SchooldayEvent event) {
     final pupilId = event.pupilId;
-    // Ensure the pupil proxy exists
     if (!_pupilSchooldayEventsMap.containsKey(pupilId)) {
       _pupilSchooldayEventsMap[pupilId] = PupilSchooldayEventsProxy();
     }
-    // 1. Update pupil map
     _pupilSchooldayEventsMap[pupilId]!.updateSchooldayEvent(event);
 
-    // 2. Update the event in the main map
-    if (_schooldayEventsMap.containsKey(event.id!)) {
-      _schooldayEventsMap[event.id!] = event;
-      notifyListeners();
+    _schooldayEventsMap[event.id!] = event;
+    final index = _schooldayEvents.value.indexWhere((e) => e.id == event.id);
+    if (index != -1) {
+      _schooldayEvents[index] = event;
     } else {
-      _schooldayEventsMap[event.id!] = event;
-      notifyListeners();
+      _schooldayEvents.add(event);
     }
+    notifyListeners();
   }
 
   void updateSchooldayEventsBatchInCollections(List<SchooldayEvent> events) {
+    _schooldayEvents.startTransAction();
     for (var event in events) {
       _updateSchooldayEventCollections(event);
     }
+    _schooldayEvents.endTransAction();
   }
 
   void removeSchooldayEventFromCollections(SchooldayEvent event) {
     final pupilId = event.pupilId;
+    _pupilSchooldayEventsMap[pupilId]?.removeSchooldayEvent(event);
+    _schooldayEventsMap.remove(event.id!);
+    final index = _schooldayEvents.value.indexWhere((e) => e.id == event.id);
+    if (index != -1) {
+      _schooldayEvents.removeAt(index);
+    }
+    notifyListeners();
+  }
 
-    // 1. Remove pupil map
-    _pupilSchooldayEventsMap[pupilId]!.removeSchooldayEvent(event);
+  //- Stream entry points (called by HubStreamService)
 
-    // 2. Remove the event from the main map
-    if (_schooldayEventsMap.containsKey(event.id!)) {
-      _schooldayEventsMap.remove(event.id!);
-      notifyListeners();
+  void upsertFromStream(SchooldayEvent event) {
+    _log.fine('[STREAM] upsert schooldayEvent ${event.id}');
+    _updateSchooldayEventCollections(event);
+  }
+
+  void deleteFromStream(int id) {
+    _log.fine('[STREAM] delete schooldayEvent $id');
+    final event = _schooldayEventsMap[id];
+    if (event != null) {
+      removeSchooldayEventFromCollections(event);
     }
   }
 
-  //- CRUD operantions
-
-  //- post schoolday event
+  //- CRUD operations
 
   Future<void> postSchooldayEvent({
     required int pupilId,
@@ -137,8 +151,8 @@ class SchooldayEventManager with ChangeNotifier {
     required String reason,
     required String eventTime,
   }) async {
-    final SchooldayEvent
-    schooldayEvent = await _schooldayEventApiService.postSchooldayEvent(
+    final SchooldayEvent schooldayEvent =
+        await _schooldayEventApiService.postSchooldayEvent(
       '${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.firstName} (${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.group})',
       pupilId,
       schooldayId,
@@ -153,16 +167,12 @@ class SchooldayEventManager with ChangeNotifier {
       NotificationType.success,
       'Eintrag erfolgreich!',
     );
-
-    return;
   }
-
-  //- get schoolday events
 
   Future<void> fetchSchooldayEvents() async {
     try {
-      final List<SchooldayEvent> events = await _schooldayEventApiService
-          .fetchSchooldayEvents();
+      final List<SchooldayEvent> events =
+          await _schooldayEventApiService.fetchSchooldayEvents();
 
       updateSchooldayEventsBatchInCollections(events);
     } catch (e) {
@@ -172,8 +182,6 @@ class SchooldayEventManager with ChangeNotifier {
       );
     }
   }
-
-  //- update schoolday event
 
   Future<void> updateSchooldayEvent({
     required SchooldayEvent eventToUpdate,
@@ -191,8 +199,8 @@ class SchooldayEventManager with ChangeNotifier {
     if (processed == false && eventToUpdate.processedDocumentId != null) {
       cacheKey = eventToUpdate.processedDocument!.documentId;
     }
-    final SchooldayEvent schooldayEvent = await _schooldayEventApiService
-        .updateSchooldayEvent(
+    final SchooldayEvent schooldayEvent =
+        await _schooldayEventApiService.updateSchooldayEvent(
           schooldayEvent: eventToUpdate,
           createdBy: createdBy,
           reason: reason,
@@ -213,8 +221,6 @@ class SchooldayEventManager with ChangeNotifier {
       NotificationType.success,
       'Eintrag erfolgreich geändert!',
     );
-
-    return;
   }
 
   Future<void> updateSchooldayEventFile({
@@ -223,8 +229,8 @@ class SchooldayEventManager with ChangeNotifier {
     required bool isProcessed,
   }) async {
     final encryptedFile = await customEncrypter.encryptFile(imageFile);
-    final SchooldayEvent? responseEvent = await _schooldayEventApiService
-        .updateSchooldayEventFile(
+    final SchooldayEvent? responseEvent =
+        await _schooldayEventApiService.updateSchooldayEventFile(
           schooldayEventId: schooldayEventId,
           file: encryptedFile,
           isProcessed: isProcessed,
@@ -242,8 +248,6 @@ class SchooldayEventManager with ChangeNotifier {
       NotificationType.success,
       'Datei erfolgreich hochgeladen!',
     );
-
-    return;
   }
 
   Future<void> deleteSchooldayEventFile(
@@ -251,8 +255,9 @@ class SchooldayEventManager with ChangeNotifier {
     String cacheKey,
     bool isProcessed,
   ) async {
-    final SchooldayEvent schooldayEvent = await _schooldayEventApiService
-        .deleteSchooldayEventFile(schooldayEventId, isProcessed);
+    final SchooldayEvent schooldayEvent =
+        await _schooldayEventApiService.deleteSchooldayEventFile(
+          schooldayEventId, isProcessed);
     await _cacheManager.removeFile(cacheKey);
     _updateSchooldayEventCollections(schooldayEvent);
 
@@ -260,8 +265,6 @@ class SchooldayEventManager with ChangeNotifier {
       NotificationType.success,
       'Datei erfolgreich gelöscht!',
     );
-
-    return;
   }
 
   Future<void> deleteSchooldayEvent(int schooldayEventId) async {
@@ -273,17 +276,15 @@ class SchooldayEventManager with ChangeNotifier {
       _notificationService.apiRunning(false);
 
       final eventToDelete = _schooldayEventsMap[schooldayEventId];
-
-      removeSchooldayEventFromCollections(eventToDelete!);
+      if (eventToDelete != null) {
+        removeSchooldayEventFromCollections(eventToDelete);
+      }
     } catch (e) {
+      _notificationService.apiRunning(false);
       _notificationService.showSnackBar(
         NotificationType.error,
         'Fehler beim Löschen des Eintrags: $e',
       );
-
-      return;
     }
-
-    return;
   }
 }

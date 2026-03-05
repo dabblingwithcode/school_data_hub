@@ -852,6 +852,20 @@ class MatrixRoomApiService {
     return roomId;
   }
 
+  Future<bool> purgeRoom({required String roomId}) async {
+    final response = await _apiClient.delete(
+      '/_synapse/admin/v2/rooms/$roomId',
+      options: _apiClient.matrixOptions,
+      data: jsonEncode({"block": true, "purge": true}),
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException('Fehler beim Löschen des Raums', response.statusCode);
+    }
+
+    return true;
+  }
+
   Future<int> cleanupAdminOnlyDirectRooms({
     required String currentUserId,
   }) async {
@@ -925,28 +939,29 @@ class MatrixRoomApiService {
   }
 
   /// Invites a user to an existing room
-  Future<void> inviteUserToRoom({
-    required String roomId,
-    required String userId,
-  }) async {
-    final encodedRoomId = _encodeRoomId(roomId);
-    final endpoint = '/_matrix/client/v3/rooms/$encodedRoomId/invite';
+  /// We don't need this method because the invitations happen through the corporal policy
+  // Future<void> inviteUserToRoom({
+  //   required String roomId,
+  //   required String userId,
+  // }) async {
+  //   final encodedRoomId = _encodeRoomId(roomId);
+  //   final endpoint = '/_matrix/client/v3/rooms/$encodedRoomId/invite';
 
-    final data = jsonEncode({"user_id": userId});
+  //   final data = jsonEncode({"user_id": userId});
 
-    final Response response = await _apiClient.post(
-      endpoint,
-      data: data,
-      options: _apiClient.matrixOptions,
-    );
+  //   final Response response = await _apiClient.post(
+  //     endpoint,
+  //     data: data,
+  //     options: _apiClient.matrixOptions,
+  //   );
 
-    if (response.statusCode != 200) {
-      throw ApiException(
-        'Fehler beim Einladen des Benutzers',
-        response.statusCode,
-      );
-    }
-  }
+  //   if (response.statusCode != 200) {
+  //     throw ApiException(
+  //       'Fehler beim Einladen des Benutzers',
+  //       response.statusCode,
+  //     );
+  //   }
+  // }
 
   /// Manually marks a room as a direct chat in m.direct account data
   Future<void> _markRoomAsDirectChat(String roomId, String targetUserId) async {

@@ -5,17 +5,6 @@ class MissedSchooldayEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
-  Stream<MissedSchooldayDto> streamMissedSchooldays(Session session) async* {
-    // Create a stream from the server's message central
-    var stream = session.messages
-        .createStream<MissedSchooldayDto>('missed_schooldays_stream');
-
-    // Relay messages from the stream to the client
-    await for (var missedClassDto in stream) {
-      yield missedClassDto;
-    }
-  }
-
   /// Helper method that handles upsert logic for a single MissedSchoolday record.
   /// Returns a record containing the processed MissedSchoolday and the operation type.
   Future<({MissedSchoolday record, String operation})> _upsertMissedSchoolday(
@@ -57,11 +46,9 @@ class MissedSchooldayEndpoint extends Endpoint {
               await session.db.updateRow(updatedMissedSchoolday);
           operation = 'update';
         } else {
-          // If we can't find the existing record, rethrow the original error
           rethrow;
         }
       } else {
-        // If it's not a duplicate key error, rethrow
         rethrow;
       }
     }
@@ -82,16 +69,7 @@ class MissedSchooldayEndpoint extends Endpoint {
       Session session, MissedSchoolday missedClass) async {
     final result = await _upsertMissedSchoolday(session, missedClass);
 
-    final missedSchooldayDto = MissedSchooldayDto(
-      missedSchoolday: result.record,
-      operation: result.operation,
-    );
-
-    // Send the missed class to the stream
-    session.messages.postMessage(
-      'missed_schooldays_stream',
-      missedSchooldayDto,
-    );
+    session.messages.postMessage('hub_events_stream', result.record);
 
     return result.record;
   }
@@ -102,7 +80,6 @@ class MissedSchooldayEndpoint extends Endpoint {
       final processed = <MissedSchoolday>[];
 
       for (final missedClass in missedClasses) {
-        // Check if record exists to avoid exception-based upsert inside txn
         final existing = await MissedSchoolday.db.findFirstRow(
           session,
           where: (t) =>
@@ -112,7 +89,6 @@ class MissedSchooldayEndpoint extends Endpoint {
         );
 
         late MissedSchoolday resultRecord;
-        String operation;
 
         if (existing != null) {
           final updated = existing.copyWith(
@@ -131,14 +107,12 @@ class MissedSchooldayEndpoint extends Endpoint {
             updated,
             transaction: transaction,
           );
-          operation = 'update';
         } else {
           resultRecord = await MissedSchoolday.db.insertRow(
             session,
             missedClass,
             transaction: transaction,
           );
-          operation = 'add';
         }
 
         final withRelation = await MissedSchoolday.db.findById(
@@ -150,14 +124,7 @@ class MissedSchooldayEndpoint extends Endpoint {
           transaction: transaction,
         );
 
-        session.messages.postMessage(
-          'missed_schooldays_stream',
-          MissedSchooldayDto(
-            missedSchoolday: withRelation!,
-            operation: operation,
-          ),
-        );
-
+        session.messages.postMessage('hub_events_stream', withRelation!);
         processed.add(withRelation);
       }
 
@@ -190,23 +157,18 @@ class MissedSchooldayEndpoint extends Endpoint {
 
   Future<bool> deleteMissedSchoolday(
       Session session, int pupilId, int schooldayId) async {
-    var missedSchooldayToDelete = await MissedSchoolday.db.findFirstRow(
+    final missedSchooldayToDelete = await MissedSchoolday.db.findFirstRow(
       session,
       where: (t) =>
           t.pupilId.equals(pupilId) & t.schooldayId.equals(schooldayId),
-      include: MissedSchoolday.include(
-        schoolday: Schoolday.include(),
-      ),
     );
     await MissedSchoolday.db.deleteRow(session, missedSchooldayToDelete!);
-    final deletedMissedSchooldayDto = MissedSchooldayDto(
-      missedSchoolday: missedSchooldayToDelete,
-      operation: 'delete',
-    );
-    // Send the deleted missed class to the stream
     session.messages.postMessage(
-      'missed_schooldays_stream',
-      deletedMissedSchooldayDto,
+      'hub_events_stream',
+      HubDeleteEvent(
+        objectType: HubObjectType.missedSchoolday,
+        id: missedSchooldayToDelete.id!,
+      ),
     );
     return true;
   }
@@ -214,7 +176,6 @@ class MissedSchooldayEndpoint extends Endpoint {
   Future<MissedSchoolday> updateMissedSchoolday(
       Session session, MissedSchoolday missedSchoolday) async {
     final updatedMissedSchoolday = await session.db.updateRow(missedSchoolday);
-    // Fetch the object again with the relation included
     final missedSchooldayWithRelation = await MissedSchoolday.db.findById(
       session,
       updatedMissedSchoolday.id!,
@@ -223,15 +184,7 @@ class MissedSchooldayEndpoint extends Endpoint {
       ),
     );
 
-    final updatedMissedSchooldayDto = MissedSchooldayDto(
-      missedSchoolday: missedSchooldayWithRelation!,
-      operation: 'update',
-    );
-    // Send the updated missed class to the stream
-    session.messages.postMessage(
-      'missed_schooldays_stream',
-      updatedMissedSchooldayDto,
-    );
+    session.messages.postMessage('hub_events_stream', missedSchooldayWithRelation!);
 
     return missedSchooldayWithRelation;
   }

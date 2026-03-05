@@ -1,6 +1,8 @@
 import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
+import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
@@ -256,6 +258,18 @@ class InitOnUserAuth {
     di.registerLazySingleton<ServerLogsManager>(
       () => ServerLogsManager(),
       dispose: (m) => m.dispose(),
+    );
+
+    di.registerSingletonAsync<HubStreamService>(
+      () => HubStreamService().init(),
+      dependsOn: [
+        Client,
+        PupilProxyManager,
+        AttendanceManager,
+        SchooldayEventManager,
+        SchoolListManager,
+      ],
+      dispose: (s) => s.dispose(),
     );
 
     _log.info('Managers depending on authentication are being initialized...');

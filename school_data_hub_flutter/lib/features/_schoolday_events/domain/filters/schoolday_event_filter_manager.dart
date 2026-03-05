@@ -1,12 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 typedef SchooldayEventFilterRecord = ({
   SchooldayEventFilter filter,
@@ -70,7 +70,7 @@ class SchooldayEventFilterManager {
     );
 
     // Filter the schoolday events and populate the pupil IDs set
-    filteredSchooldayEvents(_schooldayEventManager.schooldayEvents);
+    filteredSchooldayEvents(_schooldayEventManager.schooldayEvents.value);
 
     _pupilsFilter.refreshs();
   }

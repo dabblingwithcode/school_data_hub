@@ -18,7 +18,7 @@ class SchoolListCard extends WatchingWidget {
   Widget build(BuildContext context) {
     final schoolListManager = di<SchoolListManager>();
     final hubSessionManager = di<HubSessionManager>();
-    final schoolList = watchPropertyValue(
+    final schoolList = watchValue(
       (SchoolListManager x) => x.schoolLists,
     ).firstWhere((element) => element.listId == this.schoolList.listId);
     return ClipRRect(

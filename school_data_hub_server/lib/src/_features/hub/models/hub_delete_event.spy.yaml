@@ -1,0 +1,4 @@
+class: HubDeleteEvent
+fields:
+  objectType: HubObjectType
+  id: int

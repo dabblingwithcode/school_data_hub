@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
@@ -58,7 +59,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                   icon: const Icon(Icons.add, size: 30),
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (ctx) => const NewMatrixUserPage(),
                       ),
                     );
@@ -70,7 +71,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                   icon: const Icon(Icons.meeting_room_rounded, size: 30),
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (ctx) => const MatrixRoomsListPage(),
                       ),
                     );
@@ -82,7 +83,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                   icon: const Icon(Icons.flag_circle_rounded, size: 30),
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (ctx) => const MatrixEventReportsPage(),
                       ),
                     );
@@ -97,12 +98,29 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                 ),
                 const Gap(20),
                 IconButton(
+                  tooltip: 'Matrix-Konten für SuS ohne Kontakt erstellen',
+                  icon: const Icon(Icons.person_add_alt_1_rounded, size: 30),
+                  onPressed: () async {
+                    final file = await matrixPolicyManager.users
+                        .createMatrixCredentialsForPupilsWithoutContactInfo();
+                    if (!context.mounted) return;
+                    if (file != null) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => PdfViewerPage(pdfFile: file),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                const Gap(20),
+                IconButton(
                   tooltip: 'Mehrere neue Benutzer-Codes generieren',
                   icon: const Icon(Icons.print, color: Colors.orange, size: 30),
                   onPressed: () {
                     final matrixUsers = matrixPolicyManager.matrixUsers.value;
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (context) =>
                             SelectMatrixUsersList(matrixUsers),
                       ),

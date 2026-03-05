@@ -19,11 +19,14 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController topicController = TextEditingController();
   final TextEditingController aliasController = TextEditingController();
+  final TextEditingController existingRoomIdController =
+      TextEditingController();
 
   ChatTypePreset selectedRoomType = ChatTypePreset.private;
   bool markAsCompulsory = false;
   MatrixRoomType compulsoryRoomType = MatrixRoomType.other;
   bool isProcessing = false;
+  bool isAddingExisting = false;
 
   MatrixPolicyManager get _matrixPolicyManager => di<MatrixPolicyManager>();
   NotificationService get _notificationService => di<NotificationService>();
@@ -33,7 +36,34 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
     nameController.dispose();
     topicController.dispose();
     aliasController.dispose();
+    existingRoomIdController.dispose();
     super.dispose();
+  }
+
+  Future<void> addExistingRoom() async {
+    setState(() {
+      isAddingExisting = true;
+    });
+    try {
+      await _matrixPolicyManager.rooms.addExistingRoomById(
+        existingRoomIdController.text,
+      );
+      if (mounted) {
+        Navigator.of(context).pop(true);
+      }
+    } catch (e) {
+      _notificationService.showInformationDialog(e.toString());
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Fehler beim Hinzufügen des Raums: ${e.toString()}',
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          isAddingExisting = false;
+        });
+      }
+    }
   }
 
   Future<void> createRoom() async {
@@ -116,6 +146,63 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Add existing room by ID
+                        Card(
+                          color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Bestehenden Raum zur Policy hinzufügen',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const Gap(8),
+                                const Text(
+                                  'Matrix-Raum-ID eingeben (z.B. !abc123:server.de)',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                const Gap(8),
+                                TextField(
+                                  controller: existingRoomIdController,
+                                  decoration: const InputDecoration(
+                                    hintText: '!abc123:server.de',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  enabled: !isAddingExisting,
+                                ),
+                                const Gap(8),
+                                ElevatedButton(
+                                  style: AppStyles.successButtonStyle,
+                                  onPressed: isAddingExisting
+                                      ? null
+                                      : addExistingRoom,
+                                  child: isAddingExisting
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : const Text(
+                                          'Zur Policy hinzufügen',
+                                          style: AppStyles.buttonTextStyle,
+                                        ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Gap(16),
                         // Room name field
                         Card(
                           color: Colors.white,

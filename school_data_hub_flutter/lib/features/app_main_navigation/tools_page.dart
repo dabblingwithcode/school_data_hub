@@ -4,10 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/app_utils/pick_file_return_content_as_string.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
-import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -567,19 +565,13 @@ class ToolsPage extends WatchingWidget {
                             label: 'Matrix-\nCorporal-Logs',
                           ),
                           _ToolsMenuButton(
-                            onPressed: () async {
+                            onPressed: () {
                               Navigator.pop(context);
-                              final file = await di<MatrixPolicyManager>().users
-                                  .createMatrixCredentialsForPupilsWithoutContactInfo();
-                              if (file != null) {
-                                if (!context.mounted) return;
-                                Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        PdfViewerPage(pdfFile: file),
-                                  ),
-                                );
-                              }
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => const MatrixUsersListPage(),
+                                ),
+                              );
                             },
                             icon: Icons.person_add_alt_1_rounded,
                             label: 'Matrix-Konten\nErstellen',

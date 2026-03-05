@@ -21,21 +21,25 @@ class PupilProxyManager extends ChangeNotifier {
   final _pupilDataApiService = PupilDataApiService();
 
   final _pupilIdPupilsMap = <int, PupilProxy>{};
+  final _allPupils = ListNotifier<PupilProxy>();
 
-  List<PupilProxy> get allPupils => _pupilIdPupilsMap.values.toList();
+  /// Reactive list of all pupil proxies.
+  ValueListenable<List<PupilProxy>> get allPupilsListenable => _allPupils;
+
+  /// Convenience getter — returns the current list value.
+  List<PupilProxy> get allPupils => _allPupils.value;
 
   PupilProxyManager();
 
   @override
   void dispose() {
-    // dispose all the pupil proxies
     for (final pupil in _pupilIdPupilsMap.values) {
       pupil.dispose();
     }
     _pupilIdPupilsMap.clear();
+    _allPupils.dispose();
     super.dispose();
     _log.info('[PupilProxyManager] disposed ✅️');
-    return;
   }
 
   Future<void> init() async {
@@ -46,7 +50,7 @@ class PupilProxyManager extends ChangeNotifier {
 
   void clearData() {
     _pupilIdPupilsMap.clear();
-    return;
+    _allPupils.clear();
   }
 
   PupilProxy? getPupilByPupilId(int pupilId) {
@@ -368,20 +372,30 @@ class PupilProxyManager extends ChangeNotifier {
       final pupilIdentity = di<PupilIdentityManager>()
           .getPupilIdentityByInternalId(pupilData.internalId);
       if (pupilIdentity != null) {
-        _pupilIdPupilsMap[pupilData.id!] = PupilProxy(
+        final newProxy = PupilProxy(
           pupilData: pupilData,
           pupilIdentity: pupilIdentity,
           siblingsResolver: getSiblings,
         );
+        _pupilIdPupilsMap[pupilData.id!] = newProxy;
+        _allPupils.add(newProxy);
         notifyListeners();
       }
     }
   }
 
   void updatePupilProxiesWithPupilData(List<PupilData> pupils) {
+    _allPupils.startTransAction();
     for (PupilData pupil in pupils) {
       updatePupilProxyWithPupilData(pupil);
     }
+    _allPupils.endTransAction();
+  }
+
+  /// Called by [HubStreamService] when a PupilData update arrives on the hub stream.
+  void upsertFromStream(PupilData pupilData) {
+    _log.fine('[STREAM] upsert pupil ${pupilData.id}');
+    updatePupilProxyWithPupilData(pupilData);
   }
 
   Future<void> updateSchoolyearHeldBackDate({

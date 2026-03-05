@@ -104,11 +104,6 @@ class MatrixApiService {
   //   transactionId: transactionId,
   // );
 
-  Future<void> inviteUserToRoom({
-    required String roomId,
-    required String userId,
-  }) => _roomApiService.inviteUserToRoom(roomId: roomId, userId: userId);
-
   Future<MatrixEventReportsResponse> fetchEventReports({
     int? from,
     int? limit,

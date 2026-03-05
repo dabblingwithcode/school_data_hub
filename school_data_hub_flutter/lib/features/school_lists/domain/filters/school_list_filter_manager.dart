@@ -55,7 +55,7 @@ class SchoolListFilterManager {
   void resetFilters() {
     _filterState.value = false;
     _schoolListFilterState.value = Map.from(initialSchoolListFilterValues);
-    _filteredSchoolLists.value = _schoolListManager.schoolLists;
+    _filteredSchoolLists.value = _schoolListManager.schoolLists.value;
     _filtersStateManager.setFilterState(
       filterState: FilterState.schoolList,
       value: false,
@@ -64,7 +64,7 @@ class SchoolListFilterManager {
 
   void onSearchTextSchoolListsFilter(String text) {
     if (text.isEmpty) {
-      _filteredSchoolLists.value = _schoolListManager.schoolLists;
+      _filteredSchoolLists.value = _schoolListManager.schoolLists.value;
       return;
     }
     _filterState.value = true;
@@ -73,7 +73,7 @@ class SchoolListFilterManager {
       value: true,
     );
     String lowerCaseText = text.toLowerCase();
-    _filteredSchoolLists.value = _schoolListManager.schoolLists
+    _filteredSchoolLists.value = _schoolListManager.schoolLists.value
         .where((element) => element.name.toLowerCase().contains(lowerCaseText))
         .toList();
   }
@@ -118,7 +118,7 @@ class SchoolListFilterManager {
   /// Apply the currently active filters to the school lists
   void _applyActiveFilters() {
     final userName = _hubSessionManager.userName;
-    List<SchoolList> filteredLists = _schoolListManager.schoolLists;
+    List<SchoolList> filteredLists = _schoolListManager.schoolLists.value;
     bool anyFilterActive = false;
 
     if (_schoolListFilterState.value[SchoolListFilter.publicLists] == true) {

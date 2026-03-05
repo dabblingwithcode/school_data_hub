@@ -7,10 +7,10 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/dialogs/remove_room_from_policy_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_room_edit_page/matrix_room_edit_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/change_power_levels_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/users_in_room_list.dart';
@@ -156,15 +156,17 @@ class RoomListCard extends WatchingWidget {
                                       );
                                     },
                                     onLongPress: () async {
-                                      final confirm = await confirmationDialog(
-                                        context: context,
-                                        message:
-                                            'Raum ${room.name} aus der Policy löschen?',
-                                        title: 'Raum aus der Policy rausnehmen',
-                                      );
-                                      if (confirm == true) {
+                                      final result =
+                                          await showRemoveRoomFromPolicyDialog(
+                                            context,
+                                            roomName: room.name ?? room.id,
+                                          );
+                                      if (result != null) {
                                         await matrixPolicyManager.rooms
-                                            .removeManagedRoom(room);
+                                            .removeManagedRoom(
+                                              room,
+                                              purgeRoom: result.purge,
+                                            );
                                       }
                                     },
                                     child: Text(
@@ -184,11 +186,13 @@ class RoomListCard extends WatchingWidget {
                                     Chip(
                                       label: Text(
                                         _compulsoryRoomTypeLabel(
-                                            compulsory.roomType),
+                                          compulsory.roomType,
+                                        ),
                                         style: const TextStyle(fontSize: 12),
                                       ),
                                       backgroundColor: _compulsoryRoomTypeColor(
-                                          compulsory.roomType),
+                                        compulsory.roomType,
+                                      ),
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 6,
                                         vertical: 2,

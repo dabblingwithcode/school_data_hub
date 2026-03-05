@@ -5,8 +5,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/dialogs/remove_room_from_policy_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
@@ -522,13 +522,15 @@ class _MatrixRoomEditPageState extends State<MatrixRoomEditPage> {
                 color: Colors.red,
               ),
               onPressed: () async {
-                final confirm = await confirmationDialog(
-                  context: context,
-                  message: 'Raum ${room.name} aus der Policy löschen?',
-                  title: 'Raum aus der Policy rausnehmen',
+                final result = await showRemoveRoomFromPolicyDialog(
+                  context,
+                  roomName: room.name ?? room.id,
                 );
-                if (confirm == true) {
-                  await _matrixPolicyManager.rooms.removeManagedRoom(room);
+                if (result != null) {
+                  await _matrixPolicyManager.rooms.removeManagedRoom(
+                    room,
+                    purgeRoom: result.purge,
+                  );
                   if (context.mounted) {
                     Navigator.of(context).pop();
                   }
