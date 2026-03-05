@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _notificationService = di<NotificationService>();
 
@@ -27,7 +27,7 @@ Future<String?> qrScanner({
   );
   final result = await Navigator.push(
     context,
-    MaterialPageRoute(
+    MaterialPageRoute<String?>(
       fullscreenDialog: true,
       builder: (context) => Stack(
         children: [
@@ -67,5 +67,5 @@ Future<String?> qrScanner({
       ),
     ),
   );
-  return result;
+  return result as String?;
 }

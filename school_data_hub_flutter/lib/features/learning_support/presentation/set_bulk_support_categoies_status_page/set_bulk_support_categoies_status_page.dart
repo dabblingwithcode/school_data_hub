@@ -90,7 +90,7 @@ class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
                             Container(
                               width: 10,
                               height: 10,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.greenAccent,
                               ),

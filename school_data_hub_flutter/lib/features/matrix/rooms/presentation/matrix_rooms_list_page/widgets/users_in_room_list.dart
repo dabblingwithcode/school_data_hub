@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
@@ -134,52 +134,41 @@ class MatrixUsersInRoomList extends WatchingWidget {
     ));
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            //margin: const EdgeInsets.only(bottom: 16),
-            width: double.infinity,
-            child: ElevatedButton(
-              style: AppStyles.successButtonStyle,
-              onPressed: () async {
-                final availableUsers = MatrixUserHelper.restOfUsers(
-                  MatrixUserHelper.userIdsFromUsers(matrixUsers),
-                );
+        GenericAsyncActionButton(
+          onPressed: () async {
+            final availableUsers = MatrixUserHelper.restOfUsers(
+              MatrixUserHelper.userIdsFromUsers(matrixUsers),
+            );
 
-                final List<String> selectedUserIds =
-                    await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) => SelectMatrixUsersList(
-                          MatrixUserHelper.usersFromUserIds(availableUsers),
-                        ),
-                      ),
-                    ) ??
-                    [];
-                if (selectedUserIds.isNotEmpty) {
-                  for (final String userId in selectedUserIds) {
-                    matrixPolicyManager.users.addMatrixUserToRooms(userId, [
-                      room.id,
-                    ]);
-                  }
-                }
-              },
-              child: const Text(
-                "KONTO HINZUFÜGEN",
-                style: AppStyles.buttonTextStyle,
-              ),
-            ),
-          ),
+            final List<String> selectedUserIds =
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) => SelectMatrixUsersList(
+                      MatrixUserHelper.usersFromUserIds(availableUsers),
+                    ),
+                  ),
+                ) ??
+                [];
+            if (selectedUserIds.isNotEmpty) {
+              for (final String userId in selectedUserIds) {
+                matrixPolicyManager.users.addMatrixUserToRooms(userId, [
+                  room.id,
+                ]);
+              }
+            }
+          },
+          title: "KONTO HINZUFÜGEN",
+          buttonType: ButtonType.accept,
         ),
+
         Row(
           children: [
             const Gap(5),
-            Text(
-              matrixUsers.isNotEmpty
-                  ? 'Konten:'
-                  : 'Keine Konten in diesem Raum!',
-              style: const TextStyle(color: Colors.black, fontSize: 16),
-            ),
+            if (matrixUsers.isEmpty)
+              const Text(
+                'Keine Konten in diesem Raum!',
+                style: const TextStyle(color: Colors.black, fontSize: 16),
+              ),
           ],
         ),
         const Gap(5),

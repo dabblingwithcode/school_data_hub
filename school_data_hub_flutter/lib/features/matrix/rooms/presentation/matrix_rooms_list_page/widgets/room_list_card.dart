@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_room_edit_page/matrix_room_edit_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/change_power_levels_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/users_in_room_list.dart';
@@ -48,6 +49,9 @@ class RoomListCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final matrixPolicyManager = di<MatrixPolicyManager>();
+    final roomManager = matrixPolicyManager.rooms;
+    watch(roomManager.compulsoryRooms);
+    final compulsory = roomManager.getCompulsoryRoomFor(matrixRoom.id);
     final tileController = createOnce<CustomExpansionTileController>(
       () => CustomExpansionTileController(),
     );
@@ -140,38 +144,60 @@ class RoomListCard extends WatchingWidget {
                           Expanded(
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              child: InkWell(
-                                onTap: () async {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (ctx) =>
-                                          MatrixRoomEditPage(room: room),
+                              child: Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () async {
+                                      Navigator.of(context).push<void>(
+                                        MaterialPageRoute<void>(
+                                          builder: (ctx) =>
+                                              MatrixRoomEditPage(room: room),
+                                        ),
+                                      );
+                                    },
+                                    onLongPress: () async {
+                                      final confirm = await confirmationDialog(
+                                        context: context,
+                                        message:
+                                            'Raum ${room.name} aus der Policy löschen?',
+                                        title: 'Raum aus der Policy rausnehmen',
+                                      );
+                                      if (confirm == true) {
+                                        await matrixPolicyManager.rooms
+                                            .removeManagedRoom(room);
+                                      }
+                                    },
+                                    child: Text(
+                                      '${room.name}',
+                                      overflow: TextOverflow.fade,
+                                      softWrap: false,
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      ),
                                     ),
-                                  );
-                                },
-                                onLongPress: () async {
-                                  final confirm = await confirmationDialog(
-                                    context: context,
-                                    message:
-                                        'Raum ${room.name} aus der Policy löschen?',
-                                    title: 'Raum aus der Policy rausnehmen',
-                                  );
-                                  if (confirm == true) {
-                                    await matrixPolicyManager.rooms
-                                        .removeManagedRoom(room);
-                                  }
-                                },
-                                child: Text(
-                                  '${room.name}',
-                                  overflow: TextOverflow.fade,
-                                  softWrap: false,
-                                  textAlign: TextAlign.left,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
                                   ),
-                                ),
+                                  if (compulsory != null) ...[
+                                    const Gap(8),
+                                    Chip(
+                                      label: Text(
+                                        _compulsoryRoomTypeLabel(
+                                            compulsory.roomType),
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                      backgroundColor: _compulsoryRoomTypeColor(
+                                          compulsory.roomType),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                  ],
+                                ],
                               ),
                             ),
                           ),
@@ -397,5 +423,47 @@ class RoomListCard extends WatchingWidget {
         ),
       ),
     );
+  }
+
+  static String _compulsoryRoomTypeLabel(MatrixRoomType t) {
+    switch (t) {
+      case MatrixRoomType.contacts:
+        return 'Kontakte';
+      case MatrixRoomType.globalParents:
+        return 'Eltern';
+      case MatrixRoomType.globalChildrem:
+        return 'Kinder';
+      case MatrixRoomType.globalTeacher:
+        return 'Lehrer';
+      case MatrixRoomType.groupChildren:
+        return 'Kinder Gr.';
+      case MatrixRoomType.groupParents:
+        return 'Eltern Gr.';
+      case MatrixRoomType.staff:
+        return 'Mitarbeiter';
+      case MatrixRoomType.other:
+        return 'Sonstige';
+    }
+  }
+
+  static Color _compulsoryRoomTypeColor(MatrixRoomType t) {
+    switch (t) {
+      case MatrixRoomType.contacts:
+        return Colors.blue.shade100;
+      case MatrixRoomType.globalParents:
+        return Colors.orange.shade100;
+      case MatrixRoomType.globalChildrem:
+        return Colors.green.shade100;
+      case MatrixRoomType.globalTeacher:
+        return Colors.purple.shade100;
+      case MatrixRoomType.groupChildren:
+        return Colors.teal.shade100;
+      case MatrixRoomType.groupParents:
+        return Colors.amber.shade100;
+      case MatrixRoomType.staff:
+        return Colors.indigo.shade100;
+      case MatrixRoomType.other:
+        return Colors.grey.shade300;
+    }
   }
 }

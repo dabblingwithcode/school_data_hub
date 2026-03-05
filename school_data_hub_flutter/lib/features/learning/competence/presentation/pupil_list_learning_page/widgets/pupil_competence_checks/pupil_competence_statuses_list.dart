@@ -21,11 +21,6 @@ class PupilCompetenceStatusesList extends WatchingWidget {
   Widget build(BuildContext context) {
     watch(pupil);
 
-    // Get all competences allowed for this pupil
-    final competences = CompetenceHelper.getAllowedCompetencesForThisPupil(
-      pupil,
-    );
-
     // Get competence checks mapped by competence ID
     final Map<int, List<CompetenceCheck>> pupilCompetenceChecksMap =
         CompetenceHelper.getCompetenceChecksMappedTopublicIdsForThisPupil(

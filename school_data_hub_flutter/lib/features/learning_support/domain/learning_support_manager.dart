@@ -522,7 +522,7 @@ class LearningSupportManager {
 
       // Read and parse the JSON file
       final String jsonString = await file.readAsString();
-      final List<dynamic> jsonList = json.decode(jsonString);
+      final List<dynamic> jsonList = json.decode(jsonString) as List<dynamic>;
       final List<Map<String, dynamic>> supportLevelData = jsonList
           .cast<Map<String, dynamic>>();
 

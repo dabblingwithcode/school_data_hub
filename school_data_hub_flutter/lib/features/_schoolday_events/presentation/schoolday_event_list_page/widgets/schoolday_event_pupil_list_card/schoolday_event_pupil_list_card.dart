@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
@@ -15,7 +16,6 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SchooldayEventPupilListCard extends WatchingStatefulWidget {
   final PupilProxy passedPupil;
@@ -31,7 +31,7 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
 
   @override
   Widget build(BuildContext context) {
-    final _tileController = createOnce(() => CustomExpansionTileController());
+    final tileController = createOnce(() => CustomExpansionTileController());
     final schooldayEventFilterManager = di<SchooldayEventFilterManager>();
     final schooldayEventManager = di<SchooldayEventManager>();
     final mainMenuBottomNavManager = di<BottomNavManager>();
@@ -132,7 +132,7 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                         CustomExpansionTileSwitch(
                           includeSwitch: true,
                           switchColor: AppColors.interactiveColor,
-                          customExpansionTileController: _tileController,
+                          customExpansionTileController: tileController,
                           expansionSwitchWidget: SchooldayEventPupilStats(
                             pupil: pupil,
                           ),
@@ -152,7 +152,7 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                 'Vorfälle',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
-              tileController: _tileController,
+              tileController: tileController,
               widgetList: [PupilSchooldayEventsList(pupil: pupil)],
             ),
           ),

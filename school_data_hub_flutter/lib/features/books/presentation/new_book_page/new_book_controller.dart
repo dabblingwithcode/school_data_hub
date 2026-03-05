@@ -334,8 +334,10 @@ class NewBookController extends State<NewBook> {
     if (selectedTags.isNotEmpty) {
       await di<BookManager>().updateBookTags(widget.isbn, selectedTags);
     }
-
-    Navigator.pop(context);
+    if (!context.mounted) return;
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
   }
 
   bool validateRequestDataPayload() {
@@ -355,7 +357,7 @@ class NewBookController extends State<NewBook> {
 
       return false;
     }
-    if (lastLocationValue == 'Bitte auswählen') {
+    if (lastLocationValue == LibraryBookLocation(location: 'Bitte auswählen')) {
       di<NotificationService>().showSnackBar(
         NotificationType.error,
         'Bitte wählen Sie den Ablageort aus!',

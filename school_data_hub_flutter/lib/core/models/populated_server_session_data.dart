@@ -11,6 +11,13 @@ class PopulatedServerSessionData {
     required this.supportCategories,
   });
 
+  factory PopulatedServerSessionData.initial() => PopulatedServerSessionData(
+        schoolSemester: false,
+        schooldays: false,
+        competences: false,
+        supportCategories: false,
+      );
+
   PopulatedServerSessionData copyWith({
     bool? schoolSemester,
     bool? schooldays,

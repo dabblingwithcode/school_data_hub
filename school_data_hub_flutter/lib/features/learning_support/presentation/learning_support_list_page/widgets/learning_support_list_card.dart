@@ -21,7 +21,7 @@ class LearningSupportCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _tileController = createOnce(() => CustomExpansionTileController());
+    final tileController = createOnce(() => CustomExpansionTileController());
     final PupilProxy pupil = watch(this.pupil);
 
     return Card(
@@ -122,7 +122,7 @@ class LearningSupportCard extends WatchingWidget {
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: InkWell(
-                            onTap: () => _tileController.toggle(),
+                            onTap: () => tileController.toggle(),
                             child: SupportGoalBatches(pupil: pupil),
                           ),
                         ),
@@ -131,7 +131,7 @@ class LearningSupportCard extends WatchingWidget {
               ),
               const Gap(8),
               InkWell(
-                onTap: () => _tileController.toggle(),
+                onTap: () => tileController.toggle(),
                 onLongPress: () async {
                   // TODO: uncomment when ready
                   //    supportLevelDialog(context, pupil, pupil.latestSupportLevel);
@@ -192,7 +192,7 @@ class LearningSupportCard extends WatchingWidget {
             padding: const EdgeInsets.all(5),
             child: CustomExpansionTileContent(
               title: null,
-              tileController: _tileController,
+              tileController: tileController,
               widgetList: [SupportGoalsList(pupil: pupil)],
             ),
           ),

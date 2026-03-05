@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/action_buttons.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/color_picker_field.dart';
+import 'package:school_data_hub_flutter/app_utils/color_picker_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/description_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/name_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/public_id_field.dart';

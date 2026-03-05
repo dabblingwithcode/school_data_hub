@@ -12,18 +12,17 @@ linter:
     sort_child_properties_last: true # Improve readability of widget tree definitions
 
 analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
   exclude:
-    - build/** # Exclude generated files in the build directory
-    - .dart_tool/** # Exclude Dart tool-generated files
-    - gen/** # Exclude other generated code, if any
+    - build/**
+    - .dart_tool/**
+    - gen/**
   errors:
-    invalid_annotation_target: ignore # Ignore warnings for invalid annotations
-    missing_required_param: error # Catch missing required parameters early
-    unused_import: warning # Flag unused imports but at a warning level
-    deprecated_member_use: warning # Warn about usage of deprecated members
-    unnecessary_cast: ignore # Ignore unnecessary casts for simpler code
-
-# Optional: Stronger type safety
-strong-mode:
-  implicit-casts: false # Prevent implicit casting, requiring explicit casts
-  implicit-dynamic: false # Disable implicit dynamic typing for better type safety
+    invalid_annotation_target: ignore
+    missing_required_param: error
+    unused_import: warning
+    deprecated_member_use: warning
+    unnecessary_cast: ignore

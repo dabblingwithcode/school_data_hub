@@ -132,18 +132,9 @@ class _BranchNode extends StatelessWidget {
         collapsedBackgroundColor: color,
         title: Row(
           children: [
-            ValueListenableBuilder<int?>(
-              valueListenable: selectedParentId,
-              builder: (context, selected, _) {
-                return Radio<int?>(
-                  value: category.categoryId,
-                  groupValue: selected,
-                  onChanged: (value) {
-                    selectedParentId.value = value;
-                  },
-                  fillColor: WidgetStateProperty.all(Colors.white),
-                );
-              },
+            Radio<int?>(
+              value: category.categoryId,
+              fillColor: WidgetStateProperty.all(Colors.white),
             ),
             const Gap(5),
             Expanded(
@@ -199,18 +190,9 @@ class _LeafNode extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            ValueListenableBuilder<int?>(
-              valueListenable: selectedParentId,
-              builder: (context, selected, _) {
-                return Radio<int?>(
-                  value: category.categoryId,
-                  groupValue: selected,
-                  onChanged: (value) {
-                    selectedParentId.value = value;
-                  },
-                  fillColor: WidgetStateProperty.all(Colors.white),
-                );
-              },
+            Radio<int?>(
+              value: category.categoryId,
+              fillColor: WidgetStateProperty.all(Colors.white),
             ),
             const Gap(5),
             Flexible(

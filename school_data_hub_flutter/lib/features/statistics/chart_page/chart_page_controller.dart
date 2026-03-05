@@ -161,7 +161,6 @@ class _ChartPageControllerState extends State<ChartPageController> {
         <({DateTime lentDate, DateTime? returnedDate})>[];
     for (final pupil in _pupilManager.allPupils) {
       final lendings = pupil.pupilBookLendings;
-      if (lendings == null) continue;
       for (final lending in lendings) {
         final lentLocal = lending.lentAt.toLocal();
         final lentDate = DateTime(

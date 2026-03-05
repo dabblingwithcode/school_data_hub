@@ -17,8 +17,7 @@ class MatrixNotifications {
 
   MatrixNotifications._internal();
 
-// TODO: This is hardcoded, put it in the secrets
-  final _currentUserId = '@schuldaten-hub:hermannschule.de';
+  final _currentUserId = Serverpod.instance.getPassword('matrixUserId');
   final MatrixClient _matrixClient = MatrixClient();
   final _log = Logger('MatrixNotifications');
 
@@ -144,7 +143,7 @@ class MatrixNotifications {
 
       final roomId = await _findOrCreateDirectMessageRoom(
         targetUserId: targetUserId,
-        currentUserId: _currentUserId,
+        currentUserId: _currentUserId!,
       );
 
       _log.info('Using room ID: $roomId');
@@ -452,7 +451,7 @@ class MatrixNotifications {
     String targetUserId,
   ) async {
     try {
-      final encodedUserId = Uri.encodeComponent(_currentUserId);
+      final encodedUserId = Uri.encodeComponent(_currentUserId!);
       final response = await _matrixClient.get(
         '/_matrix/client/v3/user/$encodedUserId/account_data/m.direct',
       );

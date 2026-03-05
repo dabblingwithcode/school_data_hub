@@ -1,19 +1,25 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/app_utils/pick_file_return_content_as_string.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
+import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/presentation/set_matrix_environment_page/set_matrix_environment_controller.dart';
+import 'package:school_data_hub_flutter/features/matrix/logs/presentation/matrix_corporal_logs_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/presentation/set_matrix_environment_page/set_matrix_environment_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
@@ -59,7 +65,7 @@ class ToolsPage extends WatchingWidget {
     required IconData icon,
     required List<Widget> children,
   }) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       backgroundColor: AppColors.canvasColor,
       shape: const RoundedRectangleBorder(
@@ -115,6 +121,9 @@ class ToolsPage extends WatchingWidget {
     final bool matrixPolicyManagerIsRegistered = watchPropertyValue(
       (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus,
     );
+    final matrixSessionConfigured = watchPropertyValue(
+      (HubSessionManager x) => x.isMatrixSessionConfigured,
+    );
     final bool matrixSessionIsConfigured = watchPropertyValue(
       (HubSessionManager x) => x.isMatrixSessionConfigured,
     );
@@ -166,7 +175,7 @@ class ToolsPage extends WatchingWidget {
                           }
                           if (!context.mounted) return;
                           Navigator.of(context).push(
-                            MaterialPageRoute(
+                            MaterialPageRoute<void>(
                               builder: (context) => PupilIdentityStreamPage(
                                 role: PupilIdentityStreamRole.receiver,
                                 importedChannelName: channelName,
@@ -193,7 +202,7 @@ class ToolsPage extends WatchingWidget {
                                 }
                                 if (!context.mounted) return;
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (context) =>
                                         PupilIdentityStreamPage(
                                           role:
@@ -232,7 +241,7 @@ class ToolsPage extends WatchingWidget {
                               );
                           if (!context.mounted) return;
                           Navigator.of(context).push(
-                            MaterialPageRoute(
+                            MaterialPageRoute<void>(
                               builder: (context) => PupilIdentityStreamPage(
                                 role: PupilIdentityStreamRole.sender,
                                 encryptedData: encryptedPupilIdentities,
@@ -278,7 +287,11 @@ class ToolsPage extends WatchingWidget {
                       ],
                     ],
                   ),
-                  icon: Icons.badge_outlined,
+                  icon: Icon(
+                    Icons.badge_outlined,
+                    size: 50,
+                    color: AppColors.gridViewColor,
+                  ),
                   label: 'Schüler-Ids',
                 ),
 
@@ -293,7 +306,7 @@ class ToolsPage extends WatchingWidget {
                         onPressed: () {
                           Navigator.pop(context);
                           Navigator.of(context).push(
-                            MaterialPageRoute(
+                            MaterialPageRoute<void>(
                               builder: (_) => const ChartPageController(),
                             ),
                           );
@@ -305,7 +318,7 @@ class ToolsPage extends WatchingWidget {
                         onPressed: () {
                           Navigator.pop(context);
                           Navigator.of(context).push(
-                            MaterialPageRoute(
+                            MaterialPageRoute<void>(
                               builder: (_) => const Statistics(),
                             ),
                           );
@@ -317,7 +330,7 @@ class ToolsPage extends WatchingWidget {
                         onPressed: () {
                           Navigator.pop(context);
                           Navigator.of(context).push(
-                            MaterialPageRoute(
+                            MaterialPageRoute<void>(
                               builder: (_) => const DashboardPage(),
                             ),
                           );
@@ -327,7 +340,11 @@ class ToolsPage extends WatchingWidget {
                       ),
                     ],
                   ),
-                  icon: Icons.insights_rounded,
+                  icon: Icon(
+                    Icons.insights_rounded,
+                    size: 50,
+                    color: AppColors.gridViewColor,
+                  ),
                   label: 'Statistik',
                 ),
 
@@ -335,12 +352,16 @@ class ToolsPage extends WatchingWidget {
                 _ToolsCategoryButton(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (_) => const SchooldaysCalendarPage(),
                       ),
                     );
                   },
-                  icon: Icons.calendar_month_rounded,
+                  icon: Icon(
+                    Icons.calendar_month_rounded,
+                    size: 50,
+                    color: AppColors.gridViewColor,
+                  ),
                   label: 'Schultage-\nKalender',
                 ),
 
@@ -357,7 +378,7 @@ class ToolsPage extends WatchingWidget {
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => const CreateOrEditUserPage(),
                               ),
                             );
@@ -369,7 +390,7 @@ class ToolsPage extends WatchingWidget {
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => const UserListPage(),
                               ),
                             );
@@ -381,7 +402,7 @@ class ToolsPage extends WatchingWidget {
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => const ResetUserPasswordPage(),
                               ),
                             );
@@ -391,10 +412,30 @@ class ToolsPage extends WatchingWidget {
                         ),
                       ],
                     ),
-                    icon: Icons.people_rounded,
+                    icon: Icon(
+                      Icons.people_rounded,
+                      size: 50,
+                      color: AppColors.gridViewColor,
+                    ),
                     label: 'Personal',
                   ),
-
+                  // Matrix rooms and accounts section
+                  if (matrixSessionConfigured) ...[
+                    _ToolsCategoryButton(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const MatrixUsersListPage(),
+                        ),
+                      ),
+                      icon: Image.asset(
+                        'assets/schulpost_logo_200px_white.png',
+                        width: 50,
+                        height: 50,
+                        color: AppColors.gridViewColor,
+                      ),
+                      label: 'Matrix Kontakte',
+                    ),
+                  ],
                   // Admin (Schuldaten + Kalender + Stundenplan + Matrix)
                   _ToolsCategoryButton(
                     onPressed: () => _showSectionOverlay(
@@ -406,7 +447,7 @@ class ToolsPage extends WatchingWidget {
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => const EditSchoolDataPage(),
                               ),
                             );
@@ -418,7 +459,7 @@ class ToolsPage extends WatchingWidget {
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => const TimetablePage(),
                               ),
                             );
@@ -431,7 +472,7 @@ class ToolsPage extends WatchingWidget {
                           onPressed: () {
                             Navigator.pop(context);
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (_) => const SchoolSemesterListPage(),
                               ),
                             );
@@ -441,20 +482,11 @@ class ToolsPage extends WatchingWidget {
                         ),
                         _ToolsMenuButton(
                           onPressed: () async {
-                            if (!matrixPolicyManagerIsRegistered) {
-                              Navigator.pop(context);
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const SetMatrixEnvironment(),
-                                ),
-                              );
-                              return;
-                            }
-
                             Navigator.pop(context);
-                            final qrString = di<MatrixPolicyManager>()
-                                .exportMatrixCredentialsJsonForTransfer();
-                            await showQrCode(qrString, context);
+                            final envJson = di<EnvManager>().activeEnv!
+                                .toJson();
+                            final jsonString = jsonEncode(envJson);
+                            await showQrCode(jsonString, context);
                           },
                           icon: Icons.key_rounded,
                           label: 'Schulschlüssel\nzeigen',
@@ -479,14 +511,16 @@ class ToolsPage extends WatchingWidget {
 
                               final qrString = matrixPolicyManager
                                   .exportMatrixCredentialsJsonForTransfer();
+                              if (!context.mounted) return;
                               await showQrCode(qrString, context);
                               return;
                             }
 
                             Navigator.pop(context);
                             Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const SetMatrixEnvironment(),
+                              MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    const SetMatrixEnvironmentPage(),
                               ),
                             );
                           },
@@ -502,18 +536,73 @@ class ToolsPage extends WatchingWidget {
                               : 'Matrix\ninitialisieren',
                         ),
 
+                        if (matrixPolicyManagerIsRegistered ||
+                            matrixSessionIsConfigured) ...[
+                          _ToolsMenuButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) =>
+                                      const SetMatrixEnvironmentPage(),
+                                ),
+                              );
+                            },
+                            icon: Icons.settings_rounded,
+                            label: 'Matrix-\nUmgebung',
+                          ),
+                          _ToolsMenuButton(
+                            onPressed: () async {
+                              final navigator = Navigator.of(context);
+                              Navigator.pop(context);
+                              await di.getAsync<MatrixPolicyManager>();
+                              navigator.push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) =>
+                                      const MatrixCorporalLogsPage(),
+                                ),
+                              );
+                            },
+                            icon: Icons.article_outlined,
+                            label: 'Matrix-\nCorporal-Logs',
+                          ),
+                          _ToolsMenuButton(
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              final file = await di<MatrixPolicyManager>().users
+                                  .createMatrixCredentialsForPupilsWithoutContactInfo();
+                              if (file != null) {
+                                if (!context.mounted) return;
+                                Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) =>
+                                        PdfViewerPage(pdfFile: file),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: Icons.person_add_alt_1_rounded,
+                            label: 'Matrix-Konten\nErstellen',
+                          ),
+                        ],
                         _ToolsMenuButton(
                           onPressed: () async {
-                            Navigator.pop(context);
                             await di<MatrixPolicyManager>()
                                 .deleteAndDeregisterMatrixPolicyManager();
+
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
                           },
                           icon: Icons.delete_rounded,
                           label: 'Matrix\nlöschen',
                         ),
                       ],
                     ),
-                    icon: Icons.admin_panel_settings_rounded,
+                    icon: Icon(
+                      Icons.admin_panel_settings_rounded,
+                      size: 50,
+                      color: AppColors.gridViewColor,
+                    ),
                     label: 'Admin',
                   ),
                 ],
@@ -526,10 +615,12 @@ class ToolsPage extends WatchingWidget {
   }
 }
 
+class MatrixManager {}
+
 /// Category button shown on the main tools page grid (150x150).
 class _ToolsCategoryButton extends StatelessWidget {
   final VoidCallback onPressed;
-  final IconData icon;
+  final Widget icon;
   final String label;
 
   const _ToolsCategoryButton({
@@ -556,7 +647,7 @@ class _ToolsCategoryButton extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 50, color: AppColors.gridViewColor),
+                SizedBox(width: 50, height: 50, child: Center(child: icon)),
                 const Gap(10),
                 Text(
                   label,

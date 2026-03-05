@@ -436,11 +436,6 @@ class _BookScoreDialogState extends State<_BookScoreDialog> {
   }
 }
 
-/// Returns yellow color for selected scores.
-Color _bookScoreColor(int score) {
-  return Colors.amber;
-}
-
 /// Returns a descriptive label for the score.
 String _bookScoreLabel(int score) {
   switch (score) {

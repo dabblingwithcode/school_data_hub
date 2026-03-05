@@ -3,8 +3,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
@@ -22,7 +22,7 @@ class MissedSchooldaysPupilListCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _tileController = createOnce(() => CustomExpansionTileController());
+    final tileController = createOnce(() => CustomExpansionTileController());
     final PupilProxy pupil = watch(this.pupil);
     final attendanceManager = di<AttendanceManager>();
     List<MissedSchoolday> missedSchooldays = watch(
@@ -124,8 +124,7 @@ class MissedSchooldaysPupilListCard extends WatchingWidget {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: CustomExpansionTileSwitch(
-                                  customExpansionTileController:
-                                      _tileController,
+                                  customExpansionTileController: tileController,
                                   includeSwitch: true,
                                   switchColor: AppColors.interactiveColor,
                                   expansionSwitchWidget: attendanceStats(pupil),
@@ -180,7 +179,7 @@ class MissedSchooldaysPupilListCard extends WatchingWidget {
           ),
           CustomExpansionTileContent(
             title: null,
-            tileController: _tileController,
+            tileController: tileController,
             widgetList: [
               ListView.builder(
                 padding: const EdgeInsets.only(top: 5, bottom: 5),

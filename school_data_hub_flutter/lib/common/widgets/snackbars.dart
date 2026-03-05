@@ -3,7 +3,11 @@ import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-void snackbar(BuildContext context, snackbarType, message) {
+void snackbar(
+  BuildContext context,
+  NotificationType snackbarType,
+  String message,
+) {
   switch (snackbarType) {
     case NotificationType.error:
       snackbarError(context, message);
@@ -17,10 +21,12 @@ void snackbar(BuildContext context, snackbarType, message) {
     case NotificationType.success:
       snackbarSuccess(context, message);
       break;
+    case NotificationType.dialog:
+      break;
   }
 }
 
-void snackbarInfo(BuildContext context, message) {
+void snackbarInfo(BuildContext context, String message) {
   if (context.mounted) {
     showTopSnackBar(
       Overlay.of(context),
@@ -34,23 +40,18 @@ void snackbarInfo(BuildContext context, message) {
               fontSize: 20,
               color: Colors.white,
             ),
-            icon: const Icon(
-              Icons.school,
-              color: Colors.blue,
-            ),
+            icon: const Icon(Icons.school, color: Colors.blue),
             message: message,
           ),
         ),
       ),
       animationDuration: const Duration(milliseconds: 1600),
-      displayDuration: const Duration(
-        milliseconds: 80,
-      ),
+      displayDuration: const Duration(milliseconds: 80),
     );
   }
 }
 
-void snackbarSuccess(context, message) {
+void snackbarSuccess(BuildContext context, String message) {
   if (context.mounted) {
     showTopSnackBar(
       Overlay.of(context),
@@ -64,23 +65,18 @@ void snackbarSuccess(context, message) {
               fontSize: 20,
               color: Colors.white,
             ),
-            icon: const Icon(
-              Icons.school,
-              color: Colors.green,
-            ),
+            icon: const Icon(Icons.school, color: Colors.green),
             message: message,
           ),
         ),
       ),
       animationDuration: const Duration(milliseconds: 1600),
-      displayDuration: const Duration(
-        milliseconds: 80,
-      ),
+      displayDuration: const Duration(milliseconds: 80),
     );
   }
 }
 
-void snackbarWarning(context, message) {
+void snackbarWarning(BuildContext context, String message) {
   if (context.mounted) {
     showTopSnackBar(
       Overlay.of(context),
@@ -94,23 +90,18 @@ void snackbarWarning(context, message) {
               fontSize: 20,
               color: Colors.white,
             ),
-            icon: const Icon(
-              Icons.school,
-              color: Colors.orange,
-            ),
+            icon: const Icon(Icons.school, color: Colors.orange),
             message: message,
           ),
         ),
       ),
       animationDuration: const Duration(milliseconds: 1600),
-      displayDuration: const Duration(
-        milliseconds: 80,
-      ),
+      displayDuration: const Duration(milliseconds: 80),
     );
   }
 }
 
-void snackbarError(context, message) {
+void snackbarError(BuildContext context, String message) {
   if (context.mounted) {
     showTopSnackBar(
       Overlay.of(context),
@@ -124,18 +115,13 @@ void snackbarError(context, message) {
               fontSize: 20,
               color: Colors.white,
             ),
-            icon: const Icon(
-              Icons.school,
-              color: Colors.red,
-            ),
+            icon: const Icon(Icons.school, color: Colors.red),
             message: message,
           ),
         ),
       ),
       animationDuration: const Duration(milliseconds: 3000),
-      displayDuration: const Duration(
-        milliseconds: 80,
-      ),
+      displayDuration: const Duration(milliseconds: 80),
     );
   }
 }

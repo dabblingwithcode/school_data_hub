@@ -275,6 +275,7 @@ Future<void> _showBookInfosDialog(
     );
 
     if (libraryId != null && libraryId.isNotEmpty) {
+      if (!context.mounted) return;
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (ctx) => BookInfosPage(libraryId: libraryId),
@@ -312,6 +313,7 @@ Future<void> _showNewBookDialog(
     if (isbn != null && isbn.isNotEmpty) {
       final cleanIsbn = isbn.replaceAll('-', '');
 
+      if (!context.mounted) return;
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (ctx) => NewBook(isEdit: false, isbn: int.parse(cleanIsbn)),
@@ -333,6 +335,7 @@ Future<void> _showNewBookDialog(
     }
 
     final cleanScannedIsbn = scannedIsbn.replaceAll('-', '');
+    if (!context.mounted) return;
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (ctx) =>

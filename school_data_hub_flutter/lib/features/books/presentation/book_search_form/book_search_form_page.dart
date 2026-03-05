@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -8,7 +9,6 @@ import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_list_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/select_book_tags_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_page/book_search_results_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class BookSearchFormPage extends WatchingStatefulWidget {
   const BookSearchFormPage({super.key});
@@ -343,6 +343,7 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
                           ? selectedBookTags
                           : null,
                     );
+                    if (!context.mounted) return;
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => BookSearchResultsPage(

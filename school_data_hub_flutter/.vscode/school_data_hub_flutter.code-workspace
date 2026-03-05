@@ -14,7 +14,13 @@
 		},
 		{
 			"path": "../../docs"
+		},
+		{
+			"path": "../../private"
 		}
 	],
-	"settings": {}
+	"settings": {
+  "dart.flutterSdkPath": "C:\\Users\\p53\\.puro\\envs\\3.41.0\\flutter",
+  "dart.sdkPath": "C:\\Users\\p53\\.puro\\envs\\3.41.0\\flutter\\bin\\cache\\dart-sdk"
+}
 }

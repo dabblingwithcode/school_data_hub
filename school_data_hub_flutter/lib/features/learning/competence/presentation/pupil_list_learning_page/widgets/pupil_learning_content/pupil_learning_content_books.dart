@@ -5,7 +5,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/widgets/pupil_book_card.dart';
@@ -32,9 +32,8 @@ class PupilLearningContentBooks extends WatchingWidget {
             ),
           ],
         ),
-        const Gap(10),
-        ElevatedButton(
-          style: AppStyles.actionButtonStyle,
+
+        GenericAsyncActionButton(
           onPressed: () async {
             String? bookId;
             if (Platform.isIOS || Platform.isAndroid) {
@@ -67,9 +66,10 @@ class PupilLearningContentBooks extends WatchingWidget {
               return;
             }
           },
-          child: const Text("BUCH AUSLEIHEN", style: AppStyles.buttonTextStyle),
+          title: "BUCH AUSLEIHEN",
+          buttonType: ButtonType.action,
         ),
-        const Gap(5),
+
         if (pupilBookLendings.isNotEmpty) ...[
           const Gap(10),
           ListView.builder(

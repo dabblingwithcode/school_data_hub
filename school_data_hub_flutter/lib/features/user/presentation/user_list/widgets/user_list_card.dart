@@ -117,7 +117,7 @@ class UserListCard extends WatchingWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _SectionTitle('Benutzerinfo'),
+                    const _SectionTitle('Benutzerinfo'),
                     if (info != null) ...[
                       _InfoRow('Kürzel', info.userName ?? '–'),
                       _InfoRow('Name', info.fullName ?? '–'),
@@ -125,7 +125,7 @@ class UserListCard extends WatchingWidget {
                       _InfoRow('Erstellt', info.created.formatDateForUser()),
                       const Gap(10),
                     ],
-                    _SectionTitle('Rolle & Zeiten'),
+                    const _SectionTitle('Rolle & Zeiten'),
                     _InfoRow('Rolle', u.role.name),
                     _InfoRow('User-ID', '${u.id ?? u.userInfoId}'),
                     _InfoRow('Stunden', '${u.timeUnits}'),
@@ -140,7 +140,7 @@ class UserListCard extends WatchingWidget {
                         '${u.pupilsAuth!.length}',
                       ),
                     const Gap(12),
-                    _SectionTitle('Geräte / Sitzungen'),
+                    const _SectionTitle('Geräte / Sitzungen'),
                     const Gap(6),
                     if (devices.isEmpty)
                       Text(
@@ -177,9 +177,9 @@ class _UserAvatar extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100),
-        child: (info?.imageUrl?.isNotEmpty ?? false)
+        child: (info?.imageUrl?.isNotEmpty ?? false) as bool
             ? Image.network(
-                info!.imageUrl!,
+                info!.imageUrl! as String,
                 width: 72,
                 height: 72,
                 fit: BoxFit.cover,

@@ -85,7 +85,7 @@ class ChartPage extends WatchingWidget {
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
-          child: _buildBody(index),
+          child: _buildBody(index as int),
         ),
       ),
       bottomNavigationBar: ChartPageBottomBar(

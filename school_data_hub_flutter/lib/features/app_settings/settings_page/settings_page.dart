@@ -12,6 +12,8 @@ import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.da
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_account_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_admin_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/widgets/settings_session_section.dart';
+import 'package:school_data_hub_flutter/features/matrix/logs/presentation/matrix_corporal_logs_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/server_logs/presentation/server_logs_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
@@ -26,6 +28,15 @@ class SettingsPage extends WatchingWidget {
     final envManager = di<EnvManager>();
 
     final bool isAdmin = di<HubSessionManager>().isAdmin;
+    final bool matrixPolicyManagerIsRegistered = watchPropertyValue(
+      (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus,
+    );
+    final bool matrixSessionIsConfigured = watchPropertyValue(
+      (HubSessionManager x) => x.isMatrixSessionConfigured,
+    );
+    final bool showMatrixLogs =
+        isAdmin &&
+        (matrixPolicyManagerIsRegistered || matrixSessionIsConfigured);
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -84,6 +95,21 @@ class SettingsPage extends WatchingWidget {
                           context,
                           MaterialPageRoute(
                             builder: (_) => const ServerLogsPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  if (showMatrixLogs)
+                    SettingsTile.navigation(
+                      leading: const Icon(Icons.article_outlined),
+                      title: const Text('Matrix-Corporal-Logs'),
+                      onPressed: (context) async {
+                        await di.getAsync<MatrixPolicyManager>();
+                        if (!context.mounted) return;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MatrixCorporalLogsPage(),
                           ),
                         );
                       },

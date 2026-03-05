@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -7,7 +8,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _envManager = di<EnvManager>();
 
@@ -66,6 +66,7 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                           message: 'Möchten Sie wirklich die Instanz löschen?',
                         );
                         if (confirmation != true) return;
+                        if (!context.mounted) return;
                         Navigator.of(context).pop();
                         if (envs[index].serverName ==
                             _envManager.activeEnv?.serverName) {
@@ -77,7 +78,11 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                     ),
                     const Gap(10),
                     _envManager.activeEnv?.serverName == envs[index].serverName
-                        ? const Icon(Icons.check, color: Colors.green, weight: 20)
+                        ? const Icon(
+                            Icons.check,
+                            color: Colors.green,
+                            weight: 20,
+                          )
                         : const SizedBox(),
                   ],
                 ),

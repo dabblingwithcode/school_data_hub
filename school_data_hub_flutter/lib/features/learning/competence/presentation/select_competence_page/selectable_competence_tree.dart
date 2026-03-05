@@ -66,13 +66,8 @@ List<Widget> selectableCompetenceTree({
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(5.0),
-                                    child: Radio(
+                                    child: Radio<int>(
                                       value: competence.publicId,
-                                      groupValue:
-                                          viewModel.selectedCompetenceId,
-                                      onChanged: (value) {
-                                        viewModel.selectCompetence(value!);
-                                      },
                                     ),
                                     // : const Row(children: [
                                     //     Gap(7),
@@ -135,18 +130,9 @@ List<Widget> selectableCompetenceTree({
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(5.0),
-                            child:
-                                // getCategoryStatus(
-                                //             pupil, goalCategory.categoryId) ==
-                                //         null
-                                //     ?
-                                Radio(
-                                  value: competence.publicId,
-                                  groupValue: viewModel.selectedCompetenceId,
-                                  onChanged: (value) {
-                                    viewModel.selectCompetence(value!);
-                                  },
-                                ),
+                            child: Radio<int>(
+                              value: competence.publicId,
+                            ),
                             // : const Row(children: [
                             //     Gap(7),
                             //     Icon(

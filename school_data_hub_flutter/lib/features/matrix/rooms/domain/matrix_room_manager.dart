@@ -1,29 +1,39 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/data/matrix_api_service.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/data/compulsory_room_api_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class MatrixRoomManager {
   final _notificationService = di<NotificationService>();
 
   final MatrixApiService _matrixApiService;
   final String _matrixAdminId;
-  final void Function(bool) _onPolicyChanges;
 
-  MatrixRoomManager(
-    this._matrixAdminId,
-    this._matrixApiService,
-    this._onPolicyChanges,
-  );
+  MatrixRoomManager(this._matrixAdminId, this._matrixApiService);
 
   final _matrixRooms = ValueNotifier<List<MatrixRoom>>([]);
   ValueListenable<List<MatrixRoom>> get matrixRooms => _matrixRooms;
 
+  final _compulsoryRooms = ValueNotifier<List<CompulsoryRoom>>([]);
+  ValueListenable<List<CompulsoryRoom>> get compulsoryRooms => _compulsoryRooms;
+
+  CompulsoryRoom? getCompulsoryRoomFor(String roomId) {
+    for (final c in _compulsoryRooms.value) {
+      if (c.roomId == roomId) return c;
+    }
+    return null;
+  }
+
   void dispose() {
     _matrixRooms.dispose();
+    _compulsoryRooms.dispose();
   }
 
   void setRooms(List<MatrixRoom> rooms) {
@@ -39,6 +49,7 @@ class MatrixRoomManager {
     required String topic,
     required String? aliasName,
     required ChatTypePreset chatTypePreset,
+    MatrixRoomType? markAsCompulsoryWithType,
   }) async {
     final MatrixRoom? room = await _matrixApiService.roomApi.createMatrixRoom(
       name: name,
@@ -54,7 +65,57 @@ class MatrixRoomManager {
         .fetchAdditionalRoomInfos(room.id);
     await addManagedRoom(namedRoom);
 
+    if (markAsCompulsoryWithType != null) {
+      final current = List<CompulsoryRoom>.from(_compulsoryRooms.value);
+      final newEntry = CompulsoryRoom(
+        roomId: namedRoom.id,
+        roomType: markAsCompulsoryWithType,
+      );
+      final updated = [...current, newEntry];
+      final result = await CompulsoryRoomApiService.instance
+          .setCompulsoryRooms(updated);
+      if (result != null) {
+        _compulsoryRooms.value = result;
+      }
+    }
+
     return;
+  }
+
+  /// Creates two rooms per group from [PupilIdentityManager.groups]: one for
+  /// children (groupChildren) and one for parents (groupParents) with "(E)" suffix.
+  /// Uses [SchoolCalendarManager.currentSemester].schoolYear in the room names.
+  Future<void> createGroupRoomsForCurrentSemester() async {
+    final semester = di<SchoolCalendarManager>().currentSemester.value;
+    if (semester == null) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Kein aktuelles Schulhalbjahr gesetzt. Bitte zuerst Schulkalender laden.',
+      );
+      return;
+    }
+    final schoolYear = semester.schoolYear;
+    final groupSet = di<PupilIdentityManager>().groups.value;
+    final groups = groupSet.toList()..sort();
+
+    for (final group in groups) {
+      final nameChildren = '$group $schoolYear';
+      await createNewRoom(
+        name: nameChildren,
+        topic: nameChildren,
+        aliasName: null,
+        chatTypePreset: ChatTypePreset.private,
+        markAsCompulsoryWithType: MatrixRoomType.groupChildren,
+      );
+      final nameParents = '$group $schoolYear (E)';
+      await createNewRoom(
+        name: nameParents,
+        topic: nameParents,
+        aliasName: null,
+        chatTypePreset: ChatTypePreset.private,
+        markAsCompulsoryWithType: MatrixRoomType.groupParents,
+      );
+    }
   }
 
   Future<void> addManagedRoom(MatrixRoom newRoom) async {
@@ -88,26 +149,17 @@ class MatrixRoomManager {
 
   Future<void> changeRoomPowerLevels({
     required String roomId,
-    RoomAdmin? roomAdmin,
-    String? removeAdminWithId,
+
     int? eventsDefault,
     int? reactions,
   }) async {
-    if (roomAdmin != null || removeAdminWithId != null) {
-      di<NotificationService>().showInformationDialog(
-        'Power levels werden von der Policy geändert.',
-      );
-      return;
-    }
-
     final MatrixRoom currentRoom = getRoomById(roomId);
 
     try {
       final MatrixRoom updatedRoom = await _matrixApiService.roomApi
           .changeRoomPowerLevels(
             roomId: roomId,
-            newRoomAdmin: roomAdmin,
-            adminIdToRemove: removeAdminWithId,
+
             eventsDefault: eventsDefault,
             reactions: reactions,
             currentRoom: currentRoom,
@@ -262,6 +314,10 @@ class MatrixRoomManager {
     // Sort the rooms by name for better overview
     rooms.sort((a, b) => a.name!.compareTo(b.name!));
     setRooms(rooms);
+
+    final compulsory =
+        await CompulsoryRoomApiService.instance.getCompulsoryRooms();
+    _compulsoryRooms.value = compulsory ?? [];
 
     _notificationService.showSnackBar(
       NotificationType.success,

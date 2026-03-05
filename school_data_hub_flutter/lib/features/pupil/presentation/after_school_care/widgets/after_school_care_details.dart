@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -8,7 +9,6 @@ import 'package:school_data_hub_flutter/features/pupil/domain/models/enums.dart'
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/widgets/dialogs/after_school_care_edit_emergency_care_dialog.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class AfterSchoolCareDetails extends WatchingWidget {
   final PupilProxy pupil;
@@ -54,8 +54,6 @@ class AfterSchoolCareDetails extends WatchingWidget {
         ),
       );
     }
-
-    final pickUpTimes = afterSchoolCare.pickUpTimes;
 
     return Padding(
       padding: const EdgeInsets.all(12.0),
@@ -104,10 +102,10 @@ class _EmergencyCareCard extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: isEmergency
-                      ? Colors.orange.withOpacity(0.1)
+                      ? Colors.orange.withValues(alpha: 0.1)
                       : (isNotSet
-                            ? Colors.grey.withOpacity(0.1)
-                            : Colors.green.withOpacity(0.1)),
+                            ? Colors.grey.withValues(alpha: 0.1)
+                            : Colors.green.withValues(alpha: 0.1)),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -185,7 +183,7 @@ class _PickUpTimesCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.backgroundColor.withOpacity(0.1),
+                    color: AppColors.backgroundColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -358,12 +356,12 @@ class _TimeSelector extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: hasTime
-              ? AppColors.backgroundColor.withOpacity(0.1)
-              : Colors.grey.withOpacity(0.05),
+              ? AppColors.backgroundColor.withValues(alpha: 0.1)
+              : Colors.grey.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: hasTime
-                ? AppColors.backgroundColor.withOpacity(0.3)
+                ? AppColors.backgroundColor.withValues(alpha: 0.3)
                 : Colors.grey[300]!,
           ),
         ),
@@ -556,8 +554,8 @@ class _OgsInfoCard extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: hasInfo
-                          ? AppColors.backgroundColor.withOpacity(0.1)
-                          : Colors.grey.withOpacity(0.1),
+                          ? AppColors.backgroundColor.withValues(alpha: 0.1)
+                          : Colors.grey.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(

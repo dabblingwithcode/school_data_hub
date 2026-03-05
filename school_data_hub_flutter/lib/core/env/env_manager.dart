@@ -95,12 +95,7 @@ class EnvManager with ChangeNotifier {
   /// Without them, other features won't work properly.
   /// We nag with a notification until all data is populated.
   PopulatedServerSessionData _populatedEnvServerData =
-      PopulatedServerSessionData(
-        schoolSemester: false,
-        schooldays: false,
-        competences: false,
-        supportCategories: false,
-      );
+      PopulatedServerSessionData.initial();
 
   PopulatedServerSessionData get populatedEnvServerData =>
       _populatedEnvServerData;
@@ -170,18 +165,11 @@ class EnvManager with ChangeNotifier {
     return;
   }
 
-  /// **TODO:** There should be a better way to handle this.
-  /// We need to set the environment to not ready
-  /// when we add a new environment
   void deactivateEnv() {
     _envIsReady.value = false;
     _activeEnv = null;
-    _populatedEnvServerData = PopulatedServerSessionData(
-      schoolSemester: false,
-      schooldays: false,
-      competences: false,
-      supportCategories: false,
-    );
+    _populatedEnvServerData = PopulatedServerSessionData.initial();
+    notifyListeners();
   }
 
   Future<EnvsInStorage?> _environmentsInStorage() async {
@@ -508,10 +496,4 @@ class EnvManager with ChangeNotifier {
       _envIsReady.value = false;
     }
   }
-
-  //   Future<void> propagateNewEnv() async {
-  //     final _pupilIdentityManager = di<PupilIdentityManager>();
-  //     // TODO: implement this if needed
-  //     await _pupilIdentityManager.getPupilIdentitiesForEnv();
-  //   }
 }

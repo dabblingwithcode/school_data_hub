@@ -4,12 +4,12 @@ import 'dart:ui';
 import 'package:crop_image/crop_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_it/flutter_it.dart';
 
-Future<File?> createAndCropImageFile(context) async {
+Future<File?> createAndCropImageFile(BuildContext context) async {
   XFile? image = await ImagePicker().pickImage(
     source: Platform.isWindows || Platform.isMacOS
         ? ImageSource.gallery
@@ -21,8 +21,10 @@ Future<File?> createAndCropImageFile(context) async {
   if (image == null) {
     return null;
   }
-
-  File imageFile = await Navigator.push(
+  if (!context.mounted) {
+    return null;
+  }
+  final File? imageFile = await Navigator.push<File?>(
     context,
     MaterialPageRoute(builder: (context) => CropAvatarView(image: image)),
   );

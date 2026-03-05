@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SelectMatrixUserCard extends WatchingWidget {
   final SelectMatrixUsersListController controller;
@@ -20,8 +20,6 @@ class SelectMatrixUserCard extends WatchingWidget {
   const SelectMatrixUserCard(this.controller, this.passedUser, {super.key});
   @override
   Widget build(BuildContext context) {
-    PupilProxy? pupil;
-
     final matrixUser = watch<MatrixUser>(passedUser);
     final MatrixUserRelationship? userRelationship =
         MatrixUserHelper.getUserRelationship(matrixUser);
@@ -50,7 +48,7 @@ class SelectMatrixUserCard extends WatchingWidget {
           children: [
             const Gap(10),
             if (userRelationship?.isParent == true)
-              ...userRelationship!.familyPupils!.map(
+              ...userRelationship!.familyPupils.map(
                 (pupil) => InkWell(
                   onTap: () {
                     di<BottomNavManager>().setPupilProfileNavPage(

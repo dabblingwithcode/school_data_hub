@@ -91,10 +91,11 @@ class FiltersStateManagerImplementation implements FiltersStateManager {
     newFilterState[filterState] = value;
     _filterStates.value = newFilterState;
 
-    final filterStatesAreEqualInitialValues = const MapEquality().equals(
-      _filterStates.value,
-      _initialFilterGlobalValues,
-    );
+    final filterStatesAreEqualInitialValues =
+        const MapEquality<FilterState, bool>().equals(
+          _filterStates.value,
+          _initialFilterGlobalValues,
+        );
     if (filterStatesAreEqualInitialValues) {
       _filtersActive.value = false;
     } else {

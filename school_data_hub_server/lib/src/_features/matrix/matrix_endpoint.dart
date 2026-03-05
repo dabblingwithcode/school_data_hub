@@ -37,7 +37,7 @@ class MatrixEndpoint extends Endpoint {
           existingRoom.roomId = room.roomId;
           existingRoom.roomType = room.roomType;
           await CompulsoryRoom.db
-              .updateRow(session, room, transaction: transaction);
+              .updateRow(session, existingRoom, transaction: transaction);
         }
       }
     });

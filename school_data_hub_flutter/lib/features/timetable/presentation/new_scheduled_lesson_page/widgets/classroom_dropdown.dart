@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_classroom_page/new_classroom_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 /// Dropdown widget for selecting a classroom
 class ClassroomDropdown extends WatchingWidget {
   final Classroom? selectedClassroom;
   final ValueChanged<Classroom?> onClassroomChanged;
-  final Function(Classroom) hasClassroomConflict;
+  final bool Function(Classroom) hasClassroomConflict;
 
   const ClassroomDropdown({
     super.key,

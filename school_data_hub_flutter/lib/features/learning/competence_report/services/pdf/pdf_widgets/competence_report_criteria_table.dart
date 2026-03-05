@@ -24,7 +24,6 @@ class CompetenceReportCriteriaTable {
     required pw.MemoryImage growthThreeImage,
     required pw.MemoryImage growthFourImage,
   }) {
-    if (rows.isEmpty) return pw.SizedBox.shrink();
     return pw.Table(
       columnWidths: {
         0: const pw.FlexColumnWidth(4),

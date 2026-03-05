@@ -34,18 +34,25 @@ void setAvatar({
   } else {
     image = await ImagePicker().pickImage(
       source: ImageSource.camera,
-      preferredCameraDevice:
-          Platform.isWindows ? CameraDevice.front : CameraDevice.rear,
+      preferredCameraDevice: Platform.isWindows
+          ? CameraDevice.front
+          : CameraDevice.rear,
     );
     if (image == null) {
       return;
     }
   }
-
-  File imageFile = await Navigator.push(
+  if (!context.mounted) {
+    return;
+  }
+  File? imageFile = await Navigator.push<File?>(
     context,
     MaterialPageRoute(builder: (context) => CropAvatarView(image: image!)),
   );
+  if (imageFile == null) {
+    return;
+  }
+
   PupilMutator().updatePupilDocument(
     imageFile: imageFile,
     pupilProxy: pupil,

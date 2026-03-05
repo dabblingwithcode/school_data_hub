@@ -102,7 +102,9 @@ Future newCompetenceCheckDialog({
                       );
 
                       _textEditingController.clear();
-                      Navigator.of(parentContext).pop();
+                      if (parentContext.mounted) {
+                        Navigator.of(parentContext).pop();
+                      }
                     }
                   },
                   child: const Text("SENDEN", style: AppStyles.buttonTextStyle),

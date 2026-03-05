@@ -5,7 +5,6 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
 
 class LearningFilterBottomSheet extends WatchingWidget {
@@ -13,9 +12,6 @@ class LearningFilterBottomSheet extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedContent = watchValue(
-      (CompetenceManager m) => m.selectedLearningContent,
-    );
     final pupilBookLendingFilterManager = di<PupilBookLendingFilterManager>();
     Map<PupilBookLendingFilter, bool> bookLendingFilters = watchValue(
       (PupilBookLendingFilterManager x) => x.pupilBookLendingFilterState,

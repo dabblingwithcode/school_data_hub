@@ -7,7 +7,6 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
@@ -18,8 +17,6 @@ class PupilProxyManager extends ChangeNotifier {
   final _log = Logger('PupilManager');
 
   final _notificationService = di<NotificationService>();
-
-  final _hubSessionManager = di<HubSessionManager>();
 
   final _pupilDataApiService = PupilDataApiService();
 

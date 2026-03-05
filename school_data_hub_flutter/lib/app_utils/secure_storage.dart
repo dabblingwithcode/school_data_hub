@@ -6,7 +6,7 @@ import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart
 
 // Configure secure storage with platform-specific options
 const _secureStorage = FlutterSecureStorage(
-  aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  aOptions: AndroidOptions(),
   iOptions: IOSOptions(
     accessibility: KeychainAccessibility.first_unlock_this_device,
   ),
@@ -73,7 +73,7 @@ class HubSecureStorage extends Storage {
             final delay = Duration(
               milliseconds: baseDelay.inMilliseconds * (1 << attempt),
             );
-            await Future.delayed(delay);
+            await Future<void>.delayed(delay);
             continue;
           }
         }

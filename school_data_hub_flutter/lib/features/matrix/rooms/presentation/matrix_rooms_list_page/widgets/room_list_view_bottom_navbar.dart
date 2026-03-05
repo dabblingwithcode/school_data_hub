@@ -3,9 +3,9 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/new_matrix_room_page/new_matrix_room_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 
@@ -62,6 +62,15 @@ class RoomListPageBottomNavBar extends WatchingWidget {
                         builder: (ctx) => const NewMatrixRoomPage(),
                       ),
                     );
+                  },
+                ),
+                const Gap(30),
+                IconButton(
+                  tooltip: 'Gruppenräume für aktuelles Schuljahr anlegen',
+                  icon: const Icon(Icons.group_work_rounded, size: 30),
+                  onPressed: () async {
+                    await matrixPolicyManager.rooms
+                        .createGroupRoomsForCurrentSemester();
                   },
                 ),
                 const Gap(30),

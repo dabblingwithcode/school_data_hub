@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/paddings.dart';
@@ -15,7 +16,6 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/timetabl
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_grid.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/weekday_selector.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class TimetablePage extends WatchingWidget {
   // TODO: Implement a warning if there are no timetable slots created!
@@ -27,19 +27,6 @@ class TimetablePage extends WatchingWidget {
 
     // Debug the current state
     timetableManager.debugPrintState();
-
-    // Watch the timetable data to make the page reactive
-    final timetable = watch(timetableManager.timetable);
-    final timetableSlots = watch(timetableManager.timetableSlots);
-    final scheduledLessons = watch(timetableManager.scheduledLessons);
-    void navigateToNewLesson() {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) =>
-              NewScheduledLessonPage(timetableManager: timetableManager),
-        ),
-      );
-    }
 
     void navigateToNewLessonGroup() async {
       await Navigator.of(context).push(

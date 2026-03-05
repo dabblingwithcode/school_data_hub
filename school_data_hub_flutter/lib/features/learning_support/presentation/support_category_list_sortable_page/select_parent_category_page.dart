@@ -26,7 +26,6 @@ class SelectParentCategoryPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final selectedParentId = createOnce(() => ValueNotifier<int?>(null));
-    final selectedValue = watch(selectedParentId);
 
     final excludedIds = di<SupportCategoryManager>().getDescendantCategoryIds(
       movingCategoryId,
@@ -49,88 +48,89 @@ class SelectParentCategoryPage extends WatchingWidget {
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Neue übergeordnete Kategorie auswählen:',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  // Root option
-                  Card(
-                    color: AppColors.backgroundColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          ValueListenableBuilder<int?>(
-                            valueListenable: selectedParentId,
-                            builder: (context, selected, _) {
-                              return Radio<int?>(
-                                value: rootSentinel,
-                                groupValue: selected,
-                                onChanged: (value) {
-                                  selectedParentId.value = value;
-                                },
-                                fillColor: WidgetStateProperty.all(
-                                  Colors.white,
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                selectedParentId.value = rootSentinel;
-                              },
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(
-                                  'Keine (Hauptkategorie)',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+              child: ValueListenableBuilder<int?>(
+                valueListenable: selectedParentId,
+                builder: (context, selected, _) {
+                  return RadioGroup<int?>(
+                    groupValue: selected,
+                    onChanged: (value) {
+                      selectedParentId.value = value;
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Neue übergeordnete Kategorie auswählen:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        // Root option
+                        Card(
+                          color: AppColors.backgroundColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Radio<int?>(
+                                  value: rootSentinel,
+                                  fillColor: WidgetStateProperty.all(
+                                    Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () {
+                                      selectedParentId.value = rootSentinel;
+                                    },
+                                    child: const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8.0),
+                                      child: Text(
+                                        'Keine (Hauptkategorie)',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        // Category tree
+                        SelectableParentCategoryTree(
+                          excludedCategoryIds: excludedIds,
+                          selectedParentId: selectedParentId,
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  // Category tree
-                  SelectableParentCategoryTree(
-                    excludedCategoryIds: excludedIds,
-                    selectedParentId: selectedParentId,
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ),
         ),
       ),
-      floatingActionButton: selectedValue != null
-          ? FloatingActionButton(
-              backgroundColor: AppColors.backgroundColor,
-              child: const Icon(Icons.check, color: Colors.white, size: 35),
-              onPressed: () {
-                Navigator.of(context).pop(selectedParentId.value);
-              },
-            )
-          : const SizedBox.shrink(),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.backgroundColor,
+        child: const Icon(Icons.check, color: Colors.white, size: 35),
+        onPressed: () {
+          Navigator.of(context).pop(selectedParentId.value);
+        },
+      ),
     );
   }
 }

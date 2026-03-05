@@ -20,7 +20,7 @@ class BookLendingPupilCard extends WatchingWidget {
     final pupil = watch<PupilProxy>(
       di<PupilProxyManager>().getPupilByPupilId(passedPupilBook.pupilId)!,
     );
-    final watchedPupilBook = pupil.pupilBookLendings?.firstWhere(
+    final watchedPupilBook = pupil.pupilBookLendings.firstWhere(
       (element) => element.lendingId == passedPupilBook.lendingId,
     );
     void updatepupilBookRating(int rating) {
@@ -111,7 +111,7 @@ class BookLendingPupilCard extends WatchingWidget {
                       Row(
                         children: [
                           Text(
-                            watchedPupilBook!.lentBy,
+                            watchedPupilBook.lentBy,
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           const Gap(2),

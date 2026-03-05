@@ -308,15 +308,15 @@ class TimetableDataManager {
     for (final lesson in mockTimetable.scheduledLessons ?? []) {
       if (lesson.subject != null &&
           !subjects.any((s) => s.id == lesson.subject!.id)) {
-        subjects.add(lesson.subject!);
+        subjects.add(lesson.subject! as Subject);
       }
       if (lesson.room != null &&
           !classrooms.any((c) => c.id == lesson.room!.id)) {
-        classrooms.add(lesson.room!);
+        classrooms.add(lesson.room! as Classroom);
       }
       if (lesson.lessonGroup != null &&
           !lessonGroups.any((lg) => lg.id == lesson.lessonGroup!.id)) {
-        lessonGroups.add(lesson.lessonGroup!);
+        lessonGroups.add(lesson.lessonGroup! as LessonGroup);
       }
     }
 

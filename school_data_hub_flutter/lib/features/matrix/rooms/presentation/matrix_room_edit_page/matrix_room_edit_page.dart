@@ -4,12 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/change_power_levels_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/users_in_room_list.dart';
 
@@ -359,29 +359,35 @@ class _MatrixRoomEditPageState extends State<MatrixRoomEditPage> {
                           ],
                         ),
                         const Gap(8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            style: AppStyles.successButtonStyle,
-                            onPressed: _isSaving || _isLoadingMeta
-                                ? null
-                                : _saveRoomValues,
-                            icon: _isSaving
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Icon(Icons.save),
-                            label: const Text(
-                              'WERTE SPEICHERN',
-                              style: AppStyles.buttonTextStyle,
-                            ),
-                          ),
+                        GenericAsyncActionButton(
+                          onPressed: _saveRoomValues,
+                          title: 'WERTE SPEICHERN',
+                          buttonType: ButtonType.accept,
+                          icon: Icons.save,
                         ),
+                        // SizedBox(
+                        //   width: double.infinity,
+                        //   child: ElevatedButton.icon(
+                        //     style: AppStyles.successButtonStyle,
+                        //     onPressed: _isSaving || _isLoadingMeta
+                        //         ? null
+                        //         : _saveRoomValues,
+                        //     icon: _isSaving
+                        //         ? const SizedBox(
+                        //             width: 16,
+                        //             height: 16,
+                        //             child: CircularProgressIndicator(
+                        //               strokeWidth: 2,
+                        //               color: Colors.white,
+                        //             ),
+                        //           )
+                        //         : const Icon(Icons.save),
+                        //     label: const Text(
+                        //       'WERTE SPEICHERN',
+                        //       style: AppStyles.buttonTextStyle,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

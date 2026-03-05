@@ -11,10 +11,7 @@ import 'package:image_picker/image_picker.dart';
 class CropImagePage extends StatefulWidget {
   final XFile image;
 
-  const CropImagePage({
-    required this.image,
-    super.key,
-  });
+  const CropImagePage({required this.image, super.key});
 
   @override
   CropImagePageState createState() => CropImagePageState();
@@ -66,34 +63,35 @@ class CropImagePageState extends State<CropImagePage> {
             children: [
               const Gap(10),
               IconButton(
-                  icon: const Icon(Icons.refresh), onPressed: controller.reset),
+                icon: const Icon(Icons.refresh),
+                onPressed: controller.reset,
+              ),
               IconButton(
-                  icon: const Icon(Icons.zoom_in),
-                  onPressed: () =>
-                      controller.addTransition(CropImageData(scale: 1.33))),
+                icon: const Icon(Icons.zoom_in),
+                onPressed: () =>
+                    controller.addTransition(CropImageData(scale: 1.33)),
+              ),
               IconButton(
-                  icon: const Icon(Icons.zoom_out),
-                  onPressed: () =>
-                      controller.addTransition(CropImageData(scale: 0.75))),
+                icon: const Icon(Icons.zoom_out),
+                onPressed: () =>
+                    controller.addTransition(CropImageData(scale: 0.75)),
+              ),
               IconButton(
-                  icon: const Icon(Icons.rotate_left),
-                  onPressed: () =>
-                      controller.addTransition(CropImageData(angle: -pi / 4))),
+                icon: const Icon(Icons.rotate_left),
+                onPressed: () =>
+                    controller.addTransition(CropImageData(angle: -pi / 4)),
+              ),
               IconButton(
-                  icon: const Icon(Icons.rotate_right),
-                  onPressed: () =>
-                      controller.addTransition(CropImageData(angle: pi / 4))),
+                icon: const Icon(Icons.rotate_right),
+                onPressed: () =>
+                    controller.addTransition(CropImageData(angle: pi / 4)),
+              ),
               IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_rounded,
-                ),
+                icon: const Icon(Icons.arrow_back_rounded),
                 onPressed: () => Navigator.of(context).pop(null),
               ),
               IconButton(
-                icon: const Icon(
-                  Icons.check_circle,
-                  color: Colors.green,
-                ),
+                icon: const Icon(Icons.check_circle, color: Colors.green),
                 onPressed: () async {
                   final image = await controller.onCropImage();
 

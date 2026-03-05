@@ -1,13 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
+
+enum ButtonType { action, accept, reject }
+
+extension ButtonTypeExtension on ButtonType {
+  ButtonStyle get buttonStyle {
+    switch (this) {
+      case ButtonType.action:
+        return AppStyles.actionButtonStyle;
+      case ButtonType.accept:
+        return AppStyles.successButtonStyle;
+      case ButtonType.reject:
+        return AppStyles.cancelButtonStyle;
+    }
+  }
+}
 
 class GenericAsyncActionButton extends StatelessWidget {
-  final Future function;
+  final IconData? icon;
+  final Future<void> Function() onPressed;
   final String title;
+  final ButtonType buttonType;
   const GenericAsyncActionButton({
     super.key,
-    required this.function,
+    required this.onPressed,
     required this.title,
+    required this.buttonType,
+    this.icon,
   });
 
   @override
@@ -16,17 +36,22 @@ class GenericAsyncActionButton extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12),
-        //margin: const EdgeInsets.only(bottom: 16),
         width: double.infinity,
         child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.appStyleButtonColor,
-            minimumSize: const Size.fromHeight(50),
-          ),
+          style: buttonType.buttonStyle,
           onPressed: () async {
-            await function;
+            await onPressed();
           },
-          child: Text(title, style: const TextStyle(fontSize: 17.0)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(icon!, size: 18, color: AppStyles.buttonTextStyle.color),
+                const Gap(10),
+              ],
+              Text(title, style: AppStyles.buttonTextStyle),
+            ],
+          ),
         ),
       ),
     );

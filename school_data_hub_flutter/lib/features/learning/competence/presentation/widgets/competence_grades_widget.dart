@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart'
-    as workbookEnum;
+    as workbook_enum;
 
 class GradesWidget extends StatelessWidget {
   final String stringWithGrades;
@@ -14,7 +14,7 @@ class GradesWidget extends StatelessWidget {
     }
 
     final gradeNames = stringWithGrades.split(',').map((g) => g.trim()).toSet();
-    final matchedGrades = workbookEnum.Grade.values
+    final matchedGrades = workbook_enum.Grade.values
         .where((grade) => gradeNames.contains(grade.name))
         .toList();
 

@@ -1,10 +1,12 @@
 // import 'package:collection/collection.dart';
 import 'package:collection/collection.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class MatrixUserHelper {
   static MatrixPolicyManager get _matrixPolicyManager =>
@@ -61,6 +63,16 @@ class MatrixUserHelper {
     List<PupilProxy> familyPupils = [];
     final bool isTeacher = !user.id!.contains('_');
     final bool isParent = user.id!.contains('_e');
+
+    // return the teachers swiftly to avoid unnecessary calculations
+    if (isTeacher) {
+      return MatrixUserRelationship(
+        pupil: null,
+        familyPupils: [],
+        isTeacher: isTeacher,
+      );
+    }
+
     final linkedPupil = pupils.firstWhereOrNull(
       (pupil) => pupil.contact == user.id,
     );
@@ -69,7 +81,7 @@ class MatrixUserHelper {
     if (isLinked) {
       return MatrixUserRelationship(
         pupil: linkedPupil,
-        familyPupils: null,
+        familyPupils: [],
         isTeacher: isTeacher,
       );
     }
@@ -92,28 +104,7 @@ class MatrixUserHelper {
         isTeacher: isTeacher,
       );
     }
-    if (isTeacher) {
-      return MatrixUserRelationship(
-        pupil: null,
-        familyPupils: null,
-        isTeacher: isTeacher,
-      );
-    }
+
     return null;
   }
-}
-
-class MatrixUserRelationship {
-  final PupilProxy? pupil;
-  final List<PupilProxy>? familyPupils;
-  final bool isTeacher;
-
-  MatrixUserRelationship({
-    required this.pupil,
-    required this.familyPupils,
-    required this.isTeacher,
-  });
-
-  bool get isLinked => pupil != null;
-  bool get isParent => familyPupils != null;
 }

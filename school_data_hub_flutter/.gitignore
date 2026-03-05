@@ -27,6 +27,7 @@ updated-policy.json
 rooms.json
 test_enc.dart
 decrypt_files.dart
+encrypt_string.dart
 **/scripts/
 cursor_docs/
 test_enc.dart

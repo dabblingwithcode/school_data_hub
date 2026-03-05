@@ -1,5 +1,4 @@
 import 'package:http/http.dart' as http;
-import 'package:logging/logging.dart';
 import 'package:serverpod/serverpod.dart';
 
 typedef MatrixResponse = http.Response;
@@ -10,8 +9,6 @@ class MatrixClient {
   final http.Client _httpClient;
   final _matrixUrl = Serverpod.instance.getPassword('matrixServerUrl');
   final _authToken = Serverpod.instance.getPassword('matrixAuthToken');
-
-  final _log = Logger('MatrixClient');
 
   /// HTTP headers used for all Matrix API requests
   Map<String, String> get headers => {

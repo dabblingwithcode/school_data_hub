@@ -1,16 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/pupil_workbook_card.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilLearningContentWorkbooks extends WatchingWidget {
   final PupilProxy pupil;
@@ -34,10 +33,7 @@ class PupilLearningContentWorkbooks extends WatchingWidget {
             ),
           ],
         ),
-        const Gap(10),
-        ElevatedButton(
-          style: AppStyles.actionButtonStyle,
-          //- TODO: strip this logic and use a controller instead ?
+        GenericAsyncActionButton(
           onPressed: () async {
             String? isbnString;
             if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -82,12 +78,10 @@ class PupilLearningContentWorkbooks extends WatchingWidget {
               'Fehler beim Scannen',
             );
           },
-          child: const Text(
-            "NEUES ARBEITSHEFT",
-            style: AppStyles.buttonTextStyle,
-          ),
+          title: "NEUES ARBEITSHEFT",
+          buttonType: ButtonType.action,
         ),
-        const Gap(15),
+
         if (pupilWorkbooks.isNotEmpty) ...[
           ListView.builder(
             padding: const EdgeInsets.all(0),

@@ -26,42 +26,26 @@ Future<void> afterSchoolCareEditEmergencyCareDialog(
                   style: TextStyle(fontSize: 16),
                 ),
                 const Gap(20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Radio<bool?>(
-                      value: true,
-                      groupValue: currentValue,
-                      onChanged: (value) {
-                        setState(() {
-                          currentValue = value;
-                        });
-                      },
-                    ),
-                    const Text('Ja'),
-                    const Gap(30),
-                    Radio<bool?>(
-                      value: false,
-                      groupValue: currentValue,
-                      onChanged: (value) {
-                        setState(() {
-                          currentValue = value;
-                        });
-                      },
-                    ),
-                    const Text('Nein'),
-                    const Gap(30),
-                    Radio<bool?>(
-                      value: null,
-                      groupValue: currentValue,
-                      onChanged: (value) {
-                        setState(() {
-                          currentValue = value;
-                        });
-                      },
-                    ),
-                    const Text('Nicht gesetzt'),
-                  ],
+                RadioGroup<bool?>(
+                  groupValue: currentValue,
+                  onChanged: (value) {
+                    setState(() {
+                      currentValue = value;
+                    });
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Radio<bool?>(value: true),
+                      const Text('Ja'),
+                      const Gap(30),
+                      Radio<bool?>(value: false),
+                      const Text('Nein'),
+                      const Gap(30),
+                      Radio<bool?>(value: null),
+                      const Text('Nicht gesetzt'),
+                    ],
+                  ),
                 ),
               ],
             ),

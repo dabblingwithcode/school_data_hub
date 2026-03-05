@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdfrx/pdfrx.dart';
 import 'package:printing/printing.dart';
@@ -17,10 +18,8 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
+import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_helpers.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pages/competence_report_pdf_page1.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pages/competence_report_pdf_page2.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pages/competence_report_pdf_page3.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pages/competence_report_pdf_page4.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pages/competence_report_pdf_page5.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
@@ -63,6 +62,69 @@ class ReportSectionData {
 
   /// Plain predicate strings for pages 2–4 that do not show the achievement table.
   List<String> get criteria => criteriaRows.map((r) => r.predicate).toList();
+}
+
+// =============================================================================
+// Page height estimation (for placement simulation)
+// =============================================================================
+
+const double _pageUsableHeight = 769.0; // A4 842 - margins 24*2 - header ~25
+const double _firstPageContentHeight = 220.0;
+
+const double _sectionTitleHeight = 18.0; // Text 11pt + SizedBox(4)
+const double _subsectionTitleHeight = 28.0; // Padding 6+10 + text ~12
+const double _tableHeaderHeight = 28.0;
+const double _tableRowHeight = 15.0;
+const double _afterTableHeight = 4.0;
+const double _hinweiseBlockHeight = 72.0;
+const double _afterSectionHeight = 12.0;
+
+/// Estimated height of one subsection block (optional subtitle + table + after).
+double _estimatedSubsectionBlockHeight(ReportSubsection sub) {
+  double h = 0;
+  if (sub.subsectionTitle != null && sub.subsectionTitle!.isNotEmpty) {
+    h += _subsectionTitleHeight;
+  }
+  h +=
+      _tableHeaderHeight +
+      _tableRowHeight * sub.rows.length +
+      _afterTableHeight;
+  return h;
+}
+
+/// Block heights for a section in the same order as [sectionBlockWidgets]:
+/// [title+first subsection], (further subsections), [hinweise], (optional spacing).
+List<double> _sectionBlockHeights(
+  ReportSectionData section,
+  bool isLastSection,
+) {
+  final blocks = <double>[];
+  final allSubsectionsEmpty = section.subsections.every((s) => s.rows.isEmpty);
+  if (allSubsectionsEmpty && section.subsections.isNotEmpty) {
+    // First widget: Container(sectionTitle, 4, table). Second: SizedBox(4). Then hinweise, then maybe 12.
+    blocks.add(
+      _sectionTitleHeight +
+          _tableHeaderHeight +
+          _tableRowHeight * section.subsections.length +
+          _afterTableHeight,
+    );
+    blocks.add(_afterTableHeight); // SizedBox(4)
+    blocks.add(_hinweiseBlockHeight);
+    if (!isLastSection) blocks.add(_afterSectionHeight);
+  } else {
+    for (var i = 0; i < section.subsections.length; i++) {
+      final sub = section.subsections[i];
+      final subHeight = _estimatedSubsectionBlockHeight(sub);
+      if (i == 0) {
+        blocks.add(_sectionTitleHeight + subHeight);
+      } else {
+        blocks.add(subHeight);
+      }
+    }
+    blocks.add(_hinweiseBlockHeight);
+    if (!isLastSection) blocks.add(_afterSectionHeight);
+  }
+  return blocks;
 }
 
 // =============================================================================
@@ -303,107 +365,110 @@ class CompetenceReportPdfGenerator {
     di<NotificationService>().setHeavyLoadingValue(true);
 
     try {
-      const totalPages = 5;
       final halfYearLabel = semester.isFirst ? '1. Halbjahr' : '2. Halbjahr';
       final schoolYear = semester.schoolYear;
+      final schoolName = schoolData.officialName;
       final pupilName = '${pupil.firstName} ${pupil.lastName}';
 
-      final chunkSizes = _sectionChunkSizes(sections.length);
-      var sectionIndex = 0;
-
-      pdf.addPage(
-        CompetenceReportPdfPage1.build(
-          schoolData: schoolData,
-          sealImage: sealImage,
-          pupil: pupil,
-          semester: semester,
-          halfYearLabel: halfYearLabel,
-          schoolYear: schoolYear,
-          missedHours: missedHours,
-          sections: sectionIndex < sections.length
-              ? sections.sublist(
-                  sectionIndex,
-                  (sectionIndex + chunkSizes[0]).clamp(0, sections.length),
-                )
-              : [],
-          fontRegular: fontRegular,
-          fontBold: fontBold,
-          checkboxImage: checkboxImage,
-          checkboxCheckImage: checkboxCheckImage,
-          growthOneImage: growthOneImage,
-          growthTwoImage: growthTwoImage,
-          growthThreeImage: growthThreeImage,
-          growthFourImage: growthFourImage,
-        ),
+      final firstPageContent = CompetenceReportPdfPage1.buildFirstPageContent(
+        schoolData: schoolData,
+        pupil: pupil,
+        halfYearLabel: halfYearLabel,
+        schoolYear: schoolYear,
+        missedHours: missedHours,
+        fontRegular: fontRegular,
+        fontBold: fontBold,
+        sealImage: sealImage,
       );
-      sectionIndex += chunkSizes[0];
 
-      for (int p = 2; p <= 4; p++) {
-        final chunkSize = p - 1 < chunkSizes.length ? chunkSizes[p - 1] : 999;
-        final end = (sectionIndex + chunkSize).clamp(0, sections.length);
-        final pageSections = sectionIndex < sections.length
-            ? sections.sublist(sectionIndex, end)
-            : <ReportSectionData>[];
-        final schoolName = schoolData.officialName;
-        final page = p == 2
-            ? CompetenceReportPdfPage2.build(
-                pageNumber: p,
-                totalPages: totalPages,
-                schoolName: schoolName,
-                pupilName: pupilName,
-                sections: pageSections,
-                fontRegular: fontRegular,
-                fontBold: fontBold,
-                checkboxImage: checkboxImage,
-                checkboxCheckImage: checkboxCheckImage,
-                growthOneImage: growthOneImage,
-                growthTwoImage: growthTwoImage,
-                growthThreeImage: growthThreeImage,
-                growthFourImage: growthFourImage,
-              )
-            : p == 3
-            ? CompetenceReportPdfPage3.build(
-                pageNumber: p,
-                totalPages: totalPages,
-                schoolName: schoolName,
-                pupilName: pupilName,
-                sections: pageSections,
-                fontRegular: fontRegular,
-                fontBold: fontBold,
-                checkboxImage: checkboxImage,
-                checkboxCheckImage: checkboxCheckImage,
-                growthOneImage: growthOneImage,
-                growthTwoImage: growthTwoImage,
-                growthThreeImage: growthThreeImage,
-                growthFourImage: growthFourImage,
-              )
-            : CompetenceReportPdfPage4.build(
-                pageNumber: p,
-                totalPages: totalPages,
-                schoolName: schoolName,
-                pupilName: pupilName,
-                sections: pageSections,
-                fontRegular: fontRegular,
-                fontBold: fontBold,
-                checkboxImage: checkboxImage,
-                checkboxCheckImage: checkboxCheckImage,
-                growthOneImage: growthOneImage,
-                growthTwoImage: growthTwoImage,
-                growthThreeImage: growthThreeImage,
-                growthFourImage: growthFourImage,
-              );
-        pdf.addPage(page);
-        sectionIndex = end;
+      // Build flat list of section block widgets and their heights (subsection-level).
+      final allBlockWidgets = <pw.Widget>[];
+      final allBlockHeights = <double>[];
+      for (var s = 0; s < sections.length; s++) {
+        final section = sections[s];
+        final widgets = CompetenceReportPdfPage1.sectionBlockWidgets(
+          section,
+          fontRegular,
+          fontBold,
+          checkboxImage,
+          checkboxCheckImage,
+          growthOneImage,
+          growthTwoImage,
+          growthThreeImage,
+          growthFourImage,
+          isLastSection: s == sections.length - 1,
+        );
+        final heights = _sectionBlockHeights(section, s == sections.length - 1);
+        assert(
+          widgets.length == heights.length,
+          'sectionBlockWidgets and _sectionBlockHeights must match',
+        );
+        allBlockWidgets.addAll(widgets);
+        allBlockHeights.addAll(heights);
       }
 
+      // Placement simulation: insert NewPage() only before a block that would not fit.
+      double remaining = _pageUsableHeight - _firstPageContentHeight;
+      final insertNewPageBefore = List<bool>.filled(
+        allBlockWidgets.length,
+        false,
+      );
+      for (var i = 0; i < allBlockHeights.length; i++) {
+        final blockHeight = allBlockHeights[i];
+        if (blockHeight > remaining) {
+          insertNewPageBefore[i] = true;
+          remaining = _pageUsableHeight - blockHeight;
+        } else {
+          remaining -= blockHeight;
+        }
+      }
+
+      final sectionWidgets = <pw.Widget>[];
+      for (var i = 0; i < allBlockWidgets.length; i++) {
+        if (insertNewPageBefore[i]) {
+          sectionWidgets.add(pw.NewPage());
+        }
+        sectionWidgets.add(allBlockWidgets[i]);
+      }
+
+      final signaturesContent = CompetenceReportPdfPage5.buildSignaturesContent(
+        schoolData: schoolData,
+        pupil: pupil,
+        semester: semester,
+
+        fontRegular: fontRegular,
+        fontBold: fontBold,
+      );
+
       pdf.addPage(
-        CompetenceReportPdfPage5.build(
-          schoolData: schoolData,
-          pupil: pupil,
-          semester: semester,
-          sealImage: sealImage,
-          fontRegular: fontRegular,
-          fontBold: fontBold,
+        pw.MultiPage(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.only(
+            top: 24,
+            bottom: 24,
+            left: 1.2 * PdfPageFormat.cm,
+            right: 40,
+          ),
+          header: (pw.Context context) => context.pageNumber == 1
+              ? pw.SizedBox.shrink()
+              : pw.Padding(
+                  padding: const pw.EdgeInsets.only(bottom: 8),
+                  child: CompetenceReportPdfHelpers.buildZeugnisPageHeader(
+                    schoolName: schoolName,
+                    pupilName: pupilName,
+                    pageNumber: context.pageNumber,
+                    totalPages: context.pagesCount,
+                    font: fontRegular,
+                  ),
+                ),
+          build: (pw.Context context) => [
+            firstPageContent,
+            ...sectionWidgets,
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: signaturesContent,
+            ),
+          ],
         ),
       );
     } finally {
@@ -489,32 +554,31 @@ class CompetenceReportPdfGenerator {
           }
         }
       } else {
+        final directLeafRows = <ZeugnisCriterionRow>[];
         for (final child in directChildren) {
           final hasChildren = items.any((i) => i.parentItem == child.publicId);
           final rows = <ZeugnisCriterionRow>[];
           if (hasChildren) {
             addLeavesUnder(child.publicId, rows);
-            if (rows.isNotEmpty) {
-              subsections.add(
-                ReportSubsection(subsectionTitle: child.name, rows: rows),
-              );
-            }
+            subsections.add(
+              ReportSubsection(subsectionTitle: child.name, rows: rows),
+            );
           } else {
             allLeafIds.add(child.publicId);
             final check = checkByCompetenceId[child.publicId];
             final achievement = check?.achievement ?? 0;
-            subsections.add(
-              ReportSubsection(
-                subsectionTitle: null,
-                rows: [
-                  ZeugnisCriterionRow(
-                    predicate: child.name,
-                    achievement: achievement,
-                  ),
-                ],
+            directLeafRows.add(
+              ZeugnisCriterionRow(
+                predicate: child.name,
+                achievement: achievement,
               ),
             );
           }
+        }
+        if (directLeafRows.isNotEmpty) {
+          subsections.add(
+            ReportSubsection(subsectionTitle: null, rows: directLeafRows),
+          );
         }
       }
 
@@ -536,14 +600,5 @@ class CompetenceReportPdfGenerator {
       );
     }
     return sections;
-  }
-
-  /// How many sections to put on page 1, 2, 3, 4.
-  static List<int> _sectionChunkSizes(int totalSections) {
-    if (totalSections <= 2) return [totalSections, 0, 0, 0];
-    if (totalSections <= 5) return [2, totalSections - 2, 0, 0];
-    if (totalSections <= 8) return [2, 3, totalSections - 5, 0];
-    final perPage = (totalSections / 4).ceil();
-    return [perPage, perPage, perPage, totalSections - 3 * perPage];
   }
 }

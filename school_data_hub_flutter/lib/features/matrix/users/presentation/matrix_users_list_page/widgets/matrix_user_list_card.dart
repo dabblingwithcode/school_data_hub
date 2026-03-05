@@ -8,19 +8,19 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
-import 'package:school_data_hub_flutter/features/matrix/presentation/widgets/dialogues/logout_devices_dialog.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/dialogues/logout_devices_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/pupil_rooms_list.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
@@ -41,7 +41,6 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
   late Future<String?> _avatarUrlFuture;
 
   MatrixPolicyManager get _matrixPolicyManager => di<MatrixPolicyManager>();
-  final _mainMenuBottomNavManager = di<BottomNavManager>();
 
   @override
   void initState() {
@@ -646,43 +645,32 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                 _AppUserInfoSection(appUser: widget.appUser!),
                 const Divider(height: 24),
               ],
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  //margin: const EdgeInsets.only(bottom: 16),
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: AppStyles.successButtonStyle,
-                    onPressed: () async {
-                      final availableRooms = MatrixRoomHelper.restOfRooms(
-                        matrixUser.joinedRooms.map((e) => e.roomId).toList(),
-                      );
-                      final List<String> selectedRoomIds =
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (ctx) =>
-                                  SelectMatrixRoomsList(availableRooms),
-                            ),
-                          ) ??
-                          [];
-                      if (selectedRoomIds.isNotEmpty) {
-                        final List<JoinedRoom> joinedRooms = selectedRoomIds
-                            .map(
-                              (roomId) =>
-                                  JoinedRoom(roomId: roomId, powerLevel: 0),
-                            )
-                            .toList();
-                        matrixUser.joinRooms(joinedRooms);
-                      }
-                    },
-                    child: const Text(
-                      "RÄUME HINZUFÜGEN",
-                      style: AppStyles.buttonTextStyle,
-                    ),
-                  ),
-                ),
+              GenericAsyncActionButton(
+                onPressed: () async {
+                  final availableRooms = MatrixRoomHelper.restOfRooms(
+                    matrixUser.joinedRooms.map((e) => e.roomId).toList(),
+                  );
+                  final List<String> selectedRoomIds =
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (ctx) =>
+                              SelectMatrixRoomsList(availableRooms),
+                        ),
+                      ) ??
+                      [];
+                  if (selectedRoomIds.isNotEmpty) {
+                    final List<JoinedRoom> joinedRooms = selectedRoomIds
+                        .map(
+                          (roomId) => JoinedRoom(roomId: roomId, powerLevel: 0),
+                        )
+                        .toList();
+                    matrixUser.joinRooms(joinedRooms);
+                  }
+                },
+                title: "RÄUME HINZUFÜGEN",
+                buttonType: ButtonType.accept,
               ),
+
               MatrixUserRoomsList(
                 matrixUser: matrixUser,
                 matrixRooms: matrixUser.matrixRooms,

@@ -11,9 +11,7 @@ class NoConnectionPage extends StatelessWidget {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: AppColors.backgroundColor,
-        ),
+        decoration: BoxDecoration(color: AppColors.backgroundColor),
         child: const Center(
           child: SizedBox(
             height: 500,
@@ -25,9 +23,7 @@ class NoConnectionPage extends StatelessWidget {
                 SizedBox(
                   height: 300,
                   width: 300,
-                  child: Image(
-                    image: AssetImage('assets/foreground.png'),
-                  ),
+                  child: Image(image: AssetImage('assets/foreground.png')),
                 ),
                 Text(
                   "Schuldaten App",

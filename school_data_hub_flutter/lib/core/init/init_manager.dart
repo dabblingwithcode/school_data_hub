@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -10,10 +11,11 @@ import 'package:school_data_hub_flutter/core/init/init_on_user_auth.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/filters/matrix_policy_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_credentials.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/matrix/logs/data/matrix_corporal_logs_api_service.dart';
+import 'package:school_data_hub_flutter/features/matrix/logs/domain/matrix_corporal_logs_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/models/matrix_credentials.dart';
 
 enum InitScope { onActiveEnvScope, onAuthScope, onMatrixEnvScope }
 
@@ -178,11 +180,11 @@ class InitManager {
 
             final policyManager = await MatrixPolicyManager(
               credentials.url,
+              credentials.userServerAddress,
               credentials.policyToken,
               credentials.matrixToken,
               credentials.matrixAdmin,
               credentials.encryptionKey,
-              credentials.encryptionIv,
             ).init();
 
             _log.info('Matrix managers initialized');
@@ -211,6 +213,22 @@ class InitManager {
           dependsOn: [MatrixPolicyManager],
           dispose: (instance) {
             _log.info('[MATRIX POLICY FILTER MANAGER] disposed');
+            instance.dispose();
+          },
+        );
+
+        di.registerSingletonWithDependencies<MatrixCorporalLogsApiService>(
+          () => MatrixCorporalLogsApiService(
+            apiClient: di<MatrixPolicyManager>().matrixApiService.apiClient,
+          ),
+          dependsOn: [MatrixPolicyManager],
+        );
+
+        di.registerSingletonWithDependencies<MatrixCorporalLogsManager>(
+          () => MatrixCorporalLogsManager(di<MatrixCorporalLogsApiService>()),
+          dependsOn: [MatrixCorporalLogsApiService],
+          dispose: (instance) {
+            _log.info('[MATRIX CORPORAL LOGS MANAGER] disposed');
             instance.dispose();
           },
         );
@@ -345,7 +363,7 @@ class InitManager {
       }
 
       final credentials = MatrixCredentials.fromJson(
-        jsonDecode(matrixStoredValues),
+        jsonDecode(matrixStoredValues) as Map<String, dynamic>,
       );
 
       _log.info('Matrix credentials successfully read from storage');
@@ -355,6 +373,10 @@ class InitManager {
         'Error reading matrix credentials from storage: $e',
         StackTrace.current,
       );
+      await HubSecureStorage().remove(
+        di<EnvManager>().storageKeyForMatrixCredentials,
+      );
+      _log.info('Matrix credentials removed from secure storage');
       return null;
     }
   }

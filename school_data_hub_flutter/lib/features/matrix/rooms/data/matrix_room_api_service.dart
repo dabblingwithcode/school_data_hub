@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_message.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/models/matrix_message.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_client.dart';
 import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
 
@@ -25,6 +25,9 @@ class MatrixRoomApiService {
 
   MatrixRoomApiService({required ApiClient apiClient}) : _apiClient = apiClient;
 
+  // TODO: There is still code left from the time where the power levels could not be set by matrix-coporal
+  //- We should clean up here.
+
   //- CREATE ROOM
   static const String _createRoom = '/_matrix/client/v3/createRoom';
 
@@ -39,18 +42,33 @@ class MatrixRoomApiService {
     //- API: https://spec.matrix.org/latest/client-server-api/#create-room
 
     //- API power levels: https://spec.matrix.org/v1.15/client-server-api/#mroompower_levels
-
+    final visibility = switch (chatTypePreset) {
+      ChatTypePreset.public => 'public',
+      ChatTypePreset.private => 'private',
+      ChatTypePreset.trustedPrivate => 'private',
+    };
     final data = jsonEncode({
       "creation_content": {"m.federate": false},
       "is_direct": false,
       "name": name,
-      "preset": "private_chat",
+      "preset": chatTypePreset.value,
       if (aliasName != null) "room_alias_name": aliasName,
       "topic": topic,
-      "visibility": 'private',
+      "visibility": visibility,
       "power_level_content_override": {
         // "users": {"<user-id>": 100},
-        "events": {"m.room.name": 50, "m.reaction": 0},
+        "events": {
+          // only the admin should be allowed to change the room name
+          // because we use it to assign users to the room
+          "m.room.name": 100,
+          "m.reaction": 0,
+          // only mods shall start a poll
+          "org.matrix.msc3381.poll.start": 50,
+          // anyone shall vote on a poll
+          "org.matrix.msc3381.poll.response": 0,
+          // only mods shall end a poll
+          "org.matrix.msc3381.poll.end": 50,
+        },
         "users_default": 0,
         "events_default": 50,
         "state_default": 50,
@@ -66,9 +84,11 @@ class MatrixRoomApiService {
       data: data,
       options: _apiClient.matrixOptions,
     );
+    //- TODO: Room version 12 will NOT respond with the complete address
+    //- It leaves the domain part out - we need to consider this in the future
     if (response.statusCode == 200) {
       // extract the value of "room_id" out of the response
-      final String roomId = response.data['room_id'];
+      final String roomId = response.data['room_id'] as String;
       room = await fetchAdditionalRoomInfos(roomId);
     }
 
@@ -111,15 +131,19 @@ class MatrixRoomApiService {
 
     if (responseRoomSPowerLevels.statusCode == 200) {
       powerLevelReactions =
-          responseRoomSPowerLevels.data['events']['m.reaction'] ?? 0;
-      eventsDefault = responseRoomSPowerLevels.data['events_default'] ?? 0;
+          responseRoomSPowerLevels.data['events']['m.reaction'] as int? ?? 0;
+      eventsDefault =
+          responseRoomSPowerLevels.data['events_default'] as int? ?? 0;
 
       if (responseRoomSPowerLevels.data['users'] is Map<String, dynamic>) {
         final usersMap =
             responseRoomSPowerLevels.data['users'] as Map<String, dynamic>;
         roomAdmins = usersMap.keys
             .map(
-              (userId) => RoomAdmin(id: userId, powerLevel: usersMap[userId]),
+              (userId) => RoomAdmin(
+                id: userId as String,
+                powerLevel: usersMap[userId] as int? ?? 0,
+              ),
             )
             .toList();
       }
@@ -132,7 +156,7 @@ class MatrixRoomApiService {
     );
 
     if (responseRoomName.statusCode == 200) {
-      name = responseRoomName.data['name'] ?? 'No Room Name';
+      name = responseRoomName.data['name'] as String? ?? 'No Room Name';
     }
 
     final responseRoomAvatar = await _apiClient.get(
@@ -163,22 +187,7 @@ class MatrixRoomApiService {
     return roomWithAdditionalInfos;
   }
 
-  //- PUT ROOM POWER LEVELS
-  // Individual user power levels must only be set through the policy API.
-  // String _putRoomPowerLevels(String roomId) {
-  //   // ensure that ! and : are properly coded for the url
-  //   final roomIdforUrl = roomId.replaceAllMapped(RegExp(r'[!:]'), (match) {
-  //     switch (match.group(0)) {
-  //       case '!':
-  //         return '%21';
-  //       case ':':
-  //         return '%3A';
-  //       default:
-  //         return match.group(0)!;
-  //     }
-  //   });
-  //   return '/_matrix/client/v3/rooms/$roomIdforUrl/state/m.room.power_levels';
-  // }
+  //- SET ROOM POWER LEVELS
 
   Future<MatrixRoom> changeRoomPowerLevels({
     required String roomId,
@@ -214,10 +223,10 @@ class MatrixRoomApiService {
     }
 
     final Map<String, dynamic> payload = Map<String, dynamic>.from(
-      fetchResponse.data,
+      fetchResponse.data as Map<String, dynamic>,
     );
     final Map<String, dynamic> events = Map<String, dynamic>.from(
-      payload['events'] ?? <String, dynamic>{},
+      payload['events'] as Map<String, dynamic>,
     );
 
     if (reactions != null) {
@@ -296,7 +305,7 @@ class MatrixRoomApiService {
   }
 
   Future<String?> fetchRoomTopic(String roomId) async {
-    final Response response = await _apiClient.get(
+    final Response<dynamic> response = await _apiClient.get(
       _fetchRoomTopicUrl(roomId),
       options: _apiClient.matrixOptions,
     );
@@ -529,9 +538,13 @@ class MatrixRoomApiService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> chunk = response.data['chunk'] ?? [];
+        final List<dynamic> chunk = response.data['chunk'] as List<dynamic>;
         return chunk
-            .map((eventJson) => MatrixMessageEvent.fromJson(eventJson))
+            .map(
+              (eventJson) => MatrixMessageEvent.fromJson(
+                eventJson as Map<String, dynamic>,
+              ),
+            )
             .toList();
       } else {
         throw ApiException(
@@ -742,7 +755,8 @@ class MatrixRoomApiService {
             continue;
           }
 
-          final List<dynamic> members = membersResponse.data['chunk'] ?? [];
+          final List<dynamic> members =
+              membersResponse.data['chunk'] as List<dynamic>;
           final joinedMembers = members
               .where((member) => member['content']?['membership'] == 'join')
               .map((member) => member['state_key'] as String)
@@ -870,7 +884,8 @@ class MatrixRoomApiService {
             continue;
           }
 
-          final List<dynamic> members = membersResponse.data['chunk'] ?? [];
+          final List<dynamic> members =
+              membersResponse.data['chunk'] as List<dynamic>;
           final joinedMembers = members
               .where((member) => member['content']?['membership'] == 'join')
               .map((member) => member['state_key'] as String)
@@ -933,56 +948,6 @@ class MatrixRoomApiService {
     }
   }
 
-  /// Checks if a room has the correct power levels for admin-user communication
-  /// Admin should have full permissions (100), user should have read-only (0)
-  Future<bool> _checkRoomPowerLevels(
-    String roomId,
-    String adminUserId,
-    String targetUserId,
-  ) async {
-    try {
-      _log.info('Checking power levels for room: $roomId');
-
-      final Response response = await _apiClient.get(
-        '/_matrix/client/v3/rooms/$roomId/state/m.room.power_levels',
-        options: _apiClient.matrixOptions,
-      );
-
-      if (response.statusCode == 200) {
-        final powerLevels = response.data['content'] as Map<String, dynamic>;
-        final users = powerLevels['users'] as Map<String, dynamic>? ?? {};
-
-        final adminPowerLevel = users[adminUserId] as int? ?? 0;
-        final userPowerLevel = users[targetUserId] as int? ?? 0;
-
-        _log.info(
-          'Admin power level: $adminPowerLevel, User power level: $userPowerLevel',
-        );
-
-        // Admin should have high power level (100), user should have low power level (0)
-        final isValid = adminPowerLevel >= 50 && userPowerLevel == 0;
-
-        if (isValid) {
-          _log.info('Power levels are correct for admin-user communication');
-        } else {
-          _log.info(
-            'Power levels are incorrect - admin: $adminPowerLevel, user: $userPowerLevel',
-          );
-        }
-
-        return isValid;
-      } else {
-        _log.info(
-          'Failed to get power levels for room $roomId: ${response.statusCode}',
-        );
-        return false;
-      }
-    } catch (e) {
-      _log.info('Error checking power levels for room $roomId: $e');
-      return false;
-    }
-  }
-
   /// Manually marks a room as a direct chat in m.direct account data
   Future<void> _markRoomAsDirectChat(String roomId, String targetUserId) async {
     try {
@@ -997,7 +962,7 @@ class MatrixRoomApiService {
       // Add this room to the direct chat list for the target user
       if (directRooms.containsKey(targetUserId)) {
         final List<dynamic> existingRooms = List<dynamic>.from(
-          directRooms[targetUserId] ?? [],
+          directRooms[targetUserId] as List<dynamic>,
         );
         if (!existingRooms.contains(roomId)) {
           existingRooms.add(roomId);
@@ -1110,7 +1075,8 @@ class MatrixRoomApiService {
       );
 
       if (membersResponse.statusCode == 200) {
-        final List<dynamic> members = membersResponse.data['chunk'] ?? [];
+        final List<dynamic> members =
+            membersResponse.data['chunk'] as List<dynamic>;
         final isAdminInRoom = members.any(
           (member) =>
               member['state_key'] == currentUserId &&

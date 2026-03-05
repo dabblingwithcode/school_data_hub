@@ -10,7 +10,6 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/bir
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/after_school_care_list_page.dart';
@@ -31,10 +30,6 @@ class PupilListButtons extends WatchingWidget {
     // Always call watch methods at the top level, not conditionally
 
     final isReady = watchPropertyValue((HubSessionManager x) => x.isReady);
-
-    final matrixSessionConfigured = watchPropertyValue(
-      (HubSessionManager x) => x.isMatrixSessionConfigured,
-    );
 
     return Wrap(
       alignment: WrapAlignment.center,
@@ -150,16 +145,7 @@ class PupilListButtons extends WatchingWidget {
           ),
           buttonText: locale.allDayCare,
         ),
-        if (matrixSessionConfigured)
-          MainMenuButton(
-            destinationPage: const MatrixUsersListPage(),
-            buttonIcon: Icon(
-              Icons.chat_rounded,
-              size: 50,
-              color: AppColors.gridViewColor,
-            ),
-            buttonText: locale.matrixRooms,
-          ),
+
         MainMenuButton(
           destinationPage: const PupilsMatrixContactsListPage(),
           buttonIcon: Icon(

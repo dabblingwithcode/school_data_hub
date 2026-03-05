@@ -5,13 +5,12 @@
 /// - [AudioPlayerWidget] - displays audio controls
 /// - [AudioButton] - thumbnail button with pre-loading
 /// - [isAudioDocument], [parseDurationFromDocumentId], [formatDuration] - helpers
+library;
 
 // Data
 export 'data/audio_player_service.dart';
-
 // Domain
 export 'domain/audio_helper.dart';
-
 // Presentation
 export 'presentation/audio_button.dart';
 export 'presentation/audio_player_widget.dart';

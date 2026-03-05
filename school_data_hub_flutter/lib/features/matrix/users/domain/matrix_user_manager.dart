@@ -4,14 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/features/matrix/data/matrix_api_service.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_helper.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_room.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/models/matrix_user.dart';
-import 'package:school_data_hub_flutter/features/matrix/services/matrix_credentials_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/data/matrix_api_service.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/pdf_service/matrix_bulk_new_credentials_service.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/pdf_service/matrix_credentials_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 
 class MatrixUserManager {
   final _log = Logger('MatrixUserManager');
@@ -50,11 +52,11 @@ class MatrixUserManager {
   ///
   /// **2.** creates a new user on the matrix server
   ///
-  /// **3.** If successful, the user is added to the policy.
+  /// **3.** If successful, the user is added to the in-memory list.
   ///
-  /// **4.** Then the policy is updated.
+  /// **4.** `printMatrixCredentials` is called - a pdf file with the credentials is generated and returned.
   ///
-  /// **5.** `printMatrixCredentials` is called - a pdf file with the credentials is generated and returned.
+  /// Policy is applied by [postNewMatrixUser] once after adding the user to rooms.
   Future<File?> createNewMatrixUser({
     required String matrixId,
     required String displayName,
@@ -81,8 +83,6 @@ class MatrixUserManager {
       'Benutzer erstellt oder reaktiviert',
     );
 
-    await _applyPolicyChanges();
-
     final file = await MatrixCredentialsPrinter.printMatrixCredentials(
       matrixDomain: _matrixUrl,
       matrixUser: newUser,
@@ -102,10 +102,9 @@ class MatrixUserManager {
   }) async {
     //- TODO URGENT: this is a hack for our school, add validation for the domain part
 
-    final String domainPart = di<MatrixPolicyManager>().matrixUrl
-        .replaceAll('https://', '')
-        .split('post.')
-        .last;
+    final String domainPart =
+        di<MatrixPolicyManager>().userServerAddress ??
+        di<MatrixPolicyManager>().matrixUrl.replaceAll('https://', '');
     String matrixId = '@$generatedMatrixId:$domainPart';
 
     List<String> roomIdsList = roomIds.toList();
@@ -120,7 +119,7 @@ class MatrixUserManager {
       isStaff: isStaff,
     );
 
-    // if it is a pupil realated matrix account
+    // if it is a pupil related matrix account
     if (file != null && pupil != null) {
       if (!isParent && !isStaff) {
         // it's a pupil related matrix account
@@ -266,5 +265,60 @@ class MatrixUserManager {
 
   Future<String?> fetchUserAvatarUrl(String userId) {
     return _matrixApiService.userApi.fetchUserAvatarUrl(userId);
+  }
+
+  /// Creates Matrix accounts for pupils with no contact info and returns a
+  /// bulk PDF of the new credentials. Caller should open the file (e.g. with
+  /// [PdfViewerPage]) when non-null.
+  Future<File?> createMatrixCredentialsForPupilsWithoutContactInfo() async {
+    final List<PupilProxy> pupils = di<PupilProxyManager>().allPupils;
+    final List<Map<String, dynamic>> userCredentials = [];
+
+    for (PupilProxy pupil in pupils) {
+      if (pupil.contact == null) {
+        final displayName =
+            '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})';
+        final generatedMatrixId = MatrixPolicyHelper.generateMatrixId(
+          isParent: false,
+        );
+        final password = MatrixPolicyHelper.generatePassword();
+
+        final String domainPart =
+            di<MatrixPolicyManager>().userServerAddress ??
+            di<MatrixPolicyManager>().matrixUrl.replaceAll('https://', '');
+        String matrixId = '@$generatedMatrixId:$domainPart';
+
+        final MatrixUser? newUser = await _matrixApiService.userApi
+            .createNewMatrixUser(
+              matrixId: matrixId,
+              displayName: displayName,
+              password: password,
+            );
+
+        if (newUser == null) {
+          continue;
+        }
+
+        userCredentials.add({'user': newUser, 'password': password});
+        PupilMutator().updateStringProperty(
+          pupilId: pupil.pupilId,
+          property: PupilStringProperty.contact,
+          propertyValue: (value: matrixId),
+        );
+        _matrixUsers.value = [..._matrixUsers.value, newUser];
+      }
+    }
+
+    if (userCredentials.isEmpty) {
+      return null;
+    }
+
+    await di<MatrixPolicyManager>().applyPolicyChanges();
+
+    return MatrixBulkCredentialsService.generateBulkCredentialsPdf(
+      matrixDomain: _matrixUrl,
+      userCredentials: userCredentials,
+      isStaff: false,
+    );
   }
 }

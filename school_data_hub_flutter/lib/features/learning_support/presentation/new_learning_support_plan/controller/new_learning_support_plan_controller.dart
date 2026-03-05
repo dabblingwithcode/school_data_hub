@@ -3,7 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/new_learning_support_plan_page.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
@@ -58,7 +57,7 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
       di<LearningSupportManager>();
   SchoolCalendarManager get _schoolCalendarManager =>
       di<SchoolCalendarManager>();
-  HubSessionManager get _hubSessionManager => di<HubSessionManager>();
+
   NotificationService get _notificationService => di<NotificationService>();
   UserManager get _userManager => di<UserManager>();
 

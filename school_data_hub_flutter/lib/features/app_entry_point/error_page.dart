@@ -13,9 +13,7 @@ class ErrorPage extends StatelessWidget {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: AppColors.backgroundColor,
-        ),
+        decoration: BoxDecoration(color: AppColors.backgroundColor),
         child: Center(
           child: SizedBox(
             height: 600,
@@ -27,9 +25,7 @@ class ErrorPage extends StatelessWidget {
                 const SizedBox(
                   height: 300,
                   width: 300,
-                  child: Image(
-                    image: AssetImage('assets/foreground.png'),
-                  ),
+                  child: Image(image: AssetImage('assets/foreground.png')),
                 ),
                 const Text(
                   "Schuldaten App",
@@ -72,7 +68,8 @@ class ErrorPage extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                                'Fehlertext in die Zwischenablage kopiert!'),
+                              'Fehlertext in die Zwischenablage kopiert!',
+                            ),
                           ),
                         );
                       },

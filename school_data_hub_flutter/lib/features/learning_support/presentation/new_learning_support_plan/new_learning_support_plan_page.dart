@@ -110,7 +110,9 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '${_getSupportLevelDescription(controller.fixedSupportLevel)}',
+                                        _getSupportLevelDescription(
+                                          controller.fixedSupportLevel,
+                                        ),
                                         style: const TextStyle(
                                           fontWeight: FontWeight.w500,
                                         ),

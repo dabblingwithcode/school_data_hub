@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_competence_goals/new_competence_goal_page.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_goals_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/select_competence_page/select_competence_view_model.dart';
@@ -22,41 +21,29 @@ class PupilLearningContentCompetenceGoals extends StatelessWidget {
             ),
           ],
         ),
-        const Gap(10),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                style: AppStyles.actionButtonStyle,
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => SelectCompetence(
-                        onSelected: (ctx, competence) {
-                          Navigator.of(ctx).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => NewCompetenceGoalPage(
-                                pupilId: pupil.pupilId,
-                                competenceId: competence.publicId,
-                              ),
-                            ),
-                          );
-                        },
+        GenericAsyncActionButton(
+          onPressed: () async {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => SelectCompetence(
+                  onSelected: (ctx, competence) {
+                    Navigator.of(ctx).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => NewCompetenceGoalPage(
+                          pupilId: pupil.pupilId,
+                          competenceId: competence.publicId,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                child: const Text(
-                  "NEUES LERNZIEL",
-                  style: AppStyles.buttonTextStyle,
+                    );
+                  },
                 ),
               ),
-            ),
-          ],
+            );
+          },
+          title: "NEUES LERNZIEL",
+          buttonType: ButtonType.action,
         ),
-        const Gap(15),
+
         PupilLearningGoals(pupil: pupil),
       ],
     );

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -8,7 +9,6 @@ import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 Widget workbookListBottomNavBar(BuildContext context) {
   return BottomNavBarLayout(
@@ -69,7 +69,7 @@ Widget workbookListBottomNavBar(BuildContext context) {
                   }
                   return;
                 }
-
+                if (!context.mounted) return;
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (ctx) =>

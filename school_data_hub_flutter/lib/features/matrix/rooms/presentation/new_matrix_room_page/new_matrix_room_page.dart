@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/features/matrix/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class NewMatrixRoomPage extends StatefulWidget {
   const NewMatrixRoomPage({super.key});
@@ -20,6 +21,8 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
   final TextEditingController aliasController = TextEditingController();
 
   ChatTypePreset selectedRoomType = ChatTypePreset.private;
+  bool markAsCompulsory = false;
+  MatrixRoomType compulsoryRoomType = MatrixRoomType.other;
   bool isProcessing = false;
 
   MatrixPolicyManager get _matrixPolicyManager => di<MatrixPolicyManager>();
@@ -62,6 +65,7 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
             ? null
             : aliasController.text.trim(),
         chatTypePreset: selectedRoomType,
+        markAsCompulsoryWithType: markAsCompulsory ? compulsoryRoomType : null,
       );
 
       if (mounted) {
@@ -243,9 +247,7 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                                     ),
                                     const DropdownMenuItem(
                                       value: ChatTypePreset.trustedPrivate,
-                                      child: Text(
-                                        'Vertrauenswürdig Privat',
-                                      ),
+                                      child: Text('Vertrauenswürdig Privat'),
                                     ),
                                   ],
                                   onChanged: (value) {
@@ -260,6 +262,64 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                             ),
                           ),
                         ),
+                        const Gap(16),
+                        // Mark as compulsory room
+                        Card(
+                          color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Checkbox(
+                                      value: markAsCompulsory,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          markAsCompulsory = value ?? false;
+                                        });
+                                      },
+                                    ),
+                                    const Text(
+                                      'Als Pflichtraum markieren',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (markAsCompulsory) ...[
+                                  const Gap(8),
+                                  DropdownButtonFormField<MatrixRoomType>(
+                                    initialValue: compulsoryRoomType,
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(),
+                                    ),
+                                    items: MatrixRoomType.values
+                                        .map(
+                                          (t) => DropdownMenuItem(
+                                            value: t,
+                                            child: Text(
+                                              _compulsoryRoomTypeLabel(t),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          compulsoryRoomType = value;
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -270,44 +330,38 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                 // Action buttons
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Row(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       // Cancel button - with constrained width
-                      SizedBox(
-                        width: 150, // Fixed width
-                        child: ElevatedButton(
-                          style: AppStyles.cancelButtonStyle,
-                          onPressed: isProcessing
-                              ? null
-                              : () => Navigator.of(context).pop(),
-                          child: const Text(
-                            'ABBRECHEN',
-                            style: AppStyles.buttonTextStyle,
-                          ),
+                      ElevatedButton(
+                        style: AppStyles.cancelButtonStyle,
+                        onPressed: isProcessing
+                            ? null
+                            : () => Navigator.of(context).pop(),
+                        child: const Text(
+                          'ABBRECHEN',
+                          style: AppStyles.buttonTextStyle,
                         ),
                       ),
-
+                      const Gap(10),
                       // Create button - with constrained width
-                      SizedBox(
-                        width: 150, // Fixed width
-                        child: ElevatedButton(
-                          style: AppStyles.successButtonStyle,
-                          onPressed: isProcessing ? null : createRoom,
-                          child: isProcessing
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Text(
-                                  'RAUM ERSTELLEN',
-                                  style: AppStyles.buttonTextStyle,
+                      ElevatedButton(
+                        style: AppStyles.successButtonStyle,
+                        onPressed: isProcessing ? null : createRoom,
+                        child: isProcessing
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
                                 ),
-                        ),
+                              )
+                            : const Text(
+                                'RAUM ERSTELLEN',
+                                style: AppStyles.buttonTextStyle,
+                              ),
                       ),
                     ],
                   ),
@@ -342,5 +396,26 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
       description,
       style: const TextStyle(fontSize: 12, color: Colors.grey),
     );
+  }
+
+  static String _compulsoryRoomTypeLabel(MatrixRoomType t) {
+    switch (t) {
+      case MatrixRoomType.contacts:
+        return 'Kontakte';
+      case MatrixRoomType.globalParents:
+        return 'Eltern global';
+      case MatrixRoomType.globalChildrem:
+        return 'Kinder global';
+      case MatrixRoomType.globalTeacher:
+        return 'Lehrer global';
+      case MatrixRoomType.groupChildren:
+        return 'Kinder Gruppe';
+      case MatrixRoomType.groupParents:
+        return 'Eltern Gruppe';
+      case MatrixRoomType.staff:
+        return 'Mitarbeiter';
+      case MatrixRoomType.other:
+        return 'Sonstige';
+    }
   }
 }

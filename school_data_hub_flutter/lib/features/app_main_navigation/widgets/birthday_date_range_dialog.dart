@@ -72,10 +72,7 @@ class BirthdayDateRangeDialog extends WatchingWidget {
                           pastDateValue.isSameDate(now)
                               ? 'heute'
                               : pastDateValue.formatDateForUser(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                          style: AppStyles.buttonTextStyle,
                         ),
                       ),
                     ),
@@ -116,10 +113,7 @@ class BirthdayDateRangeDialog extends WatchingWidget {
                           futureDateValue.isSameDate(now)
                               ? 'heute'
                               : futureDateValue.formatDateForUser(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                          style: AppStyles.buttonTextStyle,
                         ),
                       ),
                     ),

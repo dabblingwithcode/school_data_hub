@@ -173,6 +173,7 @@ jobs:
           SERVERPOD_MAIL_ADMIN: ${{ secrets.SERVERPOD_MAIL_ADMIN }}
           # Matrix configuration for sending emails
           MATRIX_SERVER_URL: ${{ secrets.MATRIX_SERVER_URL }}
+          MATRIX_USER_ID: ${{ secrets.MATRIX_USER_ID }}
           MATRIX_AUTH_TOKEN: ${{ secrets.MATRIX_AUTH_TOKEN }}
 
       - name: cleanup

@@ -64,38 +64,38 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
             ),
             content: SizedBox(
               width: 360,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: palettes
-                    .map(
-                      (palette) => RadioListTile<AppColorSchemeKey>(
-                        value: palette.key,
-                        // ignore: deprecated_member_use
-                        groupValue: tempSelection,
-                        // ignore: deprecated_member_use
-                        onChanged: (value) {
-                          if (value == null) return;
-                          setState(() {
-                            tempSelection = value;
-                          });
-                        },
-                        title: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Container(
-                                color: palette.backgroundColor,
-                                width: 20,
-                                height: 20,
+              child: RadioGroup<AppColorSchemeKey>(
+                groupValue: tempSelection,
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() {
+                    tempSelection = value;
+                  });
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: palettes
+                      .map(
+                        (palette) => RadioListTile<AppColorSchemeKey>(
+                          value: palette.key,
+                          title: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  color: palette.backgroundColor,
+                                  width: 20,
+                                  height: 20,
+                                ),
                               ),
-                            ),
-                            const Gap(10),
-                            Text(palette.displayName),
-                          ],
+                              const Gap(10),
+                              Text(palette.displayName),
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                    .toList(),
+                      )
+                      .toList(),
+                ),
               ),
             ),
             actions: [

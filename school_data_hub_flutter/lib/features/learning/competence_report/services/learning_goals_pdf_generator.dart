@@ -779,7 +779,6 @@ class LearningGoalsPdfGenerator {
 
         // Data rows
         ...competenceGoals.asMap().entries.map((entry) {
-          final index = entry.key + 1;
           final goal = entry.value;
           final rootCompetence = di<CompetenceManager>().findRootCompetenceById(
             goal.competenceId,

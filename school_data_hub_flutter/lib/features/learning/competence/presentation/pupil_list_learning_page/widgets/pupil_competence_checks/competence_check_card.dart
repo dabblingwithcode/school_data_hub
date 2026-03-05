@@ -183,6 +183,7 @@ class CompetenceCheckCard extends StatelessWidget {
                                             competenceCheck.checkId,
                                         score: (value: value),
                                       );
+                                  if (!context.mounted) return;
                                   // Unfocus to prevent focus lock
                                   FocusScope.of(context).unfocus();
                                 },

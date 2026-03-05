@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -19,7 +20,6 @@ import 'package:school_data_hub_flutter/features/app_entry_point/login_page/logi
 import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('AttendanceListPage');
 
@@ -40,6 +40,7 @@ class AttendanceListPage extends WatchingWidget {
       );
       // Use Future.microtask to avoid build-phase navigation issues
       Future.microtask(() {
+        if (!context.mounted) return;
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const Login()),
         );

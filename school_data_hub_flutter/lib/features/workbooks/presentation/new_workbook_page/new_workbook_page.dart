@@ -50,7 +50,7 @@ class NewWorkbookPage extends WatchingWidget {
       await di<WorkbookManager>().fetchWorkbookByIsbn(isbn);
 
       if (isEdit) {
-        workbookNameTextFieldController.text = workbook!.name ?? '';
+        workbookNameTextFieldController.text = workbook!.name;
         if (workbook!.subject != null) {
           selectedSubject.value = workbookEnum.SubjectEnum.values
               .cast<workbookEnum.SubjectEnum?>()

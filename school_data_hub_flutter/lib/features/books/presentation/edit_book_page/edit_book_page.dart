@@ -215,6 +215,7 @@ class EditBookPage extends StatelessWidget {
                     style: AppStyles.successButtonStyle,
                     onPressed: () async {
                       await controller.submitBook();
+                      if (!context.mounted) return;
                       Navigator.pop(context);
                     },
                     child: const Text(

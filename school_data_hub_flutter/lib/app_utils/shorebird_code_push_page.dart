@@ -14,7 +14,8 @@ class ShorebirdCodePushPage extends WatchingStatefulWidget {
   const ShorebirdCodePushPage({super.key});
 
   @override
-  State<ShorebirdCodePushPage> createState() => _ShorebirdCodePushPageState();
+  State<ShorebirdCodePushPage> createState() =>
+      _ShorebirdCodePushPageState();
 }
 
 class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {

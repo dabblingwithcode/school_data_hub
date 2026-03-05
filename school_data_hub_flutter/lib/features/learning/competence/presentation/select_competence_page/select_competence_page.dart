@@ -39,30 +39,35 @@ class SelectCompetencePage extends StatelessWidget {
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Bitte eine Kompetenz auswählen!',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                child: RadioGroup<int>(
+                  groupValue: viewModel.selectedCompetenceId,
+                  onChanged: (int? value) {
+                    if (value != null) viewModel.selectCompetence(value);
+                  },
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Bitte eine Kompetenz auswählen!',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    ...selectableCompetenceTree(
-                      indentation: 0,
-                      viewModel: viewModel,
-                      //elementType: controller.widget.elementType
-                    ),
-                    const Gap(20),
-                  ],
+                      ...selectableCompetenceTree(
+                        indentation: 0,
+                        viewModel: viewModel,
+                      ),
+                      const Gap(20),
+                    ],
+                  ),
                 ),
               ),
             ),

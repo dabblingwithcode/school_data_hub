@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/audio/audio.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -396,30 +395,25 @@ class _GoalChecksSection extends WatchingWidget {
         CustomExpansionTileContent(
           tileController: tileController,
           widgetList: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10, left: 10),
-              child: ElevatedButton(
-                style: AppStyles.actionButtonStyle,
-                onPressed: () async {
-                  final check = await supportGoalCheckDialog(
-                    context: context,
-                    goal: goal,
+            GenericAsyncActionButton(
+              onPressed: () async {
+                final check = await supportGoalCheckDialog(
+                  context: context,
+                  goal: goal,
+                );
+                if (check != null) {
+                  await learningSupportManager.postSupportGoalCheck(
+                    supportGoalId: goal.id!,
+                    pupilId: pupilId,
+                    score: check.score,
+                    comment: check.comment,
                   );
-                  if (check != null) {
-                    await learningSupportManager.postSupportGoalCheck(
-                      supportGoalId: goal.id!,
-                      pupilId: pupilId,
-                      score: check.score,
-                      comment: check.comment,
-                    );
-                  }
-                },
-                child: const Text(
-                  'NEUER CHECK',
-                  style: AppStyles.buttonTextStyle,
-                ),
-              ),
+                }
+              },
+              title: 'NEUER CHECK',
+              buttonType: ButtonType.action,
             ),
+
             const Gap(5),
             if (goalChecks.isEmpty) ...[
               const Padding(
@@ -445,11 +439,6 @@ class _GoalChecksSection extends WatchingWidget {
       ],
     );
   }
-}
-
-/// Whether [doc] represents an audio file based on its extension.
-bool _isAudioDocument(HubDocument doc) {
-  return isAudioDocument(doc.documentId);
 }
 
 /// A single goal check entry display.
