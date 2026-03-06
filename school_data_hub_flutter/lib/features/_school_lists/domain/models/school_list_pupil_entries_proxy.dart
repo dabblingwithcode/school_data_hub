@@ -58,8 +58,6 @@ class SchoolListPupilEntriesProxyMap with ChangeNotifier {
           // Update the pupilId map just in case pupilId changed (unlikely but safe)
           pupilIdToEntryMap[newEntry.pupilId] = proxy;
           hasChanges = true;
-        } else {
-          _log.info('No changes for entry with ID: $entryId');
         }
       }
     }
@@ -68,8 +66,6 @@ class SchoolListPupilEntriesProxyMap with ChangeNotifier {
     if (hasChanges) {
       notifyListeners();
       _log.info('${pupilEntries.length} pupil entries updated in proxy');
-    } else {
-      _log.info('No changes in pupil entries');
     }
   }
 
