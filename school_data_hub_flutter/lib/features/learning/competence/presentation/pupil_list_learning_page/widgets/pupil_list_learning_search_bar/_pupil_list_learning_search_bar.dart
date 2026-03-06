@@ -9,8 +9,8 @@ import 'package:school_data_hub_flutter/features/learning/competence/presentatio
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar/pupil_book_lendings_infos.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar/pupil_workbooks_infos.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_filter_bottom_sheet.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_search_text_field.dart';
 
 class PupilListLearningSearchBar extends StatelessWidget {
   //final List<PupilProxy> pupils;

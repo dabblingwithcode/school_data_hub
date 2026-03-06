@@ -1,17 +1,18 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
+import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/data/schoolday_event_api_service.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/pupil_schoolday_events_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
-import 'package:listen_it/listen_it.dart';
 
 class SchooldayEventManager with ChangeNotifier {
   final _cacheManager = di<DefaultCacheManager>();
@@ -32,6 +33,7 @@ class SchooldayEventManager with ChangeNotifier {
   final Map<int, PupilSchooldayEventsProxy> _pupilSchooldayEventsMap = {};
 
   ListenableSubscription? _pupilManagerSubscription;
+  StreamSubscription<dynamic>? _hubSubscription;
 
   SchooldayEventManager() {
     init();
@@ -39,6 +41,8 @@ class SchooldayEventManager with ChangeNotifier {
 
   @override
   void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
     _pupilManagerSubscription?.cancel();
     _pupilSchooldayEventsMap.clear();
     _schooldayEventsMap.clear();
@@ -47,10 +51,24 @@ class SchooldayEventManager with ChangeNotifier {
   }
 
   Future<void> init() async {
-    _pupilManagerSubscription = _pupilManager.listen((_) => _updatePupilProxies());
+    _pupilManagerSubscription = _pupilManager.listen(
+      (_) => _updatePupilProxies(),
+    );
     _updatePupilProxies();
     Future.microtask(() => fetchSchooldayEvents());
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     _log.info('SchooldayEventManager initialized');
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is SchooldayEvent) {
+      upsertFromStream(event);
+    } else if (event is HubDeleteEvent &&
+        event.objectType == HubObjectType.schooldayEvent) {
+      deleteFromStream(event.id);
+    } else if (event is HubReconnected) {
+      fetchSchooldayEvents();
+    }
   }
 
   void _updatePupilProxies() {
@@ -151,8 +169,8 @@ class SchooldayEventManager with ChangeNotifier {
     required String reason,
     required String eventTime,
   }) async {
-    final SchooldayEvent schooldayEvent =
-        await _schooldayEventApiService.postSchooldayEvent(
+    final SchooldayEvent
+    schooldayEvent = await _schooldayEventApiService.postSchooldayEvent(
       '${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.firstName} (${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.group})',
       pupilId,
       schooldayId,
@@ -163,16 +181,12 @@ class SchooldayEventManager with ChangeNotifier {
     );
 
     _updateSchooldayEventCollections(schooldayEvent);
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Eintrag erfolgreich!',
-    );
   }
 
   Future<void> fetchSchooldayEvents() async {
     try {
-      final List<SchooldayEvent> events =
-          await _schooldayEventApiService.fetchSchooldayEvents();
+      final List<SchooldayEvent> events = await _schooldayEventApiService
+          .fetchSchooldayEvents();
 
       updateSchooldayEventsBatchInCollections(events);
     } catch (e) {
@@ -199,8 +213,8 @@ class SchooldayEventManager with ChangeNotifier {
     if (processed == false && eventToUpdate.processedDocumentId != null) {
       cacheKey = eventToUpdate.processedDocument!.documentId;
     }
-    final SchooldayEvent schooldayEvent =
-        await _schooldayEventApiService.updateSchooldayEvent(
+    final SchooldayEvent schooldayEvent = await _schooldayEventApiService
+        .updateSchooldayEvent(
           schooldayEvent: eventToUpdate,
           createdBy: createdBy,
           reason: reason,
@@ -217,10 +231,7 @@ class SchooldayEventManager with ChangeNotifier {
     if (cacheKey != null) {
       await _cacheManager.removeFile(cacheKey);
     }
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Eintrag erfolgreich geändert!',
-    );
+    _log.info('schooldayEvent updated: $schooldayEvent');
   }
 
   Future<void> updateSchooldayEventFile({
@@ -229,8 +240,8 @@ class SchooldayEventManager with ChangeNotifier {
     required bool isProcessed,
   }) async {
     final encryptedFile = await customEncrypter.encryptFile(imageFile);
-    final SchooldayEvent? responseEvent =
-        await _schooldayEventApiService.updateSchooldayEventFile(
+    final SchooldayEvent? responseEvent = await _schooldayEventApiService
+        .updateSchooldayEventFile(
           schooldayEventId: schooldayEventId,
           file: encryptedFile,
           isProcessed: isProcessed,
@@ -255,9 +266,8 @@ class SchooldayEventManager with ChangeNotifier {
     String cacheKey,
     bool isProcessed,
   ) async {
-    final SchooldayEvent schooldayEvent =
-        await _schooldayEventApiService.deleteSchooldayEventFile(
-          schooldayEventId, isProcessed);
+    final SchooldayEvent schooldayEvent = await _schooldayEventApiService
+        .deleteSchooldayEventFile(schooldayEventId, isProcessed);
     await _cacheManager.removeFile(cacheKey);
     _updateSchooldayEventCollections(schooldayEvent);
 

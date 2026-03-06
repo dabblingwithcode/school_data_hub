@@ -1,0 +1,425 @@
+import 'dart:async';
+
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/_pupil/data/pupil_data_api_service.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter_impl.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
+
+class PupilProxyManager extends ChangeNotifier {
+  final _log = Logger('PupilManager');
+
+  final _notificationService = di<NotificationService>();
+
+  final _pupilDataApiService = PupilDataApiService();
+
+  final _pupilIdPupilsMap = <int, PupilProxy>{};
+  final _allPupils = ListNotifier<PupilProxy>();
+  StreamSubscription<dynamic>? _hubSubscription;
+
+  /// Reactive list of all pupil proxies.
+  ValueListenable<List<PupilProxy>> get allPupilsListenable => _allPupils;
+
+  /// Convenience getter — returns the current list value.
+  List<PupilProxy> get allPupils => _allPupils.value;
+
+  PupilProxyManager();
+
+  @override
+  void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
+    for (final pupil in _pupilIdPupilsMap.values) {
+      pupil.dispose();
+    }
+    _pupilIdPupilsMap.clear();
+    _allPupils.dispose();
+    super.dispose();
+    _log.info('[PupilProxyManager] disposed ✅️');
+  }
+
+  Future<void> init() async {
+    await fetchAllPupils();
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is PupilData) {
+      upsertFromStream(event);
+    } else if (event is HubReconnected) {
+      fetchAllPupils();
+    }
+  }
+
+  //- HELPER METHODS
+
+  void clearData() {
+    _pupilIdPupilsMap.clear();
+    _allPupils.clear();
+  }
+
+  PupilProxy? getPupilByPupilId(int pupilId) {
+    if (!_pupilIdPupilsMap.containsKey(pupilId)) {
+      _log.warning('Pupil $pupilId not found');
+      return null;
+    }
+    return _pupilIdPupilsMap[pupilId];
+  }
+
+  List<PupilProxy> getPupilsFromPupilIds(List<int> pupilIds) {
+    List<PupilProxy> pupilsfromPupilIds = [];
+
+    for (int pupilId in pupilIds) {
+      final PupilProxy? pupil = _pupilIdPupilsMap.values.firstWhereOrNull(
+        (pupil) => pupil.pupilId == pupilId,
+      );
+      if (pupil != null) {
+        pupilsfromPupilIds.add(pupil);
+      }
+    }
+
+    return pupilsfromPupilIds;
+  }
+
+  List<PupilProxy> getPupilsFromInternalIds(List<int> internalIds) {
+    List<PupilProxy> pupilsfromInternalIds = [];
+
+    for (int internalId in internalIds) {
+      final PupilProxy? pupil = _pupilIdPupilsMap.values.firstWhereOrNull(
+        (pupil) => pupil.internalId == internalId,
+      );
+      if (pupil != null) {
+        pupilsfromInternalIds.add(pupil);
+      }
+    }
+
+    return pupilsfromInternalIds;
+  }
+
+  List<int> getInternalIdsFromPupils(List<PupilProxy> pupils) {
+    return pupils.map((pupil) => pupil.internalId).toList();
+  }
+
+  List<int> getPupilIdsFromPupils(List<PupilProxy> pupils) {
+    return pupils.map((pupil) => pupil.pupilId).toList();
+  }
+
+  List<int> getInternalIdsFromPupilIds(List<int> pupilIds) {
+    List<int> internalIds = [];
+    for (int pupilId in pupilIds) {
+      final PupilProxy? pupil = _pupilIdPupilsMap[pupilId];
+      if (pupil != null) {
+        internalIds.add(pupil.internalId);
+      }
+    }
+    return internalIds;
+  }
+
+  List<PupilProxy> getPupilsNotListed(List<int> pupilIds) {
+    Map<int, PupilProxy> allPupilsMap = Map<int, PupilProxy>.of(
+      _pupilIdPupilsMap,
+    );
+    allPupilsMap.removeWhere((key, value) => pupilIds.contains(key));
+    return allPupilsMap.values.toList();
+  }
+
+  List<PupilProxy> getSiblings(PupilProxy pupil) {
+    if (pupil.family == null) {
+      return [];
+    }
+
+    Map<int, PupilProxy> allPupilsMap = Map<int, PupilProxy>.of(
+      _pupilIdPupilsMap,
+    );
+
+    // Filter by family value of the pupil
+    allPupilsMap.removeWhere((key, value) => value.family != pupil.family);
+
+    // Remove the pupil itself from the list of siblings
+    allPupilsMap.remove(pupil.pupilId);
+
+    final pupilSiblings = allPupilsMap.values.toList();
+
+    return pupilSiblings;
+  }
+
+  /// Returns the next birthday date for a pupil (next occurrence of month/day on or after today).
+  DateTime getNextBirthdayDate(PupilProxy pupil) {
+    final now = DateTime.now();
+    final birthdayToLocal = pupil.birthday.toLocal();
+    final today = DateTime(now.year, now.month, now.day);
+    final birthdayThisYear = DateTime(
+      now.year,
+      birthdayToLocal.month,
+      birthdayToLocal.day,
+    );
+    if (birthdayThisYear.isAfter(today) || birthdayThisYear.isSameDate(today)) {
+      return birthdayThisYear;
+    }
+    return DateTime(now.year + 1, birthdayToLocal.month, birthdayToLocal.day);
+  }
+
+  /// Returns the relevant birthday date for a pupil, considering year boundaries.
+  /// If the birthday this year hasn't occurred yet, returns last year's birthday.
+  /// Otherwise, returns this year's birthday.
+  DateTime getRelevantBirthdayDate(PupilProxy pupil) {
+    final now = DateTime.now();
+    final birthdayToLocal = pupil.birthday.toLocal();
+    final birthdayThisYear = DateTime(
+      now.year,
+      birthdayToLocal.month,
+      birthdayToLocal.day,
+    );
+    final birthdayLastYear = DateTime(
+      now.year - 1,
+      birthdayToLocal.month,
+      birthdayToLocal.day,
+    );
+    return birthdayThisYear.isAfter(now) ? birthdayLastYear : birthdayThisYear;
+  }
+
+  /// Returns the birthday date to display for a pupil given the query range.
+  /// If the relevant (past) birthday falls within [sinceDate, today], returns that.
+  /// Otherwise returns the next (future) birthday.
+  DateTime getBirthdayDisplayDate(
+    PupilProxy pupil,
+    DateTime sinceDate, {
+    DateTime? untilDate,
+  }) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final relevantBirthday = getRelevantBirthdayDate(pupil);
+
+    if ((relevantBirthday.isSameDate(sinceDate) ||
+            relevantBirthday.isAfter(sinceDate)) &&
+        (relevantBirthday.isSameDate(today) ||
+            relevantBirthday.isBefore(now))) {
+      return relevantBirthday;
+    }
+
+    return getNextBirthdayDate(pupil);
+  }
+
+  /// Returns pupils whose birthday falls in the range [sinceDate, today].
+  /// When [untilDate] is provided, also includes pupils whose next birthday
+  /// falls in [today, untilDate].
+  List<PupilProxy> getPupilsWithBirthdaySinceDate(
+    DateTime sinceDate, {
+    DateTime? untilDate,
+  }) {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final Map<int, PupilProxy> matchingPupils = {};
+
+    // Past birthdays: [sinceDate, today]
+    for (final entry in _pupilIdPupilsMap.entries) {
+      final relevantBirthday = getRelevantBirthdayDate(entry.value);
+      if (relevantBirthday.isSameDate(sinceDate) ||
+          relevantBirthday.isSameDate(today) ||
+          (relevantBirthday.isAfter(sinceDate) &&
+              relevantBirthday.isBefore(now))) {
+        matchingPupils[entry.key] = entry.value;
+      }
+    }
+
+    // Future birthdays: [today, untilDate] if provided
+    if (untilDate != null) {
+      final untilDateOnly = DateTime(
+        untilDate.year,
+        untilDate.month,
+        untilDate.day,
+      );
+      for (final entry in _pupilIdPupilsMap.entries) {
+        if (matchingPupils.containsKey(entry.key)) continue;
+        final nextBirthday = getNextBirthdayDate(entry.value);
+        if (!nextBirthday.isBeforeDate(today) &&
+            !nextBirthday.isAfterDate(untilDateOnly)) {
+          matchingPupils[entry.key] = entry.value;
+        }
+      }
+    }
+
+    final result = matchingPupils.values.toList();
+
+    // Sort chronologically by display birthday date
+    result.sort((a, b) {
+      final dateA = getBirthdayDisplayDate(a, sinceDate, untilDate: untilDate);
+      final dateB = getBirthdayDisplayDate(b, sinceDate, untilDate: untilDate);
+      return dateA.compareTo(dateB);
+    });
+
+    return result;
+  }
+
+  /// Returns pupils whose next birthday falls in the range [today, date] (future birthdays from now until [date]).
+  List<PupilProxy> getPupilsWithBirthdayUntilDate(DateTime date) {
+    Map<int, PupilProxy> allPupils = Map<int, PupilProxy>.of(_pupilIdPupilsMap);
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final dateOnly = DateTime(date.year, date.month, date.day);
+
+    allPupils.removeWhere((key, pupil) {
+      final DateTime nextBirthday = getNextBirthdayDate(pupil);
+      // Keep only pupils whose next birthday is in [today, date]
+      return nextBirthday.isBeforeDate(today) ||
+          nextBirthday.isAfterDate(dateOnly);
+    });
+
+    final pupilsWithBirthdayUntilDate = allPupils.values.toList();
+
+    // Sort by next birthday ascending (soonest first)
+    pupilsWithBirthdayUntilDate.sort((a, b) {
+      final nextA = getNextBirthdayDate(a);
+      final nextB = getNextBirthdayDate(b);
+      return nextA.compareTo(nextB);
+    });
+
+    return pupilsWithBirthdayUntilDate;
+  }
+
+  /// **TODO:** Do we need this?
+  PupilsFilter getPupilFilter() {
+    //return PupilsFilterImplementation(this, sortMode: sortMode);
+    return PupilsFilterImplementation(this);
+  }
+
+  //- API CALLS
+
+  //- Fetch all available pupils from the backend
+
+  Future<void> fetchAllPupils() async {
+    _log.info('Fetching all pupils');
+    final pupilsToFetch = di<PupilIdentityManager>().availablePupilIds;
+
+    if (pupilsToFetch.isEmpty) {
+      _log.info(
+        'No pupil identities available, canot fetch pupils without ids',
+      );
+      return;
+    }
+    await fetchPupilsByInternalId(pupilsToFetch);
+  }
+
+  Future<void> updatePupilList(List<PupilProxy> pupils) async {
+    await fetchPupilsByInternalId(pupils.map((e) => e.internalId).toList());
+  }
+
+  Future<void> updatePupilData(int pupilId) async {
+    final proxy = _pupilIdPupilsMap[pupilId];
+    if (proxy == null) {
+      _log.warning('Cannot update pupil data: pupil $pupilId not found');
+      return;
+    }
+    final fetchedPupil = await _pupilDataApiService.fetchListOfPupils(
+      pupilInternalIds: [proxy.internalId],
+    );
+    if (fetchedPupil == null) {
+      return;
+    }
+    if (fetchedPupil.isNotEmpty) {
+      updatePupilProxyWithPupilData(fetchedPupil.first);
+    }
+  }
+  //- Fetch pupils with the given internal ids
+
+  Future<void> fetchPupilsByInternalId(List<int> pupilInternalIds) async {
+    _notificationService.showSnackBar(
+      NotificationType.info,
+      'Lade Schülerdaten vom Server. Bitte warten...',
+    );
+
+    // fetch the pupils from the backend
+    final fetchedPupils = await _pupilDataApiService.fetchListOfPupils(
+      pupilInternalIds: pupilInternalIds,
+    );
+    if (fetchedPupils == null) {
+      return;
+    }
+    // check if we did not get a pupil response for some ids
+    // if so, we will delete the personal data for those ids later
+    final List<int> outdatedPupilIdentitiesIds = pupilInternalIds
+        .where(
+          (element) =>
+              !fetchedPupils.any((pupil) => pupil.internalId == element),
+        )
+        .toList();
+
+    // now we match the pupils from the response with their personal data
+
+    updatePupilProxiesWithPupilData(fetchedPupils);
+
+    // remove the outdated pupil identities that
+    // did not get a response from the backend
+    // because this means the pupil is not in the database anymore
+    // and we need to delete the personal data from the device
+
+    if (outdatedPupilIdentitiesIds.isNotEmpty) {
+      final deletedPupilIdentities = await di<PupilIdentityManager>()
+          .deleteOrphanPupilIdentities(outdatedPupilIdentitiesIds);
+      _notificationService.showInformationDialog(
+        'Diese Schüler_innen existieren nicht mehr in der Datenbank, Ihre Ids wurden aus dem Gerät gelöscht:\n\n$deletedPupilIdentities',
+      );
+    }
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Schülerdaten geladen!',
+    );
+
+    notifyListeners();
+  }
+
+  void updatePupilProxyWithPupilData(PupilData pupilData) {
+    final proxy = _pupilIdPupilsMap[pupilData.id!];
+    if (proxy != null) {
+      proxy.updatePupil(pupilData);
+    } else {
+      final pupilIdentity = di<PupilIdentityManager>()
+          .getPupilIdentityByInternalId(pupilData.internalId);
+      if (pupilIdentity != null) {
+        final newProxy = PupilProxy(
+          pupilData: pupilData,
+          pupilIdentity: pupilIdentity,
+          siblingsResolver: getSiblings,
+        );
+        _pupilIdPupilsMap[pupilData.id!] = newProxy;
+        _allPupils.add(newProxy);
+        notifyListeners();
+      }
+    }
+  }
+
+  void updatePupilProxiesWithPupilData(List<PupilData> pupils) {
+    _allPupils.startTransAction();
+    for (PupilData pupil in pupils) {
+      updatePupilProxyWithPupilData(pupil);
+    }
+    _allPupils.endTransAction();
+  }
+
+  /// Called by [HubStreamService] when a PupilData update arrives on the hub stream.
+  void upsertFromStream(PupilData pupilData) {
+    _log.fine('[STREAM] upsert pupil ${pupilData.id}');
+    updatePupilProxyWithPupilData(pupilData);
+  }
+
+  Future<void> updateSchoolyearHeldBackDate({
+    required int pupilId,
+    required ({DateTime? value}) date,
+  }) async {
+    final PupilData? updatedPupil = await _pupilDataApiService
+        .updateSchoolyearHeldBackDate(pupilId: pupilId, date: date);
+    if (updatedPupil == null) {
+      return;
+    }
+    updatePupilProxyWithPupilData(updatedPupil);
+  }
+}

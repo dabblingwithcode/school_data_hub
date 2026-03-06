@@ -9,9 +9,9 @@ import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 
 class SelectMatrixUserCard extends WatchingWidget {
   final SelectMatrixUsersListController controller;

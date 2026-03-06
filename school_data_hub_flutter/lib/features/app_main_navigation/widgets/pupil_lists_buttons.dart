@@ -11,12 +11,12 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/mai
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/after_school_care/after_school_care_list_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/birthdays_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/family_language_lessons_page/family_language_lessons_list_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/religion_page/religion_list_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/special_info_page/special_info_list_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/after_school_care_list_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/birthdays_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/family_language_lessons_page/family_language_lessons_list_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/religion_page/religion_list_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/special_info_page/special_info_list_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class PupilListButtons extends WatchingWidget {

@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/domain/models/nullable_records.da
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -49,7 +49,7 @@ class SchooldayEventApiService {
         schooldayEvent: event,
         eventTime: eventTime,
       );
-    
+
       _notificationService.apiRunning(false);
 
       return event;

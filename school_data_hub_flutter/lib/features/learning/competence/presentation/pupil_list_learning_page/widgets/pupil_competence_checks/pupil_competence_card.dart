@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/features/learning/competence/domain/comp
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/widgets/competence_check_symbols.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/widgets/dialogues/new_competence_check_dialog.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 class PupilCompetenceCard extends WatchingWidget {
   final Color backgroundColor;

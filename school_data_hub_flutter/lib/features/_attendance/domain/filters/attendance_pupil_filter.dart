@@ -5,8 +5,8 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters_state_mana
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -30,7 +30,8 @@ class AttendancePupilFilterManager {
   }
 
   void refreshPupilsFilter() {
-    if (_filterStateManager.filterStates.value[FilterState.attendance] == false) {
+    if (_filterStateManager.filterStates.value[FilterState.attendance] ==
+        false) {
       return;
     }
     _pupilsFilter.refreshs();

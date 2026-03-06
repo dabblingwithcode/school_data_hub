@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists
 import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/tools_page.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/settings_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:flutter_it/flutter_it.dart';
 

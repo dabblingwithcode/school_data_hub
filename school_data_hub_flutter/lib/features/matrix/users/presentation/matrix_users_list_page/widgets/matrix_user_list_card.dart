@@ -22,9 +22,9 @@ import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/pupil_rooms_list.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 
 class MatrixUsersListCard extends WatchingStatefulWidget {
   final MatrixUser matrixUser;

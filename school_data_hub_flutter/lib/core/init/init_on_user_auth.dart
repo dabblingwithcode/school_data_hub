@@ -1,14 +1,21 @@
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
-import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter_impl.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
@@ -24,15 +31,8 @@ import 'package:school_data_hub_flutter/features/learning/competence_report/doma
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter_impl.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/server_logs/data/server_logs_api_service.dart';
 import 'package:school_data_hub_flutter/features/server_logs/domain/server_logs_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
@@ -77,13 +77,19 @@ class InitOnUserAuth {
       dispose: (m) => m.dispose(),
     );
 
+    di.registerSingletonAsync<HubStreamService>(
+      () => HubStreamService().init(),
+      dependsOn: [Client, HubSessionManager],
+      dispose: (s) => s.dispose(),
+    );
+
     di.registerSingletonAsync<PupilProxyManager>(
       () async {
         final manager = PupilProxyManager();
         await manager.init();
         return manager;
       },
-      dependsOn: [PupilIdentityManager, HubSessionManager],
+      dependsOn: [PupilIdentityManager, HubSessionManager, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
@@ -189,7 +195,7 @@ class InitOnUserAuth {
 
     di.registerSingletonWithDependencies<SchooldayEventManager>(
       () => SchooldayEventManager(),
-      dependsOn: [SchoolCalendarManager, PupilProxyManager],
+      dependsOn: [SchoolCalendarManager, PupilProxyManager, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
@@ -201,7 +207,7 @@ class InitOnUserAuth {
 
     di.registerSingletonWithDependencies<AttendanceManager>(
       () => AttendanceManager(),
-      dependsOn: [PupilProxyManager, SchoolCalendarManager],
+      dependsOn: [PupilProxyManager, SchoolCalendarManager, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
@@ -225,7 +231,7 @@ class InitOnUserAuth {
 
     di.registerSingletonAsync<SchoolListManager>(
       () => SchoolListManager().init(),
-      dependsOn: [HubSessionManager, PupilProxyManager],
+      dependsOn: [HubSessionManager, PupilProxyManager, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
@@ -258,18 +264,6 @@ class InitOnUserAuth {
     di.registerLazySingleton<ServerLogsManager>(
       () => ServerLogsManager(),
       dispose: (m) => m.dispose(),
-    );
-
-    di.registerSingletonAsync<HubStreamService>(
-      () => HubStreamService().init(),
-      dependsOn: [
-        Client,
-        PupilProxyManager,
-        AttendanceManager,
-        SchooldayEventManager,
-        SchoolListManager,
-      ],
-      dispose: (s) => s.dispose(),
     );
 
     _log.info('Managers depending on authentication are being initialized...');

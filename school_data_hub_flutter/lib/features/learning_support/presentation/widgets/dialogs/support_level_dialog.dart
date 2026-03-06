@@ -6,8 +6,8 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
@@ -22,19 +22,18 @@ Future<void> supportLevelDialog(
     context: context,
     builder: (context) {
       final bool isEditing = existingSupportLevel != null;
-      int dialogDropdownValue =
-          isEditing ? existingSupportLevel.level : (value ?? 0);
+      int dialogDropdownValue = isEditing
+          ? existingSupportLevel.level
+          : (value ?? 0);
 
-      DateTime selectedDate =
-          isEditing ? existingSupportLevel.createdAt : DateTime.now().toUtc();
-      String textValue =
-          isEditing
-              ? (existingSupportLevel.comment.isNotEmpty
-                  ? customEncrypter.decryptString(
-                    existingSupportLevel.comment,
-                  )
-                  : '')
-              : '';
+      DateTime selectedDate = isEditing
+          ? existingSupportLevel.createdAt
+          : DateTime.now().toUtc();
+      String textValue = isEditing
+          ? (existingSupportLevel.comment.isNotEmpty
+                ? customEncrypter.decryptString(existingSupportLevel.comment)
+                : '')
+          : '';
       return StatefulBuilder(
         builder: (context, setState) {
           final hubSessionManager = di<HubSessionManager>();
@@ -180,9 +179,7 @@ Future<void> supportLevelDialog(
               ),
             ),
             title: Text(
-              isEditing
-                  ? 'Förderebene bearbeiten'
-                  : 'Förderebene ändern',
+              isEditing ? 'Förderebene bearbeiten' : 'Förderebene ändern',
             ),
             actions: <Widget>[
               Padding(

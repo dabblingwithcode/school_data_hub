@@ -14,7 +14,7 @@ import 'package:school_data_hub_flutter/features/learning/competence/data/compet
 import 'package:school_data_hub_flutter/features/learning/competence/data/competence_goal_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/filters/competence_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 
 enum SelectedContent {
   competenceStatuses,
@@ -194,9 +194,7 @@ class CompetenceManager {
     required int publicId,
     required int order,
   }) async {
-    final index = _competences.value.indexWhere(
-      (c) => c.publicId == publicId,
-    );
+    final index = _competences.value.indexWhere((c) => c.publicId == publicId);
     if (index == -1) return;
 
     final competence = _competences.value[index];

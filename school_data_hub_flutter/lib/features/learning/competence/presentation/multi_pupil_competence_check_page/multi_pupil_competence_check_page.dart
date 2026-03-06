@@ -10,10 +10,10 @@ import 'package:school_data_hub_flutter/features/learning/competence/domain/comp
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/multi_pupil_competence_check_page/widgets/competence_parents_names_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/multi_pupil_competence_check_page/widgets/multi_pupil_competence_check_card.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/multi_pupil_competence_check_page/widgets/multi_pupil_competence_check_page_bottom_navbar.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
 
 class MultiPupilCompetenceCheckPage extends WatchingWidget {
   final Competence competence;

@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/new_competence_report_page/new_competence_report_page.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/pupil_competence_report_page/widgets/competence_report_card.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 class PupilCompetenceReportPage extends WatchingWidget {
   final PupilProxy pupil;

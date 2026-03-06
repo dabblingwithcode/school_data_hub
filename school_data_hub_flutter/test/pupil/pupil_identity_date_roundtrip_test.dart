@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_identity_extensions.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_identity_extensions.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 
 void main() {
   group('PupilIdentity date handling', () {

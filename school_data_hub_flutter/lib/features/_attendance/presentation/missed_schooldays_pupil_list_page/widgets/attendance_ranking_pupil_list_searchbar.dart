@@ -9,10 +9,10 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_page/widgets/missed_schooldays_filters.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_badges.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_search_text_field.dart';
 
 class AttendanceRankingListSearchbar extends WatchingWidget {
   final List<PupilProxy> pupils;

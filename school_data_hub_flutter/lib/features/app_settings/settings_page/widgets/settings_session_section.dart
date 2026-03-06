@@ -13,8 +13,8 @@ import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/dialogs/change_env_dialog.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:flutter_it/flutter_it.dart';
 

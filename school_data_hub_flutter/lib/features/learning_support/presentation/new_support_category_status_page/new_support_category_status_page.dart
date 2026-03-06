@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/n
 import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/select_support_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/goal_examples_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 
 class NewSupportCategoryStatusPage extends StatelessWidget {
   final NewSupportCategoryStatusController controller;

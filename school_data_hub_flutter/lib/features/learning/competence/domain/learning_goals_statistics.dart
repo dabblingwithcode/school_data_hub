@@ -1,4 +1,4 @@
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 /// Statistics about learning goals across pupils
 typedef LearningGoalsStats = ({

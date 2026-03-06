@@ -18,7 +18,7 @@ import 'package:school_data_hub_flutter/features/learning_support/services/pdf/p
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pages/pdf_page2.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pages/pdf_page3.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pages/pdf_page4.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 
 final _log = Logger('LearningSupportPlanPdfGenerator');

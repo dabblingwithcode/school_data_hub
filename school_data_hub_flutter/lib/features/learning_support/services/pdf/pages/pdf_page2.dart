@@ -4,7 +4,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pdf_helpers.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 /// Page 2: Support Category Status Grid.
 class PdfPage2 {

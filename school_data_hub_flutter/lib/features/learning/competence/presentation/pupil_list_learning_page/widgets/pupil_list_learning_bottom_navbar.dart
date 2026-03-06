@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/learning_list_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/select_competence_page/select_competence_view_model.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 
 class PupilListLearningBottomNavBar extends WatchingWidget {
   final bool filtersOn;

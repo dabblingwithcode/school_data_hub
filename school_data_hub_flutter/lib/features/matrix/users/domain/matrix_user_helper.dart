@@ -1,12 +1,11 @@
 // import 'package:collection/collection.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 
 class MatrixUserHelper {
   static MatrixPolicyManager get _matrixPolicyManager =>

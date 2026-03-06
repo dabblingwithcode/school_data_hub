@@ -3,9 +3,10 @@ import 'package:logging/logging.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/pdf_helpers.dart' as common;
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_helper.dart';
+import 'package:school_data_hub_flutter/common/services/pdf_helpers.dart'
+    as common;
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_helper.dart';
 
@@ -17,22 +18,23 @@ class PdfHelpers {
   PdfHelpers._();
 
   // --- Delegations to common (so existing callers keep using PdfHelpers.*) ---
-  static String formatDate(DateTime dt) => common.CommonPdfHelpers.formatDate(dt);
-  static String checkbox(bool checked) => common.CommonPdfHelpers.checkbox(checked);
+  static String formatDate(DateTime dt) =>
+      common.CommonPdfHelpers.formatDate(dt);
+  static String checkbox(bool checked) =>
+      common.CommonPdfHelpers.checkbox(checked);
   static pw.Widget fillField({
     String text = '',
     pw.Font? font,
     double? width,
     double height = 16,
     double fontSize = 12,
-  }) =>
-      common.CommonPdfHelpers.fillField(
-        text: text,
-        font: font,
-        width: width,
-        height: height,
-        fontSize: fontSize,
-      );
+  }) => common.CommonPdfHelpers.fillField(
+    text: text,
+    font: font,
+    width: width,
+    height: height,
+    fontSize: fontSize,
+  );
   static pw.Widget tableHeaderCell(String text, pw.Font fontBold) =>
       common.CommonPdfHelpers.tableHeaderCell(text, fontBold);
   static pw.Widget tableHeaderCell2TextStyles({
@@ -40,19 +42,21 @@ class PdfHelpers {
     required pw.Font font1,
     required String text2,
     required pw.Font font2,
-  }) =>
-      common.CommonPdfHelpers.tableHeaderCell2TextStyles(
-        text1: text1,
-        font1: font1,
-        text2: text2,
-        font2: font2,
-      );
+  }) => common.CommonPdfHelpers.tableHeaderCell2TextStyles(
+    text1: text1,
+    font1: font1,
+    text2: text2,
+    font2: font2,
+  );
   static pw.Widget tableDataCell(
     String text,
     pw.Font fontRegular, {
     double minHeight = 0,
-  }) =>
-      common.CommonPdfHelpers.tableDataCell(text, fontRegular, minHeight: minHeight);
+  }) => common.CommonPdfHelpers.tableDataCell(
+    text,
+    fontRegular,
+    minHeight: minHeight,
+  );
   static pw.Widget checkboxWidget({
     required bool checked,
     required String label,
@@ -60,15 +64,14 @@ class PdfHelpers {
     required pw.MemoryImage checkboxCheckImage,
     required pw.Font font,
     double fontSize = 8,
-  }) =>
-      common.CommonPdfHelpers.checkboxWidget(
-        checked: checked,
-        label: label,
-        checkboxImage: checkboxImage,
-        checkboxCheckImage: checkboxCheckImage,
-        font: font,
-        fontSize: fontSize,
-      );
+  }) => common.CommonPdfHelpers.checkboxWidget(
+    checked: checked,
+    label: label,
+    checkboxImage: checkboxImage,
+    checkboxCheckImage: checkboxCheckImage,
+    font: font,
+    fontSize: fontSize,
+  );
 
   // --- Förderplan-specific helpers ---
 

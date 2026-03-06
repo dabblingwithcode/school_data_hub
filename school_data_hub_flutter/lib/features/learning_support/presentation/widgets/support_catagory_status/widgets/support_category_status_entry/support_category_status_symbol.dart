@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 /// Displays a growth icon based on a score (1-4).
 /// Shows a question mark icon when score is null or invalid.

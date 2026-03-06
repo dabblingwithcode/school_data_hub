@@ -21,7 +21,7 @@ import 'package:school_data_hub_flutter/features/learning/competence_report/doma
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_helpers.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pages/competence_report_pdf_page1.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pages/competence_report_pdf_page5.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 

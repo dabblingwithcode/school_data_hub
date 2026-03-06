@@ -5,6 +5,10 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/data/matrix_api_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
@@ -13,10 +17,6 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matr
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/pdf_service/matrix_bulk_new_credentials_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/pdf_service/matrix_credentials_pdf_generator.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_identity_helper.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_mutator.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/pupil_proxy_manager.dart';
 
 class MatrixUserManager {
   final _log = Logger('MatrixUserManager');

@@ -4,8 +4,8 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 class AttendanceFilters extends WatchingWidget {

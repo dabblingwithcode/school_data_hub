@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/searchbar/schoolday_event_stats_row.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/pupil_search_text_field.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SchooldayEventListSearchBar extends WatchingWidget {
   const SchooldayEventListSearchBar({super.key});
@@ -22,7 +22,7 @@ class SchooldayEventListSearchBar extends WatchingWidget {
     final pupils = watchValue((PupilsFilter x) => x.filteredPupils);
 
     // we need to watch the schoolday events to refresh the counts for the stats
-    watchPropertyValue((SchooldayEventManager m) => m.schooldayEvents);
+    watchValue((SchooldayEventManager m) => m.schooldayEvents);
 
     final filtersActive = watchValue(
       (FiltersStateManager x) => x.filtersActive,

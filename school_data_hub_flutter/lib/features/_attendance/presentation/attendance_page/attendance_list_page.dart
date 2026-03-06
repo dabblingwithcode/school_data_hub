@@ -12,9 +12,9 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_m
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/atendance_list_card.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_list_search_bar.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_view_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class AttendanceListPage extends WatchingWidget {
@@ -36,7 +36,7 @@ class AttendanceListPage extends WatchingWidget {
       Future.microtask(() {
         if (!context.mounted) return;
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const Login()),
+          MaterialPageRoute<void>(builder: (context) => const Login()),
         );
       });
       // Return an empty container or loading indicator while navigating

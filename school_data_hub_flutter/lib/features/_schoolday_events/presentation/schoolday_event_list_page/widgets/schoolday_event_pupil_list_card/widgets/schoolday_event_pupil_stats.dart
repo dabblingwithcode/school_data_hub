@@ -4,7 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 class SchooldayEventPupilStats extends WatchingWidget {
@@ -20,8 +20,9 @@ class SchooldayEventPupilStats extends WatchingWidget {
     final unfilteredEvents = watch(
       schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
     ).schooldayEvents;
-    final schooldavEvents = schooldayEventFilterManager
-        .filteredSchooldayEvents(unfilteredEvents.values.toList());
+    final schooldavEvents = schooldayEventFilterManager.filteredSchooldayEvents(
+      unfilteredEvents.values.toList(),
+    );
     final admonitions = schooldavEvents
         .where(
           (element) =>

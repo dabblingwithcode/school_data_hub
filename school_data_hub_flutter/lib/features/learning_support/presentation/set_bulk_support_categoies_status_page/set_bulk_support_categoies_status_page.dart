@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/manager/set_bulk_support_categories_status_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/widgets/scorable_support_category_tree.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 /// A page that allows scoring support categories for a pupil.
 ///

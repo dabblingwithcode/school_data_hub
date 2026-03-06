@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/common_pupil_filters.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
 
 class LearningFilterBottomSheet extends WatchingWidget {
   const LearningFilterBottomSheet({super.key});

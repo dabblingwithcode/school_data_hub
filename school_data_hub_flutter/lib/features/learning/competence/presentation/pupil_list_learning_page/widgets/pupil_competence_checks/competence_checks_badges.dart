@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/enums.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 String getRootCompetenceShortName(int competenceId) {
   final competence = di<CompetenceManager>().findCompetenceById(competenceId);

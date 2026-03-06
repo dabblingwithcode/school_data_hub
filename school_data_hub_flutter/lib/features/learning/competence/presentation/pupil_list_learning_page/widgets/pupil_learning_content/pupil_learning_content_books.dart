@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/widgets/pupil_book_card.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 class PupilLearningContentBooks extends WatchingWidget {
   final PupilProxy pupil;

@@ -3,7 +3,7 @@ import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_competence_goals/new_competence_goal_page.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_goals_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/select_competence_page/select_competence_view_model.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 class PupilLearningContentCompetenceGoals extends StatelessWidget {
   final PupilProxy pupil;

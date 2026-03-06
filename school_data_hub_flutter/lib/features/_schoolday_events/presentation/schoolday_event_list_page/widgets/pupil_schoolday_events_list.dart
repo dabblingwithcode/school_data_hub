@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/new_schoolday_event_page/new_schoolday_event_page.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_event_card.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
 
 class PupilSchooldayEventsList extends WatchingWidget {
   final PupilProxy pupil;
@@ -20,12 +19,11 @@ class PupilSchooldayEventsList extends WatchingWidget {
     final schooldayEventManager = di<SchooldayEventManager>();
     final notificationService = di<NotificationService>();
     final pupil = this.pupil;
-    final unfilteredEvents = watch(
-      schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
-    ).schooldayEvents;
-    final List<SchooldayEvent> filteredSchooldayEvents =
-        schooldayEventFilterManager.filteredSchooldayEvents(
-          unfilteredEvents.values.toList(),
+    final filteredSchooldayEvents = schooldayEventFilterManager
+        .filteredSchooldayEvents(
+          watch(
+            schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
+          ).schooldayEvents.values.toList(),
         );
     return Column(
       children: [
@@ -42,7 +40,7 @@ class PupilSchooldayEventsList extends WatchingWidget {
         GenericAsyncActionButton(
           onPressed: () async {
             Navigator.of(context).push(
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (ctx) => NewSchooldayEventPage(pupilId: pupil.pupilId),
               ),
             );

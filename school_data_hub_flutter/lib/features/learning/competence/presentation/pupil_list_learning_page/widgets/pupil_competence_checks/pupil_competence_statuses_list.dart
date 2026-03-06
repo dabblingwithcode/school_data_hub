@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/learning/competence/domain/comp
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_competence_checks/competence_check_card.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_competence_checks/pupil_competence_card.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 class PupilCompetenceStatusesList extends WatchingWidget {
   final PupilProxy pupil;

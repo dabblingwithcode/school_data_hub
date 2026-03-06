@@ -17,10 +17,10 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/attend
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/dialogues/multiple_entries_dialog.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/dialogues/returned_time_picker.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
-import 'package:school_data_hub_flutter/features/pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 
 class AttendanceCard extends WatchingWidget {
   final PupilProxy pupil;
@@ -83,7 +83,9 @@ class AttendanceCard extends WatchingWidget {
           child: GestureDetector(
             onLongPress: () => createMissedSchooldayList(context, pupil),
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => PupilProfilePage(pupil: pupil)),
+              MaterialPageRoute<void>(
+                builder: (_) => PupilProfilePage(pupil: pupil),
+              ),
             ),
             child: Column(
               children: [
