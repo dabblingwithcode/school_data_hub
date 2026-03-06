@@ -77,7 +77,9 @@ class AuthorizationEndpoint extends Endpoint {
             authorizedPupils: PupilAuthorization.includeList()),
         transaction: transaction,
       );
-      return authorizationWithPupils!;
+      final result = authorizationWithPupils!;
+      session.messages.postMessage('hub_events_stream', result);
+      return result;
     });
   }
 
@@ -151,7 +153,9 @@ class AuthorizationEndpoint extends Endpoint {
         include: authInclude,
         transaction: transaction,
       );
-      return updatedAuthorization!;
+      final result = updatedAuthorization!;
+      session.messages.postMessage('hub_events_stream', result);
+      return result;
     });
   }
 
@@ -175,7 +179,10 @@ class AuthorizationEndpoint extends Endpoint {
       await Authorization.db
           .deleteRow(session, authorization, transaction: transaction);
     });
-
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.authorization, id: authId),
+    );
     return true;
   }
 }

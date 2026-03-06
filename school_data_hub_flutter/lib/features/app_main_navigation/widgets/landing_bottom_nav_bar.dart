@@ -1,19 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/learn_resources_menu_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists_menu_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/tools_page.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/settings_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class MainMenuBottomNavigation extends WatchingStatefulWidget {
   const MainMenuBottomNavigation({super.key});

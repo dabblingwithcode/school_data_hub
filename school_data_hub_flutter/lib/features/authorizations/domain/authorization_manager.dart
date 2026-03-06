@@ -1,15 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
+import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/data/authorization_api_service.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class AuthorizationManager with ChangeNotifier {
   final _notificationService = di<NotificationService>();
@@ -25,6 +27,8 @@ class AuthorizationManager with ChangeNotifier {
   final _authorizations = ValueNotifier<List<Authorization>>([]);
 
   Map<int, Authorization> _authorizationsMap = {};
+
+  StreamSubscription<dynamic>? _hubSubscription; // ignore: unused_field
 
   AuthorizationManager();
 
@@ -42,7 +46,31 @@ class AuthorizationManager with ChangeNotifier {
       'Einwilligungen werden geladen',
     );
     await fetchAuthorizations();
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     return this;
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is Authorization) {
+      upsertFromStream(event);
+    } else if (event is HubDeleteEvent &&
+        event.objectType == HubObjectType.authorization) {
+      deleteFromStream(event.id);
+    } else if (event is HubReconnected) {
+      fetchAuthorizations();
+    }
+  }
+
+  void upsertFromStream(Authorization authorization) {
+    _updateAuthsInCollections([authorization]);
+  }
+
+  void deleteFromStream(int id) {
+    if (_authorizationsMap.containsKey(id)) {
+      _authorizationsMap.remove(id);
+      _authorizations.value = _authorizationsMap.values.toList();
+      notifyListeners();
+    }
   }
 
   void clearData() {

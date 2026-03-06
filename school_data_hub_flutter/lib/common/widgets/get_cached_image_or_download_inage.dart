@@ -1,10 +1,11 @@
-import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 Future<Image> getCachedImageOrDownloadImage({
   required String documentId,
@@ -45,11 +46,9 @@ Future<Image> getCachedImageOrDownloadImage({
     return Image.memory(imageBytes);
   }
   // The image is encrypted - decrypt the bytes before returning
-  //- TODO: Check this isolate use
-  //- This is because isolate performance is horrible in debug mode
-  final decryptedBytes = (kReleaseMode || kProfileMode)
-      ? await compute(customEncrypter.decryptTheseBytes, imageBytes)
-      : customEncrypter.decryptTheseBytes(imageBytes);
+  final decryptedBytes = await customEncrypter.decryptTheseBytesAsync(
+    imageBytes,
+  );
   return Image.memory(decryptedBytes);
 }
 

@@ -4,3 +4,4 @@ values:
   - missedSchoolday
   - schooldayEvent
   - schoolList
+  - authorization

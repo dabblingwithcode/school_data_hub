@@ -2,6 +2,8 @@ import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:serverpod/serverpod.dart';
 
+import 'authorization_endpoint.dart' show authInclude;
+
 class PupilAuthorizationEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
@@ -19,6 +21,14 @@ class PupilAuthorizationEndpoint extends Endpoint {
         file: HubDocument.include(),
       ),
     );
+    final fullAuth = await Authorization.db.findById(
+      session,
+      updatedPupilAuth.authorizationId,
+      include: authInclude,
+    );
+    if (fullAuth != null) {
+      session.messages.postMessage('hub_events_stream', fullAuth);
+    }
     return authWithInclude!;
   }
 
@@ -62,7 +72,16 @@ class PupilAuthorizationEndpoint extends Endpoint {
         ),
         transaction: transaction,
       );
-      return authWithInclude!;
+      final result = authWithInclude!;
+      final fullAuth = await Authorization.db.findById(
+        session,
+        updatedPupilAuth.authorizationId,
+        include: authInclude,
+      );
+      if (fullAuth != null) {
+        session.messages.postMessage('hub_events_stream', fullAuth);
+      }
+      return result;
     });
   }
 
@@ -101,6 +120,14 @@ class PupilAuthorizationEndpoint extends Endpoint {
         file: HubDocument.include(),
       ),
     );
+    final fullAuth = await Authorization.db.findById(
+      session,
+      pupilAuth.authorizationId,
+      include: authInclude,
+    );
+    if (fullAuth != null) {
+      session.messages.postMessage('hub_events_stream', fullAuth);
+    }
     return authWithInclude!;
   }
 }

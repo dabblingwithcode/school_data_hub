@@ -155,7 +155,7 @@ class InitOnUserAuth {
 
     di.registerSingletonAsync<AuthorizationManager>(
       () => AuthorizationManager().init(),
-      dependsOn: [HubSessionManager],
+      dependsOn: [HubSessionManager, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 

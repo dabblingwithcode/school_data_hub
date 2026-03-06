@@ -1,12 +1,12 @@
 import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 Future<File?> downloadAndDecryptFile({
   required String documentId,
@@ -24,9 +24,9 @@ Future<File?> downloadAndDecryptFile({
     }
 
     final fileBytes = await fileInfo.file.readAsBytes();
-    final decryptedBytes = (kReleaseMode || kProfileMode)
-        ? await compute(customEncrypter.decryptTheseBytes, fileBytes)
-        : customEncrypter.decryptTheseBytes(fileBytes);
+    final decryptedBytes = await customEncrypter.decryptTheseBytesAsync(
+      fileBytes,
+    );
 
     final tempDir = await Directory.systemTemp.createTemp();
     final extension = p.extension(documentId);
@@ -62,9 +62,9 @@ Future<File?> downloadAndDecryptFile({
     return tempFile;
   }
 
-  final decryptedBytes = (kReleaseMode || kProfileMode)
-      ? await compute(customEncrypter.decryptTheseBytes, fileBytes)
-      : customEncrypter.decryptTheseBytes(fileBytes);
+  final decryptedBytes = await customEncrypter.decryptTheseBytesAsync(
+    fileBytes,
+  );
 
   final tempDir = await Directory.systemTemp.createTemp();
   final extension = p.extension(documentId);

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
@@ -8,12 +9,12 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_stream_crypto.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_stream_suscription.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_page/models/stream_state.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_page/utils/stream_utils.dart';
-import 'package:flutter_it/flutter_it.dart';
 
-final _log = Logger('StreamController');
+final _log = Logger('PupilIdentityStreamController');
 
 class PupilIdentityStreamController {
   final PupilIdentityStreamRole role;
@@ -30,12 +31,13 @@ class PupilIdentityStreamController {
 
   Timer? _rejectionTimer;
   bool _isDisposed = false;
+  PupilIdentitySession? _session;
 
   // Callbacks for UI interactions
-  final Function(String userName) onConfirmationRequired;
-  final Function(int totalCount, int newCount) onTransferCompleted;
-  final Function(bool wasAutoRejected) onRejectionReceived;
-  final Function()? onSenderShutdown;
+  final void Function(String userName) onConfirmationRequired;
+  final void Function(int totalCount, int newCount) onTransferCompleted;
+  final void Function(bool wasAutoRejected) onRejectionReceived;
+  final void Function()? onSenderShutdown;
 
   PupilIdentityStreamController({
     required this.role,
@@ -105,6 +107,11 @@ class PupilIdentityStreamController {
     }
   }
 
+  String get _sendChannel => _session?.privateStreamId ?? channelName;
+
+  Future<String> _encryptIfSession(String value) async =>
+      _session != null ? await _session!.encryptValueAsync(value) : value;
+
   /// Validate user session before sending a message to prevent null sender
   String? _validateUserSession() {
     final currentUser = di<HubSessionManager>().user?.userInfo?.userName;
@@ -168,22 +175,22 @@ class PupilIdentityStreamController {
 
     // Notify receiver of confirmation (backward compatibility)
     await di<Client>().pupilIdentity.sendPupilIdentityMessage(
-      channelName,
+      _sendChannel,
       PupilIdentityDto(
         sender: validatedSender,
         type: 'confirmed',
-        value: userName,
+        value: await _encryptIfSession(userName),
       ),
     );
 
     // Send the data targeted to this receiver
     await di<Client>().pupilIdentity.sendPupilIdentityMessage(
-      channelName,
+      _sendChannel,
       PupilIdentityDto(
         sender: validatedSender,
         type: 'data',
         dataTimeStamp: di<EnvManager>().activeEnv?.lastIdentitiesUpdate,
-        value: '$userName:${dataToSend ?? ''}',
+        value: await _encryptIfSession('$userName:${dataToSend ?? ''}'),
       ),
     );
 
@@ -244,11 +251,11 @@ class PupilIdentityStreamController {
           'Sending rejection message to $userName (attempt ${retryCount + 1})',
         );
         await di<Client>().pupilIdentity.sendPupilIdentityMessage(
-          channelName,
+          _sendChannel,
           PupilIdentityDto(
             sender: validatedSender,
             type: 'rejected',
-            value: rejectionValue,
+            value: await _encryptIfSession(rejectionValue),
           ),
         );
         _log.info('Rejection message sent successfully to $userName');
@@ -260,7 +267,7 @@ class PupilIdentityStreamController {
         );
 
         if (retryCount < maxRetries) {
-          await Future.delayed(retryDelay);
+          await Future<void>.delayed(retryDelay);
         } else {
           _log.severe(
             'Failed to send rejection message to $userName after $maxRetries attempts',
@@ -293,14 +300,24 @@ class PupilIdentityStreamController {
       }
 
       _log.info('Creating stream subscription...');
+      final crypto = PupilIdentityStreamCrypto();
       _subscription = PupilIdentityStream().encryptedPupilIdsStreamSubscription(
         channelName: channelName,
         role: role,
         encryptedPupilIds: dataToSend,
+        crypto: crypto,
+        onSessionReady: (PupilIdentitySession session) {
+          _session = session;
+          _log.info('Private stream session ready: ${session.privateStreamId}');
+          if (role == PupilIdentityStreamRole.receiver) {
+            _sendReceiverMessages();
+          }
+        },
         onConnected: () => _handleConnected(),
         onStatusUpdate: (message) => _handleStatusUpdate(message),
         onCompleted: () => _handleCompleted(),
         onReceiverJoined: (userName) => _handleReceiverJoined(userName),
+        onReceiverConnecting: (userName) => _handleReceiverConnecting(userName),
         onReceiverLeft: (userName) => _handleReceiverLeft(userName),
         onRequestReceived: (userName) => _handleRequestReceived(userName),
         onRequestConfirmed: () => _handleRequestConfirmed(),
@@ -326,17 +343,30 @@ class PupilIdentityStreamController {
           'Verbunden! Warte auf Empfänger...';
     } else {
       state.streamState.statusMessage.value =
-          'Verbunden! Sende Beitritts-Information und Datenanfrage...';
-      // Receiver automatically sends joined message AND request when connected
-      _sendReceiverMessages();
+          'Verbunden! Warte auf Handshake...';
+      // Receiver sends presence on public channel so sender sees "Empfänger verbindet..."
+      final validatedSender = _validateUserSession();
+      if (validatedSender != null) {
+        di<Client>().pupilIdentity
+            .sendPupilIdentityMessage(
+              _sendChannel,
+              PupilIdentityDto(
+                sender: validatedSender,
+                type: 'receiver_presence',
+                value: validatedSender,
+              ),
+            )
+            .ignore();
+      }
+      // Joined/request sent only after private session (in onSessionReady)
     }
     _log.info(
       'Connection established for channel: $channelName with role: $role',
     );
   }
 
-  /// Send receiver join and request messages
-  void _sendReceiverMessages() {
+  /// Send receiver join and request messages (on private channel; values are encrypted).
+  Future<void> _sendReceiverMessages() async {
     _log.info('Receiver sending joined message and data request...');
 
     // Validate user session before sending
@@ -346,61 +376,55 @@ class PupilIdentityStreamController {
       return;
     }
 
-    // First send joined message
-    di<Client>().pupilIdentity
-        .sendPupilIdentityMessage(
-          channelName,
-          PupilIdentityDto(
-            sender: validatedSender,
-            type: 'joined',
-            value: validatedSender,
-          ),
-        )
-        .then((_) {
-          _log.info(
-            'Joined message sent successfully, waiting before sending request...',
-          );
-          // Wait a bit longer to allow for auto-rejection to be processed
-          return Future.delayed(const Duration(milliseconds: 300));
-        })
-        .then((_) {
-          // Check if we're still connected (might have been auto-rejected)
-          if (!state.streamState.isConnected.value) {
-            _log.info(
-              'Connection lost (likely auto-rejected), not sending request',
-            );
-            return Future<void>.value();
-          }
+    // Encrypt payload when using private channel so sender can decrypt
+    final joinedValue = await _encryptIfSession(validatedSender);
+    final requestValue = await _encryptIfSession(validatedSender);
 
-          _log.info('Sending data request...');
-          // Send data request
-          return di<Client>().pupilIdentity.sendPupilIdentityMessage(
-            channelName,
-            PupilIdentityDto(
-              sender: validatedSender,
-              type: 'request',
-              value: validatedSender,
-            ),
-          );
-        })
-        .then((_) {
-          if (state.streamState.isConnected.value) {
-            _log.info('Data request sent successfully');
-            state.streamState.requestSent.value = true;
-            state.streamState.statusMessage.value =
-                'Datenanfrage gesendet. Warte auf Bestätigung...';
+    try {
+      await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+        _sendChannel,
+        PupilIdentityDto(
+          sender: validatedSender,
+          type: 'joined',
+          value: joinedValue,
+        ),
+      );
+      _log.info(
+        'Joined message sent successfully, waiting before sending request...',
+      );
 
-            // Start a timeout to detect if we're being ignored (possibly banned)
-            _startRejectionTimeout();
-          }
-        })
-        .catchError((error) {
-          _log.severe('Error in receiver flow: $error');
-          if (state.streamState.isConnected.value) {
-            state.streamState.statusMessage.value =
-                'Fehler beim Senden: $error';
-          }
-        });
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+
+      if (!state.streamState.isConnected.value) {
+        _log.info(
+          'Connection lost (likely auto-rejected), not sending request',
+        );
+        return;
+      }
+
+      _log.info('Sending data request...');
+      await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+        _sendChannel,
+        PupilIdentityDto(
+          sender: validatedSender,
+          type: 'request',
+          value: requestValue,
+        ),
+      );
+
+      if (state.streamState.isConnected.value) {
+        _log.info('Data request sent successfully');
+        state.streamState.requestSent.value = true;
+        state.streamState.statusMessage.value =
+            'Datenanfrage gesendet. Warte auf Bestätigung...';
+        _startRejectionTimeout();
+      }
+    } catch (error) {
+      _log.severe('Error in receiver flow: $error');
+      if (state.streamState.isConnected.value) {
+        state.streamState.statusMessage.value = 'Fehler beim Senden: $error';
+      }
+    }
   }
 
   /// Start a timeout to detect if receiver is being ignored (possibly banned)
@@ -444,6 +468,17 @@ class PupilIdentityStreamController {
     _log.info(
       '[${role.name.toUpperCase()}]: Data transfer completed for channel:[ $channelName]',
     );
+  }
+
+  /// Handle receiver connecting (receiver_presence on public channel before handshake).
+  /// Do not add to connectedReceivers here; the receiver card appears only after
+  /// we receive "joined" on the private stream in _handleReceiverJoined.
+  void _handleReceiverConnecting(String userName) {
+    _log.info('onReceiverConnecting: $userName');
+    state.streamState.receiverJoined.value = true;
+    state.streamState.receiverUserName.value = userName;
+    state.streamState.statusMessage.value =
+        'Empfänger $userName verbindet... Warte auf Handshake...';
   }
 
   /// Handle receiver joined
@@ -519,6 +554,18 @@ class PupilIdentityStreamController {
       return;
     }
 
+    // Ensure receiver appears in the list (e.g. if "joined" was missed or arrived after "request")
+    if (!state.receiverState.connectedReceivers.value.contains(userName)) {
+      state.receiverState.connectedReceivers.value = {
+        ...state.receiverState.connectedReceivers.value,
+        userName,
+      };
+      state.streamState.receiverJoined.value = true;
+      state.streamState.receiverUserName.value = userName;
+    }
+    state.streamState.statusMessage.value =
+        'Empfänger $userName hat Daten angefordert. Warten auf Bestätigung...';
+
     // Add to pending requests with timestamp
     final updatedPendingRequests = Map<String, DateTime>.from(
       state.receiverState.pendingRequests.value,
@@ -592,17 +639,18 @@ class PupilIdentityStreamController {
       // Validate user session before sending
       final validatedSender = _validateUserSession();
       if (validatedSender != null) {
-        // Send close message and ignore errors since we're disposing
-        di<Client>().pupilIdentity
-            .sendPupilIdentityMessage(
-              channelName,
-              PupilIdentityDto(
-                sender: validatedSender,
-                type: 'close',
-                value: validatedSender,
-              ),
-            )
-            .ignore();
+        // Send close message and ignore errors since we're disposing (async to allow encrypt)
+        Future(() async {
+          final value = await _encryptIfSession(validatedSender);
+          return di<Client>().pupilIdentity.sendPupilIdentityMessage(
+            _sendChannel,
+            PupilIdentityDto(
+              sender: validatedSender,
+              type: 'close',
+              value: value,
+            ),
+          );
+        }).ignore();
       }
     }
 
@@ -627,17 +675,17 @@ class PupilIdentityStreamController {
         try {
           // Send shutdown message to all connected receivers
           await di<Client>().pupilIdentity.sendPupilIdentityMessage(
-            channelName,
+            _sendChannel,
             PupilIdentityDto(
               sender: validatedSender,
               type: 'shutdown',
-              value: 'Sender hat den Stream beendet',
+              value: await _encryptIfSession('Sender hat den Stream beendet'),
             ),
           );
           _log.info('Sent shutdown message to all receivers');
 
           // Wait a brief moment to ensure message is sent
-          await Future.delayed(const Duration(milliseconds: 200));
+          await Future<void>.delayed(const Duration(milliseconds: 200));
         } catch (e) {
           _log.warning('Failed to send shutdown message: $e');
         }
@@ -650,11 +698,11 @@ class PupilIdentityStreamController {
       if (validatedSender != null) {
         try {
           await di<Client>().pupilIdentity.sendPupilIdentityMessage(
-            channelName,
+            _sendChannel,
             PupilIdentityDto(
               sender: validatedSender,
               type: 'close',
-              value: validatedSender,
+              value: await _encryptIfSession(validatedSender),
             ),
           );
           _log.info('Sent close message to sender before leaving');

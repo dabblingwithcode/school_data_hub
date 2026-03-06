@@ -15,7 +15,8 @@ enum HubObjectType implements _i1.SerializableModel {
   pupilData,
   missedSchoolday,
   schooldayEvent,
-  schoolList;
+  schoolList,
+  authorization;
 
   static HubObjectType fromJson(int index) {
     switch (index) {
@@ -27,6 +28,8 @@ enum HubObjectType implements _i1.SerializableModel {
         return HubObjectType.schooldayEvent;
       case 3:
         return HubObjectType.schoolList;
+      case 4:
+        return HubObjectType.authorization;
       default:
         throw ArgumentError(
             'Value "$index" cannot be converted to "HubObjectType"');
