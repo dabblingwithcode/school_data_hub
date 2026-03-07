@@ -12,14 +12,14 @@ class CompetenceEndpoint extends Endpoint {
     required List<String> level,
     required List<String> indicators,
   }) async {
-    // look for the highest competence id in the database
+    // Next publicId = max(publicId) + 1 so we never reuse an existing value
     final List<Competence> competences = await Competence.db.find(session);
-    int? maxId = competences.isNotEmpty
-        ? competences.map((c) => c.id).reduce((a, b) => a! > b! ? a : b)
+    final int maxPublicId = competences.isNotEmpty
+        ? competences.map((c) => c.publicId).reduce((a, b) => a > b ? a : b)
         : 0;
 
     final competence = Competence(
-      publicId: maxId! + 1,
+      publicId: maxPublicId + 1,
       parentCompetence: parentCompetence,
       name: name,
       level: level,

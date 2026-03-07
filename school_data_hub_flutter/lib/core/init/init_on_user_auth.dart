@@ -9,6 +9,9 @@ import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/authorization_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter_impl.dart';
@@ -18,9 +21,6 @@ import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/sc
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
-import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
-import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/authorization_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
@@ -67,6 +67,12 @@ class InitOnUserAuth {
       dispose: (m) => m.dispose(),
     );
 
+    di.registerSingletonAsync<HubStreamService>(
+      () => HubStreamService().init(),
+      dependsOn: [Client, HubSessionManager],
+      dispose: (s) => s.dispose(),
+    );
+
     di.registerSingletonAsync<SchoolCalendarManager>(
       () => SchoolCalendarManager().init(),
       dispose: (m) => m.dispose(),
@@ -76,12 +82,6 @@ class InitOnUserAuth {
       () => SupportCategoryManager().init(),
       dependsOn: [HubStreamService],
       dispose: (m) => m.dispose(),
-    );
-
-    di.registerSingletonAsync<HubStreamService>(
-      () => HubStreamService().init(),
-      dependsOn: [Client, HubSessionManager],
-      dispose: (s) => s.dispose(),
     );
 
     di.registerSingletonAsync<PupilProxyManager>(
