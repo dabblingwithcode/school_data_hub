@@ -39,16 +39,15 @@ class SupportCategoryEndpoint extends Endpoint {
       Session session, SupportCategory category) async {
     // Ensure id is null so the database auto-generates it.
     final newCategory = category.copyWith(id: null);
-    final inserted =
-        await SupportCategory.db.insertRow(session, newCategory);
+    final inserted = await SupportCategory.db.insertRow(session, newCategory);
     session.messages.postMessage('hub_events_stream', inserted);
     return true;
   }
 
   Future<bool> updateSupportCategory(
       Session session, SupportCategory category) async {
-    await session.db.updateRow(category);
-    session.messages.postMessage('hub_events_stream', category);
+    final inserted = await session.db.updateRow(category);
+    session.messages.postMessage('hub_events_stream', inserted);
     return true;
   }
 

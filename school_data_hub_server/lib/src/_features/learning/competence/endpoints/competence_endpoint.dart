@@ -19,15 +19,16 @@ class CompetenceEndpoint extends Endpoint {
         : 0;
 
     final competence = Competence(
+      id: null,
       publicId: maxPublicId + 1,
       parentCompetence: parentCompetence,
       name: name,
       level: level,
       indicators: indicators,
     );
-    await session.db.insertRow(competence);
-    session.messages.postMessage('hub_events_stream', competence);
-    return competence;
+    final competenceInDatabase = await session.db.insertRow(competence);
+    session.messages.postMessage('hub_events_stream', competenceInDatabase);
+    return competenceInDatabase;
   }
 
   Future<List<Competence>> getAllCompetences(Session session) async {
