@@ -90,14 +90,28 @@ class CompetenceManager {
     }
     final sorted = CompetenceHelper.sortCompetences(list);
     _competences.value = sorted;
-    _rootCompetencesMap =
-        CompetenceHelper.generateRootCompetencesMap(sorted);
+    _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(sorted);
     di<CompetenceFilterManager>().refreshFilteredCompetences(sorted);
   }
 
   void deleteFromStream(int publicId) {
+    final current = _competences.value;
+    final toRemove = <int>{publicId};
+    // Include all descendants so root map never references a deleted competence
+    bool added;
+    do {
+      added = false;
+      for (final c in current) {
+        if (c.parentCompetence != null &&
+            toRemove.contains(c.parentCompetence) &&
+            !toRemove.contains(c.publicId)) {
+          toRemove.add(c.publicId);
+          added = true;
+        }
+      }
+    } while (added);
     final list =
-        _competences.value.where((c) => c.publicId != publicId).toList();
+        current.where((c) => !toRemove.contains(c.publicId)).toList();
     _competences.value = list;
     _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(list);
     di<CompetenceFilterManager>().refreshFilteredCompetences(list);
@@ -168,6 +182,7 @@ class CompetenceManager {
     required List<String> indicators,
   }) async {
     final newCompetence = await _competenceApiService.postCompetence(
+      parentCompetence: parentCompetence,
       name: competenceName,
       level: competenceLevel,
       indicators: indicators,
@@ -306,6 +321,13 @@ class CompetenceManager {
   }
 
   Future<void> deleteCompetence(int publicId) async {
+    if (_competences.value.any((c) => c.parentCompetence == publicId)) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Kompetenz hat Unterkompetenzen. Bitte zuerst die Unterkompetenzen löschen.',
+      );
+      return;
+    }
     final bool success = await _competenceApiService.deleteCompetence(publicId);
 
     if (success) {

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
@@ -71,6 +73,26 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
     );
     // ignore: use_build_context_synchronously
     Navigator.pop(context);
+  }
+
+  Future<void> deleteCompetence() async {
+    if (widget.competence == null) return;
+    if (_competenceManager.isCompetenceWithChildren(widget.competence!)) {
+      informationDialog(
+        context,
+        'Kompetenz kann nicht gelöscht werden',
+        'Diese Kompetenz hat Unterkompetenzen. Bitte löschen Sie zuerst die Unterkompetenzen.',
+      );
+      return;
+    }
+    final confirm = await confirmationDialog(
+      context: context,
+      title: 'Kompetenz löschen',
+      message: 'Sind Sie sicher?',
+    );
+    if (confirm != true) return;
+    Navigator.pop(context);
+    await _competenceManager.deleteCompetence(widget.competence!.publicId);
   }
 
   bool competenceLevelContainsGrade(String grade) {
@@ -260,6 +282,23 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
                     style: AppStyles.buttonTextStyle,
                   ),
                 ),
+                if (widget.competence != null) ...[
+                  const Gap(15),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      backgroundColor: AppColors.dangerButtonColor,
+                      minimumSize: const Size.fromHeight(50),
+                    ),
+                    onPressed: deleteCompetence,
+                    child: const Text(
+                      'KOMPETENZ LÖSCHEN',
+                      style: AppStyles.buttonTextStyle,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

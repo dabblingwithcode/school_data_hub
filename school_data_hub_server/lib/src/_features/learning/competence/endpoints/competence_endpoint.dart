@@ -44,10 +44,20 @@ class CompetenceEndpoint extends Endpoint {
   }
 
   Future<bool> deleteCompetence(Session session, int publicId) async {
-    // Find the competence by publicId
-    final competence = await Competence.db.findById(session, publicId);
+    final competence = await Competence.db.findFirstRow(
+      session,
+      where: (t) => t.publicId.equals(publicId),
+    );
     if (competence == null) {
       throw Exception('Competence with publicId $publicId not found.');
+    }
+    // Recursively delete all child competences first
+    final children = await Competence.db.find(
+      session,
+      where: (t) => t.parentCompetence.equals(publicId),
+    );
+    for (final child in children) {
+      await deleteCompetence(session, child.publicId);
     }
     await session.db.deleteRow<Competence>(competence);
     session.messages.postMessage(

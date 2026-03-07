@@ -1,5 +1,5 @@
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 
 /// API service for competence CRUD operations.
 ///
@@ -14,11 +14,13 @@ class CompetenceApiService {
 
   /// Create a new competence.
   Future<Competence> postCompetence({
+    int? parentCompetence,
     required String name,
     required List<String> level,
     required List<String> indicators,
   }) async {
     return _client.competence.postCompetence(
+      parentCompetence: parentCompetence,
       name: name,
       level: level,
       indicators: indicators,

@@ -69,12 +69,22 @@ class CompetenceHelper {
       if (rootCompetencesCache.containsKey(publicId)) {
         return rootCompetencesCache[publicId]!;
       }
-      final Competence competence = rootCompetencesMap[publicId]!;
+      final Competence? competence = rootCompetencesMap[publicId];
+      if (competence == null) {
+        rootCompetencesCache[publicId] = publicId;
+        return publicId;
+      }
       if (competence.parentCompetence == null) {
         rootCompetencesCache[publicId] = publicId;
         return publicId;
       }
-      final int rootpublicId = findRootCompetence(competence.parentCompetence!);
+      final int? parentId = competence.parentCompetence;
+      if (parentId == null || !rootCompetencesMap.containsKey(parentId)) {
+        // Orphan (e.g. parent already deleted): treat as own root
+        rootCompetencesCache[publicId] = publicId;
+        return publicId;
+      }
+      final int rootpublicId = findRootCompetence(parentId);
       rootCompetencesCache[publicId] = rootpublicId;
       return rootpublicId;
     }
