@@ -8,7 +8,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';

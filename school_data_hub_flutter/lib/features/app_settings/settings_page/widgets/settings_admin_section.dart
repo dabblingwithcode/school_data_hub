@@ -4,7 +4,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/features/books/utils/book_ids_pdf_generator.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';

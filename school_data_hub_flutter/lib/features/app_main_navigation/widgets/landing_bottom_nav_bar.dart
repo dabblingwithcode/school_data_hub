@@ -24,7 +24,7 @@ class MainMenuBottomNavigation extends WatchingStatefulWidget {
 }
 
 class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
-  final List pages = [
+  final List<Widget> pages = [
     const PupilListsMenuPage(),
     const SchoolListsMenuPage(),
     const LearnResourcesMenuPage(),

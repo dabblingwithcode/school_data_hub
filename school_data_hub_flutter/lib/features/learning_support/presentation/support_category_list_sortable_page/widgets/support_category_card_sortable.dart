@@ -7,6 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_reorderable_list_view.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/post_or_patch_support_category_page/post_or_patch_support_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/select_parent_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/widgets/support_category_leaf_card_sortable.dart';
 
@@ -112,9 +113,10 @@ class _SupportCategoryCardSortableState
       (c) => c.parentCategory == categoryId,
     );
 
+    final parentId = widget.category.categoryId;
     if (hasChildren) {
       return SupportCategoryCardSortable(
-        key: ValueKey(categoryId),
+        key: ValueKey('child_${parentId}_$categoryId'),
         index: index,
         category: category,
         backgroundColor: widget.backgroundColor,
@@ -122,7 +124,7 @@ class _SupportCategoryCardSortableState
       );
     } else {
       return Padding(
-        key: ValueKey(categoryId),
+        key: ValueKey('child_${parentId}_$categoryId'),
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: SupportCategoryLeafCardSortable(
           index: index,
@@ -172,6 +174,19 @@ class _SupportCategoryCardSortableState
                         ),
                       ),
                     ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.white, size: 22),
+                    onPressed: () {
+                      Navigator.of(context).push<void>(
+                        MaterialPageRoute<void>(
+                          builder: (ctx) => PostOrPatchSupportCategoryPage(
+                            category: widget.category,
+                          ),
+                        ),
+                      );
+                    },
+                    tooltip: 'Kategorie bearbeiten',
                   ),
                   Checkbox(
                     value: widget.category.printable ?? false,

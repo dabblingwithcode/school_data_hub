@@ -82,7 +82,7 @@ class _SupportCategoryTreeSortableState
 
     if (hasChildren) {
       return SupportCategoryCardSortable(
-        key: ValueKey(categoryId),
+        key: ValueKey('root_$categoryId'),
         index: index,
         category: category,
         backgroundColor: color,
@@ -90,7 +90,7 @@ class _SupportCategoryTreeSortableState
       );
     } else {
       return Padding(
-        key: ValueKey(categoryId),
+        key: ValueKey('root_$categoryId'),
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: SupportCategoryLeafCardSortable(
           index: index,

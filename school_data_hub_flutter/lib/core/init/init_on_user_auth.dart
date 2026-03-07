@@ -24,8 +24,8 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/domain/school
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/domain/filters/competence_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';

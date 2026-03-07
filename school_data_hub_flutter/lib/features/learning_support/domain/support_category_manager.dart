@@ -9,10 +9,10 @@ import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 
 class SupportCategoryManager {
   final _notificationService = di<NotificationService>();
@@ -58,6 +58,24 @@ class SupportCategoryManager {
     }
   }
 
+  /// Shared comparator: order (nulls last), then categoryId.
+  static int _compareSupportCategories(SupportCategory a, SupportCategory b) {
+    if (a.order != null && b.order != null) {
+      return a.order!.compareTo(b.order!);
+    }
+    if (a.order != null) return -1;
+    if (b.order != null) return 1;
+    return a.categoryId.compareTo(b.categoryId);
+  }
+
+  /// Sets the category list after sorting. Keeps order as single source of truth.
+  void _setSupportCategories(List<SupportCategory> list) {
+    final sorted = List<SupportCategory>.from(list);
+    sorted.sort(_compareSupportCategories);
+    _supportCategories.value = sorted;
+    _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(sorted);
+  }
+
   void upsertFromStream(SupportCategory category) {
     final list = List<SupportCategory>.from(_supportCategories.value);
     final index = list.indexWhere((c) => c.categoryId == category.categoryId);
@@ -66,24 +84,14 @@ class SupportCategoryManager {
     } else {
       list.add(category);
     }
-    list.sort((a, b) {
-      if (a.order != null && b.order != null) {
-        return a.order!.compareTo(b.order!);
-      }
-      if (a.order != null) return -1;
-      if (b.order != null) return 1;
-      return a.categoryId.compareTo(b.categoryId);
-    });
-    _supportCategories.value = list;
-    _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(list);
+    _setSupportCategories(list);
   }
 
   void deleteFromStream(int categoryId) {
     final list = _supportCategories.value
         .where((c) => c.categoryId != categoryId)
         .toList();
-    _supportCategories.value = list;
-    _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(list);
+    _setSupportCategories(list);
   }
 
   // - Getters
@@ -136,22 +144,8 @@ class SupportCategoryManager {
       return;
     }
     if (supportCategories.isNotEmpty) {
-      // Sort by order first (nulls last), then fall back to categoryId
-      supportCategories.sort((a, b) {
-        if (a.order != null && b.order != null) {
-          return a.order!.compareTo(b.order!);
-        }
-        if (a.order != null) return -1;
-        if (b.order != null) return 1;
-        return a.categoryId.compareTo(b.categoryId);
-      });
-
-      _supportCategories.value = supportCategories;
+      _setSupportCategories(supportCategories);
       _envManager.setPopulatedEnvServerData(supportCategories: true);
-      _rootCategoriesMap.clear();
-      _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(
-        supportCategories,
-      );
 
       _notificationService.showSnackBar(
         NotificationType.success,
@@ -182,21 +176,8 @@ class SupportCategoryManager {
           fileResponse.path!,
         );
 
-    // Sort by order first (nulls last), then fall back to categoryId
-    importedCategories.sort((a, b) {
-      if (a.order != null && b.order != null) {
-        return a.order!.compareTo(b.order!);
-      }
-      if (a.order != null) return -1;
-      if (b.order != null) return 1;
-      return a.categoryId.compareTo(b.categoryId);
-    });
-    _supportCategories.value = importedCategories;
+    _setSupportCategories(importedCategories);
     _envManager.setPopulatedEnvServerData(supportCategories: true);
-    _rootCategoriesMap.clear();
-    _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(
-      importedCategories,
-    );
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -232,22 +213,16 @@ class SupportCategoryManager {
       newCategory,
     );
 
-    if (success) {
-      final categories = List<SupportCategory>.from(_supportCategories.value)
-        ..add(newCategory);
-      _supportCategories.value = categories;
+    // if (success) {
+    //   final categories = List<SupportCategory>.from(_supportCategories.value)
+    //     ..add(newCategory);
+    //   _setSupportCategories(categories);
 
-      // Rebuild the root category map since the hierarchy changed
-      _rootCategoriesMap.clear();
-      _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(
-        categories,
-      );
-
-      _notificationService.showSnackBar(
-        NotificationType.success,
-        'Kategorie "$name" erstellt',
-      );
-    }
+    //   _notificationService.showSnackBar(
+    //     NotificationType.success,
+    //     'Kategorie "$name" erstellt',
+    //   );
+    // }
 
     return success;
   }
@@ -282,7 +257,9 @@ class SupportCategoryManager {
       // The sortable widgets manage their own visual order via local state.
       // Call sortAndNotifyCategories() when done (e.g. on page dispose)
       // to commit the sorted order for other widgets.
-      _supportCategories.value[index] = updatedCategory;
+
+      //- The hub stream service will handle the update
+      //_supportCategories.value[index] = updatedCategory;
     }
   }
 
@@ -290,16 +267,41 @@ class SupportCategoryManager {
   /// Call this after order updates are complete (e.g. when leaving the
   /// sortable page) so other pages see the correct order.
   void sortAndNotifyCategories() {
-    final categories = List<SupportCategory>.from(_supportCategories.value);
-    categories.sort((a, b) {
-      if (a.order != null && b.order != null) {
-        return a.order!.compareTo(b.order!);
-      }
-      if (a.order != null) return -1;
-      if (b.order != null) return 1;
-      return a.categoryId.compareTo(b.categoryId);
-    });
-    _supportCategories.value = categories;
+    _setSupportCategories(_supportCategories.value);
+  }
+
+  Future<void> updateSupportCategoryName({
+    required int categoryId,
+    required String name,
+  }) async {
+    final index = _supportCategories.value.indexWhere(
+      (c) => c.categoryId == categoryId,
+    );
+    if (index == -1) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Kategorie nicht gefunden',
+      );
+      return;
+    }
+
+    final category = _supportCategories.value[index];
+    final updatedCategory = category.copyWith(name: name);
+
+    final success = await _learningSupportApiService.updateSupportCategory(
+      updatedCategory,
+    );
+
+    if (success) {
+      final categories = List<SupportCategory>.from(_supportCategories.value);
+      categories[index] = updatedCategory;
+      _setSupportCategories(categories);
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Kategorie aktualisiert',
+      );
+    }
   }
 
   Future<void> updateSupportCategoryParent({
@@ -327,13 +329,7 @@ class SupportCategoryManager {
     if (success) {
       final categories = List<SupportCategory>.from(_supportCategories.value);
       categories[index] = updatedCategory;
-      _supportCategories.value = categories;
-
-      // Rebuild the root category map since the hierarchy changed
-      _rootCategoriesMap.clear();
-      _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(
-        categories,
-      );
+      _setSupportCategories(categories);
 
       _notificationService.showSnackBar(
         NotificationType.success,
@@ -362,6 +358,28 @@ class SupportCategoryManager {
     return descendants;
   }
 
+  /// True if [categoryId] has at least one direct child category.
+  bool hasChildren(int categoryId) {
+    return _supportCategories.value.any((c) => c.parentCategory == categoryId);
+  }
+
+  Future<void> deleteSupportCategory(SupportCategory category) async {
+    final success = await _learningSupportApiService.deleteSupportCategory(
+      category,
+    );
+    if (success) {
+      final list = _supportCategories.value
+          .where((c) => c.categoryId != category.categoryId)
+          .toList();
+      _setSupportCategories(list);
+
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Kategorie gelöscht',
+      );
+    }
+  }
+
   Future<void> updateSupportCategoryPrintable({
     required int categoryId,
     required bool printable,
@@ -387,7 +405,7 @@ class SupportCategoryManager {
     if (success) {
       final categories = List<SupportCategory>.from(_supportCategories.value);
       categories[index] = updatedCategory;
-      _supportCategories.value = categories;
+      _setSupportCategories(categories);
     }
   }
 }

@@ -14,8 +14,8 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/domain/enums.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_page/new_support_category_page.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/post_or_patch_support_category_page/post_or_patch_support_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/controller/category_list_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/widgets/support_category_tree.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/sortable_support_category_list_page.dart';
@@ -48,19 +48,22 @@ class CategoryListPage extends WatchingWidget {
             tooltip: 'Neue Kategorie',
             icon: const Icon(Icons.add, size: 30),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) => const NewSupportCategoryPage(),
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (ctx) => const PostOrPatchSupportCategoryPage(
+                    category: null,
+                    parentCategoryId: null,
+                  ),
                 ),
               );
             },
           ),
           IconButton(
             tooltip: 'Reihenfolge ändern',
-            icon: const Icon(Icons.sort_rounded),
+            icon: const Icon(Icons.edit_rounded),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
+              Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
                   builder: (ctx) => const SortableSupportCategoryListPage(),
                 ),
               );

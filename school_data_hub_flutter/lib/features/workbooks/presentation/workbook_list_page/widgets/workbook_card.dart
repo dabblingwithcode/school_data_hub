@@ -14,7 +14,7 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/widgets/competence_grades_widget.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/presentation/widgets/competence_grades_widget.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
@@ -214,7 +214,7 @@ class WorkbookCard extends WatchingWidget {
                                   customExpansionTileController:
                                       expansionTileController,
                                 ),
-                                const Gap(5),
+                                const Gap(15),
                               ],
                             ),
                             const Gap(10),
@@ -235,54 +235,59 @@ class WorkbookCard extends WatchingWidget {
                           if (pupil == null) {
                             return const SizedBox.shrink();
                           }
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  AvatarWithBadges(pupil: pupil, size: 50),
-                                  const Gap(10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${pupil.firstName} ${pupil.lastName}',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        const Gap(4),
-                                        Text(
-                                          '${pupilWorkbook.createdBy} - ${pupilWorkbook.createdAt.formatDateForUser()}',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        if (pupilWorkbook.comment != null &&
-                                            pupilWorkbook.comment!.isNotEmpty)
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 4,
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0,
+                            ),
+                            child: Card(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    AvatarWithBadges(pupil: pupil, size: 50),
+                                    const Gap(10),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${pupil.firstName} ${pupil.lastName}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
                                             ),
-                                            child: Text(
-                                              pupilWorkbook.comment!,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontStyle: FontStyle.italic,
+                                          ),
+                                          const Gap(4),
+                                          Text(
+                                            '${pupilWorkbook.createdBy} - ${pupilWorkbook.createdAt.formatDateForUser()}',
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          if (pupilWorkbook.comment != null &&
+                                              pupilWorkbook.comment!.isNotEmpty)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 4,
                                               ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
+                                              child: Text(
+                                                pupilWorkbook.comment!,
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
-                                          ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           );

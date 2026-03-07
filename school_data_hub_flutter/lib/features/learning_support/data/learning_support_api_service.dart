@@ -59,6 +59,15 @@ class LearningSupportApiService {
     return response;
   }
 
+  //- DELETE
+  Future<bool> deleteSupportCategory(SupportCategory category) async {
+    final response = await ClientHelper.apiCall(
+      call: () => _client.supportCategory.deleteSupportCategory(category),
+      errorMessage: 'Fehler beim Löschen der Kategorie',
+    );
+    return response ?? false;
+  }
+
   //- STATUSES ---------------------------------------------------------
 
   Future<PupilData?> postSupportCategoryStatus({

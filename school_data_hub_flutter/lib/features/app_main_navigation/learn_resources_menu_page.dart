@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/books_main_menu_page/books_main_menu_page.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_page/competence_list_page.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/presentation/competence_list_page/competence_list_page.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_page/competence_report_item_list_scope.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/controller/category_list_controller.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
