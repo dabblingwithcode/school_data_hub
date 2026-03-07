@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/family_language_lessons_page/widgets/family_language_lessons_card.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/family_language_lessons_page/widgets/family_language_lessons_list_page_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/family_language_lessons_page/widgets/family_language_lessons_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/family_language_lessons_page/widgets/family_language_lessons_list_search_bar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 List<PupilProxy> familyLanguageLessonsFilter(List<PupilProxy> pupils) {
   final filterStateManager = di<FiltersStateManager>();
@@ -94,7 +97,17 @@ class FamilyLanguageLessonsListPage extends WatchingWidget {
             ),
           ),
         ),
-        bottomNavigationBar: const FamilyLanguageLessonsListPageBottomNavBar(),
+        bottomNavigationBar: GenericBottomNavBar(
+          actions: [
+            GenericFilterButton(
+              isSearchBar: false,
+              showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
+                context: context,
+                filterList: [const FamilyLanguageLessonsFiltersWidget()],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

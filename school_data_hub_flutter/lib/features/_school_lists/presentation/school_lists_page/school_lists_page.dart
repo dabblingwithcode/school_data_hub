@@ -4,12 +4,15 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/round_button_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
+import 'package:school_data_hub_flutter/features/_school_lists/presentation/new_list_page/new_school_list_page.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_lists_page/widgets/school_list_card.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_lists_page/widgets/school_list_search_text_field.dart';
-import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_lists_page/widgets/school_lists_bottom_navbar.dart';
 
 class SchoolListsPage extends WatchingWidget {
   const SchoolListsPage({super.key});
@@ -24,6 +27,10 @@ class SchoolListsPage extends WatchingWidget {
     // _schoolListFilterManager.updateFilteredSchoolLists(schoolLists);
     List<SchoolList> filteredSchoolLists = watchValue(
       (SchoolListFilterManager x) => x.filteredSchoolLists,
+    );
+
+    Map<SchoolListFilter, bool> filterState = watchValue(
+      (SchoolListFilterManager x) => x.schoolListFilterState,
     );
     // List<SchoolList> visibleSchoolLists = schoolLists
     //     .where((element) =>
@@ -65,6 +72,44 @@ class SchoolListsPage extends WatchingWidget {
                         ),
                       ),
                       const Spacer(),
+                      RoundButtonSwitch(
+                        icon: Icons.school_rounded,
+                        isActive:
+                            filterState[SchoolListFilter.publicLists] ?? false,
+                        onTap: () =>
+                            schoolListFilterManager.togglePublicListsFilter(),
+                        activeBackgroundColor: AppColors.accentColor,
+                        inactiveBackgroundColor: AppColors.backgroundColor,
+                        activeIconColor: Colors.white,
+                        inactiveIconColor: Colors.white,
+                        iconSize: 20,
+                      ),
+                      const Gap(5),
+                      RoundButtonSwitch(
+                        icon: Icons.person_rounded,
+                        isActive:
+                            filterState[SchoolListFilter.myLists] ?? false,
+                        onTap: () =>
+                            schoolListFilterManager.toggleMyListsFilter(),
+                        activeBackgroundColor: AppColors.accentColor,
+                        inactiveBackgroundColor: AppColors.backgroundColor,
+                        activeIconColor: Colors.white,
+                        inactiveIconColor: Colors.white,
+                        iconSize: 20,
+                      ),
+                      const Gap(5),
+                      RoundButtonSwitch(
+                        icon: Icons.people_rounded,
+                        isActive:
+                            filterState[SchoolListFilter.otherLists] ?? false,
+                        onTap: () =>
+                            schoolListFilterManager.toggleOtherListsFilter(),
+                        activeBackgroundColor: AppColors.accentColor,
+                        inactiveBackgroundColor: AppColors.backgroundColor,
+                        activeIconColor: Colors.white,
+                        inactiveIconColor: Colors.white,
+                        iconSize: 20,
+                      ),
                     ],
                   ),
                 ),
@@ -125,7 +170,21 @@ class SchoolListsPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const SchoolListsBottomNavBar(),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Neue Liste',
+            icon: const Icon(Icons.add, size: 35),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (ctx) => const NewSchoolListPage(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 
@@ -73,11 +74,25 @@ class MatrixCorporalLogsPage extends WatchingWidget {
         iconData: Icons.article_outlined,
         title: 'Matrix-Corporal-Logs',
       ),
-      bottomNavigationBar: _MatrixCorporalLogsBottomNavBar(
-        filtersActive: filtersActive,
-        onShowFilters: () => showMatrixCorporalLogsFilterBottomSheet(context),
-        onResetFilters: manager.resetFilters,
-        onDeleteAll: () => _showDeleteAllDialog(context, manager),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Filter',
+            icon: Icon(
+              Icons.filter_list,
+              color: filtersActive ? Colors.deepOrange : Colors.white,
+              size: 30,
+            ),
+            onPressed: () => showMatrixCorporalLogsFilterBottomSheet(context),
+            onLongPress: manager.resetFilters,
+          ),
+          IconButton(
+            tooltip: 'Alle löschen',
+            icon: const Icon(Icons.delete_sweep, size: 30),
+            onPressed: () => _showDeleteAllDialog(context, manager),
+            color: AppColors.dangerButtonColor,
+          ),
+        ],
       ),
       body: Center(
         child: ConstrainedBox(
@@ -162,62 +177,4 @@ void _showDeleteAllDialog(
       ],
     ),
   );
-}
-
-class _MatrixCorporalLogsBottomNavBar extends StatelessWidget {
-  const _MatrixCorporalLogsBottomNavBar({
-    required this.filtersActive,
-    required this.onShowFilters,
-    required this.onResetFilters,
-    required this.onDeleteAll,
-  });
-
-  final bool filtersActive;
-  final VoidCallback onShowFilters;
-  final VoidCallback onResetFilters;
-  final VoidCallback onDeleteAll;
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomAppBar(
-      height: 60,
-      padding: const EdgeInsets.all(10),
-      color: AppColors.backgroundColor,
-      child: IconTheme(
-        data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Row(
-            children: [
-              IconButton(
-                tooltip: 'Alle löschen',
-                icon: const Icon(Icons.delete_sweep, size: 30),
-                onPressed: onDeleteAll,
-                color: AppColors.dangerButtonColor,
-              ),
-              const Spacer(),
-              IconButton(
-                tooltip: 'zurück',
-                icon: const Icon(Icons.arrow_back, size: 30),
-                onPressed: () => Navigator.pop(context),
-              ),
-              InkWell(
-                onTap: onShowFilters,
-                onLongPress: onResetFilters,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Icon(
-                    Icons.filter_list,
-                    color: filtersActive ? Colors.deepOrange : Colors.white,
-                    size: 30,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

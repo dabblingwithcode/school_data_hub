@@ -9,7 +9,8 @@ import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matr
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/widgets/select_matrix_user_list_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/widgets/select_matrix_users_list_searchbar.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/widgets/select_matrix_users_list_view_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/widgets/select_pupils_filter_bottom_sheet.dart';
 
 class SelectMatrixUsersListPage extends WatchingWidget {
   final SelectMatrixUsersListController controller;
@@ -22,6 +23,7 @@ class SelectMatrixUsersListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final filtersOn = watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
     final List<MatrixUser> filteredUsers = watchValue(
       (MatrixPolicyFilterManager x) => x.filteredMatrixUsers,
     );
@@ -109,8 +111,55 @@ class SelectMatrixUsersListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: SelectMatrixUsersListPageBottomNavBar(
-        controller: controller,
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          if (controller.isSelectMode)
+            IconButton(
+              tooltip: 'Abbrechen',
+              icon: const Icon(Icons.close, size: 30),
+              onPressed: controller.cancelSelect,
+            ),
+          IconButton(
+            tooltip: 'alle auswählen',
+            icon: Icon(
+              Icons.select_all_rounded,
+              color: controller.isSelectAllMode
+                  ? Colors.deepOrange
+                  : Colors.white,
+              size: 30,
+            ),
+            onPressed: controller.toggleSelectAll,
+          ),
+          IconButton(
+            tooltip: 'Okay',
+            icon: Icon(
+              Icons.check,
+              color: controller.isSelectMode ? Colors.green : Colors.white,
+              size: 30,
+            ),
+            onPressed: () =>
+                Navigator.pop(context, controller.selectedUsers),
+          ),
+          if (controller.isSelectMode &&
+              controller.selectedUsers.isNotEmpty)
+            IconButton(
+              tooltip: 'Bulk-Credentials generieren',
+              icon: const Icon(Icons.print, color: Colors.orange, size: 30),
+              onPressed: () => controller.generateBulkCredentials(context),
+            ),
+          IconButton(
+            tooltip: 'Filter',
+            icon: Icon(
+              Icons.filter_list,
+              color: filtersOn ? Colors.deepOrange : Colors.white,
+              size: 30,
+            ),
+            onPressed: () =>
+                showSelectPupilsFilterBottomSheet(context),
+            onLongPress: () =>
+                di<MatrixPolicyFilterManager>().resetAllMatrixFilters(),
+          ),
+        ],
       ),
     );
   }

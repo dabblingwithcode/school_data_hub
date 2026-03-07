@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/widgets/classroom_list_card.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/widgets/classroom_list_page_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_classroom_page/new_classroom_page.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -51,8 +51,14 @@ class ClassroomListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: ClassroomListPageBottomNavBar(
-        onAddNewClassroom: () => _navigateToNewClassroom(context),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Neuen Raum hinzufügen',
+            icon: const Icon(Icons.add, size: 35),
+            onPressed: () => _navigateToNewClassroom(context),
+          ),
+        ],
       ),
     );
   }

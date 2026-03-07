@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar/bottom_nav_bar_no_filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
@@ -172,7 +172,7 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
           ),
         ),
       ),
-      bottomNavigationBar: GenericBottomNavBarWithActions(
+      bottomNavigationBar: GenericBottomNavBar(
         actions: [
           if (widget.isMultiSelectMode == true) ...[
             IconButton(

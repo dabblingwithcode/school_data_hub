@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart'
 import 'package:flutter_it/flutter_it.dart';
 
 import '../../domain/models/library_book_proxy.dart';
-import '../book_list_page/widgets/book_list_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'book_search_result_card.dart';
 
 class BookSearchResultsPage extends WatchingWidget {
@@ -105,7 +105,7 @@ class BookSearchResultsPage extends WatchingWidget {
                 );
               },
             ),
-      bottomNavigationBar: const BookListBottomNavBar(),
+      bottomNavigationBar: const GenericBottomNavBar(),
     );
   }
 }

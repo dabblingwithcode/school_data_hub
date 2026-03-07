@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_pupil_list_card/schoolday_event_pupil_list_card.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/searchbar/schoolday_event_list_search_bar.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SchooldayEventListPage extends WatchingWidget {
   const SchooldayEventListPage({super.key});
@@ -51,8 +52,12 @@ class SchooldayEventListPage extends WatchingWidget {
         ),
       ),
       bottomNavigationBar: const GenericBottomNavBar(
-        specificFilterBottomSheetFunction: showSchooldayEventFilterBottomSheet,
-        bottomNavBarButtons: null,
+        actions: [
+          GenericFilterButton(
+            isSearchBar: false,
+            showBottomSheetFunction: showSchooldayEventFilterBottomSheet,
+          ),
+        ],
       ),
     );
   }

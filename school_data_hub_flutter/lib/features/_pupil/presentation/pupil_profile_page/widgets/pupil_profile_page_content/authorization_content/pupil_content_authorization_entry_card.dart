@@ -9,8 +9,8 @@ import 'package:school_data_hub_flutter/common/widgets/buttons_switches/custom_c
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
-import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
-import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:flutter_it/flutter_it.dart';
 

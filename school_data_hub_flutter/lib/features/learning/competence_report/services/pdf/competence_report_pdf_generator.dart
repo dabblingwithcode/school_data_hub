@@ -13,15 +13,15 @@ import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar/generic_bottom_nav_bar_no_filter.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_helpers.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pages/competence_report_pdf_page1.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pages/competence_report_pdf_page5.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
@@ -285,7 +285,7 @@ class PdfZoomableImage extends StatelessWidget {
     return Scaffold(
       appBar: const GenericAppBar(title: 'PDF Zoom', iconData: Icons.zoom_in),
       body: PdfViewer.file(file.path),
-      bottomNavigationBar: const GenericBottomNavBarNoFilter(),
+      bottomNavigationBar: const GenericBottomNavBar(),
     );
   }
 }

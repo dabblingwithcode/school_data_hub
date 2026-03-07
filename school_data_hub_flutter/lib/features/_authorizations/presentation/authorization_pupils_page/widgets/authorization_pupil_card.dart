@@ -1,0 +1,256 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/custom_checkbox_either_or.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
+
+class AuthorizationPupilCard extends WatchingWidget {
+  final int pupilId;
+  final Authorization authorization;
+  const AuthorizationPupilCard(this.pupilId, this.authorization, {super.key});
+  @override
+  Widget build(BuildContext context) {
+    final pupilManager = di<PupilProxyManager>();
+    final authorizationManager = di<AuthorizationManager>();
+    final PupilProxy pupil = pupilManager.getPupilByPupilId(pupilId)!;
+
+    final pupilAuthorization = watchValue(
+      (AuthorizationManager x) =>
+          x.watchPupilAuthorization(authorization.id!, pupilId),
+    );
+
+    if (pupilAuthorization == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Card(
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8, top: 8, bottom: 8, right: 15),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AvatarWithBadges(pupil: pupil, size: 80),
+                //const SizedBox(width: 10), // Add some spacing
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            di<BottomNavManager>().setPupilProfileNavPage(7);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (ctx) =>
+                                    PupilProfilePage(pupil: pupil),
+                              ),
+                            );
+                          },
+                          onLongPress: () async {
+                            final bool? confirmation = await confirmationDialog(
+                              context: context,
+                              title: 'Kind aus der Liste löschen',
+                              message:
+                                  'Die Einwilligung von ${pupil.firstName} löschen?',
+                            );
+                            if (confirmation == true) {
+                              authorizationManager.updateAuthorization(
+                                authId: authorization.id!,
+                                membersToUpdate: (
+                                  operation: MemberOperation.remove,
+                                  pupilIds: [pupil.pupilId],
+                                ),
+                              );
+                            }
+                            return;
+                          },
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(
+                              pupil.firstName,
+                              overflow: TextOverflow.fade,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Text(
+                            pupil.lastName,
+                            overflow: TextOverflow.fade,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                        const Gap(10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.close, color: Colors.red),
+                            CustomCheckboxEitherOr(
+                              representedBoolValue:
+                                  false, // Red/negative checkbox
+                              currentStatus: pupilAuthorization.status,
+                              onStatusChanged: (newStatus) async {
+                                await authorizationManager
+                                    .updatePupilAuthorization(
+                                      pupilId: pupil.pupilId,
+                                      authorizationId: authorization.id!,
+                                      status: (value: newStatus),
+                                      comment: null,
+                                    );
+                              },
+                            ),
+                            const Gap(10),
+                            const Icon(Icons.done, color: Colors.green),
+                            CustomCheckboxEitherOr(
+                              representedBoolValue:
+                                  true, // Green/positive checkbox
+                              currentStatus: pupilAuthorization.status,
+                              onStatusChanged: (newStatus) async {
+                                await authorizationManager
+                                    .updatePupilAuthorization(
+                                      pupilId: pupil.pupilId,
+                                      authorizationId: authorization.id!,
+                                      status: (value: newStatus),
+                                      comment: null,
+                                    );
+                              },
+                            ),
+                            const Gap(15),
+                            if (pupilAuthorization.createdBy != null)
+                              Text(
+                                pupilAuthorization.createdBy!,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Gap(15),
+                    InkWell(
+                      onTap: () async {
+                        final File? file = await createAndCropImageFile(
+                          context,
+                        );
+                        if (file == null) return;
+                        await authorizationManager.addFileToPupilAuthorization(
+                          file,
+                          pupilAuthorization.id!,
+                        );
+                      },
+                      onLongPress: () async {
+                        if (pupilAuthorization.fileId == null) return;
+                        final bool? result = await confirmationDialog(
+                          context: context,
+                          title: 'Dokument löschen',
+                          message:
+                              'Dokument für die Einwilligung von ${pupil.firstName} ${pupil.lastName} löschen?',
+                        );
+                        if (result != true) return;
+
+                        await authorizationManager
+                            .removeFileFromPupilAuthorization(
+                              pupilAuthorization.id!,
+                              pupilAuthorization.file!.documentId,
+                            );
+                      },
+                      child: EncryptedDocumentImage(
+                        documentId: pupilAuthorization.file?.documentId,
+                        size: 70,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Gap(10),
+                Text(
+                  'Kommentar: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Gap(5),
+              ],
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Gap(10),
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                      final result = await longTextFieldDialog(
+                        title: 'Kommentar ändern',
+                        labelText: 'Kommentar',
+                        initialValue: pupilAuthorization.comment,
+                        parentContext: context,
+                      );
+                      if (result == null ||
+                          result.value == pupilAuthorization.comment ||
+                          result.value == '') {
+                        return;
+                      }
+
+                      await di<AuthorizationManager>().updatePupilAuthorization(
+                        pupilId: pupil.pupilId,
+                        authorizationId: authorization.id!,
+                        status: null,
+                        comment: result.value,
+                      );
+                    },
+                    child: Text(
+                      pupilAuthorization.comment != null
+                          ? pupilAuthorization.comment!
+                          : 'kein Kommentar',
+                      style: TextStyle(color: AppColors.backgroundColor),
+                      textAlign: TextAlign.left,
+                      maxLines: 3,
+                      softWrap: true,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Gap(10),
+          ],
+        ),
+      ),
+    );
+  }
+}

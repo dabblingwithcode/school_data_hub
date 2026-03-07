@@ -3,7 +3,7 @@ import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
-import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_page/authorizations_list_page.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorizations_list_page/authorizations_list_page.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_lists_page/school_lists_page.dart';
 
 class SchoolListsMenuPage extends StatelessWidget {

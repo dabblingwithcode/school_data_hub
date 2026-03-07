@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/learning_group_list_page/widgets/learning_group_list_card.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/learning_group_list_page/widgets/learning_group_list_page_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -52,8 +52,14 @@ class LearningGroupListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: LearningGroupListPageBottomNavBar(
-        onAddNewGroup: () => _navigateToNewLessonGroup(context),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Neue Klasse hinzufügen',
+            icon: const Icon(Icons.add, size: 35),
+            onPressed: () => _navigateToNewLessonGroup(context),
+          ),
+        ],
       ),
     );
   }

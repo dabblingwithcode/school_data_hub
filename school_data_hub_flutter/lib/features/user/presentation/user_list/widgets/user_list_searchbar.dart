@@ -137,7 +137,7 @@ class UserListSearchBar extends StatelessWidget {
                 const Gap(5),
                 GenericFilterButton(
                   isSearchBar: true,
-                  showBottomSheetFunction: onOpenFilter,
+                  showBottomSheetFunction: (_) => onOpenFilter(),
                 ),
               ],
             ),

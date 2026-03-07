@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar/generic_bottom_nav_bar_no_filter.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_items_sortable_list_page/widgets/report_item_tree_sortable.dart';
@@ -18,10 +18,8 @@ class SortableReportItemListPage extends WatchingWidget {
     }) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (ctx) => PostOrPatchReportItemPage(
-            parentItem: parentItemId,
-            item: item,
-          ),
+          builder: (ctx) =>
+              PostOrPatchReportItemPage(parentItem: parentItemId, item: item),
         ),
       );
     }
@@ -42,8 +40,7 @@ class SortableReportItemListPage extends WatchingWidget {
         title: 'Zeugniskompetenzreihenfolge ändern',
       ),
       body: RefreshIndicator(
-        onRefresh: () async =>
-            di<CompetenceReportItemManager>().fetchItems(),
+        onRefresh: () async => di<CompetenceReportItemManager>().fetchItems(),
         child: Padding(
           padding: const EdgeInsets.only(
             top: 8.0,
@@ -65,7 +62,7 @@ class SortableReportItemListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const GenericBottomNavBarNoFilter(),
+      bottomNavigationBar: const GenericBottomNavBar(),
     );
   }
 }

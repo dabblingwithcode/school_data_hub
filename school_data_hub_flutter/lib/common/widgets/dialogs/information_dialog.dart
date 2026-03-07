@@ -3,7 +3,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
 void informationDialog(BuildContext context, String title, String text) =>
-    showDialog(
+    showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         icon: Icon(Icons.info, color: AppColors.backgroundColor, size: 50),

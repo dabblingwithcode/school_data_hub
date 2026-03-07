@@ -1,17 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/workbook_card.dart';
-import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/workbook_list_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
 
 class WorkbookListPage extends WatchingWidget {
   final WorkbookListViewModel viewModel;
@@ -140,7 +145,55 @@ class WorkbookListPage extends WatchingWidget {
                 ),
               ),
       ),
-      bottomNavigationBar: workbookListBottomNavBar(context),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Neues Arbeitsheft',
+            icon: const Icon(Icons.add, size: 35),
+            onPressed: () async {
+              int? isbn;
+              if (Platform.isAndroid || Platform.isIOS) {
+                final scanResult = await qrScanner(
+                  context: context,
+                  overlayText: 'ISBN code scannen',
+                );
+                if (scanResult == null) return;
+                isbn = int.parse(scanResult);
+              } else {
+                final isbnText = await shortTextfieldDialog(
+                  context: context,
+                  title: 'ISBN',
+                  hintText: 'ISBN',
+                  labelText: 'ISBN',
+                );
+                if (isbnText == null) return;
+                isbn = int.tryParse(isbnText);
+              }
+              if (isbn == null) return;
+              final workbookManager = di<WorkbookManager>();
+              if (!workbookManager.workbooks.value.any(
+                (element) => element.isbn == isbn,
+              )) {
+                if (context.mounted) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (ctx) =>
+                          NewWorkbookPage(isEdit: false, isbn: isbn!),
+                    ),
+                  );
+                }
+                return;
+              }
+              if (!context.mounted) return;
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (ctx) => NewWorkbookPage(isbn: isbn!, isEdit: false),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

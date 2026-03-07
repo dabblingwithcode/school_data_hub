@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_page/widgets/school_semester_list_card.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_page/widgets/school_semester_list_page_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 
 class SchoolSemesterListPage extends WatchingWidget {
   const SchoolSemesterListPage({super.key});
@@ -68,9 +68,15 @@ class SchoolSemesterListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: SchoolSemesterListPageBottomNavBar(
-        onAddNewSemester: () =>
-            _navigateToNewSemester(context, schoolCalendarManager),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Neues Schulhalbjahr',
+            icon: const Icon(Icons.add, size: 30),
+            onPressed: () =>
+                _navigateToNewSemester(context, schoolCalendarManager),
+          ),
+        ],
       ),
     );
   }

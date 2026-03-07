@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
@@ -43,10 +44,19 @@ class LogsPage extends WatchingWidget {
         iconData: Icons.bug_report_outlined,
         title: 'In-App Logs',
       ),
-      bottomNavigationBar: _LogsBottomNavBar(
-        filtersActive: filtersActive,
-        onShowFilters: () => showLogsFilterBottomSheet(context),
-        onResetFilters: logService.resetFilters,
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Filter',
+            icon: Icon(
+              Icons.filter_list,
+              color: filtersActive ? Colors.deepOrange : Colors.white,
+              size: 30,
+            ),
+            onPressed: () => showLogsFilterBottomSheet(context),
+            onLongPress: logService.resetFilters,
+          ),
+        ],
       ),
       body: Center(
         child: ConstrainedBox(
@@ -141,58 +151,6 @@ class _LogSearchField extends StatelessWidget {
                   },
                 ),
           border: InputBorder.none,
-        ),
-      ),
-    );
-  }
-}
-
-class _LogsBottomNavBar extends StatelessWidget {
-  const _LogsBottomNavBar({
-    required this.filtersActive,
-    required this.onShowFilters,
-    required this.onResetFilters,
-  });
-
-  final bool filtersActive;
-  final VoidCallback onShowFilters;
-  final VoidCallback onResetFilters;
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomAppBar(
-      height: 60,
-      padding: const EdgeInsets.all(10),
-      color: AppColors.backgroundColor,
-      child: IconTheme(
-        data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Row(
-            children: [
-              const Spacer(),
-              IconButton(
-                tooltip: 'zurück',
-                icon: const Icon(Icons.arrow_back, size: 30),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              InkWell(
-                onTap: onShowFilters,
-                onLongPress: onResetFilters,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Icon(
-                    Icons.filter_list,
-                    color: filtersActive ? Colors.deepOrange : Colors.white,
-                    size: 30,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-            ],
-          ),
         ),
       ),
     );

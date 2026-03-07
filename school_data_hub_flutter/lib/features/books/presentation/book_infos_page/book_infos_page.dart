@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar/bottom_nav_bar_no_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/books/data/book_api_service.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_helper.dart';
@@ -12,7 +13,6 @@ import 'package:school_data_hub_flutter/features/books/domain/models/library_boo
 import 'package:school_data_hub_flutter/features/books/presentation/book_infos_page/widgets/book_header.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_pupil_card.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_controller.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class BookInfosPage extends WatchingStatefulWidget {
   final String libraryId;
@@ -71,7 +71,7 @@ class _BookInfosPageState extends State<BookInfosPage> {
       appBar: const GenericAppBar(title: 'Buch Details', iconData: Icons.book),
       body: _buildBody(),
       bottomNavigationBar: BottomNavBarLayout(
-        bottomNavBar: GenericBottomNavBarWithActions(
+        bottomNavBar: GenericBottomNavBar(
           actions: [
             IconButton(
               tooltip: 'Buch bearbeiten',

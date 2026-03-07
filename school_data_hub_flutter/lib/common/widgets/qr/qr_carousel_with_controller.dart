@@ -22,7 +22,7 @@ class _QrCarouselWithControllerState extends State<QrCarouselWithController> {
 
   final HardwareKeyboard hardwareKeyboard = HardwareKeyboard.instance;
 
-  bool keybardHandler(event) {
+  bool keybardHandler(Object event) {
     if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
         carouselController.previousPage();
@@ -149,7 +149,7 @@ void showQrCarouselWithController(
   Map<String, String> qrMap,
   BuildContext context,
 ) {
-  showDialog(
+  showDialog<void>(
     context: context,
     builder: (context) {
       return Dialog(

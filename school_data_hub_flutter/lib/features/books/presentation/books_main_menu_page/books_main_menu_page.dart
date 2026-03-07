@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_infos_page/book_infos_page.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_list_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/book_search_form_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_controller.dart';
@@ -49,7 +49,7 @@ class BooksMainMenuPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const BookListBottomNavBar(),
+      bottomNavigationBar: const GenericBottomNavBar(),
     );
   }
 }

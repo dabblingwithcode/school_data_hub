@@ -102,7 +102,7 @@ class CreditListSearchBar extends WatchingWidget {
                 const Gap(5),
                 GenericFilterButton(
                   isSearchBar: true,
-                  showBottomSheetFunction: () => showGenericBottomSheet(
+                  showBottomSheetFunction: (context) => showGenericBottomSheet(
                     context,
                     const CreditFilterBottomSheet(),
                   ),

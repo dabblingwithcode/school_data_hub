@@ -5,7 +5,8 @@ import 'package:school_data_hub_flutter/common/widgets/get_cached_image_or_downl
 import 'package:widget_zoom/widget_zoom.dart';
 
 class EncryptedDocumentImage extends WatchingWidget {
-  final String documentId;
+  /// Document id to load; when null, shows the standard placeholder.
+  final String? documentId;
 
   final double size;
   const EncryptedDocumentImage({
@@ -16,13 +17,27 @@ class EncryptedDocumentImage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final boxSize = (21 / 30) * size;
+    if (documentId == null) {
+      return SizedBox(
+        height: size,
+        width: boxSize,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: Image.asset(
+            'assets/document_camera.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    }
     final randomPart = createOnce(
       () => UniqueKey().toString(),
       dispose: (randomPart) {},
     );
     return SizedBox(
       height: size,
-      width: (21 / 30) * size,
+      width: boxSize,
       child: Center(
         child: Column(
           children: [
@@ -30,7 +45,7 @@ class EncryptedDocumentImage extends WatchingWidget {
               heroAnimationTag: '$documentId$randomPart',
               zoomWidget: FutureBuilder<Image>(
                 future: getCachedImageOrDownloadImage(
-                  documentId: documentId,
+                  documentId: documentId!,
                   decrypt: true,
                 ),
                 builder: (context, snapshot) {

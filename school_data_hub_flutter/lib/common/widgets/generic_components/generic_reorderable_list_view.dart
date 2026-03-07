@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class GenericReorderableListView extends StatelessWidget {
   final List<Widget> children;
-  final Function(int oldIndex, int newIndex) onReorder;
+  final void Function(int oldIndex, int newIndex) onReorder;
   const GenericReorderableListView({
     super.key,
     required this.children,

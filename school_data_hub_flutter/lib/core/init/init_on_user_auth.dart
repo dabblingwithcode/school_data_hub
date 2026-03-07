@@ -18,9 +18,9 @@ import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/sc
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
-import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
-import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/authorization_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';

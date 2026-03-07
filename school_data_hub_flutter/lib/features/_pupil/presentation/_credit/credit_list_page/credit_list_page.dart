@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/show_generic_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_card.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class CreditListPage extends WatchingWidget {
   const CreditListPage({super.key});
@@ -50,7 +52,18 @@ class CreditListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const CreditListPageBottomNavBar(),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Filter',
+            icon: const Icon(Icons.filter_list, size: 30),
+            onPressed: () {
+              showGenericBottomSheet(context, const CreditFilterBottomSheet());
+            },
+          ),
+        ],
+      ),
+      // const CreditListPageBottomNavBar(),
     );
   }
 }

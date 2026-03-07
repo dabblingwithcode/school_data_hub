@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_slot_page/new_timetable_slot_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot_list_page/widgets/timetable_slot_list.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot_list_page/widgets/timetable_slot_list_page_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 class TimetableSlotListPage extends WatchingWidget {
@@ -116,8 +116,15 @@ class TimetableSlotListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: TimetableSlotListPageBottomNavBar(
-        onAddSlot: () => navigateToNewTimetableSlot(context),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          if (activeTimetable.value != null)
+            IconButton(
+              tooltip: 'Neuen Zeitslot erstellen',
+              icon: const Icon(Icons.add, size: 30),
+              onPressed: () => navigateToNewTimetableSlot(context),
+            ),
+        ],
       ),
     );
   }

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/filters/competence_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_page/widgets/competence_list_view_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_page/widgets/competence_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_sortable_page/widgets/competence_tree_sortable.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/post_or_patch_competence_page/post_or_patch_competence_page.dart';
 
@@ -66,8 +69,37 @@ class SortableCompetenceListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: CompetenceListPageBottomNavBar(
-        competences: competences,
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Reihenfolge ändern',
+            icon: const Icon(Icons.sort_rounded),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => const SortableCompetenceListPage(),
+                ),
+              );
+            },
+          ),
+
+          // IconButton(
+          //   tooltip: 'aktualisieren',
+          //   icon: const Icon(Icons.update_rounded),
+          //   onPressed: () {
+          //     di<CompetenceFilterManager>().refreshFilteredCompetences(
+          //       competences,
+          //     );
+          //   },
+          // ),
+          GenericFilterButton(
+            isSearchBar: false,
+            showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
+              context: context,
+              filterList: [const CompetenceFilters()],
+            ),
+          ),
+        ],
       ),
     );
   }

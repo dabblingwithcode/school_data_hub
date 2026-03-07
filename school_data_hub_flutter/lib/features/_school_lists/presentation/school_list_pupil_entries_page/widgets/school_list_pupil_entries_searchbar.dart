@@ -115,7 +115,7 @@ class SchoolListPupilEntriesPageSearchBar extends WatchingWidget {
                 const Gap(5),
                 GenericFilterButton(
                   isSearchBar: true,
-                  showBottomSheetFunction: () => showGenericFilterBottomSheet(
+                  showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
                     context: context,
                     filterList: [
                       const CommonPupilFiltersWidget(),

@@ -5,9 +5,12 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -15,10 +18,10 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_fi
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_page_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
@@ -483,7 +486,17 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const CreditListPageBottomNavBar(),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          GenericFilterButton(
+            isSearchBar: false,
+            showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
+              context: context,
+              filterList: [const CommonPupilFiltersWidget()],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

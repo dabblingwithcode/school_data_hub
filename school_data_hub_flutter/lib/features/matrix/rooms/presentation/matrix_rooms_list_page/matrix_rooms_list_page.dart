@@ -9,7 +9,10 @@ import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_pol
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_searchbar.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_view_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/new_matrix_room_page/new_matrix_room_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 
 class MatrixRoomsListPage extends WatchingWidget {
   const MatrixRoomsListPage({super.key});
@@ -17,6 +20,11 @@ class MatrixRoomsListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final matrixPolicyManager = di<MatrixPolicyManager>();
+    final matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
+    final pendingChanges =
+        watchValue((MatrixPolicyManager x) => x.pendingChanges);
+    final filtersOn =
+        watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
     List<MatrixRoom> matrixRooms = watchValue(
       (MatrixPolicyFilterManager x) => x.filteredMatrixRooms,
     );
@@ -75,7 +83,74 @@ class MatrixRoomsListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const RoomListPageBottomNavBar(),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          if (pendingChanges)
+            IconButton(
+              tooltip: 'Änderungen speichern',
+              icon: const Icon(Icons.save, size: 30),
+              onPressed: () => matrixPolicyManager.applyPolicyChanges(),
+            ),
+          IconButton(
+            tooltip: 'Neuer Raum',
+            icon: const Icon(Icons.add, size: 30),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (ctx) => const NewMatrixRoomPage(),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'Gruppenräume für aktuelles Schuljahr anlegen',
+            icon: const Icon(Icons.group_work_rounded, size: 30),
+            onPressed: () async {
+              await matrixPolicyManager.rooms
+                  .createGroupRoomsForCurrentSemester();
+            },
+          ),
+          IconButton(
+            tooltip: 'Matrix-Konten',
+            icon: const Icon(Icons.people_alt_rounded, size: 30),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (ctx) => const MatrixUsersListPage(),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'Event Reports',
+            icon: const Icon(Icons.flag_circle_rounded, size: 30),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (ctx) => const MatrixEventReportsPage(),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'Zur Startseite',
+            icon: const Icon(Icons.home, size: 35),
+            onPressed: () =>
+                Navigator.popUntil(context, (route) => route.isFirst),
+          ),
+          IconButton(
+            tooltip: 'Filter',
+            icon: Icon(
+              Icons.filter_list,
+              color: filtersOn ? Colors.deepOrange : Colors.white,
+              size: 30,
+            ),
+            onPressed: () {},
+            onLongPress: () =>
+                matrixPolicyFilterManager.resetAllMatrixFilters(),
+          ),
+        ],
+      ),
     );
   }
 }

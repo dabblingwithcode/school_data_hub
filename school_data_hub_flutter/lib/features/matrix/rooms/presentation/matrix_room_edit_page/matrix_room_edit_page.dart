@@ -4,12 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/dialogs/remove_room_from_policy_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/dialogs/remove_room_from_policy_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/change_power_levels_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/users_in_room_list.dart';
 
@@ -499,46 +499,38 @@ class _MatrixRoomEditPageState extends State<MatrixRoomEditPage> {
         ),
       ),
       bottomNavigationBar: GenericBottomNavBar(
-        showFilterButton: false,
-        specificFilterBottomSheetFunction: () {},
-        bottomNavBarButtons: Row(
-          children: [
-            if (pendingChanges) ...[
-              const Gap(20),
-              IconButton(
-                tooltip: 'Änderungen speichern',
-                icon: const Icon(Icons.save, size: 30),
-                onPressed: () {
-                  _matrixPolicyManager.applyPolicyChanges();
-                },
-              ),
-            ],
+        actions: [
+          if (pendingChanges) ...[
             const Gap(20),
             IconButton(
-              tooltip: 'Aus Policy entfernen',
-              icon: const Icon(
-                Icons.delete_rounded,
-                size: 30,
-                color: Colors.red,
-              ),
-              onPressed: () async {
-                final result = await showRemoveRoomFromPolicyDialog(
-                  context,
-                  roomName: room.name ?? room.id,
-                );
-                if (result != null) {
-                  await _matrixPolicyManager.rooms.removeManagedRoom(
-                    room,
-                    purgeRoom: result.purge,
-                  );
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                  }
-                }
+              tooltip: 'Änderungen speichern',
+              icon: const Icon(Icons.save, size: 30),
+              onPressed: () {
+                _matrixPolicyManager.applyPolicyChanges();
               },
             ),
           ],
-        ),
+          const Gap(20),
+          IconButton(
+            tooltip: 'Aus Policy entfernen',
+            icon: const Icon(Icons.delete_rounded, size: 30, color: Colors.red),
+            onPressed: () async {
+              final result = await showRemoveRoomFromPolicyDialog(
+                context,
+                roomName: room.name ?? room.id,
+              );
+              if (result != null) {
+                await _matrixPolicyManager.rooms.removeManagedRoom(
+                  room,
+                  purgeRoom: result.purge,
+                );
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              }
+            },
+          ),
+        ],
       ),
     );
   }

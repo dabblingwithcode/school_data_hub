@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/new_subject_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/subject_list_page/subject_list.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/subject_list_page/widgets/subject_list_page_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 class SubjectListPage extends WatchingWidget {
@@ -35,13 +35,19 @@ class SubjectListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: SubjectListPageBottomNavBar(
-        onAddSubject: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const NewSubjectPage()),
-          );
-        },
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Neues Fach',
+            icon: const Icon(Icons.add, size: 35),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NewSubjectPage()),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

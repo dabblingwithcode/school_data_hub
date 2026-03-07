@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/widgets/select_matrix_room_card.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/widgets/select_matrix_rooms_list_view_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/widgets/select_room_list_searchbar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class SelectMatrixRoomsListPage extends WatchingWidget {
   final SelectMatrixRoomsListController controller;
@@ -20,6 +21,7 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final filtersOn = watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
@@ -101,8 +103,47 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: SelectMatrixRoomsListViewBottomNavBar(
-        controller: controller,
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          if (controller.isSelectMode)
+            IconButton(
+              tooltip: 'Abbrechen',
+              icon: const Icon(Icons.close, size: 30),
+              onPressed: controller.cancelSelect,
+            ),
+          IconButton(
+            tooltip: 'alle auswählen',
+            icon: Icon(
+              Icons.select_all_rounded,
+              color: controller.isSelectAllMode
+                  ? Colors.deepOrange
+                  : Colors.white,
+              size: 30,
+            ),
+            onPressed: controller.toggleSelectAll,
+          ),
+          IconButton(
+            tooltip: 'Okay',
+            icon: Icon(
+              Icons.check,
+              color: controller.isSelectMode ? Colors.green : Colors.white,
+              size: 30,
+            ),
+            onPressed: () => Navigator.pop(context, controller.selectedRooms),
+          ),
+
+          IconButton(
+            tooltip: 'Filter',
+            icon: Icon(
+              Icons.filter_list,
+              color: filtersOn ? Colors.deepOrange : Colors.white,
+              size: 30,
+            ),
+            onPressed: () => {},
+            onLongPress: () =>
+                di<MatrixPolicyFilterManager>().resetAllMatrixFilters(),
+          ),
+        ],
       ),
     );
   }

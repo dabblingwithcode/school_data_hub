@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_card.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_list_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -140,7 +140,7 @@ class BookListPage extends WatchingWidget {
                 ),
               ),
       ),
-      bottomNavigationBar: const BookListBottomNavBar(),
+      bottomNavigationBar: const GenericBottomNavBar(),
     );
   }
 }

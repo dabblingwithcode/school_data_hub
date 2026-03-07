@@ -11,7 +11,8 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/show_g
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_card.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_page_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_searchbar.dart';
 
 class UserListPage extends StatefulWidget {
@@ -149,7 +150,26 @@ class _UserListPageState extends State<UserListPage> {
               ),
             ),
           ),
-          bottomNavigationBar: const UserListPageBottomNavBar(),
+          bottomNavigationBar: GenericBottomNavBar(
+          actions: [
+            IconButton(
+              tooltip: 'Aktualisieren',
+              icon: const Icon(Icons.refresh, size: 30),
+              onPressed: () => di<UserManager>().fetchUsers(),
+            ),
+            IconButton(
+              tooltip: 'Neuer Benutzer',
+              icon: const Icon(Icons.add, size: 30),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (ctx) => const CreateOrEditUserPage(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         );
       },
     );

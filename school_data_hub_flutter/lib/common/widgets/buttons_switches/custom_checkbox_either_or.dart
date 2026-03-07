@@ -10,7 +10,7 @@ class CustomCheckboxEitherOr extends StatelessWidget {
 
   /// Callback function when checkbox value changes
   /// Returns the new status value (null, true, or false)
-  final Function(bool?) onStatusChanged;
+  final void Function(bool?) onStatusChanged;
 
   const CustomCheckboxEitherOr({
     required this.representedBoolValue,

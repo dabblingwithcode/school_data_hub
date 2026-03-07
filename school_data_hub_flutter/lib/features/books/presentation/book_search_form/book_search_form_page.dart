@@ -6,7 +6,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/book_list_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/select_book_tags_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_page/book_search_results_page.dart';
 
@@ -367,7 +367,7 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
           ),
         ),
       ),
-      bottomNavigationBar: const BookListBottomNavBar(),
+      bottomNavigationBar: const GenericBottomNavBar(),
     );
   }
 }

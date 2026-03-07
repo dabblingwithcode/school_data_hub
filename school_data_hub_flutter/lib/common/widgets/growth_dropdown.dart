@@ -3,7 +3,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
 class GrowthDropdown extends StatelessWidget {
   final int dropdownValue;
-  final Function(int) onChangedFunction;
+  final void Function(int) onChangedFunction;
   const GrowthDropdown({
     required this.dropdownValue,
     required this.onChangedFunction,

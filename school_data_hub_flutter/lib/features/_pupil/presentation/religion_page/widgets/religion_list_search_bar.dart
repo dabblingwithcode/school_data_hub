@@ -60,7 +60,7 @@ class ReligionListSearchBar extends WatchingWidget {
                 ),
                 GenericFilterButton(
                   isSearchBar: true,
-                  showBottomSheetFunction: () => showGenericFilterBottomSheet(
+                  showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
                     context: context,
                     filterList: [const ReligionFilterBottomSheet()],
                   ),

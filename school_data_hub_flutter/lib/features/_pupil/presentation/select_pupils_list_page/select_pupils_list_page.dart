@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
@@ -12,7 +11,9 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_prox
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/widgets/select_pupils_list_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/widgets/select_pupils_search_bar.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/widgets/select_pupils_view_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/widgets/select_pupils_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -97,7 +98,6 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
-    bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
     final List<PupilProxy> filteredPupils = watchValue(
       (PupilsFilter x) => x.filteredPupils,
     );
@@ -143,13 +143,39 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
           ),
         ),
       ),
-      bottomNavigationBar: SelectPupilsPageBottomNavBar(
-        isSelectAllMode: isSelectAllMode,
-        isSelectMode: isSelectMode,
-        filtersOn: filtersOn,
-        selectedPupilIds: selectedPupilIds,
-        cancelSelect: cancelSelect,
-        toggleSelectAll: () => toggleSelectAll(selectablePupils),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          if (isSelectMode)
+            IconButton(
+              tooltip: 'Abbrechen',
+              icon: const Icon(Icons.close, size: 30),
+              onPressed: cancelSelect,
+            ),
+          IconButton(
+            tooltip: 'alle auswählen',
+            icon: Icon(
+              Icons.select_all_rounded,
+              color: isSelectAllMode ? Colors.deepOrange : Colors.white,
+              size: 30,
+            ),
+            onPressed: () => toggleSelectAll(selectablePupils),
+          ),
+          IconButton(
+            tooltip: 'Okay',
+            icon: Icon(
+              Icons.check,
+              color: isSelectMode ? Colors.green : Colors.white,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.pop(context, selectedPupilIds);
+            },
+          ),
+          GenericFilterButton(
+            isSearchBar: false,
+            showBottomSheetFunction: showSelectPupilsFilterBottomSheet,
+          ),
+        ],
       ),
     );
   }

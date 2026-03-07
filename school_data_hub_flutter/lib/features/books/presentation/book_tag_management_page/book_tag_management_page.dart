@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/widgets/book_tag_management_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 
 class BookTagManagementPage extends StatelessWidget {
   final BookTagManagementController controller;
@@ -36,8 +36,14 @@ class BookTagManagementPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BookTagManagementBottomNavBar(
-        onAddPressed: () => controller.createNewTag(context),
+      bottomNavigationBar: GenericBottomNavBar(
+        actions: [
+          IconButton(
+            tooltip: 'Neues Tag erstellen',
+            icon: const Icon(Icons.add, size: 35),
+            onPressed: () => controller.createNewTag(context),
+          ),
+        ],
       ),
     );
   }

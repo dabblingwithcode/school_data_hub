@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar/bottom_nav_bar_no_filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/attendance_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/book_lending_stats_view.dart';
@@ -72,7 +72,7 @@ class ChartPage extends WatchingWidget {
           title: 'Statistik Diagramm',
         ),
         body: const Center(child: Text('Keine Daten verfügbar')),
-        bottomNavigationBar: const GenericBottomNavBarWithActions(),
+        bottomNavigationBar: const GenericBottomNavBar(),
       );
     }
 

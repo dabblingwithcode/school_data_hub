@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/bottom_nav_bar/generic_bottom_nav_bar_no_filter.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
@@ -285,7 +285,7 @@ class _MatrixEventReportsPageState extends State<MatrixEventReportsPage> {
           ),
         ),
       ),
-      bottomNavigationBar: const GenericBottomNavBarNoFilter(),
+      bottomNavigationBar: const GenericBottomNavBar(),
     );
   }
 

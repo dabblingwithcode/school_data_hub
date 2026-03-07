@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_page/widgets/competence_list_view_bottom_navbar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_page/widgets/competence_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/multi_pupil_competence_check_page/multi_pupil_competence_check_page.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/select_competence_page/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/select_competence_page/selectable_competence_tree.dart';
@@ -97,8 +100,17 @@ class SelectCompetencePage extends StatelessWidget {
               : null,
           child: const Icon(Icons.check, color: Colors.white, size: 35),
         ),
-        bottomNavigationBar: CompetenceListPageBottomNavBar(
-          competences: viewModel.competences,
+        bottomNavigationBar: GenericBottomNavBar(
+          actions: [
+            GenericFilterButton(
+              isSearchBar: false,
+              showBottomSheetFunction: (context) =>
+                  showGenericFilterBottomSheet(
+                    context: context,
+                    filterList: [const CompetenceFilters()],
+                  ),
+            ),
+          ],
         ),
       ),
     );
