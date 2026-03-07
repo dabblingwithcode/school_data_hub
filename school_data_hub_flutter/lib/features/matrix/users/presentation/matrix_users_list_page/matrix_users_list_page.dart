@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_user_list_card.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_user_list_searchbar.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/matrix_rooms_list_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_user_list_card.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_user_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:school_data_hub_flutter/features/user/data/user_api_service.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class MatrixUsersListPage extends WatchingWidget {
   const MatrixUsersListPage({super.key});
@@ -81,10 +81,10 @@ class _MatrixUsersListContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pendingChanges =
-        watchValue((MatrixPolicyManager x) => x.pendingChanges);
-    final filtersOn =
-        watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
+    final pendingChanges = watchValue(
+      (MatrixPolicyManager x) => x.pendingChanges,
+    );
+    final filtersOn = watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
     final matrixUsers = watchValue(
       (MatrixPolicyFilterManager x) => x.filteredMatrixUsers,
     );
@@ -108,8 +108,10 @@ class _MatrixUsersListContent extends WatchingWidget {
                 child: CustomScrollView(
                   slivers: [
                     const SliverGap(5),
-                    GenericSliverSearchAppBar(
-                      title: MatrixUsersListSearchBar(matrixUsers: matrixUsers),
+                    GenericSliverAppBarWithSearchWidget(
+                      searchWidgetWithStatsRow: MatrixUsersListSearchBar(
+                        matrixUsers: matrixUsers,
+                      ),
                       height: 110,
                     ),
                     matrixUsers.isEmpty
@@ -143,96 +145,94 @@ class _MatrixUsersListContent extends WatchingWidget {
             ),
           ),
           bottomNavigationBar: GenericBottomNavBar(
-          actions: [
-            if (pendingChanges)
+            actions: [
+              if (pendingChanges)
+                IconButton(
+                  tooltip: 'Änderungen speichern',
+                  icon: const Icon(Icons.save, size: 30),
+                  onPressed: () => matrixPolicyManager.applyPolicyChanges(),
+                ),
               IconButton(
-                tooltip: 'Änderungen speichern',
-                icon: const Icon(Icons.save, size: 30),
-                onPressed: () =>
-                    matrixPolicyManager.applyPolicyChanges(),
-              ),
-            IconButton(
-              tooltip: 'neues Matrix-Konto',
-              icon: const Icon(Icons.add, size: 30),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => const NewMatrixUserPage(),
-                  ),
-                );
-              },
-            ),
-            IconButton(
-              tooltip: 'Matrix-Räume',
-              icon: const Icon(Icons.meeting_room_rounded, size: 30),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => const MatrixRoomsListPage(),
-                  ),
-                );
-              },
-            ),
-            IconButton(
-              tooltip: 'Event Reports',
-              icon: const Icon(Icons.flag_circle_rounded, size: 30),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => const MatrixEventReportsPage(),
-                  ),
-                );
-              },
-            ),
-            IconButton(
-              tooltip: 'Zur Startseite',
-              icon: const Icon(Icons.home, size: 35),
-              onPressed: () =>
-                  Navigator.popUntil(context, (route) => route.isFirst),
-            ),
-            IconButton(
-              tooltip: 'Matrix-Konten für SuS ohne Kontakt erstellen',
-              icon: const Icon(Icons.person_add_alt_1_rounded, size: 30),
-              onPressed: () async {
-                final file = await matrixPolicyManager.users
-                    .createMatrixCredentialsForPupilsWithoutContactInfo();
-                if (!context.mounted) return;
-                if (file != null) {
+                tooltip: 'neues Matrix-Konto',
+                icon: const Icon(Icons.add, size: 30),
+                onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
-                      builder: (_) => PdfViewerPage(pdfFile: file),
+                      builder: (ctx) => const NewMatrixUserPage(),
                     ),
                   );
-                }
-              },
-            ),
-            IconButton(
-              tooltip: 'Mehrere neue Benutzer-Codes generieren',
-              icon: const Icon(Icons.print, color: Colors.orange, size: 30),
-              onPressed: () {
-                final matrixUsersList =
-                    matrixPolicyManager.matrixUsers.value;
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (context) =>
-                        SelectMatrixUsersList(matrixUsersList),
-                  ),
-                );
-              },
-            ),
-            IconButton(
-              tooltip: 'Filter',
-              icon: Icon(
-                Icons.filter_list,
-                color: filtersOn ? Colors.deepOrange : Colors.white,
-                size: 30,
+                },
               ),
-              onPressed: () {},
-              onLongPress: () =>
-                  di<MatrixPolicyFilterManager>().resetAllMatrixFilters(),
-            ),
-          ],
-        ),
+              IconButton(
+                tooltip: 'Matrix-Räume',
+                icon: const Icon(Icons.meeting_room_rounded, size: 30),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (ctx) => const MatrixRoomsListPage(),
+                    ),
+                  );
+                },
+              ),
+              IconButton(
+                tooltip: 'Event Reports',
+                icon: const Icon(Icons.flag_circle_rounded, size: 30),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (ctx) => const MatrixEventReportsPage(),
+                    ),
+                  );
+                },
+              ),
+              IconButton(
+                tooltip: 'Zur Startseite',
+                icon: const Icon(Icons.home, size: 35),
+                onPressed: () =>
+                    Navigator.popUntil(context, (route) => route.isFirst),
+              ),
+              IconButton(
+                tooltip: 'Matrix-Konten für SuS ohne Kontakt erstellen',
+                icon: const Icon(Icons.person_add_alt_1_rounded, size: 30),
+                onPressed: () async {
+                  final file = await matrixPolicyManager.users
+                      .createMatrixCredentialsForPupilsWithoutContactInfo();
+                  if (!context.mounted) return;
+                  if (file != null) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => PdfViewerPage(pdfFile: file),
+                      ),
+                    );
+                  }
+                },
+              ),
+              IconButton(
+                tooltip: 'Mehrere neue Benutzer-Codes generieren',
+                icon: const Icon(Icons.print, color: Colors.orange, size: 30),
+                onPressed: () {
+                  final matrixUsersList = matrixPolicyManager.matrixUsers.value;
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) =>
+                          SelectMatrixUsersList(matrixUsersList),
+                    ),
+                  );
+                },
+              ),
+              IconButton(
+                tooltip: 'Filter',
+                icon: Icon(
+                  Icons.filter_list,
+                  color: filtersOn ? Colors.deepOrange : Colors.white,
+                  size: 30,
+                ),
+                onPressed: () {},
+                onLongPress: () =>
+                    di<MatrixPolicyFilterManager>().resetAllMatrixFilters(),
+              ),
+            ],
+          ),
         );
       },
     );

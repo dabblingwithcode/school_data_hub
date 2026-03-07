@@ -1,29 +1,22 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_filter_bottom_sheet.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_search_text_field.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 
-final _pupilsFilter = di<PupilsFilter>();
-final _filtersStateManager = di<FiltersStateManager>();
+class LearningSupportSearchBarStats extends WatchingWidget {
+  final ValueListenable<List<PupilProxy>> filteredPupils;
 
-class LearningSupportListSearchBar extends StatelessWidget {
-  final List<PupilProxy> pupils;
-  final bool filtersOn;
-  const LearningSupportListSearchBar({
-    required this.filtersOn,
-    required this.pupils,
+  const LearningSupportSearchBarStats({
+    required this.filteredPupils,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    final pupils = watch(filteredPupils).value;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.canvasColor,
@@ -59,9 +52,8 @@ class LearningSupportListSearchBar extends StatelessWidget {
                     ),
                     const Gap(5),
                     Text(
-                      (LearningSupportHelper.developmentPlan1Pupils(
-                        pupils,
-                      )).toString(),
+                      (LearningSupportHelper.developmentPlan1Pupils(pupils))
+                          .toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -75,9 +67,8 @@ class LearningSupportListSearchBar extends StatelessWidget {
                     ),
                     const Gap(5),
                     Text(
-                      (LearningSupportHelper.developmentPlan2Pupils(
-                        pupils,
-                      )).toString(),
+                      (LearningSupportHelper.developmentPlan2Pupils(pupils))
+                          .toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -91,9 +82,8 @@ class LearningSupportListSearchBar extends StatelessWidget {
                     ),
                     const Gap(5),
                     Text(
-                      (LearningSupportHelper.developmentPlan3Pupils(
-                        pupils,
-                      )).toString(),
+                      (LearningSupportHelper.developmentPlan3Pupils(pupils))
+                          .toString(),
                       style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -103,32 +93,6 @@ class LearningSupportListSearchBar extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: PupilSearchTextField(
-                    searchType: SearchType.pupil,
-                    hintText: 'Schüler/in suchen',
-                    refreshFunction: _pupilsFilter.refreshs,
-                  ),
-                ),
-                InkWell(
-                  onTap: () => showLearningSupportFilterBottomSheet(context),
-                  onLongPress: () => _filtersStateManager.resetFilters(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Icon(
-                      Icons.filter_list,
-                      color: filtersOn ? Colors.deepOrange : Colors.grey,
-                      size: 30,
-                    ),
-                  ),
-                ),
-              ],
             ),
           ),
         ],

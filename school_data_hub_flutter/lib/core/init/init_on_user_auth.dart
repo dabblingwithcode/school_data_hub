@@ -74,6 +74,7 @@ class InitOnUserAuth {
 
     di.registerSingletonAsync<SupportCategoryManager>(
       () => SupportCategoryManager().init(),
+      dependsOn: [HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
@@ -133,6 +134,7 @@ class InitOnUserAuth {
 
     di.registerSingletonAsync<CompetenceManager>(
       () => CompetenceManager().init(),
+      dependsOn: [HubStreamService],
       dispose: (m) => m.dispose(),
     );
 

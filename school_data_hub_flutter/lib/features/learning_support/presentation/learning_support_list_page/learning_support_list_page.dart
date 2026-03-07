@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_card.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_filter_bottom_sheet.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_search_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_filters_widget.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_card.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_search_bar_stats.dart';
 
 class LearningSupportListPage extends WatchingWidget {
   const LearningSupportListPage({super.key});
@@ -21,48 +18,34 @@ class LearningSupportListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final pupilManager = di<PupilProxyManager>();
-    bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
-    // These come from the PupilFilterManager
+    final pupilsFilter = di<PupilsFilter>();
+    final filterStateManager = di<FiltersStateManager>();
 
-    List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
-    return Scaffold(
+    return GenericListPage<PupilProxy>(
       backgroundColor: AppColors.canvasColor,
-      appBar: const GenericAppBar(
-        iconData: Icons.support_rounded,
-        title: 'Förderung',
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async => pupilManager.updatePupilList(pupils),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 700),
-            child: CustomScrollView(
-              slivers: [
-                const SliverGap(5),
-                GenericSliverSearchAppBar(
-                  height: 110,
-                  title: LearningSupportListSearchBar(
-                    pupils: pupils,
-                    filtersOn: filtersOn,
-                  ),
-                ),
-                GenericSliverListWithEmptyListCheck(
-                  items: pupils,
-                  itemBuilder: (_, pupil) => LearningSupportCard(pupil),
-                ),
-              ],
-            ),
-          ),
+      iconData: Icons.support_rounded,
+      title: 'Förderung',
+      sliverAppBarHeight: 110,
+      searchBarConfig: GenericListSearchBarConfig(
+        statsWidget: LearningSupportSearchBarStats(
+          filteredPupils: pupilsFilter.filteredPupils,
         ),
+        searchType: SearchType.pupil,
+        hintText: 'Schüler/in suchen',
+        refreshFunction: pupilsFilter.refreshs,
+        onChanged: (value) => pupilsFilter.textFilter.setFilterText(value),
+        searchTextSource: pupilsFilter.textFilter,
+        filtersActive: filterStateManager.filtersActive,
+        onResetFilters: filterStateManager.resetFilters,
       ),
-      bottomNavigationBar: GenericBottomNavBar(
-        actions: [
-          GenericFilterButton(
-            isSearchBar: false,
-            showBottomSheetFunction: showLearningSupportFilterBottomSheet,
-          ),
-        ],
-      ),
+      filterSheetChildren: const [
+        CommonPupilFiltersWidget(),
+        LearningSupportFiltersWidget(),
+      ],
+      itemsListenable: pupilsFilter.filteredPupils,
+      itemBuilder: (_, pupil) => LearningSupportCard(pupil),
+      onRefresh: () async => pupilManager.fetchAllPupils(),
+      maxWidth: 700,
     );
   }
 }

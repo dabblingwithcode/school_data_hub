@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_search_text_field.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/workbook_card.dart';
@@ -91,11 +91,19 @@ class WorkbookListPage extends WatchingWidget {
                         child: Row(
                           children: [
                             Expanded(
-                              child: PupilSearchTextField(
+                              child: GenericSearchTextField(
                                 searchType: SearchType.workbook,
                                 hintText: 'Arbeitsheft suchen',
                                 refreshFunction:
                                     di<WorkbookManager>().fetchWorkbooks,
+                                onChanged: (value) =>
+                                    di<PupilsFilter>()
+                                        .textFilter
+                                        .setFilterText(value),
+                                filtersActive:
+                                    di<FiltersStateManager>().filtersActive,
+                                onResetFilters:
+                                    di<PupilsFilter>().resetFilters,
                               ),
                             ),
                             //---------------------------------

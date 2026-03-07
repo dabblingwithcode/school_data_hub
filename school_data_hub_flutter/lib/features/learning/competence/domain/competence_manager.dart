@@ -6,6 +6,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
+import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -46,6 +47,8 @@ class CompetenceManager {
   Map<int, int> _rootCompetencesMap = {};
   Map<int, int> get rootCompetencesMap => _rootCompetencesMap;
 
+  StreamSubscription<dynamic>? _hubSubscription;
+
   Competence getCompetenceById(int publicId) {
     return _competences.value.firstWhere(
       (element) => element.publicId == publicId,
@@ -54,16 +57,50 @@ class CompetenceManager {
 
   CompetenceManager();
   void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
     _competences.dispose();
     _selectedLearningContent.dispose();
-
-    return;
   }
 
   Future<CompetenceManager> init() async {
     await firstFetchCompetences();
-
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     return this;
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is Competence) {
+      upsertFromStream(event);
+    } else if (event is HubDeleteEvent &&
+        event.objectType == HubObjectType.competence) {
+      deleteFromStream(event.id);
+    } else if (event is HubReconnected) {
+      fetchCompetences();
+    }
+  }
+
+  void upsertFromStream(Competence competence) {
+    final list = List<Competence>.from(_competences.value);
+    final index = list.indexWhere((c) => c.publicId == competence.publicId);
+    if (index >= 0) {
+      list[index] = competence;
+    } else {
+      list.add(competence);
+    }
+    final sorted = CompetenceHelper.sortCompetences(list);
+    _competences.value = sorted;
+    _rootCompetencesMap =
+        CompetenceHelper.generateRootCompetencesMap(sorted);
+    di<CompetenceFilterManager>().refreshFilteredCompetences(sorted);
+  }
+
+  void deleteFromStream(int publicId) {
+    final list =
+        _competences.value.where((c) => c.publicId != publicId).toList();
+    _competences.value = list;
+    _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(list);
+    di<CompetenceFilterManager>().refreshFilteredCompetences(list);
   }
 
   void clearData() {

@@ -5,18 +5,18 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/attendance_list_page.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_page/missed_schooldays_pupil_list_page.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/birthday_date_range_dialog.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/after_school_care_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/birthdays_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/family_language_lessons_page/family_language_lessons_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/religion_page/religion_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/special_info_page/special_info_list_page.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/birthday_date_range_dialog.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil_matrix_contacts_list_page/pupils_matrix_contacts_list_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class PupilListButtons extends WatchingWidget {
@@ -134,7 +134,7 @@ class PupilListButtons extends WatchingWidget {
           buttonText: 'HSU',
         ),
         MainMenuButton(
-          destinationPage: const OgsListPage(),
+          destinationPage: const AfterSchoolListPage(),
           buttonIcon: Text(
             locale.allDayCare,
             style: TextStyle(

@@ -29,12 +29,19 @@ class SelectUsersPage extends WatchingStatefulWidget {
 
 class _SelectUsersPageState extends State<SelectUsersPage> {
   List<User>? users;
+  final _selectableListenable = ValueNotifier<List<User>>([]);
 
   List<int> selectedUserIds = [];
   bool isSelectAllMode = false;
   bool isSelectMode = false;
 
   UserManager get _userManager => di<UserManager>();
+
+  @override
+  void dispose() {
+    _selectableListenable.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -135,6 +142,7 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
               )
               .toList()
         : allUsers;
+    _selectableListenable.value = selectableUsers;
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -150,15 +158,15 @@ class _SelectUsersPageState extends State<SelectUsersPage> {
             child: CustomScrollView(
               slivers: [
                 const SliverGap(5),
-                GenericSliverSearchAppBar(
+                GenericSliverAppBarWithSearchWidget(
                   height: 110,
-                  title: SelectUsersSearchBar(
+                  searchWidgetWithStatsRow: SelectUsersSearchBar(
                     selectableUsers: selectableUsers,
                     selectedUsers: getSelectedUsers(),
                   ),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                  items: selectableUsers,
+                  itemsListenable: _selectableListenable,
                   itemBuilder: (_, user) => SelectUsersListCard(
                     isSelectMode: isSelectMode,
                     isSelected:

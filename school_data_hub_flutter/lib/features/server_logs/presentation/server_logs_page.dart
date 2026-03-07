@@ -100,7 +100,7 @@ class ServerLogsPage extends WatchingWidget {
                 )
               else ...[
                 GenericSliverListWithEmptyListCheck<HubSessionLogInfo>(
-                  items: logs,
+                  itemsListenable: manager.sessionLogs,
                   itemBuilder: (context, info) => Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,

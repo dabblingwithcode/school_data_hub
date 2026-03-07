@@ -4,6 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/filters/competence_filter_manager.dart';
@@ -94,6 +95,8 @@ class SortableCompetenceListPage extends WatchingWidget {
           // ),
           GenericFilterButton(
             isSearchBar: false,
+            filtersActive: di<FiltersStateManager>().filtersActive,
+            onLongPress: () => di<FiltersStateManager>().resetFilters(),
             showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
               context: context,
               filterList: [const CompetenceFilters()],

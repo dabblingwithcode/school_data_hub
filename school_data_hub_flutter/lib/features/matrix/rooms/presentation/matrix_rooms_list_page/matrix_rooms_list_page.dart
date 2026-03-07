@@ -75,7 +75,7 @@ class MatrixRoomsListPage extends WatchingWidget {
                   ),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                  items: matrixRooms,
+                  itemsListenable: matrixPolicyFilterManager.filteredMatrixRooms,
                   itemBuilder: (_, room) => RoomListCard(room),
                 ),
               ],

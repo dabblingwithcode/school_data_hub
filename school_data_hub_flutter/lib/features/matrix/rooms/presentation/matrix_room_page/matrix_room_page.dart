@@ -42,8 +42,8 @@ class MatrixRoomPage extends WatchingWidget {
             child: CustomScrollView(
               slivers: [
                 const SliverGap(5),
-                GenericSliverSearchAppBar(
-                  title: MatrixUsersListSearchBar(
+                GenericSliverAppBarWithSearchWidget(
+                  searchWidgetWithStatsRow: MatrixUsersListSearchBar(
                     matrixUsers: matrixUsersInRoom,
                   ),
                   height: 110,

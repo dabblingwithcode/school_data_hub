@@ -1,97 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/show_generic_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/widgets/after_school_care_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/widgets/after_school_care_list_card.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/widgets/after_school_care_list_search_bar.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_count_search_bar_stats.dart';
 
 List<PupilProxy> _afterSchoolCareFilter(List<PupilProxy> pupils) {
-  List<PupilProxy> filteredPupils = [];
+  bool filtersOn = false;
+  final List<PupilProxy> filteredPupils = [];
   for (PupilProxy pupil in pupils) {
     if (pupil.afterSchoolCare == null) {
-      di<FiltersStateManager>().setFilterState(
-        filterState: FilterState.pupil,
-        value: true,
-      );
-
+      filtersOn = true;
       continue;
     }
     filteredPupils.add(pupil);
   }
+  if (filtersOn) {
+    di<FiltersStateManager>().setFilterState(
+      filterState: FilterState.pupil,
+      value: true,
+    );
+  }
   return filteredPupils;
 }
 
-class OgsListPage extends WatchingWidget {
-  const OgsListPage({super.key});
+class AfterSchoolListPage extends WatchingWidget {
+  const AfterSchoolListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
-
+    final pupilsFilter = di<PupilsFilter>();
+    final filterStateManager = di<FiltersStateManager>();
     List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
-
     List<PupilProxy> ogsPupils = _afterSchoolCareFilter(pupils);
+    final ogsPupilsListenable =
+        createOnce(() => ValueNotifier<List<PupilProxy>>([]));
+    ogsPupilsListenable.value = ogsPupils;
 
-    return Scaffold(
+    return GenericListPage<PupilProxy>(
       backgroundColor: AppColors.canvasColor,
-      appBar: const GenericAppBar(
-        iconData: Icons.restaurant_menu_rounded,
-        title: 'OGS Infos',
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async =>
-            di<PupilProxyManager>().updatePupilList(ogsPupils),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: CustomScrollView(
-              slivers: [
-                const SliverGap(5),
-                GenericSliverSearchAppBar(
-                  height: 105,
-                  title: AfterSchoolCareListSearchBar(
-                    pupils: ogsPupils,
-                    filtersOn: filtersOn,
-                  ),
-                ),
-                GenericSliverListWithEmptyListCheck(
-                  items: ogsPupils,
-                  itemBuilder: (_, pupil) => AfterSchoolCareCard(pupil),
-                ),
-              ],
-            ),
-          ),
+      iconData: Icons.restaurant_menu_rounded,
+      title: 'OGS Infos',
+      sliverAppBarHeight: 105,
+      searchBarConfig: GenericListSearchBarConfig(
+        statsWidget: PupilCountSearchBarStats(
+          filteredPupils: ogsPupilsListenable,
         ),
+        searchType: SearchType.pupil,
+        hintText: 'Schüler/in suchen',
+        refreshFunction: pupilsFilter.refreshs,
+        onChanged: (value) => pupilsFilter.textFilter.setFilterText(value),
+        searchTextSource: pupilsFilter.textFilter,
+        filtersActive: filterStateManager.filtersActive,
+        onResetFilters: filterStateManager.resetFilters,
       ),
-      bottomNavigationBar: GenericBottomNavBar(
-        actions: [
-          GenericFilterButton(
-            isSearchBar: true,
-            showBottomSheetFunction: (context) => showGenericBottomSheet(
-              context,
-              const GenericFilterBottomSheet(
-                children: [
-                  CommonPupilFiltersWidget(),
-                  AfterSchoolCareFiltersWidget(),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+      filterSheetChildren: const [
+        CommonPupilFiltersWidget(),
+        AfterSchoolCareFiltersWidget(),
+      ],
+      itemsListenable: ogsPupilsListenable,
+      itemBuilder: (_, pupil) => AfterSchoolCareCard(pupil),
+      onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
+      maxWidth: 800,
     );
   }
 }

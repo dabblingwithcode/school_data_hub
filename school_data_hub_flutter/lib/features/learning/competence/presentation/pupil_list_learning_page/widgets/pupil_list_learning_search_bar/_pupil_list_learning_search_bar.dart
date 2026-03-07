@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
@@ -10,7 +11,7 @@ import 'package:school_data_hub_flutter/features/learning/competence/presentatio
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar/pupil_workbooks_infos.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_search_text_field.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_search_text_field.dart';
 
 class PupilListLearningSearchBar extends StatelessWidget {
   //final List<PupilProxy> pupils;
@@ -47,10 +48,15 @@ class PupilListLearningSearchBar extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: PupilSearchTextField(
+                  child: GenericSearchTextField(
                     searchType: SearchType.pupil,
                     hintText: 'Schüler/in suchen',
                     refreshFunction: di<PupilsFilter>().refreshs,
+                    onChanged: (value) =>
+                        di<PupilsFilter>().textFilter.setFilterText(value),
+                    searchTextSource: di<PupilsFilter>().textFilter,
+                    filtersActive: di<FiltersStateManager>().filtersActive,
+                    onResetFilters: di<PupilsFilter>().resetFilters,
                   ),
                 ),
                 InkWell(

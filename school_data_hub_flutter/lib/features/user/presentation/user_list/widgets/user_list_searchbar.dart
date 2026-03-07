@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -9,6 +10,8 @@ class UserListSearchBar extends StatelessWidget {
   final List<User> users;
   final TextEditingController searchController;
   final bool filtersOn;
+  final ValueListenable<bool> filtersActive;
+  final VoidCallback? onLongPress;
   final ValueChanged<String> onSearchChanged;
   final VoidCallback onResetFilters;
   final VoidCallback onOpenFilter;
@@ -17,6 +20,8 @@ class UserListSearchBar extends StatelessWidget {
     required this.users,
     required this.searchController,
     required this.filtersOn,
+    required this.filtersActive,
+    this.onLongPress,
     required this.onSearchChanged,
     required this.onResetFilters,
     required this.onOpenFilter,
@@ -137,6 +142,8 @@ class UserListSearchBar extends StatelessWidget {
                 const Gap(5),
                 GenericFilterButton(
                   isSearchBar: true,
+                  filtersActive: filtersActive,
+                  onLongPress: onLongPress,
                   showBottomSheetFunction: (_) => onOpenFilter(),
                 ),
               ],

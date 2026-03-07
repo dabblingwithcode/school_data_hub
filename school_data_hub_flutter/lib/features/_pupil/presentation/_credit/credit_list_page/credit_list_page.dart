@@ -1,69 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/show_generic_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_card.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_search_bar_stats.dart';
 
 class CreditListPage extends WatchingWidget {
   const CreditListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
-    int userCredit = watchPropertyValue(
+    final pupilsFilter = di<PupilsFilter>();
+    final filterStateManager = di<FiltersStateManager>();
+    final int userCredit = watchPropertyValue(
       (HubSessionManager x) => x.user,
     )!.credit;
 
-    return Scaffold(
+    return GenericListPage<PupilProxy>(
       backgroundColor: AppColors.canvasColor,
-      appBar: GenericAppBar(
-        iconData: Icons.credit_card,
-        title: 'Guthaben: $userCredit',
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 700),
-            child: CustomScrollView(
-              slivers: [
-                const SliverGap(5),
-                GenericSliverSearchAppBar(
-                  height: 110,
-                  title: CreditListSearchBar(pupils: pupils),
-                ),
-                GenericSliverListWithEmptyListCheck(
-                  items: pupils,
-                  itemBuilder: (_, pupil) => CreditListCard(pupil),
-                ),
-              ],
-            ),
-          ),
+      iconData: Icons.credit_card,
+      title: 'Guthaben: $userCredit',
+      sliverAppBarHeight: 110,
+      searchBarConfig: GenericListSearchBarConfig(
+        statsWidget: CreditListSearchBarStats(
+          filteredPupils: pupilsFilter.filteredPupils,
         ),
+        searchType: SearchType.pupil,
+        hintText: 'Schüler/in suchen',
+        refreshFunction: pupilsFilter.refreshs,
+        onChanged: (value) => pupilsFilter.textFilter.setFilterText(value),
+        searchTextSource: pupilsFilter.textFilter,
+        filtersActive: filterStateManager.filtersActive,
+        onResetFilters: filterStateManager.resetFilters,
       ),
-      bottomNavigationBar: GenericBottomNavBar(
-        actions: [
-          IconButton(
-            tooltip: 'Filter',
-            icon: const Icon(Icons.filter_list, size: 30),
-            onPressed: () {
-              showGenericBottomSheet(context, const CreditFilterBottomSheet());
-            },
-          ),
-        ],
-      ),
-      // const CreditListPageBottomNavBar(),
+      filterSheetChildren: const [
+        CommonPupilFiltersWidget(),
+        CreditFiltersWidget(),
+      ],
+      itemsListenable: pupilsFilter.filteredPupils,
+      itemBuilder: (_, pupil) => CreditListCard(pupil),
+      onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
+      maxWidth: 700,
     );
   }
 }

@@ -5,3 +5,5 @@ values:
   - schooldayEvent
   - schoolList
   - authorization
+  - supportCategory
+  - competence

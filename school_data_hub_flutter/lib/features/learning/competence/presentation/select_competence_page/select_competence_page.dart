@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
@@ -104,6 +106,8 @@ class SelectCompetencePage extends StatelessWidget {
           actions: [
             GenericFilterButton(
               isSearchBar: false,
+              filtersActive: di<FiltersStateManager>().filtersActive,
+              onLongPress: () => di<FiltersStateManager>().resetFilters(),
               showBottomSheetFunction: (context) =>
                   showGenericFilterBottomSheet(
                     context: context,

@@ -9,7 +9,6 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_page/widgets/learning_list_card/learning_list_card.dart';
@@ -23,9 +22,8 @@ class PupilListLearningPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pupilsFilter = di<PupilsFilter>();
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
-    // These come from the PupilFilterManager
-    List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
     final selectedContent = watchValue(
       (CompetenceManager m) => m.selectedLearningContent,
     );
@@ -37,18 +35,20 @@ class PupilListLearningPage extends WatchingWidget {
         title: 'Lernen',
       ),
       body: RefreshIndicator(
-        onRefresh: () async => di<PupilProxyManager>().updatePupilList(pupils),
+        onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 700),
             child: CustomScrollView(
               slivers: [
-                GenericSliverSearchAppBar(
+                GenericSliverAppBarWithSearchWidget(
                   height: 180,
-                  title: PupilListLearningSearchBar(filtersOn: filtersOn),
+                  searchWidgetWithStatsRow: PupilListLearningSearchBar(
+                    filtersOn: filtersOn,
+                  ),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                  items: pupils,
+                  itemsListenable: pupilsFilter.filteredPupils,
                   itemBuilder: (_, pupil) => LearningListCard(pupil),
                 ),
               ],
@@ -81,7 +81,7 @@ class PupilListLearningPage extends WatchingWidget {
                 try {
                   final pdfFile =
                       await LearningGoalsPdfGenerator.generateLearningGoalsPdf(
-                        pupils: pupils,
+                        pupils: pupilsFilter.filteredPupils.value,
                       );
                   if (context.mounted) {
                     Navigator.of(context).push(
@@ -105,6 +105,8 @@ class PupilListLearningPage extends WatchingWidget {
             ),
           GenericFilterButton(
             isSearchBar: false,
+            filtersActive: di<FiltersStateManager>().filtersActive,
+            onLongPress: () => di<FiltersStateManager>().resetFilters(),
             showBottomSheetFunction: showLearningFilterBottomSheet,
           ),
         ],

@@ -5,11 +5,38 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/language_content/pupil_language_card.dart';
 
-class PupilListDialog extends StatelessWidget {
+class PupilListDialog extends StatefulWidget {
   final String title;
   final List<PupilProxy> pupils;
 
   const PupilListDialog({super.key, required this.title, required this.pupils});
+
+  @override
+  State<PupilListDialog> createState() => _PupilListDialogState();
+}
+
+class _PupilListDialogState extends State<PupilListDialog> {
+  late final ValueNotifier<List<PupilProxy>> _pupilsListenable;
+
+  @override
+  void initState() {
+    super.initState();
+    _pupilsListenable = ValueNotifier<List<PupilProxy>>(widget.pupils);
+  }
+
+  @override
+  void didUpdateWidget(covariant PupilListDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.pupils != widget.pupils) {
+      _pupilsListenable.value = widget.pupils;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pupilsListenable.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +47,12 @@ class PupilListDialog extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 600, maxHeight: 600),
         child: Column(
           children: [
-            GenericAppBar(title: title, iconData: Icons.people),
+            GenericAppBar(title: widget.title, iconData: Icons.people),
             Expanded(
               child: CustomScrollView(
                 slivers: [
                   GenericSliverListWithEmptyListCheck(
-                    items: pupils,
+                    itemsListenable: _pupilsListenable,
                     itemBuilder: (context, pupil) =>
                         PupilLanguageCard(passedPupil: pupil),
                   ),

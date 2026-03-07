@@ -3,11 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
@@ -18,7 +22,7 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/com
 import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_filters_widget.dart';
-import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_searchbar.dart';
+import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_search_bar_stats.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entry_card.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/services/school_list_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
@@ -34,7 +38,8 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
     final _schoolListManager = di<SchoolListManager>();
     final _schoolListFilterManager = di<SchoolListFilterManager>();
     final _pupilManager = di<PupilProxyManager>();
-    // TODO: is this necessary? Other pages are not a watchingwidget
+    final pupilsFilter = di<PupilsFilter>();
+    final filterStateManager = di<FiltersStateManager>();
     final unfilteredPupilListEntries = watch(
       _schoolListManager.getPupilEntriesProxyFromSchoolList(schoolList.id!),
     ).pupilEntries.values.map((e) => e.pupilEntry).toList();
@@ -52,6 +57,9 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
           ),
         )
         .toList();
+    final pupilsInListListenable =
+        createOnce(() => ValueNotifier<List<PupilProxy>>([]));
+    pupilsInListListenable.value = pupilsInList;
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -65,36 +73,38 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
               constraints: const BoxConstraints(maxWidth: 700),
               child: CustomScrollView(
                 slivers: [
-                  GenericSliverSearchAppBar(
+                  GenericSliverAppBarWithSearchWidget(
                     height: 135,
-                    title: SchoolListPupilEntriesPageSearchBar(
-                      pupilsInList: pupilsInList,
-                      schoolList: schoolList,
+                    searchWidgetWithStatsRow: GenericListSearchBarWithStats(
+                      statsWidget: SchoolListPupilEntriesSearchBarStats(
+                        schoolList: schoolList,
+                        pupilsInList: pupilsInListListenable,
+                      ),
+                      searchType: SearchType.pupil,
+                      hintText: 'Schüler/in suchen',
+                      refreshFunction: pupilsFilter.refreshs,
+                      onChanged: (value) =>
+                          pupilsFilter.textFilter.setFilterText(value),
+                      searchTextSource: pupilsFilter.textFilter,
+                      filtersActive: filterStateManager.filtersActive,
+                      onResetFilters: filterStateManager.resetFilters,
+                      showFilterBottomSheet: (context) =>
+                          showGenericFilterBottomSheet(
+                        context: context,
+                        filterList: [
+                          const CommonPupilFiltersWidget(),
+                          const SchoolListPupilEntriesFiltersWidget(),
+                        ],
+                      ),
                     ),
                   ),
-                  pupilsInList.isEmpty
-                      ? const SliverToBoxAdapter(
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Keine Ergebnisse',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ),
-                          ),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate((
-                            BuildContext context,
-                            int index,
-                          ) {
-                            return SchoolListPupilEntryCard(
-                              pupilsInList[index].pupilId,
-                              schoolList.id!,
-                            );
-                          }, childCount: pupilsInList.length),
-                        ),
+                  GenericSliverListWithEmptyListCheck<PupilProxy>(
+                    itemsListenable: pupilsInListListenable,
+                    itemBuilder: (_, PupilProxy pupil) => SchoolListPupilEntryCard(
+                      pupil.pupilId,
+                      schoolList.id!,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -192,6 +202,8 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
           ),
           GenericFilterButton(
             isSearchBar: false,
+            filtersActive: di<FiltersStateManager>().filtersActive,
+            onLongPress: () => di<FiltersStateManager>().resetFilters(),
             showBottomSheetFunction: (context) {
               showGenericFilterBottomSheet(
                 context: context,

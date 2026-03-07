@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/generate_uuid.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
@@ -12,7 +13,9 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_search_bar_stats.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/multi_pupil_competence_check_page/widgets/competence_parents_names_widget.dart';
@@ -34,11 +37,16 @@ class MultiPupilCompetenceCheckPage extends WatchingWidget {
     final groupCheckName = watch(groupCheckNameNotifier).value;
 
     // Watch filtered pupils and apply competence filter
+    final pupilsFilter = di<PupilsFilter>();
+    final filterStateManager = di<FiltersStateManager>();
     final filteredPupils = watchValue((PupilsFilter x) => x.filteredPupils);
     final competenceFilteredPupils = _getFilteredPupilsWithCompetence(
       competence: competence,
       pupilsToBeFiltered: filteredPupils,
     );
+    final competenceFilteredPupilsListenable =
+        createOnce(() => ValueNotifier<List<PupilProxy>>([]));
+    competenceFilteredPupilsListenable.value = competenceFilteredPupils;
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -111,14 +119,29 @@ class MultiPupilCompetenceCheckPage extends WatchingWidget {
                   child: CustomScrollView(
                     slivers: [
                       // const SliverGap(5),
-                      GenericSliverSearchAppBar(
+                      GenericSliverAppBarWithSearchWidget(
                         height: 110,
-                        title: CreditListSearchBar(
-                          pupils: competenceFilteredPupils,
+                        searchWidgetWithStatsRow: GenericListSearchBarWithStats(
+                          statsWidget: CreditListSearchBarStats(
+                            filteredPupils: competenceFilteredPupilsListenable,
+                          ),
+                          searchType: SearchType.pupil,
+                          hintText: 'Schüler/in suchen',
+                          refreshFunction: pupilsFilter.refreshs,
+                          onChanged: (value) =>
+                              pupilsFilter.textFilter.setFilterText(value),
+                          searchTextSource: pupilsFilter.textFilter,
+                          filtersActive: filterStateManager.filtersActive,
+                          onResetFilters: filterStateManager.resetFilters,
+                          showFilterBottomSheet: (context) =>
+                              showGenericFilterBottomSheet(
+                            context: context,
+                            filterList: [const CommonPupilFiltersWidget()],
+                          ),
                         ),
                       ),
                       GenericSliverListWithEmptyListCheck(
-                        items: competenceFilteredPupils,
+                        itemsListenable: competenceFilteredPupilsListenable,
                         itemBuilder: (_, pupil) =>
                             MultiPupilCompetenceCheckCard(
                               passedPupil: pupil,
@@ -148,7 +171,8 @@ class MultiPupilCompetenceCheckPage extends WatchingWidget {
           ),
           GenericFilterButton(
             isSearchBar: false,
-
+            filtersActive: di<FiltersStateManager>().filtersActive,
+            onLongPress: () => di<FiltersStateManager>().resetFilters(),
             showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
               context: context,
               filterList: [const CommonPupilFiltersWidget()],

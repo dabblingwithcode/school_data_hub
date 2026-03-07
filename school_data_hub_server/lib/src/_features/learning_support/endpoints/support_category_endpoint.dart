@@ -29,7 +29,9 @@ class SupportCategoryEndpoint extends Endpoint {
         "(SELECT COALESCE(MAX(id), 0) FROM support_category));",
       );
     });
-
+    for (final c in categories) {
+      session.messages.postMessage('hub_events_stream', c);
+    }
     return categories;
   }
 
@@ -37,19 +39,29 @@ class SupportCategoryEndpoint extends Endpoint {
       Session session, SupportCategory category) async {
     // Ensure id is null so the database auto-generates it.
     final newCategory = category.copyWith(id: null);
-    await SupportCategory.db.insertRow(session, newCategory);
+    final inserted =
+        await SupportCategory.db.insertRow(session, newCategory);
+    session.messages.postMessage('hub_events_stream', inserted);
     return true;
   }
 
   Future<bool> updateSupportCategory(
       Session session, SupportCategory category) async {
     await session.db.updateRow(category);
+    session.messages.postMessage('hub_events_stream', category);
     return true;
   }
 
   Future<bool> deleteSupportCategory(
       Session session, SupportCategory category) async {
     await session.db.deleteRow<SupportCategory>(category);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(
+        objectType: HubObjectType.supportCategory,
+        id: category.categoryId,
+      ),
+    );
     return true;
   }
 }

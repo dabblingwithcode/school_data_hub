@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class GenericSliverSearchAppBar extends StatelessWidget {
-  final Widget title;
+class GenericSliverAppBarWithSearchWidget extends StatelessWidget {
+  final Widget searchWidgetWithStatsRow;
   final double height;
 
-  const GenericSliverSearchAppBar({
+  const GenericSliverAppBarWithSearchWidget({
     super.key,
-    required this.title,
+    required this.searchWidgetWithStatsRow,
     required this.height,
   });
 
@@ -25,7 +25,7 @@ class GenericSliverSearchAppBar extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         expandedTitleScale: 1,
         collapseMode: CollapseMode.none,
-        background: title,
+        background: searchWidgetWithStatsRow,
       ),
     );
   }

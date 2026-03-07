@@ -63,9 +63,9 @@ class LogsPage extends WatchingWidget {
           constraints: const BoxConstraints(maxWidth: 700),
           child: CustomScrollView(
             slivers: [
-              GenericSliverSearchAppBar(
+              GenericSliverAppBarWithSearchWidget(
                 height: 90,
-                title: _LogSearchField(
+                searchWidgetWithStatsRow: _LogSearchField(
                   controller: searchController,
                   value: searchQuery,
                   onChanged: logService.updateSearchQuery,
@@ -93,7 +93,7 @@ class LogsPage extends WatchingWidget {
                 ),
               ),
               GenericSliverListWithEmptyListCheck<AppLog>(
-                items: logs,
+                itemsListenable: logService.filteredLogs,
                 itemBuilder: (context, log) => Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,

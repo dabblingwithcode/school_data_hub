@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/services/attendance_pdf_generator.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -16,12 +18,10 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_h
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/atendance_list_card.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_filters.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_list_search_bar.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_search_bar_stats.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_classes_badges_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class AttendanceListPage extends WatchingWidget {
@@ -29,26 +29,9 @@ class AttendanceListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final attendanceManager = di<AttendanceManager>();
-    final notificationService = di<NotificationService>();
-    final bool isAuthenticated = watchPropertyValue(
-      (HubSessionManager x) => x.isSignedIn,
-    );
+    final pupilsFilter = di<PupilsFilter>();
+    final filterStateManager = di<FiltersStateManager>();
 
-    // If not authenticated, redirect to login page
-    if (!isAuthenticated) {
-      notificationService.showInformationDialog(
-        'Die Sitzung ist abgelaufen.\nBitte erneut anmelden.',
-      );
-      // Use Future.microtask to avoid build-phase navigation issues
-      Future.microtask(() {
-        if (!context.mounted) return;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute<void>(builder: (context) => const Login()),
-        );
-      });
-      // Return an empty container or loading indicator while navigating
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
     DateTime thisDate = watchValue(
       (SchoolCalendarManager x) => x.thisDate,
     ).toLocal();
@@ -58,7 +41,7 @@ class AttendanceListPage extends WatchingWidget {
     });
 
     watchValue((AttendanceManager x) => x.missedSchooldays);
-    List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
+
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: AppBar(
@@ -100,12 +83,30 @@ class AttendanceListPage extends WatchingWidget {
             child: CustomScrollView(
               slivers: [
                 const SliverGap(5),
-                const GenericSliverSearchAppBar(
+                GenericSliverAppBarWithSearchWidget(
                   height: 110,
-                  title: AttendanceListSearchBar(),
+                  searchWidgetWithStatsRow: GenericListSearchBarWithStats(
+                    statsWidget: const AttendanceSearchBarStatsWidget(),
+                    searchType: SearchType.pupil,
+                    hintText: 'Schüler/in suchen',
+                    refreshFunction: pupilsFilter.refreshs,
+                    onChanged: (value) =>
+                        pupilsFilter.textFilter.setFilterText(value),
+                    searchTextSource: pupilsFilter.textFilter,
+                    filtersActive: filterStateManager.filtersActive,
+                    onResetFilters: filterStateManager.resetFilters,
+                    showFilterBottomSheet: (context) =>
+                        showGenericFilterBottomSheet(
+                      context: context,
+                      filterList: const [
+                        CommonPupilFiltersWidget(),
+                        AttendanceFilters(),
+                      ],
+                    ),
+                  ),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                  items: pupils,
+                  itemsListenable: pupilsFilter.filteredPupils,
                   itemBuilder: (_, pupil) => AttendanceCard(pupil, thisDate),
                 ),
               ],
@@ -143,6 +144,8 @@ class AttendanceListPage extends WatchingWidget {
 
           GenericFilterButton(
             isSearchBar: false,
+            filtersActive: di<FiltersStateManager>().filtersActive,
+            onLongPress: () => di<FiltersStateManager>().resetFilters(),
             showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
               context: context,
               filterList: [
@@ -158,10 +161,10 @@ class AttendanceListPage extends WatchingWidget {
               icon: const Icon(Icons.print_rounded, size: 30),
               onPressed: () async {
                 try {
-                  final pdfFile =
+                    final pdfFile =
                       await AttendancePdfGenerator.generateAttendancePdf(
                         date: thisDate,
-                        pupils: pupils,
+                        pupils: pupilsFilter.filteredPupils.value,
                       );
                   if (context.mounted) {
                     Navigator.of(context).push(

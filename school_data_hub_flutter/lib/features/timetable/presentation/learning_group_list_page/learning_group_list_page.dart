@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/learning_group_list_page/widgets/learning_group_list_card.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -15,52 +12,32 @@ class LearningGroupListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lessonGroups = watchValue((TimetableManager x) => x.lessonGroups);
     final timetableManager = di<TimetableManager>();
 
-    return Scaffold(
+    return GenericListPage<LessonGroup>(
       backgroundColor: AppColors.canvasColor,
-      appBar: const GenericAppBar(
-        iconData: Icons.group,
-        title: 'Lerngruppen verwalten',
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await timetableManager.refreshData();
-        },
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 700),
-            child: CustomScrollView(
-              slivers: [
-                const SliverGap(5),
-                GenericSliverListWithEmptyListCheck(
-                  items: lessonGroups,
-                  itemBuilder: (_, lessonGroup) => LearningGroupListCard(
-                    lessonGroup: lessonGroup,
-                    onEdit: () =>
-                        _navigateToEditLessonGroup(context, lessonGroup),
-                    onDelete: () => _showDeleteConfirmation(
-                      context,
-                      lessonGroup,
-                      timetableManager,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+      iconData: Icons.group,
+      title: 'Lerngruppen verwalten',
+      itemsListenable: timetableManager.lessonGroups,
+      itemBuilder: (context, lessonGroup) => LearningGroupListCard(
+        lessonGroup: lessonGroup,
+        onEdit: () =>
+            _navigateToEditLessonGroup(context, lessonGroup),
+        onDelete: () => _showDeleteConfirmation(
+          context,
+          lessonGroup,
+          timetableManager,
         ),
       ),
-      bottomNavigationBar: GenericBottomNavBar(
-        actions: [
-          IconButton(
-            tooltip: 'Neue Klasse hinzufügen',
-            icon: const Icon(Icons.add, size: 35),
-            onPressed: () => _navigateToNewLessonGroup(context),
-          ),
-        ],
-      ),
+      onRefresh: () async => timetableManager.refreshData(),
+      maxWidth: 700,
+      bottomBarActions: [
+        IconButton(
+          tooltip: 'Neue Klasse hinzufügen',
+          icon: const Icon(Icons.add, size: 35),
+          onPressed: () => _navigateToNewLessonGroup(context),
+        ),
+      ],
     );
   }
 
@@ -69,7 +46,6 @@ class LearningGroupListPage extends WatchingWidget {
       context,
       MaterialPageRoute(builder: (context) => const NewLessonGroupPage()),
     );
-    // No need to refresh data - lesson group operations use local updates
   }
 
   void _navigateToEditLessonGroup(
@@ -82,7 +58,6 @@ class LearningGroupListPage extends WatchingWidget {
         builder: (context) => NewLessonGroupPage(lessonGroup: group),
       ),
     );
-    // No need to refresh data - lesson group operations use local updates
   }
 
   void _showDeleteConfirmation(

@@ -26,6 +26,7 @@ class CompetenceEndpoint extends Endpoint {
       indicators: indicators,
     );
     await session.db.insertRow(competence);
+    session.messages.postMessage('hub_events_stream', competence);
     return competence;
   }
 
@@ -37,6 +38,7 @@ class CompetenceEndpoint extends Endpoint {
   Future<Competence> updateCompetence(
       Session session, Competence competence) async {
     await session.db.updateRow(competence);
+    session.messages.postMessage('hub_events_stream', competence);
     return competence;
   }
 
@@ -47,6 +49,13 @@ class CompetenceEndpoint extends Endpoint {
       throw Exception('Competence with publicId $publicId not found.');
     }
     await session.db.deleteRow<Competence>(competence);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(
+        objectType: HubObjectType.competence,
+        id: publicId,
+      ),
+    );
     return true;
   }
 }

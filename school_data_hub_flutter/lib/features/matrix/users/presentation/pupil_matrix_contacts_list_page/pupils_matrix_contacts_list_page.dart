@@ -4,6 +4,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -18,7 +19,9 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_fi
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_searchbar.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_search_bar_stats.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
@@ -32,7 +35,8 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final pupilManager = di<PupilProxyManager>();
-    List<PupilProxy> pupils = watchValue((PupilsFilter x) => x.filteredPupils);
+    final pupilsFilter = di<PupilsFilter>();
+    final filterStateManager = di<FiltersStateManager>();
     return Scaffold(
       appBar: const GenericAppBar(
         iconData: Icons.contact_mail_rounded,
@@ -44,12 +48,29 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
           child: CustomScrollView(
             slivers: [
               const SliverGap(5),
-              GenericSliverSearchAppBar(
-                title: CreditListSearchBar(pupils: pupils),
+              GenericSliverAppBarWithSearchWidget(
                 height: 110,
+                searchWidgetWithStatsRow: GenericListSearchBarWithStats(
+                  statsWidget: CreditListSearchBarStats(
+                    filteredPupils: pupilsFilter.filteredPupils,
+                  ),
+                  searchType: SearchType.pupil,
+                  hintText: 'Schüler/in suchen',
+                  refreshFunction: pupilsFilter.refreshs,
+                  onChanged: (value) =>
+                      pupilsFilter.textFilter.setFilterText(value),
+                  searchTextSource: pupilsFilter.textFilter,
+                  filtersActive: filterStateManager.filtersActive,
+                  onResetFilters: filterStateManager.resetFilters,
+                  showFilterBottomSheet: (context) =>
+                      showGenericFilterBottomSheet(
+                    context: context,
+                    filterList: [const CommonPupilFiltersWidget()],
+                  ),
+                ),
               ),
               GenericSliverListWithEmptyListCheck(
-                items: pupils,
+                itemsListenable: pupilsFilter.filteredPupils,
                 itemBuilder: (_, pupil) {
                   final missingContacts =
                       pupil.tutorInfo?.parentsContact == null ||
@@ -490,6 +511,8 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
         actions: [
           GenericFilterButton(
             isSearchBar: false,
+            filtersActive: di<FiltersStateManager>().filtersActive,
+            onLongPress: () => di<FiltersStateManager>().resetFilters(),
             showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
               context: context,
               filterList: [const CommonPupilFiltersWidget()],

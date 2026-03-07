@@ -15,17 +15,20 @@ class SchoolSemesterListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final schoolCalendarManager = di<SchoolCalendarManager>();
     final semesters = watchValue(
       (SchoolCalendarManager m) => m.schoolSemesters,
     );
     final currentSemester = watchValue(
       (SchoolCalendarManager m) => m.currentSemester,
     );
-    final schoolCalendarManager = di<SchoolCalendarManager>();
 
     // Sort semesters by start date (newest first)
     final sortedSemesters = List<SchoolSemester>.from(semesters)
       ..sort((a, b) => b.startDate.compareTo(a.startDate));
+    final sortedSemestersListenable =
+        createOnce(() => ValueNotifier<List<SchoolSemester>>([]));
+    sortedSemestersListenable.value = sortedSemesters;
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -44,7 +47,7 @@ class SchoolSemesterListPage extends WatchingWidget {
               slivers: [
                 const SliverGap(5),
                 GenericSliverListWithEmptyListCheck(
-                  items: sortedSemesters,
+                  itemsListenable: sortedSemestersListenable,
                   itemBuilder: (_, semester) {
                     final isCurrent = currentSemester?.id == semester.id;
                     return SchoolSemesterListCard(

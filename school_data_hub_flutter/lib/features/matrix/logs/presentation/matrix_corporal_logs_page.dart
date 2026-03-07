@@ -105,7 +105,7 @@ class MatrixCorporalLogsPage extends WatchingWidget {
                 )
               else ...[
                 GenericSliverListWithEmptyListCheck<MatrixCorporalLogEntry>(
-                  items: logs,
+                  itemsListenable: manager.logs,
                   itemBuilder: (context, entry) => Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,

@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/widgets/select_pupils_filter_bottom_sheet.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_search_text_field.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_search_text_field.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -124,10 +124,15 @@ class SelectPupilsSearchBar extends WatchingWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: PupilSearchTextField(
+                  child: GenericSearchTextField(
                     searchType: SearchType.pupil,
                     hintText: 'Schüler/in suchen',
                     refreshFunction: _pupilsFilter.refreshs,
+                    onChanged: (value) =>
+                        _pupilsFilter.textFilter.setFilterText(value),
+                    searchTextSource: _pupilsFilter.textFilter,
+                    filtersActive: di<FiltersStateManager>().filtersActive,
+                    onResetFilters: _pupilsFilter.resetFilters,
                   ),
                 ),
                 InkWell(

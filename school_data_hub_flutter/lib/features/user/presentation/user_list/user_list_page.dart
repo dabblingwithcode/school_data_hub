@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/show_generic_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_card.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_searchbar.dart';
 
 class UserListPage extends StatefulWidget {
@@ -24,6 +24,8 @@ class UserListPage extends StatefulWidget {
 
 class _UserListPageState extends State<UserListPage> {
   final TextEditingController _searchController = TextEditingController();
+  final _filteredListenable =
+      ValueNotifier<List<UserWithDevices>>([]);
 
   String _searchText = '';
   Role? _selectedRole;
@@ -100,6 +102,7 @@ class _UserListPageState extends State<UserListPage> {
   @override
   void dispose() {
     _searchController.dispose();
+    _filteredListenable.dispose();
     di<FiltersStateManager>().setFilterState(
       filterState: FilterState.user,
       value: false,
@@ -113,6 +116,7 @@ class _UserListPageState extends State<UserListPage> {
       valueListenable: di<UserManager>().usersWithDevices,
       builder: (context, usersWithDevices, _) {
         final filteredUsersWithDevices = _applyFilters(usersWithDevices);
+        _filteredListenable.value = filteredUsersWithDevices;
         final users = filteredUsersWithDevices.map((e) => e.user).toList();
 
         return Scaffold(
@@ -129,19 +133,21 @@ class _UserListPageState extends State<UserListPage> {
                 child: CustomScrollView(
                   slivers: [
                     const SliverGap(5),
-                    GenericSliverSearchAppBar(
+                    GenericSliverAppBarWithSearchWidget(
                       height: 110,
-                      title: UserListSearchBar(
+                      searchWidgetWithStatsRow: UserListSearchBar(
                         users: users,
                         searchController: _searchController,
                         filtersOn: _filtersOn,
+                        filtersActive: di<FiltersStateManager>().filtersActive,
+                        onLongPress: _resetFilters,
                         onSearchChanged: _onSearchChanged,
                         onResetFilters: _resetFilters,
                         onOpenFilter: _openFilterBottomSheet,
                       ),
                     ),
                     GenericSliverListWithEmptyListCheck(
-                      items: filteredUsersWithDevices,
+                      itemsListenable: _filteredListenable,
                       itemBuilder: (_, userWithDevices) =>
                           UserListCard(userWithDevices),
                     ),
@@ -151,25 +157,25 @@ class _UserListPageState extends State<UserListPage> {
             ),
           ),
           bottomNavigationBar: GenericBottomNavBar(
-          actions: [
-            IconButton(
-              tooltip: 'Aktualisieren',
-              icon: const Icon(Icons.refresh, size: 30),
-              onPressed: () => di<UserManager>().fetchUsers(),
-            ),
-            IconButton(
-              tooltip: 'Neuer Benutzer',
-              icon: const Icon(Icons.add, size: 30),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => const CreateOrEditUserPage(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+            actions: [
+              IconButton(
+                tooltip: 'Aktualisieren',
+                icon: const Icon(Icons.refresh, size: 30),
+                onPressed: () => di<UserManager>().fetchUsers(),
+              ),
+              IconButton(
+                tooltip: 'Neuer Benutzer',
+                icon: const Icon(Icons.add, size: 30),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (ctx) => const CreateOrEditUserPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
     );

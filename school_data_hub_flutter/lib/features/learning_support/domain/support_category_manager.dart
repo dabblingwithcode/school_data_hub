@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
+import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
@@ -28,15 +31,59 @@ class SupportCategoryManager {
   // with references for each category to its root category
   Map<int, int> _rootCategoriesMap = {};
 
+  StreamSubscription<dynamic>? _hubSubscription;
+
   SupportCategoryManager();
 
   void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
     _supportCategories.dispose();
   }
 
   Future<SupportCategoryManager> init() async {
     await fetchSupportCategories();
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     return this;
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is SupportCategory) {
+      upsertFromStream(event);
+    } else if (event is HubDeleteEvent &&
+        event.objectType == HubObjectType.supportCategory) {
+      deleteFromStream(event.id);
+    } else if (event is HubReconnected) {
+      fetchSupportCategories();
+    }
+  }
+
+  void upsertFromStream(SupportCategory category) {
+    final list = List<SupportCategory>.from(_supportCategories.value);
+    final index = list.indexWhere((c) => c.categoryId == category.categoryId);
+    if (index >= 0) {
+      list[index] = category;
+    } else {
+      list.add(category);
+    }
+    list.sort((a, b) {
+      if (a.order != null && b.order != null) {
+        return a.order!.compareTo(b.order!);
+      }
+      if (a.order != null) return -1;
+      if (b.order != null) return 1;
+      return a.categoryId.compareTo(b.categoryId);
+    });
+    _supportCategories.value = list;
+    _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(list);
+  }
+
+  void deleteFromStream(int categoryId) {
+    final list = _supportCategories.value
+        .where((c) => c.categoryId != categoryId)
+        .toList();
+    _supportCategories.value = list;
+    _rootCategoriesMap = LearningSupportHelper.generateRootCategoryMap(list);
   }
 
   // - Getters
