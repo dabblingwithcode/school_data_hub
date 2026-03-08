@@ -54,6 +54,7 @@ class CustomExpansionTileSwitch extends WatchingWidget {
               duration: const Duration(milliseconds: 200),
               child: Icon(
                 Icons.keyboard_arrow_down,
+                size: 30,
                 color: switchColor ?? Colors.white,
               ),
             ),

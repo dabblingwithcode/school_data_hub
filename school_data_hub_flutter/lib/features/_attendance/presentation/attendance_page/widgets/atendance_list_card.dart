@@ -16,11 +16,11 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/attend
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/dialogues/late_in_minutes_dialog.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/dialogues/multiple_entries_dialog.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/dialogues/returned_time_picker.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
 class AttendanceCard extends WatchingWidget {
   final PupilProxy pupil;
@@ -51,7 +51,8 @@ class AttendanceCard extends WatchingWidget {
                 AvatarWithBadges(pupil: pupil, size: 80),
                 Expanded(
                   child: GestureDetector(
-                    onLongPress: () => createMissedSchooldayList(context, pupil),
+                    onLongPress: () =>
+                        createMissedSchooldayList(context, pupil),
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute<void>(
                         builder: (_) => PupilProfilePage(pupil: pupil),
@@ -71,10 +72,12 @@ class AttendanceCard extends WatchingWidget {
                                 _buildAndroidControls(context, info)
                               else
                                 _buildDesktopControls(
-                                    context, info, dropdownFocusNode),
+                                  context,
+                                  info,
+                                  dropdownFocusNode,
+                                ),
                               if (_shouldShowComment(info, isAndroid))
-                                _buildCommentSection(
-                                    context, info, isAndroid),
+                                _buildCommentSection(context, info, isAndroid),
                             ],
                           ),
                         ),
@@ -242,8 +245,10 @@ class AttendanceCard extends WatchingWidget {
       children: [
         // Missed type + author initials
         Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Gap(2),
+            const Gap(5),
             _buildMissedTypeDropdown(
               context,
               info: info,
@@ -281,7 +286,7 @@ class AttendanceCard extends WatchingWidget {
               ),
           ],
         ),
-        const Gap(10),
+        const Gap(8),
         // Unexcused checkbox + badge
         Column(
           children: [

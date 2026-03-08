@@ -17,6 +17,7 @@ class SchooldayEventStats extends WatchingWidget {
       filteredPupils,
     );
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Gap(10),
         Icon(Icons.people_alt_rounded, color: AppColors.backgroundColor),

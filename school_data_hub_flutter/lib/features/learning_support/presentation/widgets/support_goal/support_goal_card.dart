@@ -9,6 +9,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_documents_section.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
@@ -16,7 +17,6 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_category_badge.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 class SupportGoalCard extends WatchingWidget {
   final PupilProxy pupil;
@@ -57,10 +57,10 @@ class SupportGoalCard extends WatchingWidget {
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
-              side: BorderSide(
-                color: AppColors.cardInCardBorderColor,
-                width: 2,
-              ),
+              // side: BorderSide(
+              //   color: AppColors.cardInCardBorderColor,
+              //   width: 2,
+              // ),
             ),
             color: AppColors.cardInCardColor,
             child: Column(

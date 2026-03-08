@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -16,6 +17,7 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
+import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 
 final _log = Logger('SchoolListPdfGenerator');
 
@@ -25,8 +27,15 @@ class SchoolListPdfGenerator {
     required SchoolList schoolList,
     required List<PupilProxy> pupils,
   }) async {
-    final data = await rootBundle.load('assets/foreground_windows.png');
-    final imageBytes = data.buffer.asUint8List();
+    // Use school logo if available, otherwise fall back to default asset
+    final logoData = di<SchoolDataMainManager>().logoImage.value;
+    final Uint8List imageBytes;
+    if (logoData != null) {
+      imageBytes = logoData.buffer.asUint8List();
+    } else {
+      final data = await rootBundle.load('assets/foreground_windows.png');
+      imageBytes = data.buffer.asUint8List();
+    }
     final image = pw.MemoryImage(imageBytes);
 
     // Load Unicode-supporting fonts
@@ -228,7 +237,11 @@ class SchoolListPdfGenerator {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      'Schuldaten Hub',
+                      di<SchoolDataMainManager>()
+                              .schoolData
+                              .value
+                              ?.officialName ??
+                          'Schuldaten Hub',
                       style: pw.TextStyle(fontSize: 16, font: fontBold),
                     ),
                     pw.Text(

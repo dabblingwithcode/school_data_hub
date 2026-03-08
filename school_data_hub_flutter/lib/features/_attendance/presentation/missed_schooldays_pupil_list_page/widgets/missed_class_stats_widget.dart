@@ -19,6 +19,7 @@ class AttendanceRankingStats extends WatchingWidget {
   Widget build(BuildContext context) {
     final pupils = watch(pupilsListenable).value;
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Flexible(
           child: Padding(

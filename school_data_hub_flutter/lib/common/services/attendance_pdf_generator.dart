@@ -462,22 +462,17 @@ class AttendancePdfGenerator {
     bool isHeader = false,
     bool isBold = false,
   }) {
-    // Truncate text if it's too long to prevent overflow issues
-    String displayText = text;
-    if (!isHeader && text.length > 25) {
-      displayText = '${text.substring(0, 22)}...';
-    }
-
     return pw.Container(
       padding: const pw.EdgeInsets.all(4),
       child: pw.Text(
-        displayText,
+        text,
         style: pw.TextStyle(
           fontSize: isHeader ? 10 : 9,
           font: isHeader || isBold ? fontBold : fontRegular,
         ),
         textAlign: isHeader ? pw.TextAlign.center : pw.TextAlign.left,
-        overflow: pw.TextOverflow.clip, // Clip text that's still too long
+        softWrap: true,
+        overflow: pw.TextOverflow.clip,
       ),
     );
   }
@@ -628,6 +623,7 @@ class MissedSchooldaysPdfGenerator {
       // );
 
       // Then add detailed pages for each pupil
+      bool isFirstPage = true;
       for (var pupil in sortedPupils) {
         final missedSchooldays = di<AttendanceManager>()
             .getPupilMissedSchooldaysProxy(pupil.pupilId)
@@ -644,7 +640,7 @@ class MissedSchooldaysPdfGenerator {
 
         if (missedSchooldays.isNotEmpty) {
           // Add pages for this pupil's detailed records
-          const int maxRecordsPerPage = 18;
+          const int maxRecordsPerPage = 28;
           final int totalPagesForPupil =
               (missedSchooldays.length / maxRecordsPerPage).ceil();
 
@@ -658,14 +654,18 @@ class MissedSchooldaysPdfGenerator {
               startIndex,
               endIndex,
             );
+            final showStatistics = isFirstPage;
+            if (isFirstPage) isFirstPage = false;
 
             pdf.addPage(
               _buildPupilDetailPage(
                 image: image,
                 pupil: pupil,
                 missedSchooldays: recordsOnPage,
+                recordStartIndex: startIndex,
                 pageNumber: pageIndex + 1,
                 totalPages: totalPagesForPupil,
+                showStatistics: showStatistics,
                 fontRegular: fontRegular,
                 fontBold: fontBold,
               ),
@@ -731,8 +731,10 @@ class MissedSchooldaysPdfGenerator {
     required pw.MemoryImage image,
     required PupilProxy pupil,
     required List<MissedSchoolday> missedSchooldays,
+    required int recordStartIndex,
     required int pageNumber,
     required int totalPages,
+    required bool showStatistics,
     required pw.Font fontRegular,
     required pw.Font fontBold,
   }) {
@@ -753,14 +755,17 @@ class MissedSchooldaysPdfGenerator {
             ),
             pw.SizedBox(height: 15),
 
-            // Pupil statistics
-            _buildPupilStatistics(pupil, fontRegular, fontBold),
-            pw.SizedBox(height: 12),
+            if (showStatistics) ...[
+              // Pupil statistics
+              _buildPupilStatistics(pupil, fontRegular, fontBold),
+              pw.SizedBox(height: 12),
+            ],
 
             // Detailed records table
             pw.Expanded(
               child: _buildDetailedRecordsTable(
                 missedSchooldays,
+                recordStartIndex,
                 fontRegular,
                 fontBold,
               ),
@@ -965,7 +970,7 @@ class MissedSchooldaysPdfGenerator {
                       style: pw.TextStyle(fontSize: 16, font: fontBold),
                     ),
                     pw.Text(
-                      'Fehlzeiten Detail',
+                      'Fehlzeiten Übersicht',
                       style: pw.TextStyle(fontSize: 10, font: fontRegular),
                     ),
                   ],
@@ -1039,7 +1044,8 @@ class MissedSchooldaysPdfGenerator {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem('Entsch.', excusedSum, fontRegular, fontBold),
+          _buildStatItem('Entschuldigt.', excusedSum, fontRegular, fontBold),
+
           _buildStatItem('Unentsch.', unexcusedSum, fontRegular, fontBold),
           _buildStatItem('Verspätet', lateSum, fontRegular, fontBold),
           _buildStatItem('Kontaktiert', contactedSum, fontRegular, fontBold),
@@ -1064,6 +1070,7 @@ class MissedSchooldaysPdfGenerator {
   /// Builds detailed records table for a pupil
   static pw.Widget _buildDetailedRecordsTable(
     List<MissedSchoolday> missedSchooldays,
+    int recordStartIndex,
     pw.Font fontRegular,
     pw.Font fontBold,
   ) {
@@ -1088,12 +1095,12 @@ class MissedSchooldaysPdfGenerator {
       border: pw.TableBorder.all(color: PdfColors.grey400),
       columnWidths: const {
         0: pw.FixedColumnWidth(30), // Nr.
-        1: pw.FlexColumnWidth(2), // Datum
+        1: pw.FixedColumnWidth(55), // Datum
         2: pw.FixedColumnWidth(60), // Status
         3: pw.FixedColumnWidth(50), // Entschuldigt
-        4: pw.FixedColumnWidth(60), // Kontakt
+        4: pw.FixedColumnWidth(70), // Kontakt
         5: pw.FixedColumnWidth(50), // Abgeholt
-        6: pw.FlexColumnWidth(2), // Kommentar
+        6: pw.FlexColumnWidth(3), // Kommentar
       },
       children: [
         // Header row
@@ -1111,7 +1118,7 @@ class MissedSchooldaysPdfGenerator {
         ),
         // Data rows
         ...missedSchooldays.asMap().entries.map((entry) {
-          final index = entry.key + 1;
+          final index = recordStartIndex + entry.key + 1;
           final missedSchoolday = entry.value;
           final attendanceValues = AttendanceHelper.getAttendanceValues(
             missedSchoolday,
@@ -1213,21 +1220,16 @@ class MissedSchooldaysPdfGenerator {
     bool isHeader = false,
     bool isBold = false,
   }) {
-    // Truncate text if it's too long to prevent overflow issues
-    String displayText = text;
-    if (!isHeader && text.length > 25) {
-      displayText = '${text.substring(0, 22)}...';
-    }
-
     return pw.Container(
       padding: const pw.EdgeInsets.all(4),
       child: pw.Text(
-        displayText,
+        text,
         style: pw.TextStyle(
           fontSize: isHeader ? 10 : 9,
           font: isHeader || isBold ? fontBold : fontRegular,
         ),
         textAlign: isHeader ? pw.TextAlign.center : pw.TextAlign.left,
+        softWrap: true,
         overflow: pw.TextOverflow.clip,
       ),
     );

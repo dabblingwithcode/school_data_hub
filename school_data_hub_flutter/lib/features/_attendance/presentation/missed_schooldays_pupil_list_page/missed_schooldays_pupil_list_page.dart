@@ -23,10 +23,13 @@ class MissedSchooldaysPupilListPage extends StatelessWidget {
     final pupilsFilter = di<PupilsFilter>();
 
     return GenericListPage<PupilProxy>(
-      backgroundColor: AppColors.canvasColor,
-      iconData: Icons.calendar_month_rounded,
       title: 'Fehlzeiten',
+      iconData: Icons.calendar_month_rounded,
+      backgroundColor: AppColors.canvasColor,
+      maxWidth: 700,
+      onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
       sliverAppBarHeight: 110,
+
       searchBarConfig: GenericListSearchBarConfig(
         statsWidget: AttendanceRankingStats(
           pupilsListenable: pupilsFilter.filteredPupils,
@@ -40,14 +43,9 @@ class MissedSchooldaysPupilListPage extends StatelessWidget {
         onResetFilters: pupilsFilter.resetFilters,
       ),
 
-      filterSheetChildren: const [
-        CommonPupilFiltersWidget(),
-        MissedSchooldayFilters(),
-      ],
       itemsListenable: pupilsFilter.filteredPupils,
       itemBuilder: (_, pupil) => MissedSchooldaysPupilListCard(pupil),
-      onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
-      maxWidth: 700,
+
       bottomBarActions: [
         IconButton(
           tooltip: 'Info',
@@ -87,6 +85,10 @@ class MissedSchooldaysPupilListPage extends StatelessWidget {
               }
             },
           ),
+      ],
+      filterSheetChildren: const [
+        CommonPupilFiltersWidget(),
+        MissedSchooldayFilters(),
       ],
     );
   }

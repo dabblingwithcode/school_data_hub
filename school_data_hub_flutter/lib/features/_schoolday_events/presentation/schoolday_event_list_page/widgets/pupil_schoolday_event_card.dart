@@ -43,17 +43,17 @@ class PupilSchooldayEventCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Container(
         decoration: BoxDecoration(
-          border: !schooldayEvent.processed
-              ? Border.all(
-                  color: Colors
-                      .orangeAccent, // Specify the color of the border here
-                  width: 3, // Specify the width of the border here
-                )
-              : Border.all(
-                  color: AppColors
-                      .backgroundColor, // Specify the color of the border here
-                  width: 2,
-                ),
+          // border: !schooldayEvent.processed
+          //     ? Border.all(
+          //         color: Colors
+          //             .orangeAccent, // Specify the color of the border here
+          //         width: 3, // Specify the width of the border here
+          //       )
+          //     : Border.all(
+          //         color: AppColors
+          //             .backgroundColor, // Specify the color of the border here
+          //         width: 2,
+          //       ),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(

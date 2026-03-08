@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/domain/search_text_source.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
@@ -53,6 +56,7 @@ class GenericListPage<T> extends StatelessWidget {
   final double sliverAppBarHeight;
   final Widget? searchWidgetWithStatsRow;
   final GenericListSearchBarConfig? searchBarConfig;
+
   /// When set, the filter sheet is shown with these children; [GenericListPage] builds the sheet internally.
   /// When non-null, a filter [IconButton] is added to the bottom bar (before [bottomBarActions]).
   final List<Widget>? filterSheetChildren;
@@ -128,16 +132,19 @@ class GenericListPage<T> extends StatelessWidget {
   Widget? _buildBottomNavBar(BuildContext context) {
     if (bottomNavigationBar != null) return bottomNavigationBar;
     final actions = <Widget>[];
+
+    if (bottomBarActions != null) actions.addAll(bottomBarActions!);
     if (filterSheetChildren != null) {
       actions.add(
-        IconButton(
-          tooltip: 'Filter',
-          icon: const Icon(Icons.filter_list, size: 30),
-          onPressed: () => _effectiveShowFilter(context)(context),
+        GenericFilterButton(
+          isSearchBar: false,
+          filtersActive: di<FiltersStateManager>().filtersActive,
+          onLongPress: () => di<FiltersStateManager>().resetFilters(),
+          showBottomSheetFunction: (context) =>
+              _effectiveShowFilter(context)(context),
         ),
       );
     }
-    if (bottomBarActions != null) actions.addAll(bottomBarActions!);
     if (actions.isEmpty) return null;
     return GenericBottomNavBar(actions: actions);
   }
