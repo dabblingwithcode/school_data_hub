@@ -19,6 +19,22 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _PupilProfileSchoolListEntryContent(
+      pupilListEntryProxy: pupilListEntryProxy,
+    );
+  }
+}
+
+/// Rebuilds only when [pupilListEntryProxy.pupilEntry] changes.
+class _PupilProfileSchoolListEntryContent extends WatchingWidget {
+  final PupilListEntryProxy pupilListEntryProxy;
+
+  const _PupilProfileSchoolListEntryContent({
+    required this.pupilListEntryProxy,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final schoolListManager = di<SchoolListManager>();
     final pupilListEntry = watch(pupilListEntryProxy).pupilEntry;
     final schoolList = schoolListManager.getSchoolListById(
@@ -64,8 +80,8 @@ class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
+                            Navigator.of(context).push<void>(
+                              MaterialPageRoute<void>(
                                 builder: (ctx) =>
                                     SchoolListPupilEntriesPage(schoolList),
                               ),

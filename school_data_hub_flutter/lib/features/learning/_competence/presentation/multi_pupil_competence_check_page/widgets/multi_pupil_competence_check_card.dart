@@ -33,13 +33,6 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pupil = watch(passedPupil);
-    CompetenceCheck? competenceCheck =
-        CompetenceHelper.getGroupCompetenceCheckFromPupil(
-          pupil: pupil,
-          groupId: groupId,
-        );
-
     return Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,
@@ -58,7 +51,7 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              AvatarWithBadges(pupil: pupil, size: 70),
+              AvatarWithBadges(pupil: passedPupil, size: 70),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -75,40 +68,15 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                                 di<BottomNavManager>().setPupilProfileNavPage(
                                   9,
                                 );
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                Navigator.of(context).push<void>(
+                                  MaterialPageRoute<void>(
                                     builder: (ctx) =>
-                                        PupilProfilePage(pupil: pupil),
+                                        PupilProfilePage(pupil: passedPupil),
                                   ),
                                 );
                               },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    pupil.firstName,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  const Gap(5),
-                                  Text(
-                                    pupil.lastName,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  const Gap(5),
-                                ],
+                              child: _MultiPupilCompetenceNameRow(
+                                pupil: passedPupil,
                               ),
                             ),
                           ),
@@ -116,11 +84,99 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                       ],
                     ),
                     const Gap(5),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Gap(5),
-                        competenceCheck != null
+                    _MultiPupilCompetenceCheckContent(
+                      pupil: passedPupil,
+                      groupId: groupId,
+                      groupCheckName: groupCheckName,
+                      competenceId: competenceId,
+                    ),
+                  ],
+                ),
+              ),
+              const Gap(5),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Rebuilds only when [pupil.firstName] or [pupil.lastName] changes.
+class _MultiPupilCompetenceNameRow extends WatchingWidget {
+  final PupilProxy pupil;
+
+  const _MultiPupilCompetenceNameRow({required this.pupil});
+
+  @override
+  Widget build(BuildContext context) {
+    final firstName =
+        watchPropertyValue((m) => m.firstName, target: pupil);
+    final lastName =
+        watchPropertyValue((m) => m.lastName, target: pupil);
+    return Row(
+      children: [
+        Text(
+          firstName,
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        const Gap(5),
+        Text(
+          lastName,
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontSize: 18,
+          ),
+        ),
+        const Gap(5),
+      ],
+    );
+  }
+}
+
+/// Rebuilds only when [pupil.competenceChecks] (or related group check data) changes.
+class _MultiPupilCompetenceCheckContent extends WatchingWidget {
+  final PupilProxy pupil;
+  final String groupId;
+  final String? groupCheckName;
+  final int competenceId;
+
+  const _MultiPupilCompetenceCheckContent({
+    required this.pupil,
+    required this.groupId,
+    required this.groupCheckName,
+    required this.competenceId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    watchPropertyValue((m) => m.competenceChecks, target: pupil);
+    CompetenceCheck? competenceCheck =
+        CompetenceHelper.getGroupCompetenceCheckFromPupil(
+          pupil: pupil,
+          groupId: groupId,
+        );
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Gap(5),
+            competenceCheck != null
                             ? GrowthDropdown(
                                 dropdownValue: competenceCheck.score,
                                 onChangedFunction: (int value) async {
@@ -277,21 +333,46 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                         const Gap(5),
                       ],
                     ),
-                    const Gap(10),
-                  ],
+        if (competenceCheck != null) ...[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Gap(10),
+              InkWell(
+                onTap: () async {
+                  if (SessionHelper.isAuthorized(competenceCheck.createdBy)) {
+                    final result = await longTextFieldDialog(
+                      parentContext: context,
+                      title: 'Kommentar',
+                      labelText: 'Kommentar eingeben',
+                      initialValue: competenceCheck.comment,
+                    );
+                    if (result == null ||
+                        result.value == competenceCheck.comment) {
+                      return;
+                    }
+                    await di<CompetenceManager>().updateCompetenceCheck(
+                      competenceCheckId: competenceCheck.checkId,
+                      competenceComment: (value: result.value),
+                    );
+                  }
+                },
+                child: Text(
+                  'Kommentar:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.interactiveColor,
+                  ),
                 ),
               ),
               const Gap(5),
-            ],
-          ),
-          if (competenceCheck != null) ...[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Gap(10),
-                InkWell(
+              Flexible(
+                child: InkWell(
                   onTap: () async {
-                    if (SessionHelper.isAuthorized(competenceCheck.createdBy)) {
+                    if (SessionHelper.isAuthorized(
+                      competenceCheck.createdBy,
+                    )) {
                       final result = await longTextFieldDialog(
                         parentContext: context,
                         title: 'Kommentar',
@@ -309,52 +390,19 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                     }
                   },
                   child: Text(
-                    'Kommentar:',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.interactiveColor,
-                    ),
+                    (competenceCheck.comment == null ||
+                            competenceCheck.comment!.isEmpty)
+                        ? 'Kein Kommentar'
+                        : competenceCheck.comment!,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
-                const Gap(5),
-                Flexible(
-                  child: InkWell(
-                    onTap: () async {
-                      if (SessionHelper.isAuthorized(
-                        competenceCheck.createdBy,
-                      )) {
-                        final result = await longTextFieldDialog(
-                          parentContext: context,
-                          title: 'Kommentar',
-                          labelText: 'Kommentar eingeben',
-                          initialValue: competenceCheck.comment,
-                        );
-                        if (result == null ||
-                            result.value == competenceCheck.comment) {
-                          return;
-                        }
-                        await di<CompetenceManager>().updateCompetenceCheck(
-                          competenceCheckId: competenceCheck.checkId,
-                          competenceComment: (value: result.value),
-                        );
-                      }
-                    },
-                    child: Text(
-                      (competenceCheck.comment == null ||
-                              competenceCheck.comment!.isEmpty)
-                          ? 'Kein Kommentar'
-                          : competenceCheck.comment!,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Gap(10),
-          ],
+              ),
+            ],
+          ),
+          const Gap(10),
         ],
-      ),
+      ],
     );
   }
 }

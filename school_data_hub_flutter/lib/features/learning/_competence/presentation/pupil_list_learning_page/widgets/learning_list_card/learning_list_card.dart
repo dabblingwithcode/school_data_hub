@@ -30,10 +30,6 @@ class LearningListCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Watch only the specific properties this widget uses directly
-    final firstName = watchPropertyValue((m) => m.firstName, target: pupil);
-    final lastName = watchPropertyValue((m) => m.lastName, target: pupil);
-
     final pupilBookLendingManager = watch(di<PupilBookLendingManager>());
     final pupilBookLendings = pupilBookLendingManager.getPupilBookLendings(
       pupil.pupilId,
@@ -99,40 +95,14 @@ class LearningListCard extends WatchingWidget {
                                   di<BottomNavManager>().setPupilProfileNavPage(
                                     ProfileNavigationState.learning.value,
                                   );
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
+                                  Navigator.of(context).push<void>(
+                                    MaterialPageRoute<void>(
                                       builder: (ctx) =>
                                           PupilProfilePage(pupil: pupil),
                                     ),
                                   );
                                 },
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      firstName,
-                                      overflow: TextOverflow.fade,
-                                      softWrap: false,
-                                      textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                    const Gap(5),
-                                    Text(
-                                      lastName,
-                                      overflow: TextOverflow.fade,
-                                      softWrap: false,
-                                      textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                child: _LearningListNameRow(pupil: pupil),
                               ),
                             ),
                           ),
@@ -142,8 +112,8 @@ class LearningListCard extends WatchingWidget {
                               color: AppColors.interactiveColor,
                             ),
                             onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
+                              Navigator.of(context).push<void>(
+                                MaterialPageRoute<void>(
                                   builder: (ctx) =>
                                       PupilCompetenceReportPage(pupil: pupil),
                                 ),
@@ -336,6 +306,48 @@ class LearningListCard extends WatchingWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Rebuilds only when [pupil.firstName] or [pupil.lastName] changes.
+class _LearningListNameRow extends WatchingWidget {
+  final PupilProxy pupil;
+
+  const _LearningListNameRow({required this.pupil});
+
+  @override
+  Widget build(BuildContext context) {
+    final firstName =
+        watchPropertyValue((m) => m.firstName, target: pupil);
+    final lastName =
+        watchPropertyValue((m) => m.lastName, target: pupil);
+    return Row(
+      children: [
+        Text(
+          firstName,
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        const Gap(5),
+        Text(
+          lastName,
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontSize: 18,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -33,7 +33,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   window_manager: ^0.5.1
   serverpod_auth_shared_flutter: 2.9.2
-  flutter_it: ^2.1.1
+  flutter_it: ^2.1.2
   package_info_plus: ^9.0.0
   file_picker: ^10.3.7
   gap: ^3.0.1
@@ -54,7 +54,7 @@ dependencies:
   flutter_cache_manager: ^3.4.1
   top_snackbar_flutter: ^3.2.0
   cryptography: ^2.9.0
-  pointycastle: ^3.9.0
+  pointycastle: ^4.0.0
   json_annotation: ^4.10.0
   # collection: 1.19.1
   flutter_settings_ui: ^3.0.1
@@ -64,7 +64,7 @@ dependencies:
   ansicolor: ^2.0.3
   table_calendar: ^3.2.0
   calendar_date_picker2: 2.0.1
-  cryptography_plus: ^2.7.1
+  cryptography_plus: ^3.0.0
   pdf: ^3.11.3
   printing: ^5.14.2
   url_launcher: ^6.3.1

@@ -31,18 +31,6 @@ class AttendanceCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final dropdownFocusNode = createOnce(() => FocusNode());
-
-    final missedSchooldaysList = di<AttendanceManager>()
-        .getPupilMissedSchooldaysProxy(pupil.pupilId);
-
-    final missedSchoolday = watch(missedSchooldaysList).missedSchooldays
-        .firstWhereOrNull(
-          (entry) =>
-              entry.schoolday?.schoolday.isSameDate(thisDate.toLocal()) ??
-              false,
-        );
-
-    final info = AttendanceHelper.getAttendanceValues(missedSchoolday);
     final isAndroid = Platform.isAndroid;
 
     return Container(
@@ -54,53 +42,52 @@ class AttendanceCard extends WatchingWidget {
         elevation: 1.0,
         margin: const EdgeInsets.all(4),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            _buildMainRow(context, info, dropdownFocusNode, isAndroid),
-            if (_shouldShowComment(info, isAndroid))
-              _buildCommentSection(context, info, isAndroid),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AvatarWithBadges(pupil: pupil, size: 80),
+                Expanded(
+                  child: GestureDetector(
+                    onLongPress: () => createMissedSchooldayList(context, pupil),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => PupilProfilePage(pupil: pupil),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Gap(isAndroid ? 10 : 15),
+                        _buildNameRow(context, isAndroid),
+                        _AttendanceData(
+                          pupil: pupil,
+                          thisDate: thisDate,
+                          builder: (context, info) => Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isAndroid)
+                                _buildAndroidControls(context, info)
+                              else
+                                _buildDesktopControls(
+                                    context, info, dropdownFocusNode),
+                              if (_shouldShowComment(info, isAndroid))
+                                _buildCommentSection(
+                                    context, info, isAndroid),
+                            ],
+                          ),
+                        ),
+                        const Gap(15),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // Main Row (avatar + content)
-  // ---------------------------------------------------------------------------
-
-  Widget _buildMainRow(
-    BuildContext context,
-    AttendanceValues info,
-    FocusNode dropdownFocusNode,
-    bool isAndroid,
-  ) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        AvatarWithBadges(pupil: pupil, size: 80),
-        Expanded(
-          child: GestureDetector(
-            onLongPress: () => createMissedSchooldayList(context, pupil),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => PupilProfilePage(pupil: pupil),
-              ),
-            ),
-            child: Column(
-              children: [
-                Gap(isAndroid ? 10 : 15),
-                _buildNameRow(context, isAndroid),
-                if (isAndroid)
-                  _buildAndroidControls(context, info)
-                else
-                  _buildDesktopControls(context, info, dropdownFocusNode),
-                const Gap(15),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -540,7 +527,7 @@ class AttendanceCard extends WatchingWidget {
       ProfileNavigationState.attendance.value,
     );
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => PupilProfilePage(pupil: pupil)),
+      MaterialPageRoute<void>(builder: (_) => PupilProfilePage(pupil: pupil)),
     );
   }
 
@@ -606,5 +593,35 @@ class AttendanceCard extends WatchingWidget {
         ),
       ),
     );
+  }
+}
+
+/// Rebuilds only when the missed schooldays list for this pupil changes.
+/// Isolates the watch so the card shell and layout do not rebuild.
+class _AttendanceData extends WatchingWidget {
+  final PupilProxy pupil;
+  final DateTime thisDate;
+  final Widget Function(BuildContext context, AttendanceValues info) builder;
+
+  const _AttendanceData({
+    required this.pupil,
+    required this.thisDate,
+    required this.builder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final missedSchooldaysList = di<AttendanceManager>()
+        .getPupilMissedSchooldaysProxy(pupil.pupilId);
+
+    final missedSchoolday = watch(missedSchooldaysList).missedSchooldays
+        .firstWhereOrNull(
+          (entry) =>
+              entry.schoolday?.schoolday.isSameDate(thisDate.toLocal()) ??
+              false,
+        );
+
+    final info = AttendanceHelper.getAttendanceValues(missedSchoolday);
+    return builder(context, info);
   }
 }

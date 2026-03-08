@@ -1,56 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_events_list.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_pupil_list_card/widgets/schoolday_event_pupil_stats.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 
-class SchooldayEventPupilListCard extends WatchingStatefulWidget {
+class SchooldayEventPupilListCard extends WatchingWidget {
   final PupilProxy passedPupil;
   const SchooldayEventPupilListCard(this.passedPupil, {super.key});
 
   @override
-  State<SchooldayEventPupilListCard> createState() =>
-      _SchooldayEventListCardState();
-}
-
-class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
-  late List<SchooldayEvent> schooldayEvents;
-
-  @override
   Widget build(BuildContext context) {
     final tileController = createOnce(() => CustomExpansionTileController());
-    final schooldayEventFilterManager = di<SchooldayEventFilterManager>();
-    final schooldayEventManager = di<SchooldayEventManager>();
     final mainMenuBottomNavManager = di<BottomNavManager>();
-    final PupilProxy pupil = widget.passedPupil;
-    final unfilteredEvents = watch(
-      schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
-    ).schooldayEvents;
-    schooldayEvents = schooldayEventFilterManager.filteredSchooldayEvents(
-      unfilteredEvents.values.toList(),
-    );
-    // TODO: This is a workaround for the filter manager. It should be moved to
-    // - SchooldayEventListPage or to the filter manager.
-    if (schooldayEventFilterManager.schooldayEventsFilterState.value.values.any(
-      (x) => x == true,
-    )) {
-      if (schooldayEvents.isEmpty) {
-        return const SizedBox.shrink();
-      }
-    }
+    final PupilProxy pupil = passedPupil;
     return Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,
@@ -77,7 +51,7 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                                   4,
                                 );
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (ctx) =>
                                         PupilProfilePage(pupil: pupil),
                                   ),
@@ -105,26 +79,7 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
                       ],
                     ),
                     const Gap(10),
-                    Row(
-                      children: [
-                        Text(
-                          schooldayEvents.isNotEmpty
-                              ? 'zuletzt:'
-                              : 'keine Ereignisse',
-                        ),
-                        const Gap(10),
-                        if (schooldayEvents.isNotEmpty)
-                          Text(
-                            SchoolDayEventHelper.getLastSchoolEventDate(
-                              schooldayEvents,
-                            ).formatDateForUser(),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                      ],
-                    ),
+                    _LastEventRow(pupil: pupil),
                     const Gap(10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -158,6 +113,38 @@ class _SchooldayEventListCardState extends State<SchooldayEventPupilListCard> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _LastEventRow extends WatchingWidget {
+  final PupilProxy pupil;
+
+  const _LastEventRow({required this.pupil});
+
+  @override
+  Widget build(BuildContext context) {
+    final schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+    final schooldayEventManager = di<SchooldayEventManager>();
+    final unfilteredEvents = watch(
+      schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
+    ).schooldayEvents;
+    watchValue((SchooldayEventFilterManager x) => x.schooldayEventsFilterState);
+    final schooldayEvents = schooldayEventFilterManager.filteredSchooldayEvents(
+      unfilteredEvents.values.toList(),
+    );
+    return Row(
+      children: [
+        Text(schooldayEvents.isNotEmpty ? 'zuletzt:' : 'keine Ereignisse'),
+        const Gap(10),
+        if (schooldayEvents.isNotEmpty)
+          Text(
+            SchoolDayEventHelper.getLastSchoolEventDate(
+              schooldayEvents,
+            ).formatDateForUser(),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+      ],
     );
   }
 }

@@ -99,7 +99,7 @@ class AvatarImage extends WatchingWidget {
   }
 }
 
-class AvatarWithBadges extends WatchingWidget {
+class AvatarWithBadges extends StatelessWidget {
   static const double _badgeSize = 30.0;
   static const double _badgeOffset = -1.0;
   static const double _avatarPadding = 1.0;

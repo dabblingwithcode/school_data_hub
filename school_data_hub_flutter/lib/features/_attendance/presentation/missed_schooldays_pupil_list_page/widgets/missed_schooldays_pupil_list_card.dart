@@ -10,11 +10,11 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_h
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_stats_pupil.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_class_card.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
 class MissedSchooldaysPupilListCard extends WatchingWidget {
   final PupilProxy pupil;
@@ -23,18 +23,7 @@ class MissedSchooldaysPupilListCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final tileController = createOnce(() => CustomExpansionTileController());
-    final PupilProxy pupil = watch(this.pupil);
-    final attendanceManager = di<AttendanceManager>();
-    List<MissedSchoolday> missedSchooldays = watch(
-      attendanceManager.getPupilMissedSchooldaysProxy(pupil.pupilId),
-    ).missedSchooldays;
 
-    // sort by missedDay
-    missedSchooldays.sort(
-      (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday),
-    );
-    final missedHoursForActualReport =
-        AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
     return Card(
       color: Colors.white,
       surfaceTintColor: Colors.white,
@@ -76,41 +65,14 @@ class MissedSchooldaysPupilListCard extends WatchingWidget {
                                               .attendance
                                               .value,
                                         );
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
+                                    Navigator.of(context).push<void>(
+                                      MaterialPageRoute<void>(
                                         builder: (ctx) =>
                                             PupilProfilePage(pupil: pupil),
                                       ),
                                     );
                                   },
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        pupil.firstName,
-                                        overflow: TextOverflow.fade,
-                                        softWrap: false,
-                                        textAlign: TextAlign.left,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      const Gap(5),
-                                      Text(
-                                        pupil.lastName,
-                                        overflow: TextOverflow.fade,
-                                        softWrap: false,
-                                        textAlign: TextAlign.left,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      const Gap(5),
-                                    ],
-                                  ),
+                                  child: _MissedSchooldaysNameRow(pupil: pupil),
                                 ),
                               ),
                             ),
@@ -134,69 +96,140 @@ class MissedSchooldaysPupilListCard extends WatchingWidget {
                             const Gap(10),
                           ],
                         ),
+                        const Gap(10),
+                        _MissedSchooldaysSummary(
+                          pupil: pupil,
+                          tileController: tileController,
+                        ),
                       ],
                     ),
-                    const Gap(10),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          const Text(
-                            'Fehlstunden:',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          Text(
-                            ' ${missedHoursForActualReport.missed.toString()}',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const Gap(5),
-                          const Text(
-                            'davon unent:',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          Text(
-                            ' ${missedHoursForActualReport.unexcused.toString()}',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const Gap(15),
-                        ],
-                      ),
-                    ),
-                    const Gap(10),
                   ],
                 ),
               ),
             ],
           ),
-          CustomExpansionTileContent(
-            title: null,
-            tileController: tileController,
-            widgetList: [
-              ListView.builder(
-                padding: const EdgeInsets.only(top: 5, bottom: 5),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: missedSchooldays.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return MissedSchooldayCard(
-                    pupil: pupil,
-                    missedSchoolday: missedSchooldays[index],
-                  );
-                },
-              ),
-            ],
-          ),
         ],
       ),
+    );
+  }
+}
+
+/// Rebuilds only when [pupil.firstName] or [pupil.lastName] changes.
+class _MissedSchooldaysNameRow extends WatchingWidget {
+  final PupilProxy pupil;
+
+  const _MissedSchooldaysNameRow({required this.pupil});
+
+  @override
+  Widget build(BuildContext context) {
+    final firstName = watchPropertyValue((m) => m.firstName, target: pupil);
+    final lastName = watchPropertyValue((m) => m.lastName, target: pupil);
+    return Row(
+      children: [
+        Text(
+          firstName,
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        const Gap(5),
+        Text(
+          lastName,
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontSize: 18,
+          ),
+        ),
+        const Gap(5),
+      ],
+    );
+  }
+}
+
+/// Rebuilds only when the missed schooldays list for this pupil changes.
+class _MissedSchooldaysSummary extends WatchingWidget {
+  final PupilProxy pupil;
+  final CustomExpansionTileController tileController;
+
+  const _MissedSchooldaysSummary({
+    required this.pupil,
+    required this.tileController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final attendanceManager = di<AttendanceManager>();
+    List<MissedSchoolday> missedSchooldays = watch(
+      attendanceManager.getPupilMissedSchooldaysProxy(pupil.pupilId),
+    ).missedSchooldays;
+
+    missedSchooldays.sort(
+      (b, a) => a.schoolday!.schoolday.compareTo(b.schoolday!.schoolday),
+    );
+    final missedHoursForActualReport =
+        AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              const Text('Fehlstunden:', style: TextStyle(fontSize: 14)),
+              Text(
+                ' ${missedHoursForActualReport.missed.toString()}',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              const Gap(5),
+              const Text('davon unent:', style: TextStyle(fontSize: 14)),
+              Text(
+                ' ${missedHoursForActualReport.unexcused.toString()}',
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              const Gap(15),
+            ],
+          ),
+        ),
+        const Gap(10),
+        CustomExpansionTileContent(
+          title: null,
+          tileController: tileController,
+          widgetList: [
+            ListView.builder(
+              padding: const EdgeInsets.only(top: 5, bottom: 5),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: missedSchooldays.length,
+              itemBuilder: (BuildContext context, int index) {
+                return MissedSchooldayCard(
+                  pupil: pupil,
+                  missedSchoolday: missedSchooldays[index],
+                );
+              },
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

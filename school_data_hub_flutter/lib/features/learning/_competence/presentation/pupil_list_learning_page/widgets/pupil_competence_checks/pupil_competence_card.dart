@@ -33,7 +33,6 @@ class PupilCompetenceCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final competenceManager = di<CompetenceManager>();
-    watch(pupil);
     final competenceColor = CompetenceHelper.getCompetenceColor(
       competence.publicId,
     );
@@ -137,9 +136,9 @@ class PupilCompetenceCard extends WatchingWidget {
                       color: AppColors.interactiveColor,
                     ),
                     child: InkWell(
-                      child: getCompetenceReportCheckSymbol(
-                        pupil,
-                        competence.publicId,
+                      child: _CompetenceReportCheckSymbolWidget(
+                        pupil: pupil,
+                        competenceId: competence.publicId,
                       ),
                     ),
                   ),
@@ -153,5 +152,22 @@ class PupilCompetenceCard extends WatchingWidget {
         ],
       ),
     );
+  }
+}
+
+/// Rebuilds only when [pupil.competenceChecks] changes.
+class _CompetenceReportCheckSymbolWidget extends WatchingWidget {
+  final PupilProxy pupil;
+  final int competenceId;
+
+  const _CompetenceReportCheckSymbolWidget({
+    required this.pupil,
+    required this.competenceId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    watchPropertyValue((m) => m.competenceChecks, target: pupil);
+    return getCompetenceReportCheckSymbol(pupil, competenceId);
   }
 }

@@ -31,7 +31,8 @@ class SupportGoalCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    watch(pupil);
+    watchPropertyValue((m) => m.supportGoals, target: pupil);
+    watchPropertyValue((m) => m.supportCategoryStatuses, target: pupil);
     final learningSupportManager = di<SupportCategoryManager>();
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
@@ -100,7 +101,7 @@ class SupportGoalCard extends WatchingWidget {
                                     )
                                     .toList() ??
                                 [];
-                            showDialog(
+                            showDialog<void>(
                               context: context,
                               builder: (context) => Dialog(
                                 shape: RoundedRectangleBorder(
@@ -220,7 +221,7 @@ class SupportGoalCard extends WatchingWidget {
                       child: InkWell(
                         onTap: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(
+                            MaterialPageRoute<void>(
                               builder: (ctx) => NewSupportCategoryStatus(
                                 appBarTitle: 'Förderziel bearbeiten',
                                 pupilId: pupil.pupilId,

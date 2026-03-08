@@ -40,7 +40,9 @@ class AttendanceListPage extends WatchingWidget {
       attendanceManager.fetchMissedSchooldayesOnASchoolday(thisDate);
     });
 
-    watchValue((AttendanceManager x) => x.missedSchooldays);
+    // Do not watch global missedSchooldays here: it would rebuild the entire list
+    // when any child's attendance changes. Each AttendanceCard's _AttendanceData
+    // watches only that pupil's getPupilMissedSchooldaysProxy(pupilId).
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,

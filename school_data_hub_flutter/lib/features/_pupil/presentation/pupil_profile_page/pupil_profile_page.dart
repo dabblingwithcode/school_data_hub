@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -9,7 +10,6 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profi
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_heading_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/pupil_profile_page_content.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfilePage extends StatelessWidget {
   final PupilProxy pupil;
@@ -54,9 +54,7 @@ class PupilProfilePage extends StatelessWidget {
                             collapseMode: CollapseMode.none,
                             background: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: PupilProfileHeadingCard(
-                                passedPupil: pupil,
-                              ),
+                              child: PupilProfileHeadingCard(pupil: pupil),
                             ),
                           ),
                         ),

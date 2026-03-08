@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/enums.dart';
 
 class CompetenceHelper {
   static CompetenceManager get _competenceManager => di<CompetenceManager>();
@@ -99,10 +99,11 @@ class CompetenceHelper {
   static Color getCompetenceColor(int publicId) {
     final Competence rootCcompetence = _competenceManager
         .findRootCompetenceById(publicId);
-    return getRootCompetenceColor(
-      rootCompetenceType:
-          RootCompetenceType.stringToValue[rootCcompetence.name]!,
-    );
+    final rootType = RootCompetenceType.stringToValue[rootCcompetence.name];
+    if (rootType == null) {
+      return const Color.fromARGB(255, 157, 36, 36);
+    }
+    return getRootCompetenceColor(rootCompetenceType: rootType);
   }
 
   static Color getRootCompetenceColor({

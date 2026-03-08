@@ -23,14 +23,14 @@ class LearningSupportSearchBarStats extends WatchingWidget {
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Gap(5),
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
                   children: [
                     Icon(
                       Icons.people_alt_rounded,
@@ -94,7 +94,6 @@ class LearningSupportSearchBarStats extends WatchingWidget {
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

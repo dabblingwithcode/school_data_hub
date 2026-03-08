@@ -22,7 +22,6 @@ class LearningSupportCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final tileController = createOnce(() => CustomExpansionTileController());
-    final PupilProxy pupil = watch(this.pupil);
 
     return Card(
       color: Colors.white,
@@ -36,6 +35,7 @@ class LearningSupportCard extends WatchingWidget {
         bottom: 4.0,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -45,6 +45,7 @@ class LearningSupportCard extends WatchingWidget {
               AvatarWithBadges(pupil: pupil, size: 80),
               Expanded(
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -59,132 +60,30 @@ class LearningSupportCard extends WatchingWidget {
                                 di<BottomNavManager>().setPupilProfileNavPage(
                                   ProfileNavigationState.learningSupport.value,
                                 );
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                Navigator.of(context).push<void>(
+                                  MaterialPageRoute<void>(
                                     builder: (ctx) =>
                                         PupilProfilePage(pupil: pupil),
                                   ),
                                 );
                               },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    pupil.firstName,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  const Gap(5),
-                                  Text(
-                                    pupil.lastName,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  const Gap(5),
-                                ],
-                              ),
+                              child: _LearningSupportNameRow(pupil: pupil),
                             ),
                           ),
                         ),
                       ],
                     ),
-
-                    if (pupil.migrationSupportEnds != null)
-                      Wrap(
-                        children: [
-                          const Text('Erstförderung bis: '),
-                          Text(
-                            pupil.migrationSupportEnds!.formatDateForUser(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: PupilProxyHelper.migrationSupportEndsColor(
-                                pupil.migrationSupportEnds!,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    _MigrationSupportEndsRow(pupil: pupil),
                     const Gap(15),
-                    if (pupil.supportCategoryStatuses != null)
-                      if (pupil.supportCategoryStatuses!.isNotEmpty)
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: InkWell(
-                            onTap: () => tileController.toggle(),
-                            child: SupportGoalBatches(pupil: pupil),
-                          ),
-                        ),
+                    _SupportGoalBatchesRow(
+                      pupil: pupil,
+                      tileController: tileController,
+                    ),
                   ],
                 ),
               ),
               const Gap(8),
-              InkWell(
-                onTap: () => tileController.toggle(),
-                onLongPress: () async {
-                  // TODO: uncomment when ready
-                  //    supportLevelDialog(context, pupil, pupil.latestSupportLevel);
-                },
-                child: Column(
-                  children: [
-                    const Gap(20),
-                    const Text('Ebene'),
-                    Center(
-                      child: Text(
-                        pupil.latestSupportLevel != null
-                            ? pupil.latestSupportLevel!.level == 4
-                                  ? '🌈'
-                                  : pupil.latestSupportLevel!.level.toString()
-                            : '0',
-                        style: TextStyle(
-                          fontSize: 23,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              (pupil.learningSupportPlans != null &&
-                                  pupil.learningSupportPlans!.isNotEmpty &&
-                                  pupil
-                                          .learningSupportPlans!
-                                          .last
-                                          .schoolSemester!
-                                          .id! ==
-                                      di<SchoolCalendarManager>()
-                                          .currentSemester
-                                          .value!
-                                          .id!)
-                              ? AppColors.successButtonColor
-                              : pupil.latestSupportLevel != null &&
-                                    pupil.latestSupportLevel!.level != 0
-                              ? AppColors.cancelButtonColor
-                              : AppColors.backgroundColor,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      pupil.specialNeeds != null
-                          ? pupil.specialNeeds!.contains('*')
-                                ? '${pupil.specialNeeds!.split('*').first} ${pupil.specialNeeds!.split('*').last}'
-                                : pupil.specialNeeds!.substring(0, 2)
-                          : '',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: AppColors.groupColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _SupportLevelDisplay(pupil: pupil, tileController: tileController),
               const Gap(15),
             ],
           ),
@@ -194,6 +93,180 @@ class LearningSupportCard extends WatchingWidget {
               title: null,
               tileController: tileController,
               widgetList: [SupportGoalsList(pupil: pupil)],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Rebuilds only when [pupil.firstName] or [pupil.lastName] changes.
+class _LearningSupportNameRow extends WatchingWidget {
+  final PupilProxy pupil;
+
+  const _LearningSupportNameRow({required this.pupil});
+
+  @override
+  Widget build(BuildContext context) {
+    final firstName =
+        watchPropertyValue((m) => m.firstName, target: pupil);
+    final lastName =
+        watchPropertyValue((m) => m.lastName, target: pupil);
+    return Row(
+      children: [
+        Text(
+          firstName,
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        const Gap(5),
+        Text(
+          lastName,
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontSize: 18,
+          ),
+        ),
+        const Gap(5),
+      ],
+    );
+  }
+}
+
+/// Rebuilds only when [pupil.migrationSupportEnds] changes.
+class _MigrationSupportEndsRow extends WatchingWidget {
+  final PupilProxy pupil;
+
+  const _MigrationSupportEndsRow({required this.pupil});
+
+  @override
+  Widget build(BuildContext context) {
+    final migrationSupportEnds =
+        watchPropertyValue((m) => m.migrationSupportEnds, target: pupil);
+    if (migrationSupportEnds == null) return const SizedBox.shrink();
+    return Wrap(
+      children: [
+        const Text('Erstförderung bis: '),
+        Text(
+          migrationSupportEnds.formatDateForUser(),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            color: PupilProxyHelper.migrationSupportEndsColor(
+              migrationSupportEnds,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Rebuilds only when [pupil.supportCategoryStatuses] changes.
+class _SupportGoalBatchesRow extends WatchingWidget {
+  final PupilProxy pupil;
+  final CustomExpansionTileController tileController;
+
+  const _SupportGoalBatchesRow({
+    required this.pupil,
+    required this.tileController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final supportCategoryStatuses =
+        watchPropertyValue((m) => m.supportCategoryStatuses, target: pupil);
+    if (supportCategoryStatuses == null || supportCategoryStatuses.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: InkWell(
+        onTap: () => tileController.toggle(),
+        child: SupportGoalBatches(pupil: pupil),
+      ),
+    );
+  }
+}
+
+/// Rebuilds only when [pupil.latestSupportLevel], [pupil.learningSupportPlans],
+/// [pupil.specialNeeds], or current semester changes.
+class _SupportLevelDisplay extends WatchingWidget {
+  final PupilProxy pupil;
+  final CustomExpansionTileController tileController;
+
+  const _SupportLevelDisplay({
+    required this.pupil,
+    required this.tileController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final latestSupportLevel =
+        watchPropertyValue((m) => m.latestSupportLevel, target: pupil);
+    final learningSupportPlans =
+        watchPropertyValue((m) => m.learningSupportPlans, target: pupil);
+    final specialNeeds =
+        watchPropertyValue((m) => m.specialNeeds, target: pupil);
+    final currentSemester =
+        watchValue((SchoolCalendarManager x) => x.currentSemester);
+
+    final levelText = latestSupportLevel != null
+        ? (latestSupportLevel.level == 4
+            ? '🌈'
+            : latestSupportLevel.level.toString())
+        : '0';
+    final isCurrentSemester = learningSupportPlans != null &&
+        learningSupportPlans.isNotEmpty &&
+        learningSupportPlans.last.schoolSemester?.id == currentSemester?.id;
+    final levelColor = isCurrentSemester
+        ? AppColors.successButtonColor
+        : (latestSupportLevel != null && latestSupportLevel.level != 0)
+            ? AppColors.cancelButtonColor
+            : AppColors.backgroundColor;
+    final specialNeedsText = specialNeeds != null
+        ? (specialNeeds.contains('*')
+            ? '${specialNeeds.split('*').first} ${specialNeeds.split('*').last}'
+            : specialNeeds.substring(0, 2))
+        : '';
+
+    return InkWell(
+      onTap: () => tileController.toggle(),
+      onLongPress: () async {
+        // TODO: uncomment when ready
+        //    supportLevelDialog(context, pupil, pupil.latestSupportLevel);
+      },
+      child: Column(
+        children: [
+          const Gap(20),
+          const Text('Ebene'),
+          Center(
+            child: Text(
+              levelText,
+              style: TextStyle(
+                fontSize: 23,
+                fontWeight: FontWeight.bold,
+                color: levelColor,
+              ),
+            ),
+          ),
+          Text(
+            specialNeedsText,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: AppColors.groupColor,
             ),
           ),
         ],

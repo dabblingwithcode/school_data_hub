@@ -16,11 +16,9 @@ import 'package:school_data_hub_flutter/features/school_calendar/domain/school_c
 class AfterSchoolCareCard extends WatchingWidget {
   final PupilProxy pupil;
   const AfterSchoolCareCard(this.pupil, {super.key});
+
   @override
   Widget build(BuildContext context) {
-    final pupil = watch<PupilProxy>(this.pupil);
-    final thisDate = watchValue((SchoolCalendarManager x) => x.thisDate);
-    final weekday = dateTimeToAfterSchoolCareWeekday(thisDate);
     final tileController = createOnce(() => CustomExpansionTileController());
 
     return Card(
@@ -58,41 +56,14 @@ class AfterSchoolCareCard extends WatchingWidget {
                                 di<BottomNavManager>().setPupilProfileNavPage(
                                   ProfileNavigationState.afterSchoolCare.value,
                                 );
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                Navigator.of(context).push<void>(
+                                  MaterialPageRoute<void>(
                                     builder: (ctx) =>
                                         PupilProfilePage(pupil: pupil),
                                   ),
                                 );
                               },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    pupil.firstName,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  const Gap(5),
-                                  Text(
-                                    pupil.lastName,
-                                    overflow: TextOverflow.fade,
-                                    softWrap: false,
-                                    textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  const Gap(5),
-                                ],
-                              ),
+                              child: _AfterSchoolCareNameRow(pupil: pupil),
                             ),
                           ),
                         ),
@@ -102,27 +73,9 @@ class AfterSchoolCareCard extends WatchingWidget {
                 ),
               ),
               const Gap(20),
-              InkWell(
-                onTap: () => tileController.toggle(),
-                child: Column(
-                  children: [
-                    const Gap(20),
-                    const Text('Abholzeit'),
-                    Center(
-                      child: Text(
-                        weekday != null
-                            ? (pupil.pickUpTime(weekday) ?? 'keine')
-                            : 'keine',
-                        style: TextStyle(
-                          fontSize: 23,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.backgroundColor,
-                        ),
-                      ),
-                    ),
-                    const Text('Uhr'),
-                  ],
-                ),
+              _AfterSchoolCareTimeDisplay(
+                pupil: pupil,
+                tileController: tileController,
               ),
               const Gap(20),
             ],
@@ -132,6 +85,91 @@ class AfterSchoolCareCard extends WatchingWidget {
             tileController: tileController,
             widgetList: [AfterSchoolCareDetails(pupil: pupil)],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Rebuilds only when [pupil.firstName] or [pupil.lastName] changes.
+class _AfterSchoolCareNameRow extends WatchingWidget {
+  final PupilProxy pupil;
+
+  const _AfterSchoolCareNameRow({required this.pupil});
+
+  @override
+  Widget build(BuildContext context) {
+    final firstName =
+        watchPropertyValue((m) => m.firstName, target: pupil);
+    final lastName =
+        watchPropertyValue((m) => m.lastName, target: pupil);
+    return Row(
+      children: [
+        Text(
+          firstName,
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        const Gap(5),
+        Text(
+          lastName,
+          overflow: TextOverflow.fade,
+          softWrap: false,
+          textAlign: TextAlign.left,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontSize: 18,
+          ),
+        ),
+        const Gap(5),
+      ],
+    );
+  }
+}
+
+/// Rebuilds only when [SchoolCalendarManager.thisDate] or [pupil.afterSchoolCare] changes.
+class _AfterSchoolCareTimeDisplay extends WatchingWidget {
+  final PupilProxy pupil;
+  final CustomExpansionTileController tileController;
+
+  const _AfterSchoolCareTimeDisplay({
+    required this.pupil,
+    required this.tileController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final thisDate =
+        watchValue((SchoolCalendarManager x) => x.thisDate);
+    watchPropertyValue((m) => m.afterSchoolCare, target: pupil);
+    final weekday = dateTimeToAfterSchoolCareWeekday(thisDate);
+    final timeText =
+        weekday != null ? (pupil.pickUpTime(weekday) ?? 'keine') : 'keine';
+
+    return InkWell(
+      onTap: () => tileController.toggle(),
+      child: Column(
+        children: [
+          const Gap(20),
+          const Text('Abholzeit'),
+          Center(
+            child: Text(
+              timeText,
+              style: TextStyle(
+                fontSize: 23,
+                fontWeight: FontWeight.bold,
+                color: AppColors.backgroundColor,
+              ),
+            ),
+          ),
+          const Text('Uhr'),
         ],
       ),
     );

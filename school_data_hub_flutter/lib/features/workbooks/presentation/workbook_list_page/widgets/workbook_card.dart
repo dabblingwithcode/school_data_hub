@@ -31,25 +31,12 @@ class WorkbookCard extends WatchingWidget {
       () => CustomExpansionTileController(),
     );
 
-    final pupilWorkbookManager = watch(di<PupilWorkbookManager>());
-    final pupilWorkbooks = pupilWorkbookManager
-        .getAllPupilWorkbooks()
-        .where((pw) => pw.isbn == workbook.isbn)
-        .toList();
-
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
         color: Colors.white,
         surfaceTintColor: Colors.white,
         child: InkWell(
-          // onTap: () {
-          //   Navigator.of(context).push(MaterialPageRoute(
-          //     builder: (ctx) => SchoolListPupils(
-          //       workbook,
-          //     ),
-          //   ));
-          // },
           onLongPress: () async {
             if (!di<HubSessionManager>().isAdmin) {
               informationDialog(
@@ -69,19 +56,47 @@ class WorkbookCard extends WatchingWidget {
               await di<WorkbookManager>().deleteWorkbook(workbook);
             }
           },
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 5),
-            child: Column(
-              children: [
-                Row(
+          child: _WorkbookCardContent(
+            workbook: workbook,
+            expansionTileController: expansionTileController,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Rebuilds only when [PupilWorkbookManager] (pupil workbooks list) changes.
+class _WorkbookCardContent extends WatchingWidget {
+  final Workbook workbook;
+  final CustomExpansionTileController expansionTileController;
+
+  const _WorkbookCardContent({
+    required this.workbook,
+    required this.expansionTileController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final pupilWorkbookManager = watch(di<PupilWorkbookManager>());
+    final pupilWorkbooks = pupilWorkbookManager
+        .getAllPupilWorkbooks()
+        .where((pw) => pw.isbn == workbook.isbn)
+        .toList();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 5),
+      child: Column(
+        children: [
+          Row(
                   children: [
                     const Gap(15),
                     Expanded(
                       child: InkWell(
                         onLongPress: (di<HubSessionManager>().isAdmin)
                             ? () async {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                Navigator.of(context).push<void>(
+                                  MaterialPageRoute<void>(
                                     builder: (ctx) => NewWorkbookPage(
                                       workbook: workbook,
                                       isbn: workbook.isbn,
@@ -297,9 +312,6 @@ class WorkbookCard extends WatchingWidget {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
+      );
   }
 }

@@ -7,6 +7,8 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_filters_widget.dart';
@@ -19,6 +21,20 @@ class SchooldayEventListPage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final pupilsFilter = di<PupilsFilter>();
+    final filterManager = di<SchooldayEventFilterManager>();
+    final itemsListenable = createOnce(
+      () => pupilsFilter.filteredPupils.combineLatest3<
+          Map<SchooldayEventFilter, bool>,
+          Set<int>,
+          List<PupilProxy>>(
+        filterManager.schooldayEventsFilterState,
+        filterManager.pupilIdsWithFilteredSchooldayEvents,
+        (pupils, state, ids) {
+          if (!state.values.any((x) => x == true)) return pupils;
+          return pupils.where((p) => ids.contains(p.pupilId)).toList();
+        },
+      ),
+    );
 
     return GenericListPage<PupilProxy>(
       backgroundColor: AppColors.canvasColor,
@@ -43,7 +59,7 @@ class SchooldayEventListPage extends WatchingWidget {
         CommonPupilFiltersWidget(),
         SchooldayEventFiltersWidget(),
       ],
-      itemsListenable: pupilsFilter.filteredPupils,
+      itemsListenable: itemsListenable,
       itemBuilder: (_, pupil) => SchooldayEventPupilListCard(pupil),
       onRefresh: () async => di<SchooldayEventManager>().fetchSchooldayEvents(),
       maxWidth: 700,

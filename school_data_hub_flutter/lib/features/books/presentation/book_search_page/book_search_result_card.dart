@@ -28,7 +28,6 @@ class BookSearchResultCard extends WatchingWidget {
     final descriptionTileController = createOnce<CustomExpansionTileController>(
       () => CustomExpansionTileController(),
     );
-    watch(bookProxy);
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
@@ -36,220 +35,239 @@ class BookSearchResultCard extends WatchingWidget {
         surfaceTintColor: Colors.white,
         child: InkWell(
           onLongPress: () async {},
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            EditBook(libraryBook: bookProxy),
-                      ),
-                    );
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Text(
-                          bookProxy.title,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        bookProxy.author,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const Gap(5),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Book image on the left side
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15),
-
-                    child: UnencryptedImageInCard(
-                      cacheKey: bookProxy.isbn.toString(),
-                      path: bookProxy.imagePath,
-                      size: 100,
-                    ),
-                  ),
-                  const Gap(15),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Text('ISBN:'),
-                              const Gap(10),
-                              Text(
-                                bookProxy.isbn.displayAsIsbn(),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Text('LeseStufe:'),
-                              const Gap(10),
-                              Text(
-                                bookProxy.readingLevel ??
-                                    ReadingLevel.notSet.value,
-                                overflow: TextOverflow.fade,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Gap(5),
-                          Wrap(
-                            spacing: 2,
-                            children: [
-                              const Text('Tags: '),
-                              if (bookProxy.bookTags.isEmpty)
-                                const Text(
-                                  'Keine Tags',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                )
-                              else
-                                for (final tag in bookProxy.bookTags) ...[
-                                  const Gap(5),
-                                  Chip(
-                                    padding: const EdgeInsets.all(4),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    labelStyle: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
-                                    label: Text(tag.name),
-                                    backgroundColor: AppColors.interactiveColor,
-                                  ),
-                                ],
-                            ],
-                          ),
-                          const Gap(10),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15),
-                child: CustomExpansionTileSwitch(
-                  customExpansionTileController: descriptionTileController,
-                  includeSwitch: true,
-                  switchColor: AppColors.backgroundColor,
-                  expansionSwitchWidget: const Text(
-                    'Beschreibung:',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15),
-                child: CustomExpansionTileContent(
-                  tileController: descriptionTileController,
-                  widgetList: [
-                    InkWell(
-                      onTap: () async {
-                        final result = await longTextFieldDialog(
-                          title: 'Beschreibung',
-                          labelText: 'Beschreibung',
-                          initialValue: bookProxy.description,
-                          parentContext: context,
-                        );
-                        if (result == null ||
-                            result.value == bookProxy.description) {
-                          return;
-                        }
-                        di<BookManager>().updateLibraryBookAndBookProperties(
-                          isbn: bookProxy.isbn,
-                          libraryId: bookProxy.libraryId,
-                          description: result.value,
-                        );
-                      },
-                      child: Text(
-                        bookProxy.description,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.interactiveColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                children: books
-                    .fold<List<LibraryBookProxy>>([], (uniqueBooks, book) {
-                      // Only add if libraryId is not already in the list
-                      if (!uniqueBooks.any(
-                        (existing) => existing.libraryId == book.libraryId,
-                      )) {
-                        uniqueBooks.add(book);
-                      }
-                      return uniqueBooks;
-                    })
-                    .map((book) {
-                      return LibraryBookCard(libraryBookProxy: book);
-                    })
-                    .toList(),
-              ),
-              const Gap(10),
-            ],
+          child: _BookSearchResultContent(
+            bookProxy: bookProxy,
+            books: books,
+            descriptionTileController: descriptionTileController,
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Rebuilds only when [bookProxy] (library book data) changes.
+class _BookSearchResultContent extends WatchingWidget {
+  final LibraryBookProxy bookProxy;
+  final List<LibraryBookProxy> books;
+  final CustomExpansionTileController descriptionTileController;
+
+  const _BookSearchResultContent({
+    required this.bookProxy,
+    required this.books,
+    required this.descriptionTileController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    watch(bookProxy);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: InkWell(
+            onTap: () {
+              Navigator.push<void>(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) => EditBook(libraryBook: bookProxy),
+                ),
+              );
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Text(
+                    bookProxy.title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  bookProxy.author,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const Gap(5),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: UnencryptedImageInCard(
+                cacheKey: bookProxy.isbn.toString(),
+                path: bookProxy.imagePath,
+                size: 100,
+              ),
+            ),
+            const Gap(15),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Text('ISBN:'),
+                        const Gap(10),
+                        Text(
+                          bookProxy.isbn.displayAsIsbn(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Text('LeseStufe:'),
+                        const Gap(10),
+                        Text(
+                          bookProxy.readingLevel ??
+                              ReadingLevel.notSet.value,
+                          overflow: TextOverflow.fade,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Gap(5),
+                    Wrap(
+                      spacing: 2,
+                      children: [
+                        const Text('Tags: '),
+                        if (bookProxy.bookTags.isEmpty)
+                          const Text(
+                            'Keine Tags',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          )
+                        else
+                          for (final tag in bookProxy.bookTags) ...[
+                            const Gap(5),
+                            Chip(
+                              padding: const EdgeInsets.all(4),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              labelStyle: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                              label: Text(tag.name),
+                              backgroundColor: AppColors.interactiveColor,
+                            ),
+                          ],
+                      ],
+                    ),
+                    const Gap(10),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15, right: 15),
+          child: CustomExpansionTileSwitch(
+            customExpansionTileController: descriptionTileController,
+            includeSwitch: true,
+            switchColor: AppColors.backgroundColor,
+            expansionSwitchWidget: const Text(
+              'Beschreibung:',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 15, right: 15),
+          child: CustomExpansionTileContent(
+            tileController: descriptionTileController,
+            widgetList: [
+              InkWell(
+                onTap: () async {
+                  final result = await longTextFieldDialog(
+                    title: 'Beschreibung',
+                    labelText: 'Beschreibung',
+                    initialValue: bookProxy.description,
+                    parentContext: context,
+                  );
+                  if (result == null ||
+                      result.value == bookProxy.description) {
+                    return;
+                  }
+                  di<BookManager>().updateLibraryBookAndBookProperties(
+                    isbn: bookProxy.isbn,
+                    libraryId: bookProxy.libraryId,
+                    description: result.value,
+                  );
+                },
+                child: Text(
+                  bookProxy.description,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.interactiveColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Column(
+          children: books
+              .fold<List<LibraryBookProxy>>([], (uniqueBooks, book) {
+                if (!uniqueBooks.any(
+                  (existing) => existing.libraryId == book.libraryId,
+                )) {
+                  uniqueBooks.add(book);
+                }
+                return uniqueBooks;
+              })
+              .map((book) {
+                return LibraryBookCard(libraryBookProxy: book);
+              })
+              .toList(),
+        ),
+        const Gap(10),
+      ],
     );
   }
 }

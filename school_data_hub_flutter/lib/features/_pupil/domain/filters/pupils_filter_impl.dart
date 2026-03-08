@@ -5,10 +5,6 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_selector_filters.dart';
@@ -19,6 +15,10 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_prox
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 
 class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   final _log = Logger('PupilsFilterImplementation');
@@ -366,7 +366,9 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   @override
   void sortPupils() {
     PupilSortMode sortMode = _sortMode.value;
-    List<PupilProxy> filteredPupils = List<PupilProxy>.from(_filteredPupils.value);
+    List<PupilProxy> filteredPupils = List<PupilProxy>.from(
+      _filteredPupils.value,
+    );
 
     switch (sortMode) {
       case PupilSortMode.sortByName:
@@ -432,8 +434,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
           ).compareTo(AttendanceStatsHelper.goneHomeSum(a)),
         );
     }
+
     _filteredPupils.value = filteredPupils;
-    _filteredPupilIds.value = filteredPupils.map((e) => e.pupilId).toList();
     notifyListeners();
   }
 
