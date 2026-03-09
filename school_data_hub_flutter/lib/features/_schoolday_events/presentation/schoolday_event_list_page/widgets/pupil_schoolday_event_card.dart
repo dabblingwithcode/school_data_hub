@@ -137,6 +137,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                         SingleChildScrollView(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               InkWell(
                                 onTap: () async {
@@ -167,16 +168,19 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                     'Ereignis als bearbeitet markiert!',
                                   );
                                 },
-                                child: Text(
-                                  schooldayEvent.schoolday!.schoolday
-                                      .formatDateForUser(),
-
-                                  style: TextStyle(
-                                    color: isAuthorized
-                                        ? AppColors.interactiveColor
-                                        : Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                                child: Transform.translate(
+                                  offset: const Offset(0, 0),
+                                  child: Text(
+                                    schooldayEvent.schoolday!.schoolday
+                                        .formatDateForUser(),
+                                    style: TextStyle(
+                                      color: isAuthorized
+                                          ? AppColors.interactiveColor
+                                          : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      height: 1.0,
+                                    ),
                                   ),
                                 ),
                               ),

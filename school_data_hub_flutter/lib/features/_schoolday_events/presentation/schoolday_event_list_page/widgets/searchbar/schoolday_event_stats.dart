@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_type_icon.dart';
 
 class SchooldayEventStats extends WatchingWidget {
   final int pupilsWithEventsCount;
@@ -55,7 +57,10 @@ class SchooldayEventStats extends WatchingWidget {
           ),
         ),
         const Gap(10),
-        const Icon(Icons.school_rounded, color: Colors.red),
+        const SchooldayEventTypeIcon(
+          type: SchooldayEventType.admonition,
+          iconSize: 20,
+        ),
         const Gap(5),
         Text(
           schooldayEventsCount.totalLessonSchooldayEvents.toString(),
@@ -66,13 +71,9 @@ class SchooldayEventStats extends WatchingWidget {
           ),
         ),
         const Gap(10),
-        const Text(
-          'OGS',
-          style: TextStyle(
-            fontSize: 13,
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-          ),
+        const SchooldayEventTypeIcon(
+          type: SchooldayEventType.afternoonCareAdmonition,
+          iconSize: 20,
         ),
         const Gap(5),
         Text(
@@ -84,7 +85,10 @@ class SchooldayEventStats extends WatchingWidget {
           ),
         ),
         const Gap(10),
-        const Icon(Icons.home_rounded, color: Colors.red),
+        const SchooldayEventTypeIcon(
+          type: SchooldayEventType.admonitionAndBanned,
+          iconSize: 20,
+        ),
         const Gap(5),
         Text(
           schooldayEventsCount.totalSentHomeSchooldayEvents.toString(),
@@ -95,7 +99,10 @@ class SchooldayEventStats extends WatchingWidget {
           ),
         ),
         const Gap(10),
-        const Text('👪️', style: TextStyle(fontSize: 18)),
+        const SchooldayEventTypeIcon(
+          type: SchooldayEventType.parentsMeeting,
+          iconSize: 20,
+        ),
         const Gap(5),
         Text(
           schooldayEventsCount.totalParentsMeetingSchooldayEvents.toString(),

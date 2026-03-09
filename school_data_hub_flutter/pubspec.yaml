@@ -119,6 +119,7 @@ flutter:
     - assets/images/growth_icons/
     - assets/images/grade_icons/
     - assets/images/matrix_icons/
+    - assets/images/school_event_icons/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
