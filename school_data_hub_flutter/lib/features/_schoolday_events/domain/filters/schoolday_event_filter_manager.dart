@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_predicates.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 
@@ -13,10 +13,22 @@ typedef SchooldayEventFilterRecord = ({
   bool value,
 });
 
+/// Result of applying schoolday event filters: filtered list, their pupil IDs, and whether any filter was active.
+class FilteredSchooldayEventsResult {
+  const FilteredSchooldayEventsResult({
+    required this.events,
+    required this.pupilIds,
+    required this.filterActive,
+  });
+
+  final List<SchooldayEvent> events;
+  final Set<int> pupilIds;
+  final bool filterActive;
+}
+
 class SchooldayEventFilterManager {
   // Lazy getters to avoid circular dependency issues during initialization
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
-  PupilsFilter get _pupilsFilter => di<PupilsFilter>();
   SchooldayEventManager get _schooldayEventManager =>
       di<SchooldayEventManager>();
 
@@ -31,6 +43,8 @@ class SchooldayEventFilterManager {
   final _pupilIdsWithFilteredSchooldayEvents = ValueNotifier<Set<int>>({});
   ValueListenable<Set<int>> get pupilIdsWithFilteredSchooldayEvents =>
       _pupilIdsWithFilteredSchooldayEvents;
+
+  bool _syncScheduled = false;
 
   SchooldayEventFilterManager();
 
@@ -58,8 +72,8 @@ class SchooldayEventFilterManager {
       };
     }
 
-    final schooldayEventFiltesStateEqualsInitialValues = const MapEquality()
-        .equals(
+    final schooldayEventFiltesStateEqualsInitialValues =
+        const MapEquality<SchooldayEventFilter, bool>().equals(
           _schooldayEventsFilterState.value,
           initialSchooldayEventFilterValues,
         );
@@ -70,312 +84,104 @@ class SchooldayEventFilterManager {
     );
 
     // Filter the schoolday events and populate the pupil IDs set
-    filteredSchooldayEvents(_schooldayEventManager.schooldayEvents.value);
+    _applyFilterResultToNotifiers();
 
-    _pupilsFilter.refreshs();
+    // Do not call pupilsFilter.refreshs() here: the event list page uses
+    // combineLatest3(filteredPupils, filterState, pupilIds) and already
+    // filters by pupilIds. Calling refreshs() causes filteredPupils to notify
+    // and triggers an extra list rebuild, which restarts avatar/image futures
+    // and makes loading indicators appear stuck.
   }
 
-  List<SchooldayEvent> filteredSchooldayEvents(
-    List<SchooldayEvent> schooldayEvents,
-  ) {
-    List<SchooldayEvent> filteredSchooldayEvents = [];
-    Set<int> filteredPupilIds = {};
-
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-
-    final activeFilters = _schooldayEventsFilterState.value;
-
-    bool filterIsActive = false;
-
-    for (SchooldayEvent schooldayEvent in schooldayEvents) {
-      bool isMatched = true;
-
-      bool complementaryFilter = false;
-
-      //- we keep the last seven days
-      //- because this is a hard filter we use continue
-
-      if (activeFilters[SchooldayEventFilter.sevenDays]! &&
-          schooldayEvent.schoolday!.schoolday.isBefore(sevenDaysAgo)) {
-        continue;
-      }
-
-      //- we keep the not processed ones
-      //- because this is a hard filter we use continue
-
-      if (activeFilters[SchooldayEventFilter.processed]! &&
-          schooldayEvent.processed == true) {
-        continue;
-      }
-
-      //- these are complementary filters
-      //- and should persist if one of them is active
-
-      if (activeFilters[SchooldayEventFilter.admonition]!) {
-        if (schooldayEvent.eventType == SchooldayEventType.admonition) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      if (activeFilters[SchooldayEventFilter.afternoonCareAdmonition]!) {
-        if (schooldayEvent.eventType ==
-            SchooldayEventType.afternoonCareAdmonition) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      if (activeFilters[SchooldayEventFilter.admonitionAndBanned]!) {
-        if (schooldayEvent.eventType ==
-            SchooldayEventType.admonitionAndBanned) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      if (activeFilters[SchooldayEventFilter.parentsMeeting]!) {
-        if (schooldayEvent.eventType == SchooldayEventType.parentsMeeting) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      if (activeFilters[SchooldayEventFilter.otherEvent]!) {
-        if (schooldayEvent.eventType == SchooldayEventType.otherEvent) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      if (activeFilters[SchooldayEventFilter.duringBreak]!) {
-        if (schooldayEvent.eventTime == null) {
-          continue;
-        }
-        final eventTimeOfDay = TimeOfDay(
-          hour: int.parse(schooldayEvent.eventTime!.split(':')[0]),
-          minute: int.parse(schooldayEvent.eventTime!.split(':')[1]),
-        );
-        if (eventTimeOfDay.isAfter(const TimeOfDay(hour: 10, minute: 29)) &&
-            eventTimeOfDay.isBefore(const TimeOfDay(hour: 11, minute: 20))) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.notDuringBreak]!) {
-        if (schooldayEvent.eventTime == null) {
-          continue;
-        }
-        final eventTimeOfDay = TimeOfDay(
-          hour: int.parse(schooldayEvent.eventTime!.split(':')[0]),
-          minute: int.parse(schooldayEvent.eventTime!.split(':')[1]),
-        );
-        if (eventTimeOfDay.isBefore(const TimeOfDay(hour: 10, minute: 29)) ||
-            eventTimeOfDay.isAfter(const TimeOfDay(hour: 11, minute: 20))) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      //- The behavior of this first filter group should be
-      //- excluding for the next filter group
-      //- let's tidy up the list
-
-      if (!isMatched) {
-        filterIsActive = true;
-        continue;
-      }
-
-      //- these filters are also complementary
-      //- we reset the complementary value to process them
-
-      complementaryFilter = false;
-
-      if (activeFilters[SchooldayEventFilter.violenceAgainstPupils]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.violenceAgainstPupils.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      if (activeFilters[SchooldayEventFilter.violenceAgainstAdults]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.violenceAgainstTeachers.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.violenceAgainstThings]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.violenceAgainstThings.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.insultOthers]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.insultOthers.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.annoy]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.annoyOthers.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.dangerousBehaviour]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.dangerousBehaviour.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.disturbLesson]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.disturbLesson.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.ignoreInstructions]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.ignoreInstructions.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.learningDevelopmentInfo]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.learningDevelopmentInfo.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.learningSupportInfo]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.learningSupportInfo.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.admonitionInfo]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.admonitionInfo.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-      if (activeFilters[SchooldayEventFilter.other]!) {
-        if (schooldayEvent.eventReason.contains(
-          SchooldayEventReason.other.value,
-        )) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      if (!isMatched) {
-        filterIsActive = true;
-        continue;
-      }
-      filteredSchooldayEvents.add(schooldayEvent);
-      filteredPupilIds.add(schooldayEvent.pupilId);
+  void _applyFilterResultToNotifiers() {
+    final allEvents = _schooldayEventManager.schooldayEvents.value;
+    final result = _computeFiltered(allEvents);
+    // Only notify when the set actually changed, to avoid redundant list
+    // rebuilds (e.g. from post-frame callback in filteredSchooldayEvents())
+    if (!const SetEquality<int>().equals(
+      _pupilIdsWithFilteredSchooldayEvents.value,
+      result.pupilIds,
+    )) {
+      _pupilIdsWithFilteredSchooldayEvents.value = result.pupilIds;
     }
-
-    if (filterIsActive) {
+    if (result.filterActive) {
       _filtersStateManager.setFilterState(
         filterState: FilterState.schooldayEvent,
         value: true,
       );
     }
-    // sort schooldayEvents, latest first
+  }
+
+  FilteredSchooldayEventsResult _computeFiltered(
+    List<SchooldayEvent> schooldayEvents,
+  ) {
+    final filteredSchooldayEvents = <SchooldayEvent>[];
+    final filteredPupilIds = <int>{};
+    final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    final activeFilters = _schooldayEventsFilterState.value;
+    bool filterIsActive = false;
+
+    for (final e in schooldayEvents) {
+      if (SchooldayEventFilterPredicates.excludeBySevenDays(
+        event: e,
+        sevenDaysAgo: sevenDaysAgo,
+        sevenDaysFilterOn: activeFilters[SchooldayEventFilter.sevenDays]!,
+      )) {
+        continue;
+      }
+      if (SchooldayEventFilterPredicates.excludeByProcessed(
+        event: e,
+        processedFilterOn: activeFilters[SchooldayEventFilter.processed]!,
+      )) {
+        continue;
+      }
+      if (!SchooldayEventFilterPredicates.matchesFirstComplementaryGroup(
+        e,
+        activeFilters,
+      )) {
+        filterIsActive = true;
+        continue;
+      }
+      if (!SchooldayEventFilterPredicates.matchesSecondComplementaryGroup(
+        e,
+        activeFilters,
+      )) {
+        filterIsActive = true;
+        continue;
+      }
+      filteredSchooldayEvents.add(e);
+      filteredPupilIds.add(e.pupilId);
+    }
+
     filteredSchooldayEvents.sort(
       (a, b) => b.schoolday!.schoolday.compareTo(a.schoolday!.schoolday),
     );
-    _pupilIdsWithFilteredSchooldayEvents.value = filteredPupilIds;
-    return filteredSchooldayEvents;
+    return FilteredSchooldayEventsResult(
+      events: filteredSchooldayEvents,
+      pupilIds: filteredPupilIds,
+      filterActive: filterIsActive,
+    );
   }
 
-  bool filterBySevenDays(SchooldayEvent schooldayEvent) {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    return schooldayEvent.schoolday!.schoolday.isAfter(sevenDaysAgo);
-  }
+  List<SchooldayEvent> filteredSchooldayEvents(
+    List<SchooldayEvent> schooldayEvents,
+  ) {
+    final result = _computeFiltered(schooldayEvents);
 
-  bool filterByProcessed(SchooldayEvent schooldayEvent) {
-    return schooldayEvent.processed == true;
-  }
+    final needsSync =
+        result.filterActive ||
+        !const SetEquality<int>().equals(
+          result.pupilIds,
+          _pupilIdsWithFilteredSchooldayEvents.value,
+        );
+    if (needsSync && !_syncScheduled) {
+      _syncScheduled = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _syncScheduled = false;
+        _applyFilterResultToNotifiers();
+      });
+    }
 
-  bool filterByAdmonition(SchooldayEvent schooldayEvent) {
-    return schooldayEvent.eventType == SchooldayEventType.admonition;
-  }
-
-  bool filterByAfternoonCareAdmonition(SchooldayEvent schooldayEvent) {
-    return schooldayEvent.eventType ==
-        SchooldayEventType.afternoonCareAdmonition;
-  }
-
-  bool filterByAdmonitionAndBanned(SchooldayEvent schooldayEvent) {
-    return schooldayEvent.eventType == SchooldayEventType.admonitionAndBanned;
-  }
-
-  bool filterByOtherEvent(SchooldayEvent schooldayEvent) {
-    return schooldayEvent.eventType == SchooldayEventType.otherEvent;
-  }
-
-  bool filterByParentsMeeting(SchooldayEvent schooldayEvent) {
-    return schooldayEvent.eventType == SchooldayEventType.parentsMeeting;
+    return result.events;
   }
 }

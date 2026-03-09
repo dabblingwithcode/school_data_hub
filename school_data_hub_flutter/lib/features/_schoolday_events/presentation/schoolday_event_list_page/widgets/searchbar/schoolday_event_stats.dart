@@ -3,6 +3,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 
 class SchooldayEventStats extends WatchingWidget {
@@ -13,8 +15,19 @@ class SchooldayEventStats extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final filteredPupils = watchValue((PupilsFilter x) => x.filteredPupils);
+    final filterState = watchValue(
+      (SchooldayEventFilterManager x) => x.schooldayEventsFilterState,
+    );
+    final pupilIds = watchValue(
+      (SchooldayEventFilterManager x) => x.pupilIdsWithFilteredSchooldayEvents,
+    );
+    // Use same effective list as the list page: when event filter is on, restrict by pupilIds
+    final List<PupilProxy> effectivePupils =
+        filterState.values.any((x) => x == true)
+        ? filteredPupils.where((p) => pupilIds.contains(p.pupilId)).toList()
+        : filteredPupils;
     final schooldayEventsCount = SchoolDayEventHelper.getSchooldayEventsCounts(
-      filteredPupils,
+      effectivePupils,
     );
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -23,7 +36,7 @@ class SchooldayEventStats extends WatchingWidget {
         Icon(Icons.people_alt_rounded, color: AppColors.backgroundColor),
         const Gap(5),
         Text(
-          '${pupilsWithEventsCount.toString()}/${filteredPupils.length}',
+          '${pupilsWithEventsCount.toString()}/${effectivePupils.length}',
           style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,

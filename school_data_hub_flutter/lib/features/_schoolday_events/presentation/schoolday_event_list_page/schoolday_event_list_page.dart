@@ -23,17 +23,19 @@ class SchooldayEventListPage extends WatchingWidget {
     final pupilsFilter = di<PupilsFilter>();
     final filterManager = di<SchooldayEventFilterManager>();
     final itemsListenable = createOnce(
-      () => pupilsFilter.filteredPupils.combineLatest3<
-          Map<SchooldayEventFilter, bool>,
-          Set<int>,
-          List<PupilProxy>>(
-        filterManager.schooldayEventsFilterState,
-        filterManager.pupilIdsWithFilteredSchooldayEvents,
-        (pupils, state, ids) {
-          if (!state.values.any((x) => x == true)) return pupils;
-          return pupils.where((p) => ids.contains(p.pupilId)).toList();
-        },
-      ),
+      () =>
+          pupilsFilter.filteredPupils.combineLatest3<
+            Map<SchooldayEventFilter, bool>,
+            Set<int>,
+            List<PupilProxy>
+          >(
+            filterManager.schooldayEventsFilterState,
+            filterManager.pupilIdsWithFilteredSchooldayEvents,
+            (pupils, state, ids) {
+              if (!state.values.any((x) => x == true)) return pupils;
+              return pupils.where((p) => ids.contains(p.pupilId)).toList();
+            },
+          ),
     );
 
     return GenericListPage<PupilProxy>(
@@ -60,7 +62,10 @@ class SchooldayEventListPage extends WatchingWidget {
         SchooldayEventFiltersWidget(),
       ],
       itemsListenable: itemsListenable,
-      itemBuilder: (_, pupil) => SchooldayEventPupilListCard(pupil),
+      itemBuilder: (_, pupil) => KeyedSubtree(
+        key: ValueKey(pupil.pupilId),
+        child: SchooldayEventPupilListCard(pupil),
+      ),
       onRefresh: () async => di<SchooldayEventManager>().fetchSchooldayEvents(),
       maxWidth: 700,
     );

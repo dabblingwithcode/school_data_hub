@@ -7,12 +7,14 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/get_cached_image_or_download_inage.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_set_avatar.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 
 class AvatarImage extends WatchingWidget {
@@ -99,6 +101,95 @@ class AvatarImage extends WatchingWidget {
   }
 }
 
+/// Container-only badge that shows school grade and admonition state.
+/// Rebuilds when the pupil's schoolday events change.
+class _SchoolGradeBadgeContainer extends WatchingWidget {
+  final PupilProxy pupil;
+  final double badgeSize;
+
+  const _SchoolGradeBadgeContainer({
+    required this.pupil,
+    required this.badgeSize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final schooldayEventManager = di<SchooldayEventManager>();
+    watch(schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId));
+
+    final size = pupil.family != null ? badgeSize + 3 : badgeSize;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        border: pupil.schoolyearHeldBackAt != null
+            ? Border.all(
+                color: const Color.fromARGB(255, 250, 197, 98),
+                width: 3,
+              )
+            : null,
+        color: SchoolDayEventHelper.pupilIsAdmonishedToday(pupil)
+            ? Colors.red
+            : AppColors.schoolyearColor,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Text(
+          pupil.schoolGrade.name,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Container-only badge that shows group and missed-today state.
+/// Rebuilds when the pupil's missed schooldays change (pupilIsMissedToday).
+class _GroupBadgeContainer extends WatchingWidget {
+  final PupilProxy pupil;
+  final double badgeSize;
+
+  const _GroupBadgeContainer({required this.pupil, required this.badgeSize});
+
+  @override
+  Widget build(BuildContext context) {
+    final attendanceManager = di<AttendanceManager>();
+    watch(attendanceManager.getPupilMissedSchooldaysProxy(pupil.pupilId));
+
+    final size = pupil.siblingIds.isNotEmpty ? badgeSize + 3 : badgeSize;
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        border: pupil.siblingIds.isNotEmpty
+            ? Border.all(
+                color: const Color.fromARGB(255, 120, 127, 216),
+                width: 3,
+              )
+            : null,
+        color: AttendanceHelper.pupilIsMissedToday(pupil)
+            ? AppColors.warningButtonColor
+            : AppColors.groupColor,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Text(
+          pupil.group,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class AvatarWithBadges extends StatelessWidget {
   static const double _badgeSize = 30.0;
   static const double _badgeOffset = -1.0;
@@ -156,14 +247,14 @@ class AvatarWithBadges extends StatelessWidget {
                     context: context,
                     position: position,
                     items: [
-                      PopupMenuItem(
+                      PopupMenuItem<void>(
                         child: pupil.avatar == null
                             ? const Text('Foto hochladen')
                             : const Text('Foto ersetzen'),
                         onTap: () => setAvatar(context: context, pupil: pupil),
                       ),
                       if (pupil.avatar != null)
-                        PopupMenuItem(
+                        PopupMenuItem<void>(
                           child: const Text('Foto löschen'),
                           onTap: () async {
                             final confirm = await confirmationDialog(
@@ -302,66 +393,18 @@ class AvatarWithBadges extends StatelessWidget {
                     _siblingsDialog(context, pupil.siblings);
                   }
                 },
-                child: Container(
-                  width: pupil.siblingIds.isNotEmpty
-                      ? _badgeSize + 3
-                      : _badgeSize,
-                  height: pupil.siblingIds.isNotEmpty
-                      ? _badgeSize + 3
-                      : _badgeSize,
-                  decoration: BoxDecoration(
-                    border: pupil.siblingIds.isNotEmpty
-                        ? Border.all(
-                            color: const Color.fromARGB(255, 120, 127, 216),
-                            width: 3,
-                          )
-                        : null,
-                    color: AttendanceHelper.pupilIsMissedToday(pupil)
-                        ? AppColors.warningButtonColor
-                        : AppColors.groupColor,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      pupil.group,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                child: _GroupBadgeContainer(
+                  pupil: pupil,
+                  badgeSize: _badgeSize,
                 ),
               ),
             ),
             Positioned(
               bottom: -_badgeOffset,
               right: -_badgeOffset,
-              child: Container(
-                width: pupil.family != null ? _badgeSize + 3 : _badgeSize,
-                height: pupil.family != null ? _badgeSize + 3 : _badgeSize,
-                decoration: BoxDecoration(
-                  border: pupil.schoolyearHeldBackAt != null
-                      ? Border.all(
-                          color: const Color.fromARGB(255, 250, 197, 98),
-                          width: 3,
-                        )
-                      : null,
-                  color: SchoolDayEventHelper.pupilIsAdmonishedToday(pupil)
-                      ? Colors.red
-                      : AppColors.schoolyearColor,
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    pupil.schoolGrade.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+              child: _SchoolGradeBadgeContainer(
+                pupil: pupil,
+                badgeSize: _badgeSize,
               ),
             ),
             if (pupil.afterSchoolCare != null)

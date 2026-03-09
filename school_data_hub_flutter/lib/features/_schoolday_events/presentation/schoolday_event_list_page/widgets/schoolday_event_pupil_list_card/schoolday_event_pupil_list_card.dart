@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_prox
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/pupil_schoolday_events_list.dart';
@@ -57,22 +58,7 @@ class SchooldayEventPupilListCard extends WatchingWidget {
                                   ),
                                 );
                               },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    pupil.firstName,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const Gap(10),
-                                  Text(
-                                    pupil.lastName,
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                ],
-                              ),
+                              child: _NameRow(pupil: pupil),
                             ),
                           ),
                         ),
@@ -117,6 +103,36 @@ class SchooldayEventPupilListCard extends WatchingWidget {
   }
 }
 
+/// Rebuilds only when [pupil.firstName] or [pupil.lastName] changes.
+class _NameRow extends WatchingWidget {
+  final PupilProxy pupil;
+
+  const _NameRow({required this.pupil});
+
+  @override
+  Widget build(BuildContext context) {
+    final firstName = watchPropertyValue(
+      (PupilProxy m) => m.firstName,
+      target: pupil,
+    );
+    final lastName = watchPropertyValue(
+      (PupilProxy m) => m.lastName,
+      target: pupil,
+    );
+    return Row(
+      children: [
+        Text(
+          firstName,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const Gap(10),
+        Text(lastName, style: const TextStyle(fontSize: 18)),
+      ],
+    );
+  }
+}
+
+/// Rebuilds only when this pupil's schoolday events or the event filter state change.
 class _LastEventRow extends WatchingWidget {
   final PupilProxy pupil;
 
@@ -124,12 +140,18 @@ class _LastEventRow extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final schooldayEventFilterManager = di<SchooldayEventFilterManager>();
     final schooldayEventManager = di<SchooldayEventManager>();
-    final unfilteredEvents = watch(
-      schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
-    ).schooldayEvents;
-    watchValue((SchooldayEventFilterManager x) => x.schooldayEventsFilterState);
+    final schooldayEventFilterManager = di<SchooldayEventFilterManager>();
+    final proxy = schooldayEventManager.getPupilSchooldayEventsProxy(
+      pupil.pupilId,
+    );
+    final unfilteredEvents = watch(proxy).schooldayEvents;
+    // .select so we only rebuild when the filter map content actually changes
+    watch(
+      schooldayEventFilterManager.schooldayEventsFilterState.select(
+        (m) => Map<SchooldayEventFilter, bool>.from(m),
+      ),
+    );
     final schooldayEvents = schooldayEventFilterManager.filteredSchooldayEvents(
       unfilteredEvents.values.toList(),
     );

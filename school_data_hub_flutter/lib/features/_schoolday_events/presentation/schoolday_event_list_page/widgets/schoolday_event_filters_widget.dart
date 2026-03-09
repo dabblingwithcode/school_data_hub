@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 
 /// Event-type and reason filter sections for the schoolday event filter sheet.
 /// Use with [CommonPupilFiltersWidget] in [showGenericFilterBottomSheet] filterList.
@@ -20,8 +20,8 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
     PupilSortMode sortMode = watchValue((PupilsFilter x) => x.sortMode);
     final Map<SchooldayEventFilter, bool> activeSchooldayEventFilters =
         watchValue(
-      (SchooldayEventFilterManager x) => x.schooldayEventsFilterState,
-    );
+          (SchooldayEventFilterManager x) => x.schooldayEventsFilterState,
+        );
     bool valueLastSevenDays =
         activeSchooldayEventFilters[SchooldayEventFilter.sevenDays]!;
     bool valueProcessed =
@@ -29,7 +29,8 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
     bool valueRedCard =
         activeSchooldayEventFilters[SchooldayEventFilter.admonition]!;
     bool valueRedCardOgs =
-        activeSchooldayEventFilters[SchooldayEventFilter.afternoonCareAdmonition]!;
+        activeSchooldayEventFilters[SchooldayEventFilter
+            .afternoonCareAdmonition]!;
     bool valueRedCardSentHome =
         activeSchooldayEventFilters[SchooldayEventFilter.admonitionAndBanned]!;
     bool valueParentsMeeting =
@@ -37,11 +38,14 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
     bool valueOtherEvents =
         activeSchooldayEventFilters[SchooldayEventFilter.otherEvent]!;
     bool valueViolenceAgainstPupils =
-        activeSchooldayEventFilters[SchooldayEventFilter.violenceAgainstPupils]!;
+        activeSchooldayEventFilters[SchooldayEventFilter
+            .violenceAgainstPupils]!;
     bool valueViolenceAgainstAdults =
-        activeSchooldayEventFilters[SchooldayEventFilter.violenceAgainstAdults]!;
+        activeSchooldayEventFilters[SchooldayEventFilter
+            .violenceAgainstAdults]!;
     bool valueViolenceAgainstThings =
-        activeSchooldayEventFilters[SchooldayEventFilter.violenceAgainstThings]!;
+        activeSchooldayEventFilters[SchooldayEventFilter
+            .violenceAgainstThings]!;
     bool valueInsultOthers =
         activeSchooldayEventFilters[SchooldayEventFilter.insultOthers]!;
     bool valueAnnoy = activeSchooldayEventFilters[SchooldayEventFilter.annoy]!;
@@ -54,7 +58,8 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
     bool valueOtherReasons =
         activeSchooldayEventFilters[SchooldayEventFilter.other]!;
     bool valueLearningDevelopmentInfo =
-        activeSchooldayEventFilters[SchooldayEventFilter.learningDevelopmentInfo]!;
+        activeSchooldayEventFilters[SchooldayEventFilter
+            .learningDevelopmentInfo]!;
     bool valueLearningSupportInfo =
         activeSchooldayEventFilters[SchooldayEventFilter.learningSupportInfo]!;
     bool valueAdmonitionInfo =
@@ -67,9 +72,7 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Row(
-          children: [Text('Ereignisse', style: AppStyles.subtitle)],
-        ),
+        const Row(children: [Text('Ereignisse', style: AppStyles.subtitle)]),
         const Gap(5),
         Wrap(
           spacing: 5,
@@ -143,10 +146,7 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
               onSelected: (val) {
                 schooldayEventFilterManager.setFilter(
                   schooldayEventFilters: [
-                    (
-                      filter: SchooldayEventFilter.parentsMeeting,
-                      value: val,
-                    ),
+                    (filter: SchooldayEventFilter.parentsMeeting, value: val),
                   ],
                 );
               },
@@ -163,35 +163,41 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
               },
             ),
             ThemedFilterChip(
-              label: '🕒',
+              label: '🕒Pause',
               selected: valueDuringBreak,
               onSelected: (val) {
                 schooldayEventFilterManager.setFilter(
-                  schooldayEventFilters: [
-                    (filter: SchooldayEventFilter.duringBreak, value: val),
-                    (filter: SchooldayEventFilter.notDuringBreak, value: !val),
-                  ],
+                  schooldayEventFilters: val
+                      ? [
+                          (filter: SchooldayEventFilter.duringBreak, value: true),
+                          (filter: SchooldayEventFilter.notDuringBreak, value: false),
+                        ]
+                      : [
+                          (filter: SchooldayEventFilter.duringBreak, value: false),
+                        ],
                 );
               },
             ),
             ThemedFilterChip(
-              label: '✏️',
+              label: '🕒Unterricht',
               selected: valueNotDuringBreak,
               onSelected: (val) {
                 schooldayEventFilterManager.setFilter(
-                  schooldayEventFilters: [
-                    (filter: SchooldayEventFilter.notDuringBreak, value: val),
-                    (filter: SchooldayEventFilter.duringBreak, value: !val),
-                  ],
+                  schooldayEventFilters: val
+                      ? [
+                          (filter: SchooldayEventFilter.notDuringBreak, value: true),
+                          (filter: SchooldayEventFilter.duringBreak, value: false),
+                        ]
+                      : [
+                          (filter: SchooldayEventFilter.notDuringBreak, value: false),
+                        ],
                 );
               },
             ),
           ],
         ),
         const Gap(10),
-        const Row(
-          children: [Text('Grund', style: AppStyles.subtitle)],
-        ),
+        const Row(children: [Text('Grund', style: AppStyles.subtitle)]),
         const Gap(5),
         Wrap(
           spacing: 5,
@@ -246,10 +252,7 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
               onSelected: (val) {
                 schooldayEventFilterManager.setFilter(
                   schooldayEventFilters: [
-                    (
-                      filter: SchooldayEventFilter.insultOthers,
-                      value: val,
-                    ),
+                    (filter: SchooldayEventFilter.insultOthers, value: val),
                   ],
                 );
               },
@@ -285,10 +288,7 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
               onSelected: (val) {
                 schooldayEventFilterManager.setFilter(
                   schooldayEventFilters: [
-                    (
-                      filter: SchooldayEventFilter.disturbLesson,
-                      value: val,
-                    ),
+                    (filter: SchooldayEventFilter.disturbLesson, value: val),
                   ],
                 );
               },
@@ -341,10 +341,7 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
               onSelected: (val) {
                 schooldayEventFilterManager.setFilter(
                   schooldayEventFilters: [
-                    (
-                      filter: SchooldayEventFilter.admonitionInfo,
-                      value: val,
-                    ),
+                    (filter: SchooldayEventFilter.admonitionInfo, value: val),
                   ],
                 );
               },
@@ -363,9 +360,7 @@ class SchooldayEventFiltersWidget extends WatchingWidget {
           ],
         ),
         const Gap(10),
-        const Row(
-          children: [Text('Sortieren', style: AppStyles.subtitle)],
-        ),
+        const Row(children: [Text('Sortieren', style: AppStyles.subtitle)]),
         const Gap(5),
         Wrap(
           spacing: 5,
