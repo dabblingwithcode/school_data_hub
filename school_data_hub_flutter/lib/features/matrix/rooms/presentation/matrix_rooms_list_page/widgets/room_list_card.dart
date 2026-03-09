@@ -432,13 +432,13 @@ class RoomListCard extends WatchingWidget {
   static String _compulsoryRoomTypeLabel(MatrixRoomType t) {
     switch (t) {
       case MatrixRoomType.contacts:
-        return 'Kontakte';
+        return 'assets';
       case MatrixRoomType.globalParents:
-        return 'Eltern';
+        return 'assets/images/matrix_icons/parents.png';
       case MatrixRoomType.globalChildrem:
-        return 'Kinder';
+        return 'assets/images/matrix_icons/children.png';
       case MatrixRoomType.globalTeacher:
-        return 'Lehrer';
+        return 'assets/images/matrix_icons/teachers.png';
       case MatrixRoomType.groupChildren:
         return 'Kinder Gr.';
       case MatrixRoomType.groupParents:

@@ -28,17 +28,12 @@ class ThemedFilterChip extends StatelessWidget {
         shape: AppStyles.filterChipShape,
         avatar: const CircleAvatar(
           backgroundColor: Colors.transparent,
-          child: SizedBox(
-            width: 10,
-          ),
+          child: SizedBox(width: 10),
         ),
         selectedColor: AppColors.filterChipSelectedColor,
         checkmarkColor: AppColors.filterChipSelectedCheckColor,
         backgroundColor: AppColors.filterChipUnselectedColor,
-        label: Text(
-          label,
-          style: AppStyles.filterItemsTextStyle,
-        ),
+        label: Text(label, style: AppStyles.filterItemsTextStyle),
         selected: selected,
         onSelected: onSelected,
       ),

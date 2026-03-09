@@ -462,6 +462,7 @@ void _siblingsDialog(BuildContext context, List<PupilProxy> siblings) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
+      constraints: const BoxConstraints(maxWidth: 400),
       icon: Icon(
         Icons.family_restroom,
         color: AppColors.backgroundColor,

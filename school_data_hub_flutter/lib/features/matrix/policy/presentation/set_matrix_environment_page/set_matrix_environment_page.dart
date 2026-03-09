@@ -188,141 +188,212 @@ class SetMatrixEnvironmentPage extends WatchingWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 800),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: 5,
-                    runSpacing: 8,
-                    children: [
-                      const Text(
-                        'Matrix-URL:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Text('https://', style: TextStyle(fontSize: 16)),
-                      SizedBox(
-                        width: 300,
-                        child: TextField(
-                          minLines: 1,
-                          maxLines: 3,
-                          controller: vm.urlController,
-                          decoration: AppStyles.textFieldDecoration(
-                            labelText: 'Matrix-URL',
+                  // Section 1: Matrix-Zugangsdaten (Verbindung)
+                  Card(
+                    margin: EdgeInsets.zero,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            '1. Matrix-Zugangsdaten',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+                          const Gap(4),
+                          Text(
+                            'Verbindung zum Matrix-Server und Corporal konfigurieren.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          const Gap(20),
+                          Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 5,
+                            runSpacing: 8,
+                            children: [
+                              const Text(
+                                'Matrix-URL:',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Text(
+                                'https://',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              SizedBox(
+                                width: 300,
+                                child: TextField(
+                                  minLines: 1,
+                                  maxLines: 3,
+                                  controller: vm.urlController,
+                                  decoration: AppStyles.textFieldDecoration(
+                                    labelText: 'Matrix-URL',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Gap(20),
+                          TextField(
+                            controller: vm.userServerAddressController,
+                            decoration: AppStyles.textFieldDecoration(
+                              labelText: 'Matrix-Id Serveradresse',
+                            ),
+                          ),
+                          const Gap(20),
+                          TextField(
+                            minLines: 1,
+                            maxLines: 2,
+                            controller: vm.matrixAdminController,
+                            decoration: AppStyles.textFieldDecoration(
+                              labelText: 'Matrix-Admin ID',
+                            ),
+                          ),
+                          const Gap(20),
+                          TextField(
+                            minLines: 1,
+                            maxLines: 2,
+                            controller: vm.matrixTokenController,
+                            decoration: AppStyles.textFieldDecoration(
+                              labelText: 'Matrix-Admin Token',
+                            ),
+                          ),
+                          const Gap(20),
+                          TextField(
+                            minLines: 1,
+                            maxLines: 2,
+                            controller: vm.policyTokenController,
+                            decoration: AppStyles.textFieldDecoration(
+                              labelText: 'Matrix-Corporal Token',
+                            ),
+                          ),
+                          const Gap(20),
+                          TextField(
+                            minLines: 1,
+                            maxLines: 2,
+                            controller: vm.encryptionKeyController,
+                            decoration: AppStyles.textFieldDecoration(
+                              labelText: 'Encryption Key',
+                            ),
+                          ),
+                          const Gap(24),
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            children: [
+                              ElevatedButton(
+                                style: AppStyles.successButtonStyle,
+                                onPressed: () async {
+                                  await vm.setMatrixEnvironment();
+                                  if (context.mounted) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                child: const Text(
+                                  'Zugangsdaten speichern',
+                                  style: AppStyles.buttonTextStyle,
+                                ),
+                              ),
+                              ElevatedButton(
+                                style: AppStyles.successButtonStyle,
+                                onPressed: () async {
+                                  String? scanResult;
+                                  if (Platform.isAndroid || Platform.isIOS) {
+                                    scanResult = await qrScanner(
+                                      context: context,
+                                      overlayText:
+                                          'Matrix Zugangsdaten scannen',
+                                    );
+                                  }
+                                  if (Platform.isWindows ||
+                                      Platform.isLinux ||
+                                      Platform.isMacOS) {
+                                    scanResult =
+                                        await importStringfromTxtFile();
+                                  }
+                                  if (scanResult != null) {
+                                    final success = await vm
+                                        .importAndApplyMatrixCredentials(
+                                          scanResult,
+                                        );
+                                    if (success && context.mounted) {
+                                      Navigator.pop(context);
+                                    } else {
+                                      di<NotificationService>().showSnackBar(
+                                        NotificationType.error,
+                                        'Ungültige Matrix-Zugangsdaten',
+                                      );
+                                    }
+                                  }
+                                },
+                                child: Text(
+                                  (Platform.isAndroid || Platform.isIOS)
+                                      ? 'Zugangsdaten scannen'
+                                      : 'Import aus Datei',
+                                  style: AppStyles.buttonTextStyle,
+                                ),
+                              ),
+                              ElevatedButton(
+                                style: AppStyles.cancelButtonStyle,
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text(
+                                  'Abbrechen',
+                                  style: AppStyles.buttonTextStyle,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  const Gap(20),
-                  TextField(
-                    controller: vm.userServerAddressController,
-                    decoration: AppStyles.textFieldDecoration(
-                      labelText: 'Matrix-Id Serveradresse',
-                    ),
-                  ),
-                  const Gap(20),
-                  TextField(
-                    minLines: 1,
-                    maxLines: 2,
-                    controller: vm.matrixAdminController,
-                    decoration: AppStyles.textFieldDecoration(
-                      labelText: 'Matrix-Admin ID',
-                    ),
-                  ),
-                  const Gap(20),
-                  TextField(
-                    minLines: 1,
-                    maxLines: 2,
-                    controller: vm.matrixTokenController,
-                    decoration: AppStyles.textFieldDecoration(
-                      labelText: 'Matrix-Admin Token',
-                    ),
-                  ),
-                  const Gap(20),
-                  TextField(
-                    minLines: 1,
-                    maxLines: 2,
-                    controller: vm.policyTokenController,
-                    decoration: AppStyles.textFieldDecoration(
-                      labelText: 'Matrix-Corporal Token',
-                    ),
-                  ),
-                  const Gap(20),
-                  TextField(
-                    minLines: 1,
-                    maxLines: 2,
-                    controller: vm.encryptionKeyController,
-                    decoration: AppStyles.textFieldDecoration(
-                      labelText: 'Encryption Key',
                     ),
                   ),
                   if (flags != null) ...[
                     const Gap(24),
-                    _FlagsSection(vm: vm, flags: flags),
-                    const Gap(24),
-                    _HooksSection(vm: vm, hooks: hooks),
+                    // Section 2: Corporal-Richtlinie (Flags & Hooks)
+                    Card(
+                      margin: EdgeInsets.zero,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              '2. Corporal-Richtlinie',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Gap(4),
+                            Text(
+                              'Richtlinien-Flags und Hooks auf dem Corporal-Server bearbeiten und anwenden.',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            const Gap(24),
+                            _FlagsSection(vm: vm, flags: flags),
+                            const Gap(24),
+                            _HooksSection(vm: vm, hooks: hooks),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
-                  const Gap(24),
-                  ElevatedButton(
-                    style: AppStyles.successButtonStyle,
-                    onPressed: () async {
-                      await vm.setMatrixEnvironment();
-                      if (context.mounted) Navigator.pop(context);
-                    },
-                    child: const Text(
-                      'SENDEN',
-                      style: AppStyles.buttonTextStyle,
-                    ),
-                  ),
-                  const Gap(15),
-                  ElevatedButton(
-                    style: AppStyles.successButtonStyle,
-                    onPressed: () async {
-                      String? scanResult;
-                      if (Platform.isAndroid || Platform.isIOS) {
-                        scanResult = await qrScanner(
-                          context: context,
-                          overlayText: 'Matrix Zugangsdaten scannen',
-                        );
-                      }
-                      if (Platform.isWindows ||
-                          Platform.isLinux ||
-                          Platform.isMacOS) {
-                        scanResult = await importStringfromTxtFile();
-                      }
-                      if (scanResult != null) {
-                        final success = await vm
-                            .importAndApplyMatrixCredentials(scanResult);
-                        if (success && context.mounted) {
-                          Navigator.pop(context);
-                        } else {
-                          di<NotificationService>().showSnackBar(
-                            NotificationType.error,
-                            'Ungültige Matrix-Zugangsdaten',
-                          );
-                        }
-                      }
-                    },
-                    child: Text(
-                      (Platform.isAndroid || Platform.isIOS)
-                          ? 'SCANNEN'
-                          : 'IMPORT AUS DATEI',
-                      style: AppStyles.buttonTextStyle,
-                    ),
-                  ),
-                  const Gap(15),
-                  ElevatedButton(
-                    style: AppStyles.cancelButtonStyle,
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'ABBRECHEN',
-                      style: AppStyles.buttonTextStyle,
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -406,7 +477,7 @@ class _FlagsSection extends StatelessWidget {
             await vm.applyPolicyFlags();
           },
           child: const Text(
-            'Policy speichern',
+            'Flags speichern',
             style: AppStyles.buttonTextStyle,
           ),
         ),

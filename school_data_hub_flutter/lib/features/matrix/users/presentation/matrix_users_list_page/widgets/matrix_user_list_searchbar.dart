@@ -5,6 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/matrix_search_text_field.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_users_list_filter_bottom_sheet.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
@@ -62,11 +63,9 @@ class MatrixUsersListSearchBar extends WatchingWidget {
                   ),
                 ),
                 InkWell(
-                  // TODO: implement this
-                  // onTap: () => showCreditFilterBottomSheet(context),
+                  onTap: () => showMatrixUsersListFilterBottomSheet(context),
                   onLongPress: () =>
                       _matrixPolicyFilterManager.resetAllMatrixFilters(),
-                  // onPressed: () => showBottomSheetFilters(context),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Icon(

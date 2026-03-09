@@ -1,12 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_user_filter_category.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
 
 class MatrixPolicyFilterManager {
   final _filtersOn = ValueNotifier<bool>(false);
   ValueListenable<bool> get filtersOn => _filtersOn;
+
+  final _includedCategories = ValueNotifier<Set<MatrixUserFilterCategory>>({});
+  ValueListenable<Set<MatrixUserFilterCategory>> get includedCategories =>
+      _includedCategories;
 
   final _filteredMatrixUsers = ValueNotifier<List<MatrixUser>>([]);
   ValueListenable<List<MatrixUser>> get filteredMatrixUsers =>
@@ -44,6 +51,7 @@ class MatrixPolicyFilterManager {
 
   void resetAllMatrixFilters() {
     _searchText.value = '';
+    _includedCategories.value = {};
     _filteredMatrixUsers.value = _policyManager.matrixUsers.value;
     _filteredMatrixRooms.value = _policyManager.matrixRooms.value;
     _filtersOn.value = false;
@@ -52,6 +60,40 @@ class MatrixPolicyFilterManager {
 
   void refreshFilteredMatrixUsers() {
     setUsersFilterText(_searchText.value);
+  }
+
+  void setIncludedCategories(Set<MatrixUserFilterCategory> categories) {
+    _includedCategories.value = Set.from(categories);
+    refreshFilteredMatrixUsers();
+    _filtersOn.value =
+        _searchText.value.isNotEmpty || _includedCategories.value.isNotEmpty;
+  }
+
+  void toggleCategory(MatrixUserFilterCategory category) {
+    final current = Set<MatrixUserFilterCategory>.from(_includedCategories.value);
+    if (current.contains(category)) {
+      current.remove(category);
+    } else {
+      current.add(category);
+    }
+    setIncludedCategories(current);
+  }
+
+  bool isCategoryIncluded(MatrixUserFilterCategory category) {
+    final set = _includedCategories.value;
+    if (set.isEmpty) return true;
+    return set.contains(category);
+  }
+
+  static MatrixUserFilterCategory? _categoryFromRelationship(
+    MatrixUserRelationship? rel,
+  ) {
+    if (rel == null) return MatrixUserFilterCategory.noRelation;
+    if (rel.isTeacher) return MatrixUserFilterCategory.staff;
+    if (rel.isLinked) return MatrixUserFilterCategory.pupil;
+    if (rel.isFamily) return MatrixUserFilterCategory.familyParent;
+    if (rel.isParent) return MatrixUserFilterCategory.parent;
+    return MatrixUserFilterCategory.noRelation;
   }
 
   void reactWhenRoomListChanges() {
@@ -63,22 +105,26 @@ class MatrixPolicyFilterManager {
   }
 
   void setUsersFilterText(String text) {
-    if (text == '') {
-      _searchText.value = text;
-      _filteredMatrixUsers.value = _policyManager.matrixUsers.value;
-      _filtersOn.value = false;
-      return;
-    }
+    _searchText.value = text;
     List<MatrixUser> matrixUsers = List.from(_policyManager.matrixUsers.value);
-    List<MatrixUser> filteredMatrixUsers = [];
-    filteredMatrixUsers = matrixUsers
-        .where(
-          (MatrixUser user) =>
-              user.displayName.toLowerCase().contains(text.toLowerCase()),
-        )
-        .toList();
-    _filteredMatrixUsers.value = filteredMatrixUsers;
-    _filtersOn.value = true;
+    if (text.isNotEmpty) {
+      matrixUsers = matrixUsers
+          .where(
+            (MatrixUser user) =>
+                user.displayName.toLowerCase().contains(text.toLowerCase()),
+          )
+          .toList();
+    }
+    final categories = _includedCategories.value;
+    if (categories.isNotEmpty) {
+      matrixUsers = matrixUsers.where((MatrixUser user) {
+        final rel = MatrixUserHelper.getUserRelationship(user);
+        final cat = _categoryFromRelationship(rel);
+        return cat != null && categories.contains(cat);
+      }).toList();
+    }
+    _filteredMatrixUsers.value = matrixUsers;
+    _filtersOn.value = text.isNotEmpty || categories.isNotEmpty;
   }
 
   void setRoomsFilterText(String text) {

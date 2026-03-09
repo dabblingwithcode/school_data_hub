@@ -6,8 +6,8 @@ import 'package:logging/logging.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/pdf_service/widgets/matrix_credentials_card.dart';
 
@@ -51,18 +51,22 @@ class MatrixCredentialsPrinter {
     ) async {
       if (userRelationship != null) {
         if (userRelationship.isTeacher) {
-          return await rootBundle.load('assets/teacher.png');
+          return await rootBundle.load(
+            'assets/images/matrix_icons/teacher.png',
+          );
         }
         if (userRelationship.isParent &&
             userRelationship.familyPupils.isNotEmpty) {
-          return await rootBundle.load('assets/family.png');
+          return await rootBundle.load('assets/images/matrix_icons/family.png');
         }
         if (userRelationship.isParent &&
             userRelationship.familyPupils.isEmpty) {
-          return await rootBundle.load('assets/parents.png');
+          return await rootBundle.load(
+            'assets/images/matrix_icons/parents.png',
+          );
         }
       }
-      return await rootBundle.load('assets/pupil.png');
+      return await rootBundle.load('assets/images/matrix_icons/pupil.png');
     }
 
     final userIcon = await getUserIcon(userRelationship);
@@ -85,7 +89,7 @@ class MatrixCredentialsPrinter {
       ),
     );
 
-    final file = File("HP_credentials_${matrixUser.displayName}.pdf");
+    final file = File("HP_credentials_${matrixUser.id}.pdf");
     await file.writeAsBytes(await pdf.save());
     return file;
   }

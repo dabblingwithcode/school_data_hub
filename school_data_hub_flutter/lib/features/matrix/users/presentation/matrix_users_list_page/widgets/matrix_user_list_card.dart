@@ -14,17 +14,19 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/dialogues/logout_devices_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/pupil_rooms_list.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 
 class MatrixUsersListCard extends WatchingStatefulWidget {
   final MatrixUser matrixUser;
@@ -91,24 +93,19 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
     ];
   }
 
+  static const String _matrixIconsBase = 'assets/images/matrix_icons';
+
+  static String _matrixIconPathFor(MatrixUserRelationship? rel) {
+    if (rel == null) return '$_matrixIconsBase/teacher.png';
+    if (rel.isTeacher) return '$_matrixIconsBase/teacher.png';
+    if (rel.isFamily) return '$_matrixIconsBase/family.png';
+    if (rel.isParent) return '$_matrixIconsBase/parents.png';
+    if (rel.isLinked) return '$_matrixIconsBase/pupil.png';
+    return '$_matrixIconsBase/teacher.png';
+  }
+
   Widget _buildAvatar(MatrixUser matrixUser) {
     final linkedPupil = MatrixUserHelper.linkedPupil(matrixUser);
-    if (linkedPupil != null && linkedPupil.avatar != null) {
-      return InkWell(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (ctx) => PupilProfilePage(pupil: linkedPupil),
-            ),
-          );
-        },
-        child: AvatarWithBadges(
-          pupil: linkedPupil,
-          size: 70,
-          heroTag: '${linkedPupil.avatar?.documentId}_matrix_${matrixUser.id}',
-        ),
-      );
-    }
 
     final imageHeaders = {'Authorization': _matrixPolicyManager.matrixToken};
 
@@ -360,7 +357,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
       surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: borderColor, width: 2),
+        // side: BorderSide(color: borderColor, width: 2),
       ),
       elevation: 1.0,
       margin: const EdgeInsets.only(
@@ -541,6 +538,38 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        Image.asset(
+                          _matrixIconPathFor(userRelationship),
+                          width: 24,
+                          height: 24,
+                          color: userRelationship?.isFamily == true
+                              ? Colors.green
+                              : AppColors.backgroundColor,
+                        ),
+                        if (userRelationship?.isParent == true) ...[
+                          const Gap(6),
+                          ...userRelationship!.familyPupils.map(
+                            (pupil) => Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: InkWell(
+                                onTap: () {
+                                  di<BottomNavManager>().setPupilProfileNavPage(
+                                    ProfileNavigationState.info.value,
+                                  );
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<void>(
+                                      builder: (ctx) =>
+                                          PupilProfilePage(pupil: pupil),
+                                    ),
+                                  );
+                                },
+                                borderRadius: BorderRadius.circular(14),
+                                child: AvatarWithBadges(pupil: pupil, size: 50),
+                              ),
+                            ),
+                          ),
+                        ],
+                        const Spacer(),
                         IconButton(
                           padding: const EdgeInsets.all(0),
                           onPressed: () async {

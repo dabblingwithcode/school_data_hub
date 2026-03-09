@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/ma
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_card.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/matrix_rooms_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_searchbar.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
@@ -145,7 +146,8 @@ class MatrixRoomsListPage extends WatchingWidget {
               color: filtersOn ? Colors.deepOrange : Colors.white,
               size: 30,
             ),
-            onPressed: () {},
+            onPressed: () =>
+                showMatrixRoomsFilterBottomSheet(context),
             onLongPress: () =>
                 matrixPolicyFilterManager.resetAllMatrixFilters(),
           ),

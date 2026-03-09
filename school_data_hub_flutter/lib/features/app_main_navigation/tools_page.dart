@@ -20,9 +20,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_ma
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
-import 'package:school_data_hub_flutter/features/matrix/logs/presentation/matrix_corporal_logs_page.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/presentation/set_matrix_environment_page/set_matrix_environment_page.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/matrix_tools_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/edit_school_data_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_page/school_semester_list.dart';
@@ -116,13 +114,7 @@ class ToolsPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool matrixPolicyManagerIsRegistered = watchPropertyValue(
-      (HubSessionManager x) => x.matrixPolicyManagerRegistrationStatus,
-    );
     final matrixSessionConfigured = watchPropertyValue(
-      (HubSessionManager x) => x.isMatrixSessionConfigured,
-    );
-    final bool matrixSessionIsConfigured = watchPropertyValue(
       (HubSessionManager x) => x.isMatrixSessionConfigured,
     );
 
@@ -417,7 +409,7 @@ class ToolsPage extends WatchingWidget {
                     ),
                     label: 'Personal',
                   ),
-                  // Matrix rooms and accounts section
+                  // Matrix Kontakte (when configured)
                   if (matrixSessionConfigured) ...[
                     _ToolsCategoryButton(
                       onPressed: () => Navigator.of(context).push(
@@ -490,103 +482,16 @@ class ToolsPage extends WatchingWidget {
                           label: 'Schulschlüssel\nzeigen',
                         ),
                         _ToolsMenuButton(
-                          onPressed: () async {
-                            if (matrixPolicyManagerIsRegistered) {
-                              Navigator.pop(context);
-                              final matrixPolicyManager =
-                                  di<MatrixPolicyManager>();
-
-                              final qrString = matrixPolicyManager
-                                  .exportMatrixCredentialsJsonForTransfer();
-                              await showQrCode(qrString, context);
-                              return;
-                            }
-
-                            if (matrixSessionIsConfigured) {
-                              Navigator.pop(context);
-                              final matrixPolicyManager = await di
-                                  .getAsync<MatrixPolicyManager>();
-
-                              final qrString = matrixPolicyManager
-                                  .exportMatrixCredentialsJsonForTransfer();
-                              if (!context.mounted) return;
-                              await showQrCode(qrString, context);
-                              return;
-                            }
-
+                          onPressed: () {
                             Navigator.pop(context);
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
-                                builder: (_) =>
-                                    const SetMatrixEnvironmentPage(),
+                                builder: (_) => const MatrixToolsPage(),
                               ),
                             );
                           },
-                          icon:
-                              matrixPolicyManagerIsRegistered ||
-                                  matrixSessionIsConfigured
-                              ? Icons.check_circle_rounded
-                              : Icons.chat_rounded,
-                          label:
-                              matrixPolicyManagerIsRegistered ||
-                                  matrixSessionIsConfigured
-                              ? 'Matrix\ninitialisiert'
-                              : 'Matrix\ninitialisieren',
-                        ),
-
-                        if (matrixPolicyManagerIsRegistered ||
-                            matrixSessionIsConfigured) ...[
-                          _ToolsMenuButton(
-                            onPressed: () async {
-                              Navigator.pop(context);
-                              Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) =>
-                                      const SetMatrixEnvironmentPage(),
-                                ),
-                              );
-                            },
-                            icon: Icons.settings_rounded,
-                            label: 'Matrix-\nUmgebung',
-                          ),
-                          _ToolsMenuButton(
-                            onPressed: () async {
-                              final navigator = Navigator.of(context);
-                              Navigator.pop(context);
-                              await di.getAsync<MatrixPolicyManager>();
-                              navigator.push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) =>
-                                      const MatrixCorporalLogsPage(),
-                                ),
-                              );
-                            },
-                            icon: Icons.article_outlined,
-                            label: 'Matrix-\nCorporal-Logs',
-                          ),
-                          _ToolsMenuButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) => const MatrixUsersListPage(),
-                                ),
-                              );
-                            },
-                            icon: Icons.person_add_alt_1_rounded,
-                            label: 'Matrix-Konten\nErstellen',
-                          ),
-                        ],
-                        _ToolsMenuButton(
-                          onPressed: () async {
-                            await di<MatrixPolicyManager>()
-                                .deleteAndDeregisterMatrixPolicyManager();
-
-                            if (!context.mounted) return;
-                            Navigator.pop(context);
-                          },
-                          icon: Icons.delete_rounded,
-                          label: 'Matrix\nlöschen',
+                          icon: Icons.chat_rounded,
+                          label: 'Matrix',
                         ),
                       ],
                     ),
