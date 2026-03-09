@@ -117,10 +117,13 @@ class _BookSearchResultContent extends WatchingWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 15),
-              child: UnencryptedImageInCard(
-                cacheKey: bookProxy.isbn.toString(),
-                path: bookProxy.imagePath,
-                size: 100,
+              child: KeyedSubtree(
+                key: ValueKey(bookProxy.imagePath),
+                child: UnencryptedImageInCard(
+                  cacheKey: bookProxy.isbn.toString(),
+                  path: bookProxy.imagePath,
+                  size: 100,
+                ),
               ),
             ),
             const Gap(15),
@@ -150,8 +153,7 @@ class _BookSearchResultContent extends WatchingWidget {
                         const Text('LeseStufe:'),
                         const Gap(10),
                         Text(
-                          bookProxy.readingLevel ??
-                              ReadingLevel.notSet.value,
+                          bookProxy.readingLevel ?? ReadingLevel.notSet.value,
                           overflow: TextOverflow.fade,
                           style: const TextStyle(
                             fontSize: 16,
@@ -230,8 +232,7 @@ class _BookSearchResultContent extends WatchingWidget {
                     initialValue: bookProxy.description,
                     parentContext: context,
                   );
-                  if (result == null ||
-                      result.value == bookProxy.description) {
+                  if (result == null || result.value == bookProxy.description) {
                     return;
                   }
                   di<BookManager>().updateLibraryBookAndBookProperties(

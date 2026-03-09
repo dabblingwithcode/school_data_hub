@@ -50,14 +50,14 @@ class NewBookPage extends StatelessWidget {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(10.0),
-                                child:
-                                    // TODO: Repair when image loading is implemented
-                                    UnencryptedImageInCard(
-                                      path: controller.imagePath!,
-                                      cacheKey: controller.widget.isbn
-                                          .toString(),
-                                      size: 220,
-                                    ),
+                                child: KeyedSubtree(
+                                  key: ValueKey(controller.imagePath),
+                                  child: UnencryptedImageInCard(
+                                    path: controller.imagePath!,
+                                    cacheKey: controller.widget.isbn.toString(),
+                                    size: 220,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
