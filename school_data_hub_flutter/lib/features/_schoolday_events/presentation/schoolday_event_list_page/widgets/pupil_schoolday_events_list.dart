@@ -19,12 +19,24 @@ class PupilSchooldayEventsList extends WatchingWidget {
     final schooldayEventManager = di<SchooldayEventManager>();
     final notificationService = di<NotificationService>();
     final pupil = this.pupil;
+    final proxy = schooldayEventManager.getPupilSchooldayEventsProxy(
+      pupil.pupilId,
+    );
+    final merged = createOnce(
+      () => Listenable.merge([
+        proxy,
+        schooldayEventFilterManager.schooldayEventsFilterState,
+      ]),
+    );
+    watchPropertyValue(
+      (Listenable _) => schooldayEventFilterManager
+          .filteredSchooldayEvents(proxy.schooldayEvents.values.toList())
+          .map((e) => (e.id, e.documentId))
+          .toList(),
+      target: merged,
+    );
     final filteredSchooldayEvents = schooldayEventFilterManager
-        .filteredSchooldayEvents(
-          watch(
-            schooldayEventManager.getPupilSchooldayEventsProxy(pupil.pupilId),
-          ).schooldayEvents.values.toList(),
-        );
+        .filteredSchooldayEvents(proxy.schooldayEvents.values.toList());
     return Column(
       children: [
         if (filteredSchooldayEvents.isEmpty)

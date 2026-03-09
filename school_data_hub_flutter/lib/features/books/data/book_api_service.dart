@@ -1,16 +1,14 @@
 import 'dart:io';
 
-import 'package:logging/logging.dart';
-import 'package:path/path.dart' as p;
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class BookApiService {
   final _client = di<Client>();
   final _notificationService = di<NotificationService>();
-  final _log = Logger('SchooldayEventApiService');
 
   // - BOOK TAGS - //
 
@@ -107,95 +105,26 @@ class BookApiService {
   }
 
   Future<Book?> updateBookImage({required int isbn, required File file}) async {
+    final result = await ClientFileUpload.uploadFile(
+      file: file,
+      storageId: StorageId.public,
+      folder: ServerStorageFolder.events,
+      customPath: '$isbn.jpg',
+    );
+    if (result.cancelled || !result.success || result.path == null) {
+      return null;
+    }
     try {
-      final documentId = isbn.toString();
-      final path = p.posix.join('$documentId.jpg');
-      String? uploadDescription;
-      try {
-        uploadDescription = await _client.files.getUploadDescription(
-          StorageId.public.name,
-          path,
-        );
-      } catch (e) {
-        _notificationService.apiRunning(false);
-        throw Exception('Failed to get upload description, $e');
-      }
-
-      if (uploadDescription != null) {
-        _log.info('Upload description received for $path');
-        _log.fine('Upload description: $uploadDescription');
-        // Create an uploader
-        final uploader = FileUploader(uploadDescription);
-
-        // Upload the file
-        final fileStream = file.openRead();
-
-        final fileLength = await file.length();
-        _log.info('File length: $fileLength');
-        _notificationService.apiRunning(true);
-        try {
-          await uploader.upload(fileStream, fileLength);
-        } catch (e) {
-          _notificationService.apiRunning(false);
-          _log.severe('Error while uploading file', e, StackTrace.current);
-
-          throw Exception('Failed to upload file, $uploadDescription');
-        }
-
-        _notificationService.apiRunning(false);
-        bool success = false;
-        try {
-          // Verify the upload
-          success = await _client.files.verifyUpload('public', path);
-        } catch (e) {
-          _notificationService.apiRunning(false);
-          throw Exception('Failed to verify upload, $e');
-        }
-
-        if (success) {
-          try {
-            final updatedSchooldayEvent = await _client.books.updateBookImage(
-              isbn,
-              path,
-            );
-            _notificationService.apiRunning(false);
-
-            return updatedSchooldayEvent;
-          } catch (e) {
-            _notificationService.apiRunning(false);
-
-            _log.severe(
-              'Error while updating schoolday event file',
-              e,
-              StackTrace.current,
-            );
-
-            _notificationService.showSnackBar(
-              NotificationType.error,
-              'Das Dokument konnte nicht aktualisiert werden: ${e.toString()}',
-            );
-
-            throw Exception('Failed to update schoolday event file, $e');
-          }
-        } else {
-          _notificationService.apiRunning(false);
-          throw Exception('Failed to verify upload, $success');
-        }
-      } else {
-        _notificationService.apiRunning(false);
-
-        _log.severe('Error while uploading file', null, StackTrace.current);
-
-        _notificationService.showSnackBar(
-          NotificationType.error,
-          'Das Ereignisdokument konnte nicht hochgeladen werden: ${uploadDescription.toString()}',
-        );
-
-        throw Exception('Failed to upload file, $uploadDescription');
-      }
+      return await ClientHelper.apiCall(
+        call: () => _client.books.updateBookImage(isbn, result.path!),
+        errorMessage: 'Das Dokument konnte nicht aktualisiert werden',
+      );
     } catch (e) {
-      _notificationService.apiRunning(false);
-      throw Exception('Failed to upload file, $e');
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Das Dokument konnte nicht aktualisiert werden: ${e.toString()}',
+      );
+      rethrow;
     }
   }
 

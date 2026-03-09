@@ -105,6 +105,7 @@ class SchooldayEventReasonDialog extends WatchingWidget {
     );
 
     return AlertDialog(
+      constraints: const BoxConstraints(maxWidth: 400),
       title: const Text(
         'Grund bearbeiten',
         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),

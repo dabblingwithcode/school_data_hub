@@ -231,7 +231,7 @@ class SchooldayEventManager with ChangeNotifier {
     if (cacheKey != null) {
       await _cacheManager.removeFile(cacheKey);
     }
-    _log.info('schooldayEvent updated: $schooldayEvent');
+    _log.info('SchooldayEvent updated!');
   }
 
   Future<void> updateSchooldayEventFile({

@@ -18,14 +18,17 @@ class ClientFileUpload {
   ///
   /// [file] is the file to upload.
   /// [storageId] is the storage id to upload the file to.
-  /// [folder] is the folder to upload the file to.
+  /// [folder] is the folder to upload the file to (ignored if [customPath] is set).
   /// [fileInfo] is optional file information like audio duration
   /// to be included in the documentId string to upload the file to.
+  /// [customPath] if set, use this as the storage path instead of building from
+  /// [folder] and documentId (e.g. for book images: '$isbn.jpg').
   static Future<({String? path, bool success, bool cancelled})> uploadFile({
     File? file,
     required StorageId storageId,
     required ServerStorageFolder folder,
     String? fileInfo,
+    String? customPath,
   }) async {
     File? fileToUpload = file;
     if (fileToUpload == null) {
@@ -37,20 +40,18 @@ class ClientFileUpload {
       }
       fileToUpload = File(pickedFile.files.single.path!);
     }
-    final documentId = fileInfo != null
-        ? '${fileInfo.replaceAll(':', '-')}_${const Uuid().v4()}'
-        : const Uuid().v4();
-    final path = p.posix.join(
-      folder.name,
-      '$documentId${p.extension(fileToUpload.path)}',
-    );
+    final path = customPath ??
+        p.posix.join(
+          folder.name,
+          '${fileInfo != null ? '${fileInfo.replaceAll(':', '-')}_${const Uuid().v4()}' : const Uuid().v4()}${p.extension(fileToUpload.path)}',
+        );
     try {
       final uploadDescription = await di<Client>().files.getUploadDescription(
         storageId.name,
         path,
       );
       _log.info('Upload description received for $path');
-      _log.fine('Upload description: $uploadDescription');
+      // _log.fine('Upload description: $uploadDescription');
 
       if (uploadDescription != null) {
         // Create an uploader

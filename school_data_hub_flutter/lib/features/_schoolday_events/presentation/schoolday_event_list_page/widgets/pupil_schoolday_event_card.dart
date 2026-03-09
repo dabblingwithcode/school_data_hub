@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
@@ -22,6 +23,72 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_page.dart';
+
+/// Document image/placeholder for one schoolday event. Rebuilds only when this
+/// event's document part changes (via .select on the manager's event list).
+class _SchooldayEventDocumentImage extends WatchingWidget {
+  final SchooldayEvent schooldayEvent;
+
+  const _SchooldayEventDocumentImage({required this.schooldayEvent});
+
+  @override
+  Widget build(BuildContext context) {
+    final manager = di<SchooldayEventManager>();
+    final eventId = schooldayEvent.id!;
+    final documentPart = createOnce(() {
+      final m = di<SchooldayEventManager>();
+      final id = schooldayEvent.id!;
+      return m.schooldayEvents.select((list) {
+        final e = list.firstWhereOrNull((e) => e.id == id);
+        return e?.documentId;
+      });
+    });
+    watch(documentPart);
+
+    final list = manager.schooldayEvents.value;
+    final event =
+        list.firstWhereOrNull((e) => e.id == eventId) ?? schooldayEvent;
+
+    if (event.document != null) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            event.document!.createdAt.formatDateForUser(),
+            style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+          ),
+          EncryptedDocumentImage(
+            documentId: event.document!.documentId,
+            size: 70,
+          ),
+          Row(
+            children: [
+              Text(
+                event.document!.createdBy,
+                style: const TextStyle(
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+    return Column(
+      children: [
+        const Gap(13),
+        SizedBox(
+          height: 70,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Image.asset('assets/document_camera.png'),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 class PupilSchooldayEventCard extends StatelessWidget {
   final SchooldayEvent schooldayEvent;
@@ -413,45 +480,9 @@ class PupilSchooldayEventCard extends StatelessWidget {
                             'Dokument gelöscht!',
                           );
                         },
-                        child: schooldayEvent.document != null
-                            ? Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    schooldayEvent.document!.createdAt
-                                        .formatDateForUser(),
-                                    style: const TextStyle(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  EncryptedDocumentImage(
-                                    documentId:
-                                        schooldayEvent.document!.documentId,
-                                    size: 70,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        schooldayEvent.document!.createdBy,
-                                        style: const TextStyle(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            : SizedBox(
-                                height: 70,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Image.asset(
-                                    'assets/document_camera.png',
-                                  ),
-                                ),
-                              ),
+                        child: _SchooldayEventDocumentImage(
+                          schooldayEvent: schooldayEvent,
+                        ),
                       ),
                     ],
                   ),
