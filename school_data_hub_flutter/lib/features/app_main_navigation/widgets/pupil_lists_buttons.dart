@@ -9,6 +9,7 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/cre
 import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/after_school_care_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/birthdays_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/family_language_lessons_page/family_language_lessons_list_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/public_media_auth/public_media_auth_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/religion_page/religion_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/special_info_page/special_info_list_page.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
@@ -20,8 +21,7 @@ import 'package:school_data_hub_flutter/features/matrix/users/presentation/pupil
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class PupilListButtons extends WatchingWidget {
-  final double screenWidth;
-  const PupilListButtons({required this.screenWidth, super.key});
+  const PupilListButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +145,15 @@ class PupilListButtons extends WatchingWidget {
           ),
           buttonText: locale.allDayCare,
         ),
-
+        MainMenuButton(
+          destinationPage: const PublicMediaAuthListPage(),
+          buttonIcon: Icon(
+            Icons.shield,
+            size: 50,
+            color: AppColors.gridViewColor,
+          ),
+          buttonText: 'Einwilligung\nVeröffentlichungen',
+        ),
         MainMenuButton(
           destinationPage: const PupilsMatrixContactsListPage(),
           buttonIcon: Icon(
@@ -169,7 +177,7 @@ class PupilListButtons extends WatchingWidget {
               if (result == null) return;
               if (context.mounted) {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (ctx) => BirthdaysView(
                       selectedDate: result.pastDayValue,
                       endDate: result.futureDayValue,

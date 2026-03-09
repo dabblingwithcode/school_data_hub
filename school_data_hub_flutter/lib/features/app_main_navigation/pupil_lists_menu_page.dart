@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -12,7 +13,6 @@ class PupilListsMenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
-    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       primary: true,
       backgroundColor: AppColors.canvasColor,
@@ -25,19 +25,26 @@ class PupilListsMenuPage extends StatelessWidget {
           textAlign: TextAlign.end,
         ),
       ),
-      body: Center(
-        child: SizedBox(
-          width: Platform.isWindows ? 700 : 600,
-          height:
-              Platform.isWindows
-                  ? 600
-                  : MediaQuery.of(context).size.height * 0.9,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            physics: const ScrollPhysics(),
-            child: PupilListButtons(screenWidth: screenWidth),
-          ),
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = Platform.isWindows
+              ? 700.0
+              : math.min(600.0, constraints.maxWidth);
+          final height = Platform.isWindows
+              ? 600.0
+              : constraints.maxHeight * 0.9;
+          return Center(
+            child: SizedBox(
+              width: width,
+              height: height,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                physics: const ScrollPhysics(),
+                child: const PupilListButtons(),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

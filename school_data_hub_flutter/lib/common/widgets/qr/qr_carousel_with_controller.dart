@@ -53,87 +53,85 @@ class _QrCarouselWithControllerState extends State<QrCarouselWithController> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    double maxHeight;
-    final maxWidth = mediaQuery.size.width; // Adjust the multiplier as needed
-    if (mediaQuery.orientation == Orientation.landscape) {
-      maxHeight = mediaQuery.size.height * 0.9;
-    } else {
-      maxHeight = mediaQuery.size.height * 0.6;
-    }
     final qrMap = widget.qrMap;
     // Transforming myMap into a List<Map<String, String>>
     qrMap.forEach((key, value) {
       myListOfMaps.add({key: value});
     });
-    return CarouselSlider(
-      carouselController: carouselController,
-      options: CarouselOptions(
-        viewportFraction: (mediaQuery.orientation == Orientation.landscape)
-            ? 0.6
-            : 0.9,
-        enlargeCenterPage: true,
-        height: maxHeight,
-        autoPlay: false,
-        pauseAutoPlayInFiniteScroll: true,
-        pauseAutoPlayOnTouch: true,
-        scrollPhysics: const PageScrollPhysics(),
-      ),
-      items: myListOfMaps.map((i) {
-        return Builder(
-          builder: (BuildContext context) {
-            return Center(
-              child: Container(
-                width: maxWidth,
-                margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                ),
-                child: Column(
-                  children: [
-                    const Gap(10),
-                    Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = constraints.maxWidth;
+        final isLandscape = constraints.maxWidth > constraints.maxHeight;
+        final maxHeight = isLandscape
+            ? constraints.maxHeight * 0.9
+            : constraints.maxHeight * 0.6;
+        final horizontalGap = constraints.maxWidth * 0.05;
+        return CarouselSlider(
+          carouselController: carouselController,
+          options: CarouselOptions(
+            viewportFraction: isLandscape ? 0.6 : 0.9,
+            enlargeCenterPage: true,
+            height: maxHeight,
+            autoPlay: false,
+            pauseAutoPlayInFiniteScroll: true,
+            pauseAutoPlayOnTouch: true,
+            scrollPhysics: const PageScrollPhysics(),
+          ),
+          items: myListOfMaps.map((i) {
+            return Builder(
+              builder: (BuildContext context) {
+                return Center(
+                  child: Container(
+                    width: maxWidth,
+                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                    ),
+                    child: Column(
                       children: [
-                        Gap(mediaQuery.size.width * 0.05),
-                        Text(
-                          i.keys.first,
-                          style: const TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
+                        const Gap(10),
+                        Row(
+                          children: [
+                            Gap(horizontalGap),
+                            Text(
+                              i.keys.first,
+                              style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(
+                              '${myListOfMaps.indexOf(i) + 1}/${myListOfMaps.length}',
+                              style: const TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Gap(horizontalGap),
+                          ],
+                        ),
+                        Expanded(
+                          child: QrImageView(
+                            padding: const EdgeInsets.all(20),
+                            backgroundColor: Colors.white,
+                            data: i.values.first,
+                            version: QrVersions.auto,
+                            size: (isLandscape || Platform.isWindows)
+                                ? maxHeight * 0.9
+                                : maxWidth,
                           ),
                         ),
-                        const Spacer(),
-                        Text(
-                          '${myListOfMaps.indexOf(i) + 1}/${myListOfMaps.length}',
-                          style: const TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Gap(mediaQuery.size.width * 0.05),
                       ],
                     ),
-                    Expanded(
-                      child: QrImageView(
-                        padding: const EdgeInsets.all(20),
-                        backgroundColor: Colors.white,
-                        data: i.values.first,
-                        version: QrVersions.auto,
-                        size:
-                            (mediaQuery.orientation == Orientation.landscape ||
-                                Platform.isWindows)
-                            ? maxHeight * 0.9
-                            : maxWidth,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             );
-          },
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
 

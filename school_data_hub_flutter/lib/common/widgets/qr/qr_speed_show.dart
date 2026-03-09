@@ -70,7 +70,6 @@ class QrCodeSpeedShowState extends State<QrCodeSpeedShow> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -107,41 +106,46 @@ class QrCodeSpeedShowState extends State<QrCodeSpeedShow> {
             )
           : Center(
               child: _timerRunning == true //_currentIndex != _qrMap.length
-                  ? ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 800),
-                      child: Column(
-                        children: [
-                          const Gap(20),
-                          SizedBox(
-                            child: Row(
-                              children: [
-                                const Gap(20),
-                                Text(_qrMap.keys.elementAt(_currentIndex),
-                                    style: const TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.center),
-                                const Spacer(),
-                                Text(
-                                    '${(_currentIndex + 1).toString()}/${_qrMap.entries.length}',
-                                    style: const TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.center),
-                                const Gap(20),
-                              ],
-                            ),
+                  ? LayoutBuilder(
+                      builder: (context, constraints) {
+                        final qrSize = constraints.maxHeight * 0.75;
+                        return ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 800),
+                          child: Column(
+                            children: [
+                              const Gap(20),
+                              SizedBox(
+                                child: Row(
+                                  children: [
+                                    const Gap(20),
+                                    Text(_qrMap.keys.elementAt(_currentIndex),
+                                        style: const TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center),
+                                    const Spacer(),
+                                    Text(
+                                        '${(_currentIndex + 1).toString()}/${_qrMap.entries.length}',
+                                        style: const TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center),
+                                    const Gap(20),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: QrImageView(
+                                  size: qrSize,
+                                  data: _qrMap.values.elementAt(_currentIndex),
+                                  version: QrVersions.auto,
+                                ),
+                              ),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: QrImageView(
-                              size: mediaQuery.size.height * 0.75,
-                              data: _qrMap.values.elementAt(_currentIndex),
-                              version: QrVersions.auto,
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     )
                   : Column(children: [
                       const Gap(20),

@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/
 import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_media_auth_filters.dart';
 
 enum FilterState {
   pupil,
@@ -119,6 +120,7 @@ class FiltersStateManagerImplementation implements FiltersStateManager {
     di<PupilAuthorizationFilterManager>().resetFilters();
     di<LearningSupportFilterManager>().resetFilters();
     di<PupilBookLendingFilterManager>().resetFilters();
+    di<PupilMediaAuthFilterManager>().resetFilters();
 
     _filterStates.value = {..._initialFilterGlobalValues};
     _filtersActive.value = false;

@@ -8,8 +8,10 @@ class EnvsInStorage {
 
   factory EnvsInStorage.fromJson(Map<String, dynamic> json) => EnvsInStorage(
     defaultEnv: json["defaultEnv"] as String,
-    environmentsMap: Map.from(json["environmentsMap"] as Map<dynamic, dynamic>)
-        .map(
+    environmentsMap:
+        Map<dynamic, dynamic>.from(
+          json["environmentsMap"] as Map<dynamic, dynamic>,
+        ).map(
           (k, v) => MapEntry<String, Env>(
             k as String,
             Env.fromJson(v as Map<String, dynamic>),

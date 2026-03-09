@@ -18,68 +18,68 @@ final _notificationService = di<NotificationService>();
 
 Future<void> showQrCode(String qr, BuildContext context) async {
   final qrImageKey = GlobalKey();
-  final mediaQuery = MediaQuery.of(context);
-  final maxDialogWidth = min(800.0, mediaQuery.size.width * 0.8);
-  final maxHeight = mediaQuery.size.height * 0.8;
-
-  final qrSize = min(maxDialogWidth - 40, maxHeight - 60);
-  final maxDialogHeight = qrSize * 1.2;
-  //final RenderBox box = context.findRenderObject() as RenderBox;
-  //final Offset offset = box.localToGlobal(Offset.zero);
-  await showDialog(
+  await showDialog<void>(
     context: context,
-    builder: (context) {
-      return Dialog(
-        backgroundColor: Colors.white,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: maxDialogWidth,
-            maxHeight: maxDialogHeight,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Gap(20),
-              RepaintBoundary(
-                key: qrImageKey,
-                child: QrImageView(
-                  padding: const EdgeInsets.all(20),
-                  backgroundColor: Colors.white,
-                  data: qr,
-                  version: QrVersions.auto,
-                  size: qrSize,
-                ),
+    builder: (dialogContext) {
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final maxDialogWidth = min(800.0, constraints.maxWidth * 0.8);
+          final maxAvailableHeight = constraints.maxHeight * 0.8;
+          final qrSize = min(maxDialogWidth - 40, maxAvailableHeight - 60);
+          final maxDialogHeight = qrSize * 1.2;
+          return Dialog(
+            backgroundColor: Colors.white,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: maxDialogWidth,
+                maxHeight: maxDialogHeight,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(width: 10),
-                  TextButton(
-                    onPressed: () {
-                      saveQrCode(qr, context, qrImageKey);
-                    },
-                    child: const Text('speichern'),
+                  const Gap(20),
+                  RepaintBoundary(
+                    key: qrImageKey,
+                    child: QrImageView(
+                      padding: const EdgeInsets.all(20),
+                      backgroundColor: Colors.white,
+                      data: qr,
+                      version: QrVersions.auto,
+                      size: qrSize,
+                    ),
                   ),
-                  const SizedBox(width: 20),
-                  TextButton(
-                    onPressed: () {
-                      copyQrCodeToClipboard(qr, context, qrImageKey);
-                    },
-                    child: const Text('kopieren'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const SizedBox(width: 10),
+                      TextButton(
+                        onPressed: () {
+                          saveQrCode(qr, dialogContext, qrImageKey);
+                        },
+                        child: const Text('speichern'),
+                      ),
+                      const SizedBox(width: 20),
+                      TextButton(
+                        onPressed: () {
+                          copyQrCodeToClipboard(qr, dialogContext, qrImageKey);
+                        },
+                        child: const Text('kopieren'),
+                      ),
+                      const SizedBox(width: 20),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(dialogContext);
+                        },
+                        child: const Text('fertig'),
+                      ),
+                      const Gap(10),
+                    ],
                   ),
-                  const SizedBox(width: 20),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('fertig'),
-                  ),
-                  const Gap(10),
                 ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       );
     },
   );

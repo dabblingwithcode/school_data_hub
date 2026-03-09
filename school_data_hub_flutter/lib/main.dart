@@ -21,7 +21,7 @@ import 'package:school_data_hub_flutter/features/app_entry_point/global_overlay_
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_bottom_navigation.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:window_manager/window_manager.dart';
 

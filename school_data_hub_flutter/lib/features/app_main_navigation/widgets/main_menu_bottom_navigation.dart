@@ -23,7 +23,8 @@ class MainMenuBottomNavigation extends WatchingStatefulWidget {
       _MainMenuBottomNavigationState();
 }
 
-class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
+class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation>
+    with WidgetsBindingObserver {
   final List<Widget> pages = [
     const PupilListsMenuPage(),
     const SchoolListsMenuPage(),
@@ -31,6 +32,32 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
     const ToolsPage(),
     const SettingsPage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    // On some devices (e.g. Samsung Tab S6 Lite), orientation change can report
+    // new orientation before updated dimensions. Force a rebuild after a short
+    // delay so the next frame gets correct viewport constraints.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() {});
+    });
+    // Future<void>.delayed(const Duration(milliseconds: 100), () {
+    //   if (mounted) setState(() {});
+    // });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,16 +111,20 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation> {
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      body: PageView(
-        controller: pageViewController,
-        children: const <Widget>[
-          PupilListsMenuPage(),
-          SchoolListsMenuPage(),
-          LearnResourcesMenuPage(),
-          ToolsPage(),
-          SettingsPage(),
-        ],
-        onPageChanged: (index) => bottomNavmanager.setBottomNavPage(index),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return PageView(
+            controller: pageViewController,
+            children: const <Widget>[
+              PupilListsMenuPage(),
+              SchoolListsMenuPage(),
+              LearnResourcesMenuPage(),
+              ToolsPage(),
+              SettingsPage(),
+            ],
+            onPageChanged: (index) => bottomNavmanager.setBottomNavPage(index),
+          );
+        },
       ),
       bottomNavigationBar: BottomNavBarLayout(
         bottomNavBar: BottomNavigationBar(

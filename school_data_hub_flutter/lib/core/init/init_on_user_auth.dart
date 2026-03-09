@@ -13,6 +13,7 @@ import 'package:school_data_hub_flutter/features/_authorizations/domain/authoriz
 import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_media_auth_filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
@@ -228,6 +229,12 @@ class InitOnUserAuth {
         SchooldayEventFilterManager,
         AttendancePupilFilterManager,
       ],
+      dispose: (m) => m.dispose(),
+    );
+
+    di.registerSingletonWithDependencies<PupilMediaAuthFilterManager>(
+      () => PupilMediaAuthFilterManager(),
+      dependsOn: [PupilsFilter],
       dispose: (m) => m.dispose(),
     );
 
