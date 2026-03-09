@@ -86,6 +86,7 @@ class CompetenceReportCheckEndpoint extends Endpoint {
       return inserted;
     });
 
+    session.messages.postMessage('hub_events_stream', result);
     return result;
   }
 
@@ -116,7 +117,9 @@ class CompetenceReportCheckEndpoint extends Endpoint {
       check.shouldPrint = shouldPrint.value;
     }
 
-    return await CompetenceReportCheck.db.updateRow(session, check);
+    final updated = await CompetenceReportCheck.db.updateRow(session, check);
+    session.messages.postMessage('hub_events_stream', updated);
+    return updated;
   }
 
   Future<bool> deleteCompetenceReportCheck(
@@ -133,7 +136,15 @@ class CompetenceReportCheckEndpoint extends Endpoint {
       );
     }
 
+    final checkId = check.id!;
     await CompetenceReportCheck.db.deleteRow(session, check);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(
+        objectType: HubObjectType.competenceReportCheck,
+        id: checkId,
+      ),
+    );
     return true;
   }
 }

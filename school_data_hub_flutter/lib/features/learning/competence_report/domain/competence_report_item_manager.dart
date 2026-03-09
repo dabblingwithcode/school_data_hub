@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/data/competence_report_item_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_helper.dart';
@@ -12,15 +15,48 @@ class CompetenceReportItemManager {
   final _items = ValueNotifier<List<CompetenceReportItem>>([]);
   ValueListenable<List<CompetenceReportItem>> get items => _items;
 
+  StreamSubscription<dynamic>? _hubSubscription;
+
   CompetenceReportItemManager();
 
   Future<CompetenceReportItemManager> init() async {
     await fetchItems();
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     return this;
   }
 
   void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
     _items.dispose();
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is CompetenceReportItem) {
+      upsertItemFromStream(event);
+    } else if (event is HubDeleteEvent &&
+        event.objectType == HubObjectType.competenceReportItem) {
+      deleteItemFromStream(event.id);
+    } else if (event is HubReconnected) {
+      fetchItems();
+    }
+  }
+
+  void upsertItemFromStream(CompetenceReportItem item) {
+    final list = List<CompetenceReportItem>.from(_items.value);
+    final index = list.indexWhere((i) =>
+        (i.id != null && i.id == item.id) || i.publicId == item.publicId);
+    if (index >= 0) {
+      list[index] = item;
+    } else {
+      list.add(item);
+    }
+    _items.value = CompetenceReportHelper.sortItems(list);
+  }
+
+  void deleteItemFromStream(int itemId) {
+    final list = _items.value.where((i) => i.id != itemId).toList();
+    _items.value = CompetenceReportHelper.sortItems(list);
   }
 
   Future<void> fetchItems() async {
@@ -39,17 +75,12 @@ class CompetenceReportItemManager {
     List<String>? level,
     int? order,
   }) async {
-    final newItem = await _apiService.postCompetenceReportItem(
+    await _apiService.postCompetenceReportItem(
       parentItem: parentItem,
       name: name,
       level: level,
       order: order,
     );
-
-    _items.value = CompetenceReportHelper.sortItems([
-      ..._items.value,
-      newItem,
-    ]);
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -66,12 +97,9 @@ class CompetenceReportItemManager {
 
     final item = _items.value[index];
     final updatedItem = item.copyWith(order: order);
-    final verified = await _apiService.updateCompetenceReportItem(updatedItem);
-    // Update in-place without notifying listeners.
-    // The sortable widgets manage their own visual order via local state.
-    // Call sortAndNotifyItems() when done (e.g. on page dispose)
-    // to commit the sorted order for other widgets.
-    _items.value[index] = verified;
+    await _apiService.updateCompetenceReportItem(updatedItem);
+    // Hub stream will deliver the updated item; sortAndNotifyItems() on page
+    // dispose commits order for other widgets.
   }
 
   /// Sorts the items list by order and notifies listeners.
@@ -84,14 +112,7 @@ class CompetenceReportItemManager {
   }
 
   Future<void> updateItem(CompetenceReportItem item) async {
-    final updated = await _apiService.updateCompetenceReportItem(item);
-
-    final list = List<CompetenceReportItem>.from(_items.value);
-    final index = list.indexWhere((i) => i.publicId == updated.publicId);
-    if (index != -1) {
-      list[index] = updated;
-    }
-    _items.value = list;
+    await _apiService.updateCompetenceReportItem(item);
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -102,10 +123,6 @@ class CompetenceReportItemManager {
   Future<void> deleteItem(int publicId) async {
     final success = await _apiService.deleteCompetenceReportItem(publicId);
     if (success) {
-      final list = List<CompetenceReportItem>.from(_items.value);
-      list.removeWhere((i) => i.publicId == publicId);
-      _items.value = list;
-
       _notificationService.showSnackBar(
         NotificationType.success,
         'Zeugniskompetenz gelöscht',

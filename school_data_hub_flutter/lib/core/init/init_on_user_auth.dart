@@ -147,12 +147,13 @@ class InitOnUserAuth {
 
     di.registerSingletonAsync<CompetenceReportItemManager>(
       () => CompetenceReportItemManager().init(),
+      dependsOn: [HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
-    di.registerSingletonWithDependencies<CompetenceReportManager>(
-      () => CompetenceReportManager(),
-      dependsOn: [CompetenceReportItemManager],
+    di.registerSingletonAsync<CompetenceReportManager>(
+      () => CompetenceReportManager().init(),
+      dependsOn: [CompetenceReportItemManager, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 

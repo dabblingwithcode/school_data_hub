@@ -7,3 +7,6 @@ values:
   - authorization
   - supportCategory
   - competence
+  - competenceReport
+  - competenceReportCheck
+  - competenceReportItem

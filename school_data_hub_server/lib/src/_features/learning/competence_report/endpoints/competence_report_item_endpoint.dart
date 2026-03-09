@@ -26,6 +26,7 @@ class CompetenceReportItemEndpoint extends Endpoint {
     );
 
     final inserted = await CompetenceReportItem.db.insertRow(session, item);
+    session.messages.postMessage('hub_events_stream', inserted);
     return inserted;
   }
 
@@ -39,10 +40,12 @@ class CompetenceReportItemEndpoint extends Endpoint {
     Session session,
     CompetenceReportItem competenceReportItem,
   ) async {
-    return await CompetenceReportItem.db.updateRow(
+    final updated = await CompetenceReportItem.db.updateRow(
       session,
       competenceReportItem,
     );
+    session.messages.postMessage('hub_events_stream', updated);
+    return updated;
   }
 
   Future<bool> deleteCompetenceReportItem(
@@ -59,7 +62,15 @@ class CompetenceReportItemEndpoint extends Endpoint {
       );
     }
 
+    final itemId = item.id!;
     await CompetenceReportItem.db.deleteRow(session, item);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(
+        objectType: HubObjectType.competenceReportItem,
+        id: itemId,
+      ),
+    );
     return true;
   }
 }

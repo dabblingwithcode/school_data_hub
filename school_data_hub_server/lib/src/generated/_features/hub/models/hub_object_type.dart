@@ -18,7 +18,10 @@ enum HubObjectType implements _i1.SerializableModel {
   schoolList,
   authorization,
   supportCategory,
-  competence;
+  competence,
+  competenceReport,
+  competenceReportCheck,
+  competenceReportItem;
 
   static HubObjectType fromJson(int index) {
     switch (index) {
@@ -36,6 +39,12 @@ enum HubObjectType implements _i1.SerializableModel {
         return HubObjectType.supportCategory;
       case 6:
         return HubObjectType.competence;
+      case 7:
+        return HubObjectType.competenceReport;
+      case 8:
+        return HubObjectType.competenceReportCheck;
+      case 9:
+        return HubObjectType.competenceReportItem;
       default:
         throw ArgumentError(
             'Value "$index" cannot be converted to "HubObjectType"');
