@@ -1,7 +1,7 @@
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_server/src/_features/pupil/schemas/pupil_schemas.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
-import 'package:school_data_hub_server/src/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
 final _log = Logger('PupilUpdateEndpoint');
@@ -33,7 +33,8 @@ class PupilUpdateEndpoint extends Endpoint {
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    session.messages
+        .postMessage('hub_events_stream', updatedPupilWithRelation!);
     return updatedPupilWithRelation;
   }
 
@@ -51,7 +52,8 @@ class PupilUpdateEndpoint extends Endpoint {
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    session.messages
+        .postMessage('hub_events_stream', updatedPupilWithRelation!);
     return updatedPupilWithRelation;
   }
 
@@ -69,7 +71,8 @@ class PupilUpdateEndpoint extends Endpoint {
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    session.messages
+        .postMessage('hub_events_stream', updatedPupilWithRelation!);
     return updatedPupilWithRelation;
   }
 
@@ -377,7 +380,8 @@ class PupilUpdateEndpoint extends Endpoint {
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    session.messages
+        .postMessage('hub_events_stream', updatedPupilWithRelation!);
     return updatedPupilWithRelation;
   }
 
@@ -424,7 +428,8 @@ class PupilUpdateEndpoint extends Endpoint {
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    session.messages
+        .postMessage('hub_events_stream', updatedPupilWithRelation!);
     return updatedPupilWithRelation;
   }
 
@@ -442,7 +447,8 @@ class PupilUpdateEndpoint extends Endpoint {
       pupil.id!,
       include: PupilSchemas.allInclude,
     );
-    session.messages.postMessage('hub_events_stream', updatedPupilWithRelation!);
+    session.messages
+        .postMessage('hub_events_stream', updatedPupilWithRelation!);
     return updatedPupilWithRelation;
   }
 }

@@ -148,7 +148,7 @@ class LessonCell extends WatchingWidget {
     return Card(
       margin: const EdgeInsets.all(0),
       color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       child: Padding(
         padding: const EdgeInsets.all(3.0),
         child: Column(
@@ -156,37 +156,40 @@ class LessonCell extends WatchingWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             LessonCellTeacherInfo(lesson: lesson!),
-            const Gap(2),
-            Container(
-              decoration: BoxDecoration(
-                color:
-                    _parseColor(subjectColor)?.withValues(alpha: 0.7) ??
-                    Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(
+            const Gap(4),
+            SizedBox(
+              height: 20,
+              child: Container(
+                decoration: BoxDecoration(
                   color:
-                      _parseColor(subjectColor) ??
-                      Theme.of(context).colorScheme.primary,
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Text(
-                    subjectName,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
+                      _parseColor(subjectColor)?.withValues(alpha: 0.7) ??
+                      Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer.withValues(alpha: 0.7),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color:
+                        _parseColor(subjectColor) ??
+                        Theme.of(context).colorScheme.primary,
+                    width: 1,
                   ),
-                ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Text(
+                      subjectName,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             ),
             const Gap(1),

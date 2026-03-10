@@ -1,6 +1,6 @@
 import 'package:school_data_hub_server/src/_features/books/endpoints/books/book_tagging_helper.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/schemas/pupil_schemas.dart';
+import 'package:school_data_hub_server/src/_features/pupil/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
 class LibraryBooksEndpoint extends Endpoint {
