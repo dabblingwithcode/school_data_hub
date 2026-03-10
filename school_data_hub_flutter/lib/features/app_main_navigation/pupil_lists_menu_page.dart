@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/pupil_lists_buttons.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
@@ -16,15 +16,8 @@ class PupilListsMenuPage extends StatelessWidget {
     return Scaffold(
       primary: true,
       backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: Text(
-          locale.pupilLists,
-          style: AppStyles.appBarTextStyle,
-          textAlign: TextAlign.end,
-        ),
-      ),
+      appBar: GenericAppBar(iconData: Icons.person, title: locale.pupilLists),
+
       body: LayoutBuilder(
         builder: (context, constraints) {
           final width = Platform.isWindows
@@ -37,10 +30,10 @@ class PupilListsMenuPage extends StatelessWidget {
             child: SizedBox(
               width: width,
               height: height,
-              child: SingleChildScrollView(
+              child: const SingleChildScrollView(
                 scrollDirection: Axis.vertical,
-                physics: const ScrollPhysics(),
-                child: const PupilListButtons(),
+                physics: ScrollPhysics(),
+                child: PupilListButtons(),
               ),
             ),
           );

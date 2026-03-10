@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -8,7 +9,6 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class AttendancePupilFilterManager {
   FiltersStateManager get _filterStateManager => di<FiltersStateManager>();
@@ -54,8 +54,8 @@ class AttendancePupilFilterManager {
       };
     }
 
-    final bool attendanceFilterStateEqualsInitialState = const MapEquality()
-        .equals(
+    final bool attendanceFilterStateEqualsInitialState =
+        const MapEquality<AttendancePupilFilter, bool>().equals(
           _attendancePupilFilterState.value,
           initialAttendancePupilFilterValues,
         );

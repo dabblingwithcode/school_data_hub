@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_card.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/matrix_rooms_filters_widget.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_searchbar.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/matrix_rooms_filters_widget.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_card.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/new_matrix_room_page/new_matrix_room_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 
@@ -22,29 +22,21 @@ class MatrixRoomsListPage extends WatchingWidget {
   Widget build(BuildContext context) {
     final matrixPolicyManager = di<MatrixPolicyManager>();
     final matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
-    final pendingChanges =
-        watchValue((MatrixPolicyManager x) => x.pendingChanges);
-    final filtersOn =
-        watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
+    final pendingChanges = watchValue(
+      (MatrixPolicyManager x) => x.pendingChanges,
+    );
+    final filtersOn = watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
     List<MatrixRoom> matrixRooms = watchValue(
       (MatrixPolicyFilterManager x) => x.filteredMatrixRooms,
     );
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.chat_rounded, size: 25, color: Colors.white),
-            Gap(10),
-            Text('Matrix-Räume', style: AppStyles.appBarTextStyle),
-          ],
-        ),
+      appBar: const GenericAppBar(
+        iconData: Icons.meeting_room_rounded,
+        title: 'Matrix-Räume',
       ),
+
       body: RefreshIndicator(
         onRefresh: () async => matrixPolicyManager.fetchMatrixPolicy(),
         child: Center(
@@ -76,7 +68,8 @@ class MatrixRoomsListPage extends WatchingWidget {
                   ),
                 ),
                 GenericSliverListWithEmptyListCheck(
-                  itemsListenable: matrixPolicyFilterManager.filteredMatrixRooms,
+                  itemsListenable:
+                      matrixPolicyFilterManager.filteredMatrixRooms,
                   itemBuilder: (_, room) => RoomListCard(room),
                 ),
               ],
@@ -146,8 +139,7 @@ class MatrixRoomsListPage extends WatchingWidget {
               color: filtersOn ? Colors.deepOrange : Colors.white,
               size: 30,
             ),
-            onPressed: () =>
-                showMatrixRoomsFilterBottomSheet(context),
+            onPressed: () => showMatrixRoomsFilterBottomSheet(context),
             onLongPress: () =>
                 matrixPolicyFilterManager.resetAllMatrixFilters(),
           ),

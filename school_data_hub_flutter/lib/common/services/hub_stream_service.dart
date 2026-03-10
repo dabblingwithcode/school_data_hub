@@ -64,12 +64,16 @@ class HubStreamService with WidgetsBindingObserver {
     _attemptConnect(isReconnect: false);
     final monitor = di<ServerpodConnectivityMonitor>();
     _connectivityListener = () {
-      if (!monitor.isConnected.value ||
-          !_appInForeground ||
-          _disposed ||
-          _connecting) {
+      if (_disposed) return;
+      if (!monitor.isConnected.value) {
+        _log.info('[HUB] connectivity_lost — setting disconnected');
+        _connecting = false;
+        _cancelReconnectTimer();
+        _cleanupSubscription();
+        _setState(HubConnectionState.disconnected);
         return;
       }
+      if (!_appInForeground || _connecting) return;
       final s = _state.value;
       if (s == HubConnectionState.waitingRetry ||
           s == HubConnectionState.disconnected) {
@@ -201,7 +205,6 @@ class HubStreamService with WidgetsBindingObserver {
           if (!_hasReceivedFirstEvent) {
             _hasReceivedFirstEvent = true;
             _reconnectDelayMs = _initialReconnectDelayMs;
-            _setState(HubConnectionState.connected);
           }
           if (!_disposed) {
             _events.add(message as Object);
@@ -215,6 +218,7 @@ class HubStreamService with WidgetsBindingObserver {
         },
         cancelOnError: true,
       );
+      _setState(HubConnectionState.connected);
       _connecting = false;
     } catch (e, st) {
       _connecting = false;

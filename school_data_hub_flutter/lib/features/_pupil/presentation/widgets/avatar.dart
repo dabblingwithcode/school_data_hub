@@ -337,12 +337,13 @@ class AvatarWithBadges extends StatelessWidget {
                       Text(
                         specialNeedsText ??
                             (pupil.latestSupportLevel != null
-                                ? pupil.latestSupportLevel!.level.toString()
+                                ? 'FE\n${pupil.latestSupportLevel!.level.toString()}'
                                 : ''),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: specialNeedsText != null ? 17 : 18,
+                          height: 1.1,
                           color: specialNeedsText != null
                               ? AppColors.groupColor
                               : AppColors.accentColor,
@@ -459,7 +460,7 @@ class AvatarWithBadges extends StatelessWidget {
 }
 
 void _siblingsDialog(BuildContext context, List<PupilProxy> siblings) {
-  showDialog(
+  showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
       constraints: const BoxConstraints(maxWidth: 400),
@@ -494,7 +495,7 @@ void _siblingsDialog(BuildContext context, List<PupilProxy> siblings) {
                 onTap: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (context) => PupilProfilePage(pupil: sibling),
                     ),
                   );

@@ -18,6 +18,7 @@ class BirthdayDateRangeDialog extends WatchingWidget {
     final futureDateValue = watch(futureDate).value;
 
     return Dialog(
+      constraints: const BoxConstraints(maxWidth: 400),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(24.0),

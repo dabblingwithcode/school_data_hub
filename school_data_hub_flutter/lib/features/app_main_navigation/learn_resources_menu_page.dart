@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/books_main_menu_page/books_main_menu_page.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/competence_list_page/competence_list_page.dart';
@@ -19,11 +19,11 @@ class LearnResourcesMenuPage extends StatelessWidget {
     final locale = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: Text(locale.learningresources, style: AppStyles.appBarTextStyle),
+      appBar: GenericAppBar(
+        iconData: Icons.lightbulb,
+        title: locale.learningresources,
       ),
+
       body: Center(
         child: SizedBox(
           width: 380,

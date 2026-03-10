@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/attendance_pdf_generator.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
-import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -99,12 +99,12 @@ class AttendanceListPage extends WatchingWidget {
                     onResetFilters: filterStateManager.resetFilters,
                     showFilterBottomSheet: (context) =>
                         showGenericFilterBottomSheet(
-                      context: context,
-                      filterList: const [
-                        CommonPupilFiltersWidget(),
-                        AttendanceFilters(),
-                      ],
-                    ),
+                          context: context,
+                          filterList: const [
+                            CommonPupilFiltersWidget(),
+                            AttendanceFilters(),
+                          ],
+                        ),
                   ),
                 ),
                 GenericSliverListWithEmptyListCheck(
@@ -163,7 +163,7 @@ class AttendanceListPage extends WatchingWidget {
               icon: const Icon(Icons.print_rounded, size: 30),
               onPressed: () async {
                 try {
-                    final pdfFile =
+                  final pdfFile =
                       await AttendancePdfGenerator.generateAttendancePdf(
                         date: thisDate,
                         pupils: pupilsFilter.filteredPupils.value,

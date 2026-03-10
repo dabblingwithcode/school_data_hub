@@ -8,15 +8,15 @@ import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_search_text_field.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
+import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/workbook_card.dart';
-import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
 
 class WorkbookListPage extends WatchingWidget {
   final WorkbookListViewModel viewModel;
@@ -31,19 +31,11 @@ class WorkbookListPage extends WatchingWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.note_alt_rounded, size: 25, color: Colors.white),
-            Gap(10),
-            Text('Arbeitshefte', style: AppStyles.appBarTextStyle),
-          ],
-        ),
+      appBar: const GenericAppBar(
+        iconData: Icons.note_alt_rounded,
+        title: 'Arbeitshefte',
       ),
+
       body: RefreshIndicator(
         onRefresh: () async => di<WorkbookManager>().fetchWorkbooks(),
         child: workbooks.isEmpty
@@ -96,14 +88,12 @@ class WorkbookListPage extends WatchingWidget {
                                 hintText: 'Arbeitsheft suchen',
                                 refreshFunction:
                                     di<WorkbookManager>().fetchWorkbooks,
-                                onChanged: (value) =>
-                                    di<PupilsFilter>()
-                                        .textFilter
-                                        .setFilterText(value),
+                                onChanged: (value) => di<PupilsFilter>()
+                                    .textFilter
+                                    .setFilterText(value),
                                 filtersActive:
                                     di<FiltersStateManager>().filtersActive,
-                                onResetFilters:
-                                    di<PupilsFilter>().resetFilters,
+                                onResetFilters: di<PupilsFilter>().resetFilters,
                               ),
                             ),
                             //---------------------------------

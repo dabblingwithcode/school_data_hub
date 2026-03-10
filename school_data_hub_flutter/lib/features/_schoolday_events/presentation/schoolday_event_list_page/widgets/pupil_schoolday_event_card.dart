@@ -184,7 +184,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              const Gap(10),
+                              const Gap(5),
                               InkWell(
                                 onLongPress: () {
                                   if (!SessionHelper.isAuthorized(
@@ -197,7 +197,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                     return;
                                   }
 
-                                  showDialog(
+                                  showDialog<void>(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return SchooldayEventTypeDialog(
@@ -214,6 +214,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                           ),
                         ),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.access_time,
@@ -285,7 +286,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                               );
                               return;
                             }
-                            showDialog(
+                            showDialog<void>(
                               context: context,
                               builder: (BuildContext context) {
                                 return SchooldayEventReasonDialog(

@@ -7,6 +7,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_fi
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/widgets/schoolday_event_type_icon.dart';
 
 class SchooldayEventStats extends WatchingWidget {
@@ -23,6 +24,8 @@ class SchooldayEventStats extends WatchingWidget {
     final pupilIds = watchValue(
       (SchooldayEventFilterManager x) => x.pupilIdsWithFilteredSchooldayEvents,
     );
+    // Rebuild when events change (add/update/delete via hub or CRUD)
+    watchValue((SchooldayEventManager x) => x.schooldayEvents);
     // Use same effective list as the list page: when event filter is on, restrict by pupilIds
     final List<PupilProxy> effectivePupils =
         filterState.values.any((x) => x == true)

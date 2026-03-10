@@ -39,128 +39,131 @@ class MatrixToolsPage extends WatchingWidget {
           constraints: const BoxConstraints(maxWidth: 800),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              children: [
-                _MatrixToolButton(
-                  onPressed: () async {
-                    if (matrixPolicyManagerIsRegistered) {
-                      final matrixPolicyManager = di<MatrixPolicyManager>();
-                      final qrString = matrixPolicyManager
-                          .exportMatrixCredentialsJsonForTransfer();
-                      await showQrCode(qrString, context);
-                      return;
-                    }
-                    if (matrixSessionIsConfigured) {
-                      final matrixPolicyManager = await di
-                          .getAsync<MatrixPolicyManager>();
-                      final qrString = matrixPolicyManager
-                          .exportMatrixCredentialsJsonForTransfer();
-                      if (!context.mounted) return;
-                      await showQrCode(qrString, context);
-                      return;
-                    }
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const SetMatrixEnvironmentPage(),
-                      ),
-                    );
-                  },
-                  icon: isConfigured
-                      ? Icons.qr_code_2_rounded
-                      : Icons.chat_rounded,
-                  label: isConfigured
-                      ? 'Zugangsdaten\nQR anzeigen'
-                      : 'Matrix\ninitialisieren',
-                ),
-                if (isConfigured) ...[
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                children: [
                   _MatrixToolButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const MatrixUsersListPage(),
-                        ),
-                      );
-                    },
-                    icon: Icons.people_rounded,
-                    label: 'Matrix-\nKontakte',
-                  ),
-                  _MatrixToolButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      if (matrixPolicyManagerIsRegistered) {
+                        final matrixPolicyManager = di<MatrixPolicyManager>();
+                        final qrString = matrixPolicyManager
+                            .exportMatrixCredentialsJsonForTransfer();
+                        await showQrCode(qrString, context);
+                        return;
+                      }
+                      if (matrixSessionIsConfigured) {
+                        final matrixPolicyManager = await di
+                            .getAsync<MatrixPolicyManager>();
+                        final qrString = matrixPolicyManager
+                            .exportMatrixCredentialsJsonForTransfer();
+                        if (!context.mounted) return;
+                        await showQrCode(qrString, context);
+                        return;
+                      }
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
                           builder: (_) => const SetMatrixEnvironmentPage(),
                         ),
                       );
                     },
-                    icon: Icons.settings_rounded,
-                    label: 'Matrix-\nUmgebung',
+                    icon: isConfigured
+                        ? Icons.qr_code_2_rounded
+                        : Icons.chat_rounded,
+                    label: isConfigured
+                        ? 'Zugangsdaten\nQR anzeigen'
+                        : 'Matrix\ninitialisieren',
                   ),
-                  _MatrixToolButton(
-                    onPressed: () async {
-                      final navigator = Navigator.of(context);
-                      await di.getAsync<MatrixPolicyManager>();
-                      if (!context.mounted) return;
-                      navigator.push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const MatrixCorporalLogsPage(),
-                        ),
-                      );
-                    },
-                    icon: Icons.article_outlined,
-                    label: 'Matrix-\nCorporal-Logs',
-                  ),
-
-                  _MatrixToolButton(
-                    onPressed: () async {
-                      final confirm = await confirmationDialog(
-                        context: context,
-                        title: 'Matrix-Konten für SuS ohne Kontakt erstellen',
-                        message:
-                            'Möchten Sie die Matrix-Konten für SuS ohne Kontakt wirklich erstellen?',
-                      );
-                      if (confirm != true) return;
-                      final file = await di<MatrixPolicyManager>().users
-                          .createMatrixCredentialsForPupilsWithoutContactInfo();
-                      if (!context.mounted) return;
-                      if (file != null) {
+                  if (isConfigured) ...[
+                    _MatrixToolButton(
+                      onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
-                            builder: (_) => PdfViewerPage(pdfFile: file),
+                            builder: (_) => const MatrixUsersListPage(),
                           ),
                         );
-                      }
-                    },
-                    icon: Icons.person_add_alt_1_rounded,
-                    label: 'Matrix-Konten\nErstellen',
-                  ),
+                      },
+                      icon: Icons.people_rounded,
+                      label: 'Matrix-\nKontakte',
+                    ),
+                    _MatrixToolButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const SetMatrixEnvironmentPage(),
+                          ),
+                        );
+                      },
+                      icon: Icons.settings_rounded,
+                      label: 'Matrix-\nUmgebung',
+                    ),
+                    _MatrixToolButton(
+                      onPressed: () async {
+                        final navigator = Navigator.of(context);
+                        await di.getAsync<MatrixPolicyManager>();
+                        if (!context.mounted) return;
+                        navigator.push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const MatrixCorporalLogsPage(),
+                          ),
+                        );
+                      },
+                      icon: Icons.article_outlined,
+                      label: 'Matrix-\nCorporal-Logs',
+                    ),
 
-                  _MatrixToolButton(
-                    onPressed: () async {
-                      final matrixUsersList =
-                          di<MatrixPolicyManager>().matrixUsers.value;
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (context) =>
-                              SelectMatrixUsersList(matrixUsersList),
-                        ),
-                      );
-                    },
-                    icon: Icons.print,
-                    label: 'Mehrere neue Benutzer-Codes generieren',
-                  ),
-                  _MatrixToolButton(
-                    onPressed: () async {
-                      await di<MatrixPolicyManager>()
-                          .deleteAndDeregisterMatrixPolicyManager();
-                      if (!context.mounted) return;
-                      Navigator.of(context).pop();
-                    },
-                    icon: Icons.delete_rounded,
-                    label: 'Matrix\nlöschen',
-                  ),
+                    _MatrixToolButton(
+                      onPressed: () async {
+                        final confirm = await confirmationDialog(
+                          context: context,
+                          title: 'Matrix-Konten für SuS ohne Kontakt erstellen',
+                          message:
+                              'Möchten Sie die Matrix-Konten für SuS ohne Kontakt wirklich erstellen?',
+                        );
+                        if (confirm != true) return;
+                        final file = await di<MatrixPolicyManager>().users
+                            .createMatrixCredentialsForPupilsWithoutContactInfo();
+                        if (!context.mounted) return;
+                        if (file != null) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => PdfViewerPage(pdfFile: file),
+                            ),
+                          );
+                        }
+                      },
+                      icon: Icons.person_add_alt_1_rounded,
+                      label: 'Matrix-Konten\nErstellen',
+                    ),
+
+                    _MatrixToolButton(
+                      onPressed: () async {
+                        final matrixUsersList =
+                            di<MatrixPolicyManager>().matrixUsers.value;
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (context) =>
+                                SelectMatrixUsersList(matrixUsersList),
+                          ),
+                        );
+                      },
+                      icon: Icons.print,
+                      label: 'Mehrere neue Benutzer-Codes generieren',
+                    ),
+                    _MatrixToolButton(
+                      onPressed: () async {
+                        await di<MatrixPolicyManager>()
+                            .deleteAndDeregisterMatrixPolicyManager();
+                        if (!context.mounted) return;
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icons.delete_rounded,
+                      label: 'Matrix\nlöschen',
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

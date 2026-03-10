@@ -17,9 +17,11 @@ class BottomNavBarLayout extends StatelessWidget {
       child: Padding(
         padding: Platform.isWindows
             ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
-            : const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+            : const EdgeInsets.only(left: 5, right: 5, bottom: 15),
         child: SizedBox(
-          height: kBottomNavigationBarHeight + 30,
+          height: Platform.isWindows
+              ? kBottomNavigationBarHeight + 6
+              : kBottomNavigationBarHeight + 6,
           child: Align(
             alignment: Alignment.bottomCenter,
             child: ConstrainedBox(

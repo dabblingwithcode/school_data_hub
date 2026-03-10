@@ -1,7 +1,7 @@
 # *ListPage files not yet using GenericListPage
 
 Pages that **do** use GenericListPage (single import, composition):  
-CreditListPage, AfterSchoolListPage, LearningSupportListPage, ReligionListPage, SpecialInfoListPage, FamilyLanguageLessonsListPage, ClassroomListPage, LearningGroupListPage, SubjectListPage, MissedSchooldaysPupilListPage, SchooldayEventListPage.
+CreditListPage, AfterSchoolListPage, LearningSupportListPage, ReligionListPage, SpecialInfoListPage, FamilyLanguageLessonsListPage, ClassroomListPage, LearningGroupListPage, SubjectListPage, MissedSchooldaysPupilListPage, SchooldayEventListPage., MatrixRoomsListPage, MatrixUsersListPage
 
 ---
 
@@ -14,8 +14,7 @@ CreditListPage, AfterSchoolListPage, LearningSupportListPage, ReligionListPage, 
 | **book_list_page.dart** | Likely different layout or navigation; needs inspection. |
 | **competence_list_page.dart** | Competence-specific UI (sortable or different list pattern); needs inspection. |
 | **competence_report_item_list_page.dart** | Report-item list with its own navigation/actions; needs inspection. |
-| **matrix_rooms_list_page.dart** | Matrix rooms list; may have custom actions or FAB. |
-| **matrix_users_list_page.dart** | Matrix users; likely custom search/actions. |
+likely custom search/actions. |
 | **pupil_list_learning_page.dart** | Learning goals PDF and custom bottom bar / filters; more complex flow. |
 | **pupils_matrix_contacts_list_page.dart** | **No RefreshIndicator**, **complex list item** (inline card with many children). GenericListPage requires `onRefresh`; could pass no-op. Item builder is heavy. |
 | **school_list_pupil_entries_page.dart** | School-list-specific (entries for one list); already uses GenericSliverListWithEmptyListCheck. |

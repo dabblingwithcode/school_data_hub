@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -8,7 +9,6 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manag
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class NewAuthorizationPage extends StatefulWidget {
   const NewAuthorizationPage({super.key});
@@ -160,7 +160,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                                       },
                                       onTap: () {
                                         Navigator.of(context).push(
-                                          MaterialPageRoute(
+                                          MaterialPageRoute<void>(
                                             builder: (ctx) => PupilProfilePage(
                                               pupil: listedPupil,
                                             ),

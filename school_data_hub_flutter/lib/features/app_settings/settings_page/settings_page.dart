@@ -4,7 +4,7 @@ import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_page/logs_page.dart';
 import 'package:school_data_hub_flutter/app_utils/shorebird_code_push_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -15,6 +15,7 @@ import 'package:school_data_hub_flutter/features/app_settings/settings_page/widg
 import 'package:school_data_hub_flutter/features/matrix/logs/presentation/matrix_corporal_logs_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/server_logs/presentation/server_logs_page.dart';
+import 'package:school_data_hub_flutter/features/server_model_diagram/presentation/server_model_diagram_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class SettingsPage extends WatchingWidget {
@@ -40,11 +41,8 @@ class SettingsPage extends WatchingWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: Text(locale.settings, style: AppStyles.appBarTextStyle),
-      ),
+      appBar: GenericAppBar(iconData: Icons.settings, title: locale.settings),
+
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -114,6 +112,17 @@ class SettingsPage extends WatchingWidget {
                         );
                       },
                     ),
+                  SettingsTile.navigation(
+                    leading: const Icon(Icons.account_tree_rounded),
+                    title: const Text('Server-Datenmodell'),
+                    onPressed: (context) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const ServerModelDiagramPage(),
+                        ),
+                      );
+                    },
+                  ),
                   SettingsTile.navigation(
                     leading: const Icon(Icons.info_rounded),
                     title: const Text('App Infos'),

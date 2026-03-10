@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -6,7 +7,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorizations_list_page/widgets/authorization_list_stats_row.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class AuthorizationCard extends WatchingWidget {
   final Authorization authorization;
@@ -22,7 +22,7 @@ class AuthorizationCard extends WatchingWidget {
         child: InkWell(
           onTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (ctx) => AuthorizationPupilsPage(authorization),
               ),
             );

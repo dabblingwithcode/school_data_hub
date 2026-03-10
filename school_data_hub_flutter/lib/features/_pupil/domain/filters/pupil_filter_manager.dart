@@ -1,12 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 // TODO: this is an old class and the rests being used should be migrated to PupilsFilterImplementation
 
@@ -67,10 +67,11 @@ class PupilFilterManager {
         record.filter: record.value,
       };
     }
-    final bool pupilFilterStateEqualsInitialState = const MapEquality().equals(
-      _pupilFilterState.value,
-      initialPupilFilterValues,
-    );
+    final bool pupilFilterStateEqualsInitialState =
+        const MapEquality<PupilFilter, bool>().equals(
+          _pupilFilterState.value,
+          initialPupilFilterValues,
+        );
 
     if (pupilFilterStateEqualsInitialState) {
       di<FiltersStateManager>().setFilterState(

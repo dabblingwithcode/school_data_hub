@@ -59,7 +59,7 @@ class AuthorizationPupilCard extends WatchingWidget {
                           onTap: () {
                             di<BottomNavManager>().setPupilProfileNavPage(7);
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (ctx) =>
                                     PupilProfilePage(pupil: pupil),
                               ),

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorizations_list_page/widgets/authorization_card.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/_authorizations/presentation/new_authorization_page/new_authorization_page.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorizations_list_page/widgets/authorization_list_search_text_field.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/presentation/new_authorization_page/new_authorization_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class AuthorizationsListPage extends WatchingWidget {
   const AuthorizationsListPage({super.key});
@@ -32,19 +32,11 @@ class AuthorizationsListPage extends WatchingWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.backgroundColor,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.fact_check_rounded, size: 25, color: Colors.white),
-            Gap(10),
-            Text('Nachweis-Listen', style: AppStyles.appBarTextStyle),
-          ],
-        ),
+      appBar: const GenericAppBar(
+        iconData: Icons.fact_check_rounded,
+        title: 'Nachweis-Listen',
       ),
+
       body: RefreshIndicator(
         onRefresh: () async => authorizationManager.fetchAuthorizations(),
         child: Center(
@@ -136,7 +128,7 @@ class AuthorizationsListPage extends WatchingWidget {
               icon: const Icon(Icons.add, size: 35),
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (ctx) => const NewAuthorizationPage(),
                   ),
                 );

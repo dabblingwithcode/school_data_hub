@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
-Widget contactedBadge(contacted) {
+Widget contactedBadge(int contacted) {
   if (contacted == 1 || contacted == 2 || contacted == 3) {
     return Padding(
       padding: const EdgeInsets.all(1.0),
@@ -31,38 +31,36 @@ Widget contactedBadge(contacted) {
   }
 }
 
-Widget contactedDayBadge(contacted) {
+Widget contactedDayBadge(ContactedType contacted) {
   return (contacted != ContactedType.notSet)
       ? Padding(
-        padding: const EdgeInsets.all(1),
-        child: Container(
-          width: 25.0,
-          height: 25.0,
-        decoration: BoxDecoration(
-            color:
-                contacted == ContactedType.contacted
-                    ? AppColors.contactedSuccessColor
-                    : contacted == ContactedType.calledBack
-                    ? AppColors.contactedCalledBackColor
-                    : contacted == ContactedType.notReached
-                    ? AppColors.contactedFailedColor
-                    : AppColors.contactedFailedColor,
-            shape: BoxShape.circle,
+          padding: const EdgeInsets.all(1),
+          child: Container(
+            width: 25.0,
+            height: 25.0,
+            decoration: BoxDecoration(
+              color: contacted == ContactedType.contacted
+                  ? AppColors.contactedSuccessColor
+                  : contacted == ContactedType.calledBack
+                  ? AppColors.contactedCalledBackColor
+                  : contacted == ContactedType.notReached
+                  ? AppColors.contactedFailedColor
+                  : AppColors.contactedFailedColor,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: contacted == ContactedType.contacted
+                  ? const Icon(Icons.local_phone_rounded)
+                  : contacted == ContactedType.calledBack
+                  ? const Icon(Icons.phone_callback_rounded)
+                  : const Icon(Icons.phone_disabled_rounded),
+            ),
           ),
-          child: Center(
-            child:
-                contacted == ContactedType.contacted
-                    ? const Icon(Icons.local_phone_rounded)
-                    : contacted == ContactedType.calledBack
-                    ? const Icon(Icons.phone_callback_rounded)
-                    : const Icon(Icons.phone_disabled_rounded),
-          ),
-        ),
-      )
+        )
       : const SizedBox.shrink();
 }
 
-Widget returnedBadge(returned) {
+Widget returnedBadge(bool returned) {
   if (returned == true) {
     return Padding(
       padding: const EdgeInsets.all(1.0),
@@ -91,7 +89,7 @@ Widget returnedBadge(returned) {
   }
 }
 
-Widget excusedBadge(excused) {
+Widget excusedBadge(bool excused) {
   if (excused == true) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
@@ -141,7 +139,7 @@ Widget excusedBadge(excused) {
   }
 }
 
-Widget missedTypeBadge(missedtype) {
+Widget missedTypeBadge(MissedType missedtype) {
   if (missedtype == MissedType.missed) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
