@@ -3,6 +3,7 @@ serialized: byName
 values:
   - admin
   - teacher
+  - specialEducator
   - specialEducatorE
   - specialEducatorK
   - educator

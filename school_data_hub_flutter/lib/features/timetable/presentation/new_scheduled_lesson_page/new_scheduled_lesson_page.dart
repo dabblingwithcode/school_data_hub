@@ -7,11 +7,13 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
+import 'package:school_data_hub_flutter/features/timetable/domain/timetable_overlap_helper.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/action_buttons.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/classroom_dropdown.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/lesson_group_dropdown.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/subject_dropdown.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/teacher_selection.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 
 class NewScheduledLessonPage extends WatchingWidget {
@@ -108,8 +110,7 @@ class NewScheduledLessonPage extends WatchingWidget {
           final additional = <User>[];
           for (final lt
               in editingLesson.lessonTeachers ?? <ScheduledLessonTeacher>[]) {
-            final u =
-                users.where((user) => user.id == lt.userId).firstOrNull;
+            final u = users.where((user) => user.id == lt.userId).firstOrNull;
             if (u != null && u.id != main?.id) {
               additional.add(u);
             }
@@ -178,6 +179,17 @@ class NewScheduledLessonPage extends WatchingWidget {
     final selectedLessonGroupValue = watch(selectedLessonGroup).value;
     final selectedTeachersValue = watch(selectedTeachers).value;
     final dropdownKeyValue = watch(dropdownKey).value;
+    watch(durationMinutes);
+
+    // Target slot for overlap checks (used by classroom, group, teacher dropdowns)
+    final targetWeekday = effectiveWeekday;
+    final targetStartTime = effectiveStartTime;
+    final targetEndTime = targetStartTime != null
+        ? TimetableOverlapHelper.addMinutesToTime(
+            targetStartTime,
+            durationMinutes.value,
+          )
+        : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -200,233 +212,176 @@ class NewScheduledLessonPage extends WatchingWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
-            child: Form(
-              key: formKey,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    // Subject selection
-                    SubjectDropdown(
-                      selectedSubject: selectedSubjectValue,
-                      onSubjectChanged: (subject) {
-                        selectedSubject.value = subject;
-                      },
-                    ),
-                    const Gap(20),
-
-                    // Start time (read-only) and duration
-                    if (effectiveStartTime != null) ...[
-                      Text(
-                        'Beginn: $effectiveStartTime',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const Gap(8),
-                    ],
-                    Row(
-                      children: [
-                        const Text('Dauer (Minuten):'),
-                        const Gap(8),
-                        SizedBox(
-                          width: 80,
-                          child: TextFormField(
-                            controller: durationController,
-                            key: const ValueKey('duration_minutes'),
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                            ),
-                            onChanged: (value) {
-                              final parsed = int.tryParse(value);
-                              if (parsed != null && parsed > 0) {
-                                durationMinutes.value = parsed;
-                              }
-                            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Form(
+                  key: formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          TimetableUtils.getWeekdayName(
+                            di<TimetableManager>().selectedWeekday.value,
+                          ),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
-                    ),
-                    const Gap(20),
+                        const Gap(10),
 
-                    // Classroom selection
-                    ClassroomDropdown(
-                      selectedClassroom: selectedClassroomValue,
-                      onClassroomChanged: (classroom) {
-                        selectedClassroom.value = classroom;
-                      },
-                      hasClassroomConflict: (classroom) => false,
-                    ),
-                    const Gap(20),
+                        // Start time (read-only) and duration
+                        if (effectiveStartTime != null) ...[
+                          Text(
+                            'Beginn: $effectiveStartTime',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const Gap(8),
+                        ],
+                        const Gap(20),
+                        // Subject selection
+                        SubjectDropdown(
+                          selectedSubject: selectedSubjectValue,
+                          onSubjectChanged: (subject) {
+                            selectedSubject.value = subject;
+                          },
+                        ),
+                        const Gap(10),
 
-                    // Lesson group selection
-                    LessonGroupDropdown(
-                      selectedLessonGroup: selectedLessonGroupValue,
-                      onLessonGroupChanged: (group) {
-                        selectedLessonGroup.value = group;
-                      },
-                      hasLessonGroupConflict: (group) => false,
-                    ),
-                    const Gap(20),
-
-                    // Teacher selection
-                    TeacherSelection(
-                      selectedTeachers: selectedTeachersValue,
-                      onTeachersChanged: (teachers) {
-                        selectedTeachers.value = teachers;
-                        dropdownKey.value++; // Force dropdown rebuild
-                      },
-                      dropdownKey: dropdownKeyValue,
-                    ),
-                    const Gap(20),
-
-                    // Action buttons
-                    ActionButtons(
-                      isEditing: _isEditing,
-                      onSave: () async {
-                        if (!formKey.currentState!.validate()) {
-                          return;
-                        }
-
-                        if (selectedSubjectValue == null ||
-                            effectiveStartTime == null ||
-                            effectiveWeekday == null ||
-                            selectedClassroomValue == null ||
-                            selectedLessonGroupValue == null ||
-                            selectedTeachersValue.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Bitte füllen Sie alle Pflichtfelder aus',
+                        Row(
+                          children: [
+                            const Text('Dauer (Minuten):'),
+                            const Gap(8),
+                            SizedBox(
+                              width: 80,
+                              child: TextFormField(
+                                controller: durationController,
+                                key: const ValueKey('duration_minutes'),
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                ),
+                                onChanged: (value) {
+                                  final parsed = int.tryParse(value);
+                                  if (parsed != null && parsed > 0) {
+                                    durationMinutes.value = parsed;
+                                  }
+                                },
                               ),
-                              backgroundColor: Colors.red,
                             ),
-                          );
-                          return;
-                        }
+                          ],
+                        ),
+                        const Gap(20),
 
-                        final now = DateTime.now().formatToUtcForServer();
+                        // Classroom selection (overlap-based availability when slot is known)
+                        ClassroomDropdown(
+                          selectedClassroom: selectedClassroomValue,
+                          onClassroomChanged: (classroom) {
+                            selectedClassroom.value = classroom;
+                          },
+                          targetWeekday: targetWeekday,
+                          targetStartTime: targetStartTime,
+                          targetEndTime: targetEndTime,
+                          excludeLessonId: editingLessonId,
+                        ),
+                        const Gap(20),
 
-                        // Compute or re-use timetable slot based on weekday, start time and duration.
-                        final timetable = timetableManager.timetable.value;
-                        if (timetable == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Kein Stundenplan ausgewählt'),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          return;
-                        }
+                        // Lesson group selection (overlap-based availability when slot is known)
+                        LessonGroupDropdown(
+                          selectedLessonGroup: selectedLessonGroupValue,
+                          onLessonGroupChanged: (group) {
+                            selectedLessonGroup.value = group;
+                          },
+                          targetWeekday: targetWeekday,
+                          targetStartTime: targetStartTime,
+                          targetEndTime: targetEndTime,
+                          excludeLessonId: editingLessonId,
+                        ),
+                        const Gap(20),
 
-                        // Read duration from the field at save time so the slot always reflects what the user entered
-                        final durationText = durationController.text.trim();
-                        final currentDurationMinutes = int.tryParse(durationText);
-                        if (currentDurationMinutes == null ||
-                            currentDurationMinutes <= 0) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Bitte geben Sie eine gültige Dauer (Minuten) ein.',
-                              ),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                          return;
-                        }
-                        final computedSlot =
-                            await timetableManager.findOrCreateSlotFor(
-                          effectiveWeekday,
-                          effectiveStartTime,
-                          currentDurationMinutes,
-                        );
+                        // Teacher selection (overlap-based filtering)
+                        TeacherSelection(
+                          selectedTeachers: selectedTeachersValue,
+                          onTeachersChanged: (teachers) {
+                            selectedTeachers.value = teachers;
+                            dropdownKey.value++; // Force dropdown rebuild
+                          },
+                          dropdownKey: dropdownKeyValue,
+                          targetWeekday: targetWeekday,
+                          targetStartTime: targetStartTime,
+                          targetEndTime: targetEndTime,
+                          scheduledLessons:
+                              timetableManager.scheduledLessons.value,
+                          excludeLessonId: editingLessonId,
+                        ),
+                        const Gap(20),
 
-                        if (_isEditing) {
-                          final editingLesson = timetableManager
-                              .scheduledLessons
-                              .value
-                              .where((lesson) => lesson.id == editingLessonId)
-                              .firstOrNull;
+                        // Action buttons
+                        ActionButtons(
+                          isEditing: _isEditing,
+                          onSave: () async {
+                            if (!formKey.currentState!.validate()) {
+                              return;
+                            }
 
-                          if (editingLesson != null) {
-                            // Update existing lesson
-                            final slot = computedSlot;
-                            final updatedLesson = editingLesson.copyWith(
-                              subjectId: selectedSubjectValue.id!,
-                              subject: selectedSubjectValue,
-                              scheduledAtId: slot.id!,
-                              scheduledAt: slot,
-                              roomId: selectedClassroomValue.id!,
-                              room: selectedClassroomValue,
-                              lessonGroupId: selectedLessonGroupValue.id!,
-                              lessonGroup: selectedLessonGroupValue,
-                              mainTeacherId: selectedTeachersValue.first.id!,
-                              modifiedBy: 'user', // TODO: Get actual user
-                              modifiedAt: now,
-                            );
-
-                            await timetableManager.updateScheduledLesson(
-                              updatedLesson,
-                            );
-
-                            if (context.mounted) {
+                            if (selectedSubjectValue == null ||
+                                effectiveStartTime == null ||
+                                effectiveWeekday == null ||
+                                selectedClassroomValue == null ||
+                                selectedLessonGroupValue == null ||
+                                selectedTeachersValue.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text(
-                                    'Stunde erfolgreich aktualisiert mit ${selectedTeachersValue.length} Lehrer(n)',
+                                    'Bitte füllen Sie alle Pflichtfelder aus',
                                   ),
-                                  backgroundColor: Colors.green,
+                                  backgroundColor: Colors.red,
                                 ),
                               );
-                              Navigator.of(context).pop();
+                              return;
                             }
-                          }
-                        } else {
-                          // Create new lesson
-                          final slot = computedSlot;
-                          final nextAvailableOrder = timetableManager
-                              .getNextAvailableOrderForSlot(slot.id!);
 
-                          final generatedLessonId =
-                              'L-${DateTime.now().millisecondsSinceEpoch}';
+                            final now = DateTime.now().formatToUtcForServer();
 
-                          final newLesson = ScheduledLesson(
-                            active: true,
-
-                            subjectId: selectedSubjectValue.id!,
-                            subject: selectedSubjectValue,
-                            scheduledAtId: slot.id!,
-                            scheduledAt: slot,
-                            timetableId: timetable.id!,
-                            lessonId: generatedLessonId,
-                            roomId: selectedClassroomValue.id!,
-                            room: selectedClassroomValue,
-                            lessonGroupId: selectedLessonGroupValue.id!,
-                            lessonGroup: selectedLessonGroupValue,
-                            timetableSlotOrder: nextAvailableOrder,
-                            mainTeacherId: selectedTeachersValue.first.id!,
-                            createdBy: di<HubSessionManager>()
-                                .userName!, // TODO: Get actual user
-                            createdAt: now,
-                          );
-
-                          await timetableManager.addScheduledLesson(newLesson);
-
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Stunde erfolgreich erstellt mit ${selectedTeachersValue.length} Lehrer(n)',
+                            // Compute or re-use timetable slot based on weekday, start time and duration.
+                            final timetable = timetableManager.timetable.value;
+                            if (timetable == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Kein Stundenplan ausgewählt'),
+                                  backgroundColor: Colors.red,
                                 ),
-                                backgroundColor: Colors.green,
-                              ),
+                              );
+                              return;
+                            }
+
+                            // Read duration from the field at save time so the slot always reflects what the user entered
+                            final durationText = durationController.text.trim();
+                            final currentDurationMinutes = int.tryParse(
+                              durationText,
                             );
-                            Navigator.of(context).pop();
-                          }
-                        }
-                      },
-                      onCancel: () => Navigator.of(context).pop(),
-                      onDelete: _isEditing
-                          ? () {
+                            if (currentDurationMinutes == null ||
+                                currentDurationMinutes <= 0) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Bitte geben Sie eine gültige Dauer (Minuten) ein.',
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                              return;
+                            }
+                            final computedSlot = await timetableManager
+                                .findOrCreateSlotFor(
+                                  effectiveWeekday,
+                                  effectiveStartTime,
+                                  currentDurationMinutes,
+                                );
+
+                            if (_isEditing) {
                               final editingLesson = timetableManager
                                   .scheduledLessons
                                   .value
@@ -435,55 +390,150 @@ class NewScheduledLessonPage extends WatchingWidget {
                                   )
                                   .firstOrNull;
 
-                              if (editingLesson?.id == null) return;
+                              if (editingLesson != null) {
+                                // Update existing lesson
+                                final slot = computedSlot;
+                                final updatedLesson = editingLesson.copyWith(
+                                  subjectId: selectedSubjectValue.id!,
+                                  subject: selectedSubjectValue,
+                                  scheduledAtId: slot.id!,
+                                  scheduledAt: slot,
+                                  roomId: selectedClassroomValue.id!,
+                                  room: selectedClassroomValue,
+                                  lessonGroupId: selectedLessonGroupValue.id!,
+                                  lessonGroup: selectedLessonGroupValue,
+                                  mainTeacherId:
+                                      selectedTeachersValue.first.id!,
+                                  modifiedBy: 'user', // TODO: Get actual user
+                                  modifiedAt: now,
+                                );
 
-                              showDialog<void>(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Stunde löschen'),
-                                  content: const Text(
-                                    'Sind Sie sicher, dass Sie diese Stunde löschen möchten?',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
-                                      child: const Text('Abbrechen'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        timetableManager.removeScheduledLesson(
-                                          editingLesson!.id!,
-                                        );
-                                        Navigator.of(
-                                          context,
-                                        ).pop(); // Close dialog
-                                        Navigator.of(
-                                          context,
-                                        ).pop(); // Close page
+                                await timetableManager.updateScheduledLesson(
+                                  updatedLesson,
+                                );
 
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Stunde erfolgreich gelöscht',
-                                            ),
-                                            backgroundColor: Colors.orange,
-                                          ),
-                                        );
-                                      },
-                                      child: const Text('Löschen'),
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Stunde erfolgreich aktualisiert mit ${selectedTeachersValue.length} Lehrer(n)',
+                                      ),
+                                      backgroundColor: Colors.green,
                                     ),
-                                  ],
-                                ),
+                                  );
+                                  Navigator.of(context).pop();
+                                }
+                              }
+                            } else {
+                              // Create new lesson
+                              final slot = computedSlot;
+                              final nextAvailableOrder = timetableManager
+                                  .getNextAvailableOrderForSlot(slot.id!);
+
+                              final generatedLessonId =
+                                  'L-${DateTime.now().millisecondsSinceEpoch}';
+
+                              final newLesson = ScheduledLesson(
+                                active: true,
+
+                                subjectId: selectedSubjectValue.id!,
+                                subject: selectedSubjectValue,
+                                scheduledAtId: slot.id!,
+                                scheduledAt: slot,
+                                timetableId: timetable.id!,
+                                lessonId: generatedLessonId,
+                                roomId: selectedClassroomValue.id!,
+                                room: selectedClassroomValue,
+                                lessonGroupId: selectedLessonGroupValue.id!,
+                                lessonGroup: selectedLessonGroupValue,
+                                timetableSlotOrder: nextAvailableOrder,
+                                mainTeacherId: selectedTeachersValue.first.id!,
+                                createdBy: di<HubSessionManager>()
+                                    .userName!, // TODO: Get actual user
+                                createdAt: now,
                               );
+
+                              await timetableManager.addScheduledLesson(
+                                newLesson,
+                              );
+
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Stunde erfolgreich erstellt mit ${selectedTeachersValue.length} Lehrer(n)',
+                                    ),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                                Navigator.of(context).pop();
+                              }
                             }
-                          : null,
+                          },
+                          onCancel: () => Navigator.of(context).pop(),
+                          onDelete: _isEditing
+                              ? () {
+                                  final editingLesson = timetableManager
+                                      .scheduledLessons
+                                      .value
+                                      .where(
+                                        (lesson) =>
+                                            lesson.id == editingLessonId,
+                                      )
+                                      .firstOrNull;
+
+                                  if (editingLesson?.id == null) return;
+
+                                  showDialog<void>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Stunde löschen'),
+                                      content: const Text(
+                                        'Sind Sie sicher, dass Sie diese Stunde löschen möchten?',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: const Text('Abbrechen'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            timetableManager
+                                                .removeScheduledLesson(
+                                                  editingLesson!.id!,
+                                                );
+                                            Navigator.of(
+                                              context,
+                                            ).pop(); // Close dialog
+                                            Navigator.of(
+                                              context,
+                                            ).pop(); // Close page
+
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'Stunde erfolgreich gelöscht',
+                                                ),
+                                                backgroundColor: Colors.orange,
+                                              ),
+                                            );
+                                          },
+                                          child: const Text('Löschen'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              : null,
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

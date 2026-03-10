@@ -2,40 +2,81 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
+import 'package:school_data_hub_flutter/features/timetable/domain/timetable_overlap_helper.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/new_classroom_page/new_classroom_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
 
-/// Dropdown widget for selecting a classroom
+/// Dropdown widget for selecting a classroom.
+/// Availability is based on overlap with the target slot (no synchronous callbacks).
+/// When target slot is null, all classrooms are shown.
 class ClassroomDropdown extends WatchingWidget {
   final Classroom? selectedClassroom;
   final ValueChanged<Classroom?> onClassroomChanged;
-  final bool Function(Classroom) hasClassroomConflict;
+  final Weekday? targetWeekday;
+  final String? targetStartTime;
+  final String? targetEndTime;
+  final int? excludeLessonId;
 
   const ClassroomDropdown({
     super.key,
     required this.selectedClassroom,
     required this.onClassroomChanged,
-    required this.hasClassroomConflict,
+    this.targetWeekday,
+    this.targetStartTime,
+    this.targetEndTime,
+    this.excludeLessonId,
   });
+
+  static bool _hasConflict(
+    Classroom classroom,
+    List<ScheduledLesson> lessons,
+    Weekday weekday,
+    String startTime,
+    String endTime,
+    int? excludeId,
+  ) {
+    return TimetableOverlapHelper.classroomHasOverlappingLesson(
+      lessons,
+      excludeLessonId: excludeId,
+      weekday: weekday,
+      startTime: startTime,
+      endTime: endTime,
+      roomId: classroom.id!,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final classrooms = watchValue((TimetableManager m) => m.classrooms);
+    final scheduledLessons =
+        watchValue((TimetableManager m) => m.scheduledLessons);
     final selectedSlot = watchValue((TimetableManager m) => m.selectedWeekday);
 
-    // Filter out classrooms that already have a lesson at the selected time slot
+    final hasTargetSlot = targetWeekday != null &&
+        targetStartTime != null &&
+        targetEndTime != null;
+
     final availableClassrooms = classrooms.where((classroom) {
-      return !hasClassroomConflict(classroom);
+      if (!hasTargetSlot) return true;
+      return !_hasConflict(
+        classroom,
+        scheduledLessons,
+        targetWeekday!,
+        targetStartTime!,
+        targetEndTime!,
+        excludeLessonId,
+      );
     }).toList();
 
-    // Ensure the selected classroom is available in the filtered list
-    final validInitialValue =
-        selectedClassroom != null &&
-            availableClassrooms.any(
-              (classroom) => classroom.id == selectedClassroom!.id,
-            )
-        ? selectedClassroom
-        : null;
+    Classroom? validInitialValue;
+    if (selectedClassroom != null) {
+      for (final c in availableClassrooms) {
+        if (c.id == selectedClassroom!.id) {
+          validInitialValue = c;
+          break;
+        }
+      }
+    }
 
     return Row(
       children: [
@@ -59,12 +100,17 @@ class ClassroomDropdown extends WatchingWidget {
               if (value == null) {
                 return 'Bitte wählen Sie einen Raum aus';
               }
-
-              // Additional validation: check for conflicts
-              if (hasClassroomConflict(value)) {
+              if (hasTargetSlot &&
+                  _hasConflict(
+                    value,
+                    scheduledLessons,
+                    targetWeekday!,
+                    targetStartTime!,
+                    targetEndTime!,
+                    excludeLessonId,
+                  )) {
                 return 'Dieser Raum ist bereits zu dieser Zeit belegt';
               }
-
               return null;
             },
           ),

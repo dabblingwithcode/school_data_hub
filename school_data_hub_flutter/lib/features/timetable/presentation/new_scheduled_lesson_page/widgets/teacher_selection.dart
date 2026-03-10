@@ -1,24 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/features/timetable/domain/timetable_overlap_helper.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-/// Widget for selecting teachers for a lesson
+/// Widget for selecting teachers for a lesson.
+/// When [targetWeekday], [targetStartTime], [targetEndTime] and [scheduledLessons]
+/// are provided, the "add teacher" dropdown only lists teachers without overlap.
 class TeacherSelection extends WatchingWidget {
   final List<User> selectedTeachers;
   final ValueChanged<List<User>> onTeachersChanged;
   final int dropdownKey;
+  final Weekday? targetWeekday;
+  final String? targetStartTime;
+  final String? targetEndTime;
+  final List<ScheduledLesson>? scheduledLessons;
+  final int? excludeLessonId;
 
   const TeacherSelection({
     super.key,
     required this.selectedTeachers,
     required this.onTeachersChanged,
     required this.dropdownKey,
+    this.targetWeekday,
+    this.targetStartTime,
+    this.targetEndTime,
+    this.scheduledLessons,
+    this.excludeLessonId,
   });
+
+  bool _teacherHasOverlap(User user) {
+    if (targetWeekday == null ||
+        targetStartTime == null ||
+        targetEndTime == null ||
+        scheduledLessons == null ||
+        user.id == null) {
+      return false;
+    }
+    return TimetableOverlapHelper.teacherHasOverlappingLesson(
+      scheduledLessons!,
+      excludeLessonId: excludeLessonId,
+      weekday: targetWeekday!,
+      startTime: targetStartTime!,
+      endTime: targetEndTime!,
+      userId: user.id!,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final users = watchValue((UserManager m) => m.users);
+
+    final availableToAdd = users.where((user) {
+      if (user.role != Role.teacher || user.id == null) return false;
+      if (selectedTeachers.any((t) => t.id == user.id)) return false;
+      if (_teacherHasOverlap(user)) return false;
+      return true;
+    }).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,14 +135,7 @@ class TeacherSelection extends WatchingWidget {
                     labelText: 'Lehrer hinzufügen',
                     border: OutlineInputBorder(),
                   ),
-                  items: users
-                      .where(
-                        (user) =>
-                            user.role == Role.teacher &&
-                            user.id != null &&
-                            !selectedTeachers.any((t) => t.id == user.id),
-                      )
-                      .map((user) {
+                  items: availableToAdd.map((user) {
                         return DropdownMenuItem<int>(
                           value: user.id,
                           child: Text(

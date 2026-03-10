@@ -2,35 +2,72 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
+import 'package:school_data_hub_flutter/features/timetable/domain/timetable_overlap_helper.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
 
-/// Dropdown widget for selecting a lesson group
+/// Dropdown widget for selecting a lesson group.
+/// Availability is based on overlap with the target slot (no synchronous callbacks).
+/// When target slot is null, all groups are shown.
 class LessonGroupDropdown extends WatchingWidget {
   final LessonGroup? selectedLessonGroup;
   final ValueChanged<LessonGroup?> onLessonGroupChanged;
-  final bool Function(LessonGroup) hasLessonGroupConflict;
+  final Weekday? targetWeekday;
+  final String? targetStartTime;
+  final String? targetEndTime;
+  final int? excludeLessonId;
 
   const LessonGroupDropdown({
     super.key,
     required this.selectedLessonGroup,
     required this.onLessonGroupChanged,
-    required this.hasLessonGroupConflict,
+    this.targetWeekday,
+    this.targetStartTime,
+    this.targetEndTime,
+    this.excludeLessonId,
   });
+
+  static bool _hasConflict(
+    LessonGroup group,
+    List<ScheduledLesson> lessons,
+    Weekday weekday,
+    String startTime,
+    String endTime,
+    int? excludeId,
+  ) {
+    return TimetableOverlapHelper.lessonGroupHasOverlappingLesson(
+      lessons,
+      excludeLessonId: excludeId,
+      weekday: weekday,
+      startTime: startTime,
+      endTime: endTime,
+      lessonGroupId: group.id!,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final lessonGroups = watchValue((TimetableManager m) => m.lessonGroups);
+    final scheduledLessons = watchValue(
+      (TimetableManager m) => m.scheduledLessons,
+    );
 
-    // Filter out lesson groups that already have a lesson at the selected time slot
+    final hasTargetSlot =
+        targetWeekday != null &&
+        targetStartTime != null &&
+        targetEndTime != null;
+
     final availableLessonGroups = lessonGroups.where((group) {
-      return !hasLessonGroupConflict(group);
+      if (!hasTargetSlot) return true;
+      return !_hasConflict(
+        group,
+        scheduledLessons,
+        targetWeekday!,
+        targetStartTime!,
+        targetEndTime!,
+        excludeLessonId,
+      );
     }).toList();
 
-    // Map the selected lesson group (possibly from a different instance)
-    // to the concrete instance used in the items list so DropdownButtonFormField
-    // sees exactly one matching value. If the selected group isn't yet in the
-    // available list (e.g. just created and data not refreshed), we pass null
-    // so that no invalid initialValue is set.
     LessonGroup? selectedValue;
     if (selectedLessonGroup != null) {
       for (final group in availableLessonGroups) {
@@ -45,14 +82,11 @@ class LessonGroupDropdown extends WatchingWidget {
       children: [
         Expanded(
           child: DropdownButtonFormField<LessonGroup>(
-            // Using initialValue keeps form semantics, while selectedValue
-            // is guaranteed to be one of the items so that exactly one
-            // match exists.
             initialValue: selectedValue,
-            decoration: InputDecoration(
-              labelText: 'Klasse *',
-              border: const OutlineInputBorder(),
-              helperText: 'Nur verfügbare Klassen',
+            decoration: const InputDecoration(
+              labelText: 'Lerngruppen *',
+              border: OutlineInputBorder(),
+              helperText: 'Nur verfügbare Gruppen in diesem Zeitslot',
             ),
             items: availableLessonGroups.map((group) {
               return DropdownMenuItem<LessonGroup>(
@@ -65,12 +99,17 @@ class LessonGroupDropdown extends WatchingWidget {
               if (value == null) {
                 return 'Bitte wählen Sie eine Klasse aus';
               }
-
-              // Additional validation: check for conflicts
-              if (hasLessonGroupConflict(value)) {
+              if (hasTargetSlot &&
+                  _hasConflict(
+                    value,
+                    scheduledLessons,
+                    targetWeekday!,
+                    targetStartTime!,
+                    targetEndTime!,
+                    excludeLessonId,
+                  )) {
                 return 'Diese Klasse hat bereits eine Stunde zu dieser Zeit';
               }
-
               return null;
             },
           ),

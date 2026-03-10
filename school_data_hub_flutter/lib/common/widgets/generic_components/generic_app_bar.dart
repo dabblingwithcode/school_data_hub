@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 /// Small circle indicator whose color reflects [HubConnectionState].
 /// Use inside a [Positioned] in the app bar (e.g. top-right).
 class HubConnectionStateIndicator extends WatchingWidget {
-  static const double _radius = 5;
+  static const double _radius = 10;
 
   const HubConnectionStateIndicator({super.key});
 
@@ -29,14 +29,19 @@ class HubConnectionStateIndicator extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final state = watchValue((HubStreamService x) => x.connectionState);
-    return Container(
-      width: _radius * 2,
-      height: _radius * 2,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: _colorForState(state),
-      ),
+    return Icon(
+      Icons.private_connectivity_rounded,
+      size: _radius * 2,
+      color: _colorForState(state),
     );
+    // return Container(
+    //   width: _radius * 2,
+    //   height: _radius * 2,
+    //   decoration: BoxDecoration(
+    //     shape: BoxShape.circle,
+    //     color: _colorForState(state),
+    //   ),
+    // );
   }
 }
 
@@ -72,7 +77,7 @@ class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
           const Padding(
-            padding: EdgeInsets.only(right: 8),
+            padding: EdgeInsets.only(right: 5),
             child: HubConnectionStateIndicator(),
           ),
         ],

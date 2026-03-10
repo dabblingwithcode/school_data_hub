@@ -7,12 +7,14 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
@@ -62,6 +64,10 @@ class CreateOrEditUserPage extends WatchingWidget {
         : userWithDevices;
     final devices = effectiveUserWithDevices?.userDevices ?? [];
 
+    final childrenCustomExpansionController = createOnce(
+      () => CustomExpansionTileController(),
+    );
+
     final TextEditingController fullNameController = createOnce(
       () => TextEditingController(text: user?.userInfo?.fullName ?? ''),
     );
@@ -94,6 +100,8 @@ class CreateOrEditUserPage extends WatchingWidget {
     );
     final scopeNames = createOnce(() => ValueNotifier<List<String>>([]));
     final watchedScopeNames = watch(scopeNames).value;
+    final multipleEntries = createOnce(() => ValueNotifier<bool>(false));
+    final watchedMultipleEntries = watch(multipleEntries).value;
     final pupilsAuth = createOnce(
       () => ValueNotifier<Set<int>>(user?.pupilsAuth ?? {}),
     );
@@ -403,106 +411,120 @@ class CreateOrEditUserPage extends WatchingWidget {
                               };
                             }
                           },
-                          icon: const Icon(Icons.group_add_rounded),
-                          label: const Text('KINDER AUSWÄHLEN'),
+                          icon: const Icon(
+                            Icons.group_add_rounded,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            'KINDER AUSWÄHLEN',
+                            style: AppStyles.buttonTextStyle,
+                          ),
                         ),
                         if (watchedPupilsAuth.isNotEmpty) ...[
                           const Gap(16),
-                          Text(
-                            '${watchedPupilsAuth.length} ${watchedPupilsAuth.length == 1 ? "Kind" : "Kinder"} ausgewählt',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
+                          Row(
+                            children: [
+                              Text(
+                                '${watchedPupilsAuth.length} ${watchedPupilsAuth.length == 1 ? "Kind" : "Kinder"} ausgewählt',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const Spacer(),
+                              CustomExpansionTileSwitch(
+                                customExpansionTileController:
+                                    childrenCustomExpansionController,
+                                includeSwitch: true,
+                                switchColor: AppColors.interactiveColor,
+                              ),
+                            ],
                           ),
                           const Gap(8),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: pupilManager
-                                .getPupilsFromPupilIds(
-                                  watchedPupilsAuth.toList(),
-                                )
-                                .length,
-                            itemBuilder: (context, int index) {
-                              final pupilsList = pupilManager
-                                  .getPupilsFromPupilIds(
-                                    watchedPupilsAuth.toList(),
-                                  );
-                              PupilProxy listedPupil = pupilsList[index];
-                              return InkWell(
-                                onLongPress: () {
-                                  pupilsAuth.value = watchedPupilsAuth
-                                      .where(
-                                        (id) => id != listedPupil.internalId,
-                                      )
-                                      .toSet();
-                                },
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (ctx) =>
-                                          PupilProfilePage(pupil: listedPupil),
+                          CustomExpansionTileContent(
+                            tileController: childrenCustomExpansionController,
+                            widgetList: [
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: pupilManager
+                                    .getPupilsFromPupilIds(
+                                      watchedPupilsAuth.toList(),
+                                    )
+                                    .length,
+                                itemBuilder: (context, int index) {
+                                  final pupilsList = pupilManager
+                                      .getPupilsFromPupilIds(
+                                        watchedPupilsAuth.toList(),
+                                      );
+                                  PupilProxy listedPupil = pupilsList[index];
+                                  return InkWell(
+                                    onLongPress: () {
+                                      pupilsAuth.value = watchedPupilsAuth
+                                          .where(
+                                            (id) => id != listedPupil.pupilId,
+                                          )
+                                          .toSet();
+                                    },
+                                    child: Card(
+                                      margin: const EdgeInsets.only(bottom: 8),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: [
+                                            AvatarWithBadges(
+                                              pupil: listedPupil,
+                                              size: 50,
+                                            ),
+                                            const Gap(10),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  listedPupil.firstName,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  listedPupil.lastName,
+                                                  style: const TextStyle(),
+                                                ),
+                                              ],
+                                            ),
+                                            const Spacer(),
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  listedPupil.group,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.groupColor,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  listedPupil.schoolGrade.name,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors
+                                                        .schoolyearColor,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const Gap(15),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   );
                                 },
-                                child: Card(
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        AvatarWithBadges(
-                                          pupil: listedPupil,
-                                          size: 50,
-                                        ),
-                                        const Gap(10),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              listedPupil.firstName,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                            Text(
-                                              listedPupil.lastName,
-                                              style: const TextStyle(),
-                                            ),
-                                          ],
-                                        ),
-                                        const Spacer(),
-                                        Column(
-                                          children: [
-                                            Text(
-                                              listedPupil.group,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.groupColor,
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                            Text(
-                                              listedPupil.schoolGrade.name,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color:
-                                                    AppColors.schoolyearColor,
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const Gap(15),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                              ),
+                            ],
                           ),
                         ] else ...[
                           const Gap(8),
@@ -622,6 +644,22 @@ class CreateOrEditUserPage extends WatchingWidget {
                   ),
                   const Gap(24),
 
+                  if (!_isEditing)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        children: [
+                          Checkbox(
+                            value: watchedMultipleEntries,
+                            onChanged: (bool? v) =>
+                                multipleEntries.value = v ?? false,
+                          ),
+                          const Text('mehrere Einträge'),
+                        ],
+                      ),
+                    ),
+                  if (!_isEditing) const Gap(8),
+
                   ElevatedButton(
                     style: AppStyles.successButtonStyle,
                     onPressed: () async {
@@ -659,8 +697,26 @@ class CreateOrEditUserPage extends WatchingWidget {
                         );
                         return;
                       }
+                      final trimmedEmail = emailController.text.trim();
+                      final trimmedUserName = userNameController.text.trim();
+                      if (trimmedUserName.isEmpty) {
+                        informationDialog(
+                          context,
+                          'Kürzel fehlt',
+                          'Bitte ein Kürzel eingeben.',
+                        );
+                        return;
+                      }
+                      if (trimmedEmail.isEmpty) {
+                        informationDialog(
+                          context,
+                          'E-Mail fehlt',
+                          'Bitte eine E-Mail-Adresse eingeben.',
+                        );
+                        return;
+                      }
                       if (userManager.users.value.any(
-                        (u) => u.userInfo?.email == emailController.text.trim(),
+                        (u) => u.userInfo?.email == trimmedEmail,
                       )) {
                         informationDialog(
                           context,
@@ -670,9 +726,7 @@ class CreateOrEditUserPage extends WatchingWidget {
                         return;
                       }
                       if (userManager.users.value.any(
-                        (u) =>
-                            u.userInfo?.userName ==
-                            userNameController.text.trim(),
+                        (u) => u.userInfo?.userName == trimmedUserName,
                       )) {
                         informationDialog(
                           context,
@@ -683,10 +737,10 @@ class CreateOrEditUserPage extends WatchingWidget {
                       }
                       try {
                         await userManager.createUser(
-                          userName: userNameController.text,
+                          userName: trimmedUserName,
                           fullName: fullNameController.text,
                           matrixUserId: matrixIdController.text,
-                          email: emailController.text,
+                          email: trimmedEmail,
                           password: passwordController.text,
                           role: watchedSetAsAdmin ? Role.admin : watchedRole,
                           timeUnits:
@@ -700,7 +754,9 @@ class CreateOrEditUserPage extends WatchingWidget {
                               : (watchedSetAsAdmin ? ['Serverpod.admin'] : []),
                           pupilsAuth: watchedPupilsAuth,
                         );
-                        if (context.mounted) Navigator.pop(context);
+                        if (context.mounted && !multipleEntries.value) {
+                          Navigator.pop(context);
+                        }
                       } catch (e) {
                         if (context.mounted) {
                           di<NotificationService>().showSnackBar(

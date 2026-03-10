@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
@@ -13,6 +12,7 @@ import 'package:school_data_hub_flutter/features/matrix/logs/presentation/matrix
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/set_matrix_environment_page/set_matrix_environment_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 
 class MatrixToolsPage extends WatchingWidget {
@@ -45,8 +45,9 @@ class MatrixToolsPage extends WatchingWidget {
               child: Wrap(
                 alignment: WrapAlignment.center,
                 children: [
-                  _MatrixToolButton(
-                    onPressed: () async {
+                  MainMenuButton(
+                    buttonSize: 120,
+                    onTap: () async {
                       if (matrixPolicyManagerIsRegistered) {
                         final matrixPolicyManager = di<MatrixPolicyManager>();
                         final qrString = matrixPolicyManager
@@ -69,50 +70,51 @@ class MatrixToolsPage extends WatchingWidget {
                         ),
                       );
                     },
-                    icon: isConfigured
-                        ? Icons.qr_code_2_rounded
-                        : Icons.chat_rounded,
-                    label: isConfigured
+                    buttonIcon: Icon(
+                      isConfigured
+                          ? Icons.qr_code_2_rounded
+                          : Icons.chat_rounded,
+                      size: 36,
+                      color: AppColors.gridViewColor,
+                    ),
+                    buttonText: isConfigured
                         ? 'Zugangsdaten\nQR anzeigen'
                         : 'Matrix\ninitialisieren',
                   ),
                   if (isConfigured) ...[
-                    _MatrixToolButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const MatrixUsersListPage(),
-                          ),
-                        );
-                      },
-                      icon: Icons.people_rounded,
-                      label: 'Matrix-\nKontakte',
+                    MainMenuButton(
+                      buttonSize: 120,
+                      destinationPage: const MatrixUsersListPage(),
+                      buttonIcon: Icon(
+                        Icons.people_rounded,
+                        size: 36,
+                        color: AppColors.gridViewColor,
+                      ),
+                      buttonText: 'Matrix-\nKontakte',
                     ),
-                    _MatrixToolButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const SetMatrixEnvironmentPage(),
-                          ),
-                        );
-                      },
-                      icon: Icons.settings_rounded,
-                      label: 'Matrix-\nUmgebung',
+                    MainMenuButton(
+                      buttonSize: 120,
+                      destinationPage: const SetMatrixEnvironmentPage(),
+                      buttonIcon: Icon(
+                        Icons.settings_rounded,
+                        size: 36,
+                        color: AppColors.gridViewColor,
+                      ),
+                      buttonText: 'Matrix-\nUmgebung',
                     ),
-                    _MatrixToolButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => const RoomTimetableGridPage(),
-                          ),
-                        );
-                      },
-                      icon: Icons.grid_on,
-                      label: 'Raum-\nRaster (Test)',
+                    MainMenuButton(
+                      buttonSize: 120,
+                      destinationPage: const RoomTimetableGridPage(),
+                      buttonIcon: Icon(
+                        Icons.grid_on,
+                        size: 36,
+                        color: AppColors.gridViewColor,
+                      ),
+                      buttonText: 'Raum-\nRaster (Test)',
                     ),
-
-                    _MatrixToolButton(
-                      onPressed: () async {
+                    MainMenuButton(
+                      buttonSize: 120,
+                      onTap: () async {
                         final navigator = Navigator.of(context);
                         await di.getAsync<MatrixPolicyManager>();
                         if (!context.mounted) return;
@@ -122,12 +124,16 @@ class MatrixToolsPage extends WatchingWidget {
                           ),
                         );
                       },
-                      icon: Icons.article_outlined,
-                      label: 'Matrix-\nCorporal-Logs',
+                      buttonIcon: Icon(
+                        Icons.article_outlined,
+                        size: 36,
+                        color: AppColors.gridViewColor,
+                      ),
+                      buttonText: 'Matrix-\nCorporal-Logs',
                     ),
-
-                    _MatrixToolButton(
-                      onPressed: () async {
+                    MainMenuButton(
+                      buttonSize: 120,
+                      onTap: () async {
                         final confirm = await confirmationDialog(
                           context: context,
                           title: 'Matrix-Konten für SuS ohne Kontakt erstellen',
@@ -146,12 +152,16 @@ class MatrixToolsPage extends WatchingWidget {
                           );
                         }
                       },
-                      icon: Icons.person_add_alt_1_rounded,
-                      label: 'Matrix-Konten\nErstellen',
+                      buttonIcon: Icon(
+                        Icons.person_add_alt_1_rounded,
+                        size: 36,
+                        color: AppColors.gridViewColor,
+                      ),
+                      buttonText: 'Matrix-Konten\nErstellen',
                     ),
-
-                    _MatrixToolButton(
-                      onPressed: () async {
+                    MainMenuButton(
+                      buttonSize: 120,
+                      onTap: () async {
                         final matrixUsersList =
                             di<MatrixPolicyManager>().matrixUsers.value;
                         Navigator.of(context).push(
@@ -161,18 +171,27 @@ class MatrixToolsPage extends WatchingWidget {
                           ),
                         );
                       },
-                      icon: Icons.print,
-                      label: 'Mehrere neue Benutzer-Codes generieren',
+                      buttonIcon: Icon(
+                        Icons.print,
+                        size: 36,
+                        color: AppColors.gridViewColor,
+                      ),
+                      buttonText: 'Mehrere neue Benutzer-Codes generieren',
                     ),
-                    _MatrixToolButton(
-                      onPressed: () async {
+                    MainMenuButton(
+                      buttonSize: 120,
+                      onTap: () async {
                         await di<MatrixPolicyManager>()
                             .deleteAndDeregisterMatrixPolicyManager();
                         if (!context.mounted) return;
                         Navigator.of(context).pop();
                       },
-                      icon: Icons.delete_rounded,
-                      label: 'Matrix\nlöschen',
+                      buttonIcon: Icon(
+                        Icons.delete_rounded,
+                        size: 36,
+                        color: AppColors.gridViewColor,
+                      ),
+                      buttonText: 'Matrix\nlöschen',
                     ),
                   ],
                 ],
@@ -182,61 +201,6 @@ class MatrixToolsPage extends WatchingWidget {
         ),
       ),
       bottomNavigationBar: const GenericBottomNavBar(),
-    );
-  }
-}
-
-class _MatrixToolButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final IconData icon;
-  final String label;
-
-  const _MatrixToolButton({
-    required this.onPressed,
-    required this.icon,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    const double buttonSize = 120;
-    return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: BorderRadius.circular(15),
-        child: SizedBox(
-          width: buttonSize,
-          height: buttonSize,
-          child: Card(
-            color: AppColors.backgroundColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 36, color: AppColors.gridViewColor),
-                const Gap(8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

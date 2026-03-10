@@ -6,6 +6,8 @@ export 'data/timetable_mock_data.dart';
 export 'domain/models/timetable_proxy_models.dart';
 // Domain
 export 'domain/timetable_manager.dart';
+// Services
+export 'services/timetable_pdf_generator.dart';
 // Presentation - Pages
 export 'presentation/new_scheduled_lesson_page/new_scheduled_lesson_page.dart';
 export 'presentation/new_subject_page/new_subject_page.dart';

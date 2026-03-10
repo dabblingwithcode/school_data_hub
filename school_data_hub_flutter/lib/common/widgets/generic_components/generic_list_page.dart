@@ -111,47 +111,17 @@ class GenericListPage<T> extends StatelessWidget {
     return searchBarConfig?.showFilterBottomSheet ?? (_) {};
   }
 
-  Widget? _buildSearchWidget(BuildContext context) {
-    if (searchWidgetWithStatsRow != null) return searchWidgetWithStatsRow;
-    final config = searchBarConfig;
-    if (config == null) return null;
-    return GenericListSearchBarWithStats(
-      statsWidget: config.statsWidget,
-      middleWidgets: config.middleWidgets,
-      searchType: config.searchType,
-      hintText: config.hintText,
-      refreshFunction: config.refreshFunction,
-      onChanged: config.onChanged,
-      searchTextSource: config.searchTextSource,
-      filtersActive: config.filtersActive,
-      onResetFilters: config.onResetFilters,
-      showFilterBottomSheet: _effectiveShowFilter(context),
-    );
-  }
-
-  Widget? _buildBottomNavBar(BuildContext context) {
-    if (bottomNavigationBar != null) return bottomNavigationBar;
-    final actions = <Widget>[];
-
-    if (bottomBarActions != null) actions.addAll(bottomBarActions!);
-    if (filterSheetChildren != null) {
-      actions.add(
-        GenericFilterButton(
-          isSearchBar: false,
-          filtersActive: di<FiltersStateManager>().filtersActive,
-          onLongPress: () => di<FiltersStateManager>().resetFilters(),
-          showBottomSheetFunction: (context) =>
-              _effectiveShowFilter(context)(context),
-        ),
-      );
-    }
-    if (actions.isEmpty) return null;
-    return GenericBottomNavBar(actions: actions);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final searchWidget = _buildSearchWidget(context);
+    final showFilter = _effectiveShowFilter(context);
+    final searchWidget =
+        (searchWidgetWithStatsRow != null || searchBarConfig != null)
+        ? _ListPageSearchWidget(
+            searchWidgetWithStatsRow: searchWidgetWithStatsRow,
+            searchBarConfig: searchBarConfig,
+            showFilterBottomSheet: showFilter,
+          )
+        : null;
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: _effectiveAppBar,
@@ -179,7 +149,85 @@ class GenericListPage<T> extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(context),
+      bottomNavigationBar:
+          (bottomNavigationBar != null ||
+              (bottomBarActions?.isNotEmpty ?? false) ||
+              filterSheetChildren != null)
+          ? _ListPageBottomNavBar(
+              bottomNavigationBar: bottomNavigationBar,
+              bottomBarActions: bottomBarActions,
+              filterSheetChildren: filterSheetChildren,
+              showFilterBottomSheet: showFilter,
+            )
+          : null,
     );
+  }
+}
+
+/// Private widget for the search section; used only by [GenericListPage].
+class _ListPageSearchWidget extends StatelessWidget {
+  const _ListPageSearchWidget({
+    this.searchWidgetWithStatsRow,
+    this.searchBarConfig,
+    required this.showFilterBottomSheet,
+  });
+
+  final Widget? searchWidgetWithStatsRow;
+  final GenericListSearchBarConfig? searchBarConfig;
+  final void Function(BuildContext) showFilterBottomSheet;
+
+  @override
+  Widget build(BuildContext context) {
+    if (searchWidgetWithStatsRow != null) return searchWidgetWithStatsRow!;
+    final config = searchBarConfig;
+    if (config == null) return const SizedBox.shrink();
+    return GenericListSearchBarWithStats(
+      statsWidget: config.statsWidget,
+      middleWidgets: config.middleWidgets,
+      searchType: config.searchType,
+      hintText: config.hintText,
+      refreshFunction: config.refreshFunction,
+      onChanged: config.onChanged,
+      searchTextSource: config.searchTextSource,
+      filtersActive: config.filtersActive,
+      onResetFilters: config.onResetFilters,
+      showFilterBottomSheet: showFilterBottomSheet,
+    );
+  }
+}
+
+/// Private widget for the bottom nav bar; used only by [GenericListPage].
+class _ListPageBottomNavBar extends StatelessWidget {
+  const _ListPageBottomNavBar({
+    this.bottomNavigationBar,
+    this.bottomBarActions,
+    this.filterSheetChildren,
+    required this.showFilterBottomSheet,
+  });
+
+  final Widget? bottomNavigationBar;
+  final List<Widget>? bottomBarActions;
+  final List<Widget>? filterSheetChildren;
+  final void Function(BuildContext) showFilterBottomSheet;
+
+  @override
+  Widget build(BuildContext context) {
+    if (bottomNavigationBar != null) return bottomNavigationBar!;
+    final actions = <Widget>[];
+
+    if (bottomBarActions != null) actions.addAll(bottomBarActions!);
+    if (filterSheetChildren != null) {
+      actions.add(
+        // TODO; decouple the di calls from this widget
+        GenericFilterButton(
+          isSearchBar: false,
+          filtersActive: di<FiltersStateManager>().filtersActive,
+          onLongPress: () => di<FiltersStateManager>().resetFilters(),
+          showBottomSheetFunction: showFilterBottomSheet,
+        ),
+      );
+    }
+    if (actions.isEmpty) return const SizedBox.shrink();
+    return GenericBottomNavBar(actions: actions);
   }
 }

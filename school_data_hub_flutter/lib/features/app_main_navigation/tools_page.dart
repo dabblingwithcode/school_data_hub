@@ -21,6 +21,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manag
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/matrix_tools_page.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/edit_school_data_page.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_page/school_semester_list.dart';
@@ -133,8 +134,8 @@ class ToolsPage extends WatchingWidget {
               alignment: WrapAlignment.center,
               children: [
                 // --- Schüler-Ids ---
-                _ToolsCategoryButton(
-                  onPressed: () => _showSectionOverlay(
+                MainMenuButton(
+                  onTap: () => _showSectionOverlay(
                     context: context,
                     title: 'Schüler-Ids',
                     icon: Icons.badge_outlined,
@@ -277,19 +278,19 @@ class ToolsPage extends WatchingWidget {
                       ],
                     ],
                   ),
-                  icon: Icon(
+                  buttonIcon: Icon(
                     Icons.badge_outlined,
                     size: 50,
                     color: AppColors.gridViewColor,
                   ),
-                  label: 'Schüler-Ids',
+                  buttonText: 'Schüler-Ids',
                 ),
 
                 // --- Statistik ---
-                _ToolsCategoryButton(
-                  onPressed: () => _showSectionOverlay(
+                MainMenuButton(
+                  onTap: () => _showSectionOverlay(
                     context: context,
-                    title: 'Statistik & Daten',
+                    title: 'Daten',
                     icon: Icons.insights_rounded,
                     children: [
                       _ToolsMenuButton(
@@ -316,50 +317,52 @@ class ToolsPage extends WatchingWidget {
                         icon: Icons.table_chart_rounded,
                         label: 'Statistik-Zahlen',
                       ),
-                      _ToolsMenuButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const RoomTimetableGridPage(),
-                            ),
-                          );
-                        },
-                        icon: Icons.dashboard_rounded,
-                        label: 'Stundenplan',
-                      ),
+                      // _ToolsMenuButton(
+                      //   onPressed: () {
+                      //     Navigator.pop(context);
+                      //     Navigator.of(context).push(
+                      //       MaterialPageRoute<void>(
+                      //         builder: (_) => const RoomTimetableGridPage(),
+                      //       ),
+                      //     );
+                      //   },
+                      //   icon: Icons.dashboard_rounded,
+                      //   label: 'Stundenplan',
+                      // ),
                     ],
                   ),
-                  icon: Icon(
+                  buttonIcon: Icon(
                     Icons.insights_rounded,
                     size: 50,
                     color: AppColors.gridViewColor,
                   ),
-                  label: 'Statistik',
+                  buttonText: 'Daten',
                 ),
-
+                MainMenuButton(
+                  destinationPage: const RoomTimetableGridPage(),
+                  buttonIcon: Icon(
+                    Icons.dashboard_rounded,
+                    size: 50,
+                    color: AppColors.gridViewColor,
+                  ),
+                  buttonText: 'Stundenplan',
+                ),
                 // --- Calendar section ---
-                _ToolsCategoryButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const SchooldaysCalendarPage(),
-                      ),
-                    );
-                  },
-                  icon: Icon(
+                MainMenuButton(
+                  destinationPage: const SchooldaysCalendarPage(),
+                  buttonIcon: Icon(
                     Icons.calendar_month_rounded,
                     size: 50,
                     color: AppColors.gridViewColor,
                   ),
-                  label: 'Schultage-\nKalender',
+                  buttonText: 'Schultage-\nKalender',
                 ),
 
                 // --- Admin sections ---
                 if (_hubSessionManager.isAdmin) ...[
                   // User-Verwaltung
-                  _ToolsCategoryButton(
-                    onPressed: () => _showSectionOverlay(
+                  MainMenuButton(
+                    onTap: () => _showSectionOverlay(
                       context: context,
                       title: 'User-Verwaltung',
                       icon: Icons.people_rounded,
@@ -402,33 +405,29 @@ class ToolsPage extends WatchingWidget {
                         ),
                       ],
                     ),
-                    icon: Icon(
+                    buttonIcon: Icon(
                       Icons.people_rounded,
                       size: 50,
                       color: AppColors.gridViewColor,
                     ),
-                    label: 'Personal',
+                    buttonText: 'Personal',
                   ),
                   // Matrix Kontakte (when configured)
                   if (matrixSessionConfigured) ...[
-                    _ToolsCategoryButton(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const MatrixUsersListPage(),
-                        ),
-                      ),
-                      icon: Image.asset(
+                    MainMenuButton(
+                      destinationPage: const MatrixUsersListPage(),
+                      buttonIcon: Image.asset(
                         'assets/schulpost_logo_200px_white.png',
                         width: 50,
                         height: 50,
                         color: AppColors.gridViewColor,
                       ),
-                      label: 'Matrix Kontakte',
+                      buttonText: 'Matrix Kontakte',
                     ),
                   ],
                   // Admin (Schuldaten + Kalender + Stundenplan + Matrix)
-                  _ToolsCategoryButton(
-                    onPressed: () => _showSectionOverlay(
+                  MainMenuButton(
+                    onTap: () => _showSectionOverlay(
                       context: context,
                       title: 'Administration',
                       icon: Icons.admin_panel_settings_rounded,
@@ -495,12 +494,12 @@ class ToolsPage extends WatchingWidget {
                         ),
                       ],
                     ),
-                    icon: Icon(
+                    buttonIcon: Icon(
                       Icons.admin_panel_settings_rounded,
                       size: 50,
                       color: AppColors.gridViewColor,
                     ),
-                    label: 'Admin',
+                    buttonText: 'Admin',
                   ),
                 ],
               ],
@@ -513,55 +512,6 @@ class ToolsPage extends WatchingWidget {
 }
 
 class MatrixManager {}
-
-/// Category button shown on the main tools page grid (150x150).
-class _ToolsCategoryButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final Widget icon;
-  final String label;
-
-  const _ToolsCategoryButton({
-    required this.onPressed,
-    required this.icon,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    const double buttonSize = 150;
-    return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: InkWell(
-        onTap: onPressed,
-        child: SizedBox(
-          width: buttonSize,
-          height: buttonSize,
-          child: Card(
-            color: AppColors.backgroundColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(width: 50, height: 50, child: Center(child: icon)),
-                const Gap(10),
-                Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 /// Sub-button shown inside the bottom sheet overlay (120x120).
 class _ToolsMenuButton extends StatelessWidget {

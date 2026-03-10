@@ -14,6 +14,7 @@ import 'package:serverpod/serverpod.dart' as _i1;
 enum Role implements _i1.SerializableModel {
   admin,
   teacher,
+  specialEducator,
   specialEducatorE,
   specialEducatorK,
   educator,
@@ -28,6 +29,8 @@ enum Role implements _i1.SerializableModel {
         return Role.admin;
       case 'teacher':
         return Role.teacher;
+      case 'specialEducator':
+        return Role.specialEducator;
       case 'specialEducatorE':
         return Role.specialEducatorE;
       case 'specialEducatorK':

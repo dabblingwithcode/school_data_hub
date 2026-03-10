@@ -7,7 +7,6 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/new_subj
 import 'package:school_data_hub_flutter/app_utils/color_picker_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/description_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/name_field.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/public_id_field.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 class NewSubjectPage extends WatchingWidget {
@@ -21,10 +20,6 @@ class NewSubjectPage extends WatchingWidget {
   Widget build(BuildContext context) {
     final nameController = createOnce<TextEditingController>(() {
       return TextEditingController(text: subject?.name ?? '');
-    });
-
-    final publicIdController = createOnce<TextEditingController>(() {
-      return TextEditingController(text: subject?.publicId ?? '');
     });
 
     final descriptionController = createOnce<TextEditingController>(() {
@@ -55,8 +50,6 @@ class NewSubjectPage extends WatchingWidget {
             const SizedBox(height: 16),
             NameField(controller: nameController),
             const SizedBox(height: 16),
-            PublicIdField(controller: publicIdController),
-            const SizedBox(height: 16),
             DescriptionField(controller: descriptionController),
             const SizedBox(height: 16),
             ColorPickerField(selectedColor: selectedColor),
@@ -72,18 +65,13 @@ class NewSubjectPage extends WatchingWidget {
                   return;
                 }
 
-                if (publicIdController.text.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Bitte geben Sie eine öffentliche ID ein'),
-                    ),
-                  );
-                  return;
-                }
+                final publicId = _isEditing
+                    ? subject!.publicId
+                    : 'SUB-${DateTime.now().millisecondsSinceEpoch}';
 
                 final newSubject = Subject(
                   id: subject?.id,
-                  publicId: publicIdController.text.trim(),
+                  publicId: publicId,
                   name: nameController.text.trim(),
                   description: descriptionController.text.trim().isEmpty
                       ? null

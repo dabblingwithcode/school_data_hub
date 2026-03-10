@@ -237,9 +237,19 @@ class TimetableDataManager {
       }
     }
 
-    // Update collections if we found additional data
+    // Merge subjects from lessons with existing subjects (do not overwrite:
+    // standalone subjects not yet used in lessons must remain in the list)
     if (subjects.isNotEmpty) {
-      _subjects.value = subjects;
+      final existingSubjects = _subjects.value;
+      final mergedSubjects = <Subject>[];
+      mergedSubjects.addAll(existingSubjects);
+      for (final subject in subjects) {
+        if (!mergedSubjects.any((s) => s.id == subject.id)) {
+          mergedSubjects.add(subject);
+        }
+      }
+      mergedSubjects.sort((a, b) => a.name.compareTo(b.name));
+      _subjects.value = mergedSubjects;
     }
 
     // Merge classrooms from lessons with existing classrooms instead of overwriting

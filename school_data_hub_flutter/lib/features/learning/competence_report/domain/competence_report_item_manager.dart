@@ -44,8 +44,9 @@ class CompetenceReportItemManager {
 
   void upsertItemFromStream(CompetenceReportItem item) {
     final list = List<CompetenceReportItem>.from(_items.value);
-    final index = list.indexWhere((i) =>
-        (i.id != null && i.id == item.id) || i.publicId == item.publicId);
+    final index = list.indexWhere(
+      (i) => (i.id != null && i.id == item.id) || i.publicId == item.publicId,
+    );
     if (index >= 0) {
       list[index] = item;
     } else {

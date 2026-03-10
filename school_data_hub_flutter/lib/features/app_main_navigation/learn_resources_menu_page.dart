@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/books_main_menu_page/books_main_menu_page.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/competence_list_page/competence_list_page.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_page/competence_report_item_list_scope.dart';
@@ -34,189 +34,51 @@ class LearnResourcesMenuPage extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             physics: const NeverScrollableScrollPhysics(),
             children: [
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) => const CompetenceListPage(),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    color: AppColors.backgroundColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.lightbulb,
-                          size: 50,
-                          color: AppColors.gridViewColor,
-                        ),
-                        const Gap(10),
-                        Text(
-                          locale.competences,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              MainMenuButton(
+                destinationPage: const CompetenceListPage(),
+                buttonIcon: Icon(
+                  Icons.lightbulb,
+                  size: 50,
+                  color: AppColors.gridViewColor,
                 ),
+                buttonText: locale.competences,
               ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Card(
-                  color: AppColors.backgroundColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (ctx) => const CategoryList(),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.support_rounded,
-                          size: 50,
-                          color: AppColors.gridViewColor,
-                        ),
-                        const Gap(10),
-                        Text(
-                          locale.supportCategories,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              MainMenuButton(
+                destinationPage: const CategoryList(),
+                buttonIcon: Icon(
+                  Icons.support_rounded,
+                  size: 50,
+                  color: AppColors.gridViewColor,
                 ),
+                buttonText: locale.supportCategories,
               ),
               if (di<HubSessionManager>().user!.userFlags.isTester)
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Card(
-                    color: AppColors.backgroundColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (ctx) => const WorkbookList(),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.note_alt,
-                            size: 50,
-                            color: AppColors.gridViewColor,
-                          ),
-                          const Gap(10),
-                          Text(
-                            locale.workbooks,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                MainMenuButton(
+                  destinationPage: const WorkbookList(),
+                  buttonIcon: Icon(
+                    Icons.note_alt,
+                    size: 50,
+                    color: AppColors.gridViewColor,
                   ),
+                  buttonText: locale.workbooks,
                 ),
-
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Card(
-                  color: AppColors.backgroundColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (ctx) => const BooksMainMenuPage(),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.book,
-                          size: 50,
-                          color: AppColors.gridViewColor,
-                        ),
-                        const Gap(10),
-                        const Text(
-                          'Bücherei',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              MainMenuButton(
+                destinationPage: const BooksMainMenuPage(),
+                buttonIcon: Icon(
+                  Icons.book,
+                  size: 50,
+                  color: AppColors.gridViewColor,
                 ),
+                buttonText: 'Bücherei',
               ),
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Card(
-                  color: AppColors.backgroundColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (ctx) =>
-                              const CompetenceReportItemListScope(),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.assignment,
-                          size: 50,
-                          color: AppColors.gridViewColor,
-                        ),
-                        const Gap(10),
-                        const Text(
-                          'Zeugnis-\nkompetenzen',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              MainMenuButton(
+                destinationPage: const CompetenceReportItemListScope(),
+                buttonIcon: Icon(
+                  Icons.assignment,
+                  size: 50,
+                  color: AppColors.gridViewColor,
                 ),
+                buttonText: 'Zeugnis-\nkompetenzen',
               ),
             ],
           ),

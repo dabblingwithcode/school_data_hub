@@ -163,59 +163,33 @@ class PupilListButtons extends WatchingWidget {
           ),
           buttonText: 'Matrix Kontakte',
         ),
-        Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: InkWell(
-            onTap: () async {
-              final result =
-                  await showDialog<
-                    ({DateTime pastDayValue, DateTime futureDayValue})?
-                  >(
-                    context: context,
-                    builder: (ctx) => const BirthdayDateRangeDialog(),
-                  );
-              if (result == null) return;
-              if (context.mounted) {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => BirthdaysView(
-                      selectedDate: result.pastDayValue,
-                      endDate: result.futureDayValue,
-                    ),
-                  ),
+        MainMenuButton(
+          onTap: () async {
+            final result =
+                await showDialog<
+                  ({DateTime pastDayValue, DateTime futureDayValue})?
+                >(
+                  context: context,
+                  builder: (ctx) => const BirthdayDateRangeDialog(),
                 );
-              }
-            },
-            child: SizedBox(
-              width: 150,
-              height: 150,
-              child: Card(
-                color: AppColors.backgroundColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
+            if (result == null) return;
+            if (context.mounted) {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (ctx) => BirthdaysView(
+                    selectedDate: result.pastDayValue,
+                    endDate: result.futureDayValue,
+                  ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.cake_rounded,
-                      size: 50,
-                      color: AppColors.gridViewColor,
-                    ),
-                    const Gap(10),
-                    const Text(
-                      'Geburtstage',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+              );
+            }
+          },
+          buttonIcon: Icon(
+            Icons.cake_rounded,
+            size: 50,
+            color: AppColors.gridViewColor,
           ),
+          buttonText: 'Geburtstage',
         ),
       ],
     );

@@ -13,6 +13,7 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/timetabl
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_grid.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/weekday_selector.dart';
+import 'package:school_data_hub_flutter/features/timetable/services/timetable_pdf_generator.dart';
 
 class TimetablePage extends WatchingWidget {
   // TODO: Implement a warning if there are no timetable slots created!
@@ -150,6 +151,44 @@ class TimetablePage extends WatchingWidget {
             tooltip: 'Filter & Klassen verwalten',
             icon: const Icon(Icons.filter_list, size: 35),
             onPressed: () => showTimetableFilterBottomSheet(context),
+          ),
+          IconButton(
+            tooltip: 'Stundenplan als PDF',
+            icon: const Icon(Icons.picture_as_pdf, size: 35),
+            onPressed: () async {
+              final manager = di<TimetableManager>();
+              if (!manager.hasActiveTimetable) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Kein Stundenplan ausgewählt.')),
+                  );
+                }
+                return;
+              }
+              try {
+                final file = await TimetablePdfGenerator.generateTimetablePdf(
+                  timetableManager: manager,
+                );
+                if (context.mounted) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (context) => TimetablePdfViewPage(pdfFile: file),
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'PDF konnte nicht erstellt werden: ${e is StateError ? e.toString().replaceFirst('StateError: ', '') : e}',
+                      ),
+                    ),
+                  );
+                }
+              }
+            },
           ),
         ],
       ),
