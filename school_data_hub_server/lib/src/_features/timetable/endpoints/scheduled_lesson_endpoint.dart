@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/timetable/schemas/timetable_schemas.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -50,7 +51,13 @@ class ScheduledLessonEndpoint extends Endpoint {
 
     final scheduledLessonInDatabase =
         await ScheduledLesson.db.insertRow(session, scheduledLesson);
-    return scheduledLessonInDatabase;
+    final scheduledLessonWithIncludes = await ScheduledLesson.db.findById(
+        session, scheduledLessonInDatabase.id!,
+        include: TimetableSchemas.scheduledLessonAllInclude);
+    if (scheduledLessonWithIncludes == null) {
+      throw Exception('Failed to find scheduled lesson with includes.');
+    }
+    return scheduledLessonWithIncludes;
   }
 
   //- read
@@ -58,14 +65,7 @@ class ScheduledLessonEndpoint extends Endpoint {
   Future<List<ScheduledLesson>> fetchScheduledLessons(Session session) async {
     final scheduledLessons = await ScheduledLesson.db.find(
       session,
-      include: ScheduledLesson.include(
-        subject: Subject.include(),
-        scheduledAt: TimetableSlot.include(),
-        timetable: Timetable.include(),
-        lessonTeachers: ScheduledLessonTeacher.includeList(),
-        room: Classroom.include(),
-        lessonGroup: LessonGroup.include(),
-      ),
+      include: TimetableSchemas.scheduledLessonAllInclude,
     );
     return scheduledLessons;
   }
@@ -75,14 +75,7 @@ class ScheduledLessonEndpoint extends Endpoint {
     final scheduledLesson = await ScheduledLesson.db.findById(
       session,
       id,
-      include: ScheduledLesson.include(
-        subject: Subject.include(),
-        scheduledAt: TimetableSlot.include(),
-        timetable: Timetable.include(),
-        lessonTeachers: ScheduledLessonTeacher.includeList(),
-        room: Classroom.include(),
-        lessonGroup: LessonGroup.include(),
-      ),
+      include: TimetableSchemas.scheduledLessonAllInclude,
     );
     return scheduledLesson;
   }
@@ -92,14 +85,7 @@ class ScheduledLessonEndpoint extends Endpoint {
     final scheduledLessons = await ScheduledLesson.db.find(
       session,
       where: (t) => t.timetableId.equals(timetableId),
-      include: ScheduledLesson.include(
-        subject: Subject.include(),
-        scheduledAt: TimetableSlot.include(),
-        timetable: Timetable.include(),
-        lessonTeachers: ScheduledLessonTeacher.includeList(),
-        room: Classroom.include(),
-        lessonGroup: LessonGroup.include(),
-      ),
+      include: TimetableSchemas.scheduledLessonAllInclude,
     );
     return scheduledLessons;
   }
@@ -109,14 +95,7 @@ class ScheduledLessonEndpoint extends Endpoint {
     final scheduledLessons = await ScheduledLesson.db.find(
       session,
       where: (t) => t.subjectId.equals(subjectId),
-      include: ScheduledLesson.include(
-        subject: Subject.include(),
-        scheduledAt: TimetableSlot.include(),
-        timetable: Timetable.include(),
-        lessonTeachers: ScheduledLessonTeacher.includeList(),
-        room: Classroom.include(),
-        lessonGroup: LessonGroup.include(),
-      ),
+      include: TimetableSchemas.scheduledLessonAllInclude,
     );
     return scheduledLessons;
   }
@@ -126,14 +105,7 @@ class ScheduledLessonEndpoint extends Endpoint {
     final scheduledLessons = await ScheduledLesson.db.find(
       session,
       where: (t) => t.roomId.equals(roomId),
-      include: ScheduledLesson.include(
-        subject: Subject.include(),
-        scheduledAt: TimetableSlot.include(),
-        timetable: Timetable.include(),
-        lessonTeachers: ScheduledLessonTeacher.includeList(),
-        room: Classroom.include(),
-        lessonGroup: LessonGroup.include(),
-      ),
+      include: TimetableSchemas.scheduledLessonAllInclude,
     );
     return scheduledLessons;
   }
@@ -143,14 +115,7 @@ class ScheduledLessonEndpoint extends Endpoint {
     final scheduledLessons = await ScheduledLesson.db.find(
       session,
       where: (t) => t.scheduledAtId.equals(slotId),
-      include: ScheduledLesson.include(
-        subject: Subject.include(),
-        scheduledAt: TimetableSlot.include(),
-        timetable: Timetable.include(),
-        lessonTeachers: ScheduledLessonTeacher.includeList(),
-        room: Classroom.include(),
-        lessonGroup: LessonGroup.include(),
-      ),
+      include: TimetableSchemas.scheduledLessonAllInclude,
     );
     return scheduledLessons;
   }
@@ -160,14 +125,7 @@ class ScheduledLessonEndpoint extends Endpoint {
     final scheduledLessons = await ScheduledLesson.db.find(
       session,
       where: (t) => t.active.equals(true),
-      include: ScheduledLesson.include(
-        subject: Subject.include(),
-        scheduledAt: TimetableSlot.include(),
-        timetable: Timetable.include(),
-        lessonTeachers: ScheduledLessonTeacher.includeList(),
-        room: Classroom.include(),
-        lessonGroup: LessonGroup.include(),
-      ),
+      include: TimetableSchemas.scheduledLessonAllInclude,
     );
     return scheduledLessons;
   }
@@ -178,7 +136,13 @@ class ScheduledLessonEndpoint extends Endpoint {
       Session session, ScheduledLesson scheduledLesson) async {
     final updatedScheduledLesson =
         await ScheduledLesson.db.updateRow(session, scheduledLesson);
-    return updatedScheduledLesson;
+    final updatedScheduledLessonWithIncludes = await ScheduledLesson.db
+        .findById(session, updatedScheduledLesson.id!,
+            include: TimetableSchemas.scheduledLessonAllInclude);
+    if (updatedScheduledLessonWithIncludes == null) {
+      throw Exception('Failed to find scheduled lesson with includes.');
+    }
+    return updatedScheduledLessonWithIncludes;
   }
 
   Future<ScheduledLesson?> deactivateScheduledLesson(

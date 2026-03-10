@@ -383,17 +383,13 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
           onLongPressEnd: (details) =>
               _endDrag(details, classrooms.length, durationSlots),
           child: isDragging
-              ? Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.drag_indicator,
-                      color: Colors.grey.shade400,
-                      size: 20,
-                    ),
+              ? Opacity(
+                  opacity: 0.5,
+                  child: LessonCell(
+                    lesson: lesson,
+                    slot: slot,
+                    enableReorder: false,
+                    onTap: () {},
                   ),
                 )
               : LessonCell(

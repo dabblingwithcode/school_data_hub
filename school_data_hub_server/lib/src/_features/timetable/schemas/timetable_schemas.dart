@@ -12,4 +12,13 @@ class TimetableSchemas {
     scheduledLessons: ScheduledLesson.includeList(),
     memberships: ScheduledLessonGroupMembership.includeList(),
   );
+  static ScheduledLessonInclude scheduledLessonAllInclude =
+      ScheduledLesson.include(
+    subject: Subject.include(),
+    scheduledAt: TimetableSlot.include(),
+    timetable: Timetable.include(),
+    lessonTeachers: ScheduledLessonTeacher.includeList(),
+    room: Classroom.include(),
+    lessonGroup: LessonGroup.include(),
+  );
 }
