@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/room_timetable_grid/room_timetable_grid_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/logs/presentation/matrix_corporal_logs_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/set_matrix_environment_page/set_matrix_environment_page.dart';
@@ -98,6 +99,18 @@ class MatrixToolsPage extends WatchingWidget {
                       icon: Icons.settings_rounded,
                       label: 'Matrix-\nUmgebung',
                     ),
+                    _MatrixToolButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const RoomTimetableGridPage(),
+                          ),
+                        );
+                      },
+                      icon: Icons.grid_on,
+                      label: 'Raum-\nRaster (Test)',
+                    ),
+
                     _MatrixToolButton(
                       onPressed: () async {
                         final navigator = Navigator.of(context);

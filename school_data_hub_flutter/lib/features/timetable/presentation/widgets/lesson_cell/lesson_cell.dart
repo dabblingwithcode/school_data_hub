@@ -12,12 +12,18 @@ class LessonCell extends WatchingWidget {
   final VoidCallback onTap;
   final Function(ScheduledLesson)? onLessonReorder;
 
+  /// When false, drag-and-drop reorder is disabled and [onTap] is used for
+  /// filled cells (e.g. in room grid where tap opens editor and long-press
+  /// is handled by the parent for room drag).
+  final bool enableReorder;
+
   const LessonCell({
     super.key,
     this.lesson,
     required this.slot,
     required this.onTap,
     this.onLessonReorder,
+    this.enableReorder = true,
   });
 
   @override
@@ -31,6 +37,18 @@ class LessonCell extends WatchingWidget {
     // );
 
     if (lesson != null) {
+      if (!enableReorder) {
+        return Material(
+          child: InkWell(
+            onTap: onTap,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(4.0),
+              child: _buildLessonContent(context, userManager),
+            ),
+          ),
+        );
+      }
       return LongPressDraggable<ScheduledLesson>(
         data: lesson!,
         feedback: Material(

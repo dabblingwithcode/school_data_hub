@@ -1,30 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/action_buttons.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/classroom_dropdown.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/lesson_group_dropdown.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/lesson_id_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/subject_dropdown.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/teacher_selection.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_page/widgets/time_slot_dropdown.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 
 class NewScheduledLessonPage extends WatchingWidget {
   final TimetableManager timetableManager;
   final int? preselectedSlotId;
   final int? editingLessonId;
+  final Weekday? initialWeekday;
+  final String? initialStartTime; // "HH:MM"
+  final Classroom? initialClassroom;
 
   const NewScheduledLessonPage({
     super.key,
     required this.timetableManager,
     this.preselectedSlotId,
     this.editingLessonId,
+    this.initialWeekday,
+    this.initialStartTime,
+    this.initialClassroom,
   });
 
   bool get _isEditing => editingLessonId != null;
@@ -36,9 +41,9 @@ class NewScheduledLessonPage extends WatchingWidget {
       () => GlobalKey<FormState>(),
     );
 
-    // Create text editing controller using createOnce
-    final lessonIdController = createOnce<TextEditingController>(
-      () => TextEditingController(),
+    // Duration in minutes (used to compute endTime from startTime)
+    final durationMinutes = createOnce<ValueNotifier<int>>(
+      () => ValueNotifier<int>(45),
     );
 
     // Create ValueListenable for state management
@@ -56,24 +61,6 @@ class NewScheduledLessonPage extends WatchingWidget {
       return ValueNotifier<Subject?>(null);
     });
 
-    final selectedSlot = createOnce<ValueNotifier<TimetableSlot?>>(() {
-      if (_isEditing) {
-        final editingLesson = timetableManager.scheduledLessons.value
-            .where((lesson) => lesson.id == editingLessonId)
-            .firstOrNull;
-        if (editingLesson != null) {
-          return ValueNotifier<TimetableSlot?>(
-            timetableManager.getTimetableSlotById(editingLesson.scheduledAtId),
-          );
-        }
-      } else if (preselectedSlotId != null) {
-        return ValueNotifier<TimetableSlot?>(
-          timetableManager.getTimetableSlotById(preselectedSlotId!),
-        );
-      }
-      return ValueNotifier<TimetableSlot?>(null);
-    });
-
     final selectedClassroom = createOnce<ValueNotifier<Classroom?>>(() {
       if (_isEditing) {
         final editingLesson = timetableManager.scheduledLessons.value
@@ -84,6 +71,8 @@ class NewScheduledLessonPage extends WatchingWidget {
             timetableManager.getClassroomById(editingLesson.roomId),
           );
         }
+      } else if (initialClassroom != null) {
+        return ValueNotifier<Classroom?>(initialClassroom);
       }
       return ValueNotifier<Classroom?>(null);
     });
@@ -106,30 +95,85 @@ class NewScheduledLessonPage extends WatchingWidget {
       return ValueNotifier<LessonGroup?>(null);
     });
 
-    final selectedTeachers = createOnce<ValueNotifier<List<User>>>(
-      () => ValueNotifier<List<User>>([]),
-    );
+    final selectedTeachers = createOnce<ValueNotifier<List<User>>>(() {
+      if (_isEditing) {
+        final editingLesson = timetableManager.scheduledLessons.value
+            .where((lesson) => lesson.id == editingLessonId)
+            .firstOrNull;
+        if (editingLesson != null) {
+          final users = di<UserManager>().users.value;
+          final main = users
+              .where((u) => u.id == editingLesson.mainTeacherId)
+              .firstOrNull;
+          final additional = <User>[];
+          for (final lt
+              in editingLesson.lessonTeachers ?? <ScheduledLessonTeacher>[]) {
+            final u =
+                users.where((user) => user.id == lt.userId).firstOrNull;
+            if (u != null && u.id != main?.id) {
+              additional.add(u);
+            }
+          }
+          final initial = <User>[];
+          if (main != null) {
+            initial.add(main);
+          }
+          initial.addAll(additional);
+          if (initial.isNotEmpty) {
+            return ValueNotifier<List<User>>(initial);
+          }
+        }
+      }
+      return ValueNotifier<List<User>>([]);
+    });
     final dropdownKey = createOnce<ValueNotifier<int>>(
       () => ValueNotifier<int>(0),
     );
 
-    // Initialize lesson ID controller if editing
-    if (_isEditing) {
-      final editingLesson = timetableManager.scheduledLessons.value
-          .where((lesson) => lesson.id == editingLessonId)
-          .firstOrNull;
-      if (editingLesson != null) {
-        lessonIdController.text = editingLesson.lessonId;
+    // Determine effective start time and initial duration for display
+    String? effectiveStartTime = initialStartTime;
+    Weekday? effectiveWeekday = initialWeekday;
+    if (_isEditing || preselectedSlotId != null) {
+      final editingLesson = _isEditing
+          ? timetableManager.scheduledLessons.value
+                .where((lesson) => lesson.id == editingLessonId)
+                .firstOrNull
+          : null;
+      final slot = editingLesson != null
+          ? timetableManager.getTimetableSlotById(editingLesson.scheduledAtId)
+          : preselectedSlotId != null
+          ? timetableManager.getTimetableSlotById(preselectedSlotId!)
+          : null;
+      if (slot != null) {
+        effectiveStartTime ??= slot.startTime;
+        effectiveWeekday ??= slot.day;
+        // Try to infer duration from existing slot
+        try {
+          final startParts = slot.startTime.split(':');
+          final endParts = slot.endTime.split(':');
+          if (startParts.length == 2 && endParts.length == 2) {
+            final startMinutes =
+                int.parse(startParts[0]) * 60 + int.parse(startParts[1]);
+            final endMinutes =
+                int.parse(endParts[0]) * 60 + int.parse(endParts[1]);
+            final diff = endMinutes - startMinutes;
+            if (diff > 0) {
+              durationMinutes.value = diff;
+            }
+          }
+        } catch (_) {
+          // Keep default duration on parse errors
+        }
       }
     }
 
     // Watch the state values
     final selectedSubjectValue = watch(selectedSubject).value;
-    final selectedSlotValue = watch(selectedSlot).value;
     final selectedClassroomValue = watch(selectedClassroom).value;
     final selectedLessonGroupValue = watch(selectedLessonGroup).value;
     final selectedTeachersValue = watch(selectedTeachers).value;
     final dropdownKeyValue = watch(dropdownKey).value;
+    final durationMinutesValue = watch(durationMinutes).value;
 
     return Scaffold(
       appBar: AppBar(
@@ -167,34 +211,35 @@ class NewScheduledLessonPage extends WatchingWidget {
                     ),
                     const Gap(20),
 
-                    // Time slot selection
-                    TimeSlotDropdown(
-                      selectedSlot: selectedSlotValue,
-                      onSlotChanged: (slot) {
-                        selectedSlot.value = slot;
-
-                        // Reset lesson group if it conflicts with the new time slot
-                        if (selectedLessonGroupValue != null &&
-                            _hasLessonGroupConflict(
-                              selectedLessonGroupValue,
-                              selectedSlotValue,
-                            )) {
-                          selectedLessonGroup.value = null;
-                        }
-
-                        // Reset classroom if it conflicts with the new time slot
-                        if (selectedClassroomValue != null &&
-                            _hasClassroomConflict(
-                              selectedClassroomValue,
-                              selectedSlotValue,
-                            )) {
-                          selectedClassroom.value = null;
-                        }
-                      },
-                      hasLessonGroupConflict: (group) =>
-                          _hasLessonGroupConflict(group, selectedSlotValue),
-                      hasClassroomConflict: (classroom) =>
-                          _hasClassroomConflict(classroom, selectedSlotValue),
+                    // Start time (read-only) and duration
+                    if (effectiveStartTime != null) ...[
+                      Text(
+                        'Beginn: $effectiveStartTime',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const Gap(8),
+                    ],
+                    Row(
+                      children: [
+                        const Text('Dauer (Minuten):'),
+                        const Gap(8),
+                        SizedBox(
+                          width: 80,
+                          child: TextFormField(
+                            initialValue: durationMinutesValue.toString(),
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            onChanged: (value) {
+                              final parsed = int.tryParse(value);
+                              if (parsed != null && parsed > 0) {
+                                durationMinutes.value = parsed;
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                     const Gap(20),
 
@@ -204,8 +249,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                       onClassroomChanged: (classroom) {
                         selectedClassroom.value = classroom;
                       },
-                      hasClassroomConflict: (classroom) =>
-                          _hasClassroomConflict(classroom, selectedSlotValue),
+                      hasClassroomConflict: (classroom) => false,
                     ),
                     const Gap(20),
 
@@ -215,8 +259,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                       onLessonGroupChanged: (group) {
                         selectedLessonGroup.value = group;
                       },
-                      hasLessonGroupConflict: (group) =>
-                          _hasLessonGroupConflict(group, selectedSlotValue),
+                      hasLessonGroupConflict: (group) => false,
                     ),
                     const Gap(20),
 
@@ -231,20 +274,17 @@ class NewScheduledLessonPage extends WatchingWidget {
                     ),
                     const Gap(20),
 
-                    // Lesson ID field
-                    LessonIdField(controller: lessonIdController),
-                    const Gap(32),
-
                     // Action buttons
                     ActionButtons(
                       isEditing: _isEditing,
-                      onSave: () {
+                      onSave: () async {
                         if (!formKey.currentState!.validate()) {
                           return;
                         }
 
                         if (selectedSubjectValue == null ||
-                            selectedSlotValue == null ||
+                            effectiveStartTime == null ||
+                            effectiveWeekday == null ||
                             selectedClassroomValue == null ||
                             selectedLessonGroupValue == null ||
                             selectedTeachersValue.isEmpty) {
@@ -261,6 +301,25 @@ class NewScheduledLessonPage extends WatchingWidget {
 
                         final now = DateTime.now().formatToUtcForServer();
 
+                        // Compute or re-use timetable slot based on weekday, start time and duration.
+                        final timetable = timetableManager.timetable.value;
+                        if (timetable == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Kein Stundenplan ausgewählt'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        final computedSlot = await _findOrCreateSlotFor(
+                          effectiveWeekday,
+                          effectiveStartTime,
+                          durationMinutesValue,
+                          timetable.id!,
+                        );
+
                         if (_isEditing) {
                           final editingLesson = timetableManager
                               .scheduledLessons
@@ -270,12 +329,12 @@ class NewScheduledLessonPage extends WatchingWidget {
 
                           if (editingLesson != null) {
                             // Update existing lesson
+                            final slot = computedSlot;
                             final updatedLesson = editingLesson.copyWith(
                               subjectId: selectedSubjectValue.id!,
                               subject: selectedSubjectValue,
-                              scheduledAtId: selectedSlotValue.id!,
-                              scheduledAt: selectedSlotValue,
-                              lessonId: lessonIdController.text.trim(),
+                              scheduledAtId: slot.id!,
+                              scheduledAt: slot,
                               roomId: selectedClassroomValue.id!,
                               room: selectedClassroomValue,
                               lessonGroupId: selectedLessonGroupValue.id!,
@@ -300,22 +359,22 @@ class NewScheduledLessonPage extends WatchingWidget {
                           }
                         } else {
                           // Create new lesson
+                          final slot = computedSlot;
                           final nextAvailableOrder = timetableManager
-                              .getNextAvailableOrderForSlot(
-                                selectedSlotValue.id!,
-                              );
+                              .getNextAvailableOrderForSlot(slot.id!);
+
+                          final generatedLessonId =
+                              'L-${DateTime.now().millisecondsSinceEpoch}';
 
                           final newLesson = ScheduledLesson(
                             active: true,
 
                             subjectId: selectedSubjectValue.id!,
                             subject: selectedSubjectValue,
-                            scheduledAtId: selectedSlotValue.id!,
-                            scheduledAt: selectedSlotValue,
-                            timetableId:
-                                timetableManager.timetable.value?.id ??
-                                1, // Get from current timetable
-                            lessonId: lessonIdController.text.trim(),
+                            scheduledAtId: slot.id!,
+                            scheduledAt: slot,
+                            timetableId: timetable.id!,
+                            lessonId: generatedLessonId,
                             roomId: selectedClassroomValue.id!,
                             room: selectedClassroomValue,
                             lessonGroupId: selectedLessonGroupValue.id!,
@@ -354,7 +413,7 @@ class NewScheduledLessonPage extends WatchingWidget {
 
                               if (editingLesson?.id == null) return;
 
-                              showDialog(
+                              showDialog<void>(
                                 context: context,
                                 builder: (context) => AlertDialog(
                                   title: const Text('Stunde löschen'),
@@ -407,37 +466,51 @@ class NewScheduledLessonPage extends WatchingWidget {
       ),
     );
   }
+}
 
-  bool _hasClassroomConflict(Classroom classroom, TimetableSlot? selectedSlot) {
-    if (selectedSlot == null || classroom.id == null) return false;
+Future<TimetableSlot> _findOrCreateSlotFor(
+  Weekday day,
+  String startTime,
+  int durationMinutes,
+  int timetableId,
+) async {
+  final manager = di<TimetableManager>();
+  // Compute endTime from startTime + duration
+  final parts = startTime.split(':');
+  final startHour = int.parse(parts[0]);
+  final startMinute = int.parse(parts[1]);
+  final startTotal = startHour * 60 + startMinute;
+  final endTotal = startTotal + durationMinutes;
+  final endHour = endTotal ~/ 60;
+  final endMinute = endTotal % 60;
+  final endTime =
+      '${endHour.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')}';
 
-    final currentLessonId = _isEditing ? editingLessonId : null;
-
-    final lessonsInSlot = timetableManager.getAllLessonsForSlot(
-      selectedSlot.id!,
-    );
-
-    return lessonsInSlot.any(
-      (lesson) => lesson.roomId == classroom.id && lesson.id != currentLessonId,
-    );
+  final existing = manager.timetableSlots.value.where(
+    (s) =>
+        s.day == day &&
+        s.startTime == startTime &&
+        s.endTime == endTime &&
+        s.timetableId == timetableId,
+  );
+  if (existing.isNotEmpty) {
+    return existing.first;
   }
 
-  bool _hasLessonGroupConflict(
-    LessonGroup lessonGroup,
-    TimetableSlot? selectedSlot,
-  ) {
-    if (selectedSlot == null || lessonGroup.id == null) return false;
-
-    final currentLessonId = _isEditing ? editingLessonId : null;
-
-    final lessonsInSlot = timetableManager.getAllLessonsForSlot(
-      selectedSlot.id!,
-    );
-
-    return lessonsInSlot.any(
-      (lesson) =>
-          lesson.lessonGroupId == lessonGroup.id &&
-          lesson.id != currentLessonId,
-    );
-  }
+  final slot = TimetableSlot(
+    day: day,
+    startTime: startTime,
+    endTime: endTime,
+    timetableId: timetableId,
+  );
+  await manager.addTimetableSlot(slot);
+  // Best effort: try to find it again after add; fall back to local slot.
+  final refreshed = manager.timetableSlots.value.where(
+    (s) =>
+        s.day == day &&
+        s.startTime == startTime &&
+        s.endTime == endTime &&
+        s.timetableId == timetableId,
+  );
+  return refreshed.isNotEmpty ? refreshed.first : slot;
 }

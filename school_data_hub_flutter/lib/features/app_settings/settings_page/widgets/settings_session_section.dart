@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
@@ -11,12 +12,11 @@ import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
-import 'package:school_data_hub_flutter/features/app_settings/settings_page/dialogs/change_env_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
+import 'package:school_data_hub_flutter/features/app_entry_point/login_page/login_controller.dart';
+import 'package:school_data_hub_flutter/features/app_settings/settings_page/dialogs/change_env_dialog.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('EnvManager');
 

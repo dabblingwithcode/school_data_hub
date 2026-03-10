@@ -27,7 +27,7 @@ import 'package:school_data_hub_flutter/features/school_calendar/presentation/sc
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page_controller.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/sliver_dashboard_page/sliver_dashboard_page.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/room_timetable_grid/room_timetable_grid_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_page.dart';
@@ -321,12 +321,12 @@ class ToolsPage extends WatchingWidget {
                           Navigator.pop(context);
                           Navigator.of(context).push(
                             MaterialPageRoute<void>(
-                              builder: (_) => const DashboardPage(),
+                              builder: (_) => const RoomTimetableGridPage(),
                             ),
                           );
                         },
                         icon: Icons.dashboard_rounded,
-                        label: 'Dashboard',
+                        label: 'Stundenplan',
                       ),
                     ],
                   ),

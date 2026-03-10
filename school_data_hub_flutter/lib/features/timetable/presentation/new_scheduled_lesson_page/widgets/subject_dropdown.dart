@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/new_subject_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 /// Dropdown widget for selecting a subject
 class SubjectDropdown extends WatchingWidget {
@@ -20,18 +20,21 @@ class SubjectDropdown extends WatchingWidget {
   Widget build(BuildContext context) {
     final subjects = watchValue((TimetableManager m) => m.subjects);
 
-    // Ensure the selectedSubject is in the subjects list
-    final validSelectedSubject =
-        selectedSubject != null &&
-            subjects.any((subject) => subject.id == selectedSubject!.id)
-        ? selectedSubject
-        : null;
+    // Map the selected subject (possibly from a different instance) to the
+    // concrete instance used in the items list so DropdownButtonFormField
+    // sees exactly one matching value.
+    final initialValue = selectedSubject == null
+        ? null
+        : subjects.firstWhere(
+            (subject) => subject.id == selectedSubject!.id,
+            orElse: () => selectedSubject!,
+          );
 
     return Row(
       children: [
         Expanded(
           child: DropdownButtonFormField<Subject>(
-            initialValue: validSelectedSubject,
+            initialValue: initialValue,
             decoration: const InputDecoration(
               labelText: 'Fach *',
               border: OutlineInputBorder(),

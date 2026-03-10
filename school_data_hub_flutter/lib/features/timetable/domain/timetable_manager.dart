@@ -449,6 +449,17 @@ class TimetableManager {
     );
   }
 
+  /// All scheduled lessons on [weekday] (no lesson-group filter). Use for
+  /// conflict checks e.g. in room grid drag-snap validation.
+  List<ScheduledLesson> getAllScheduledLessonsForWeekday(Weekday weekday) {
+    return _uiManager.getScheduledLessonsForWeekdayAndGroups(
+      weekday,
+      <int>{},
+      _dataManager.scheduledLessons.value,
+      _dataManager.timetableSlots.value,
+    );
+  }
+
   void clearData() {
     _dataManager.clearData();
     _uiManager.clearLessonGroupSelection();

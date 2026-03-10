@@ -3,7 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_lesson_group_page/new_lesson_group_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
 
 /// Dropdown widget for selecting a lesson group
 class LessonGroupDropdown extends WatchingWidget {
@@ -21,32 +20,39 @@ class LessonGroupDropdown extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final lessonGroups = watchValue((TimetableManager m) => m.lessonGroups);
-    final selectedSlot = watchValue((TimetableManager m) => m.selectedWeekday);
 
     // Filter out lesson groups that already have a lesson at the selected time slot
     final availableLessonGroups = lessonGroups.where((group) {
       return !hasLessonGroupConflict(group);
     }).toList();
 
-    // Ensure the selected lesson group is available in the filtered list
-    final validInitialValue =
-        selectedLessonGroup != null &&
-            availableLessonGroups.any(
-              (group) => group.id == selectedLessonGroup!.id,
-            )
-        ? selectedLessonGroup
-        : null;
+    // Map the selected lesson group (possibly from a different instance)
+    // to the concrete instance used in the items list so DropdownButtonFormField
+    // sees exactly one matching value. If the selected group isn't yet in the
+    // available list (e.g. just created and data not refreshed), we pass null
+    // so that no invalid initialValue is set.
+    LessonGroup? selectedValue;
+    if (selectedLessonGroup != null) {
+      for (final group in availableLessonGroups) {
+        if (group.id == selectedLessonGroup!.id) {
+          selectedValue = group;
+          break;
+        }
+      }
+    }
 
     return Row(
       children: [
         Expanded(
           child: DropdownButtonFormField<LessonGroup>(
-            initialValue: validInitialValue,
+            // Using initialValue keeps form semantics, while selectedValue
+            // is guaranteed to be one of the items so that exactly one
+            // match exists.
+            initialValue: selectedValue,
             decoration: InputDecoration(
               labelText: 'Klasse *',
               border: const OutlineInputBorder(),
-              helperText:
-                  'Nur verfügbare Klassen für ${TimetableUtils.getWeekdayName(selectedSlot)}',
+              helperText: 'Nur verfügbare Klassen',
             ),
             items: availableLessonGroups.map((group) {
               return DropdownMenuItem<LessonGroup>(
