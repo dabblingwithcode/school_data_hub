@@ -39,7 +39,10 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
   // Drag overlay state
   OverlayEntry? _dragOverlay;
   Offset? _dragGlobalPosition;
-  Offset? _snapOverlayGlobalPosition;
+
+  /// Offset from finger (in grid local coords) to the dragged card's top-left.
+  /// Keeps the card under the finger instead of jumping to snap cell center.
+  Offset? _dragFingerToCardOffset;
   ScheduledLesson? _draggingLesson;
   TimetableSlot? _dragSlot;
   Timer? _snapTimer;
@@ -54,6 +57,9 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
 
   /// Start slot index of the current snap cell (for badge on dragged card).
   int? _dragSnapStartSlotIndex;
+
+  /// Room index of the current snap cell (so overlay can draw at snapped position).
+  int? _snapRoomIndex;
 
   final GlobalKey _gridKey = GlobalKey();
   static const _snapDelayMs = 0;
@@ -466,35 +472,76 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
   ) {
     _snapTimer?.cancel();
     _snapTimer = null;
-    _snapOverlayGlobalPosition = null;
     _conflictRoomIndex = null;
     _conflictStartSlotIndex = null;
     _conflictMessage = null;
     _dragSnapStartSlotIndex = null;
+    _snapRoomIndex = null;
     _draggingLesson = lesson;
     _dragSlot = slot;
     _dragDurationSlots = durationSlots;
     _dragRoomsCount = roomsCount;
     _dragGlobalPosition = details.globalPosition;
 
-    // Compute initial snap position (with validation) so the card is visible immediately.
+    // Keep card under finger: offset from finger (grid local) to card top-left.
+    if (_gridKey.currentContext != null) {
+      final box = _gridKey.currentContext!.findRenderObject() as RenderBox;
+      final local = box.globalToLocal(details.globalPosition);
+      final timetableManager = di<TimetableManager>();
+      final classrooms = timetableManager.classrooms.value;
+      final roomIndex = classrooms.indexWhere((r) => r.id == lesson.roomId);
+      final startIndex = _timeToIndex(slot.startTime);
+      if (roomIndex >= 0) {
+        final left = roomIndex * _roomWidth;
+        final top = startIndex * _slotHeight;
+        _dragFingerToCardOffset = Offset(left - local.dx, top - local.dy);
+      } else {
+        _dragFingerToCardOffset = Offset.zero;
+      }
+    } else {
+      _dragFingerToCardOffset = Offset.zero;
+    }
+
+    // Compute initial snap (for validation and badge).
     _applySnapWithValidation();
 
     _dragOverlay = OverlayEntry(
       builder: (context) {
-        // Only show the dragged card when we have a snapped position.
-        final pos = _snapOverlayGlobalPosition;
-        if (pos == null || _dragSlot == null) {
+        if (_dragSlot == null || _dragGlobalPosition == null) {
           return const SizedBox.shrink();
         }
+        final gridContext = _gridKey.currentContext;
+        if (gridContext == null) {
+          return const SizedBox.shrink();
+        }
+        final box = gridContext.findRenderObject() as RenderBox?;
+        if (box == null) {
+          return const SizedBox.shrink();
+        }
+        // Position overlay at snapped cell so the card visually snaps to the grid.
+        Offset overlayTopLeftGlobal;
+        if (_snapRoomIndex != null && _dragSnapStartSlotIndex != null) {
+          overlayTopLeftGlobal = box.localToGlobal(
+            Offset(
+              _snapRoomIndex! * _roomWidth,
+              _dragSnapStartSlotIndex! * _slotHeight,
+            ),
+          );
+        } else {
+          // Fallback: under finger (e.g. before first _applySnapWithValidation).
+          final offset = _dragFingerToCardOffset ?? Offset.zero;
+          final local = box.globalToLocal(_dragGlobalPosition!);
+          overlayTopLeftGlobal = box.localToGlobal(local + offset);
+        }
+
         final hasConflict = _conflictMessage != null;
         final snapStartTime = _dragSnapStartSlotIndex != null
             ? _indexToTime(_dragSnapStartSlotIndex!)
             : null;
 
         return Positioned(
-          left: pos.dx - _roomWidth / 2,
-          top: pos.dy - (_dragDurationSlots * _slotHeight) / 2,
+          left: overlayTopLeftGlobal.dx,
+          top: overlayTopLeftGlobal.dy,
           child: Material(
             type: MaterialType.transparency,
             elevation: 12,
@@ -581,8 +628,10 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
     }
     final box = _gridKey.currentContext!.findRenderObject() as RenderBox;
     final local = box.globalToLocal(_dragGlobalPosition!);
-    final x = local.dx;
-    final y = local.dy;
+    // Snap target = cell under the card's top-left (LessonCell top); fallback to finger.
+    final cardTopLeft = local + (_dragFingerToCardOffset ?? Offset.zero);
+    final x = cardTopLeft.dx;
+    final y = cardTopLeft.dy;
     final roomIndex = (x / _roomWidth).floor().clamp(0, _dragRoomsCount - 1);
     final startSlotIndex = (y / _slotHeight).floor().clamp(
       0,
@@ -616,15 +665,8 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
     );
 
     final useStartSlotIndex = result.suggestedStartSlotIndex;
-    final cellTopLeft = Offset(
-      roomIndex * _roomWidth,
-      useStartSlotIndex * _slotHeight,
-    );
-    final cellCenterLocal =
-        cellTopLeft +
-        Offset(_roomWidth / 2, _dragDurationSlots * _slotHeight / 2);
-    _snapOverlayGlobalPosition = box.localToGlobal(cellCenterLocal);
     _dragSnapStartSlotIndex = useStartSlotIndex;
+    _snapRoomIndex = roomIndex;
 
     if (result is RoomDragSnapConflict) {
       _conflictRoomIndex = roomIndex;
@@ -650,11 +692,11 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
   ) async {
     _snapTimer?.cancel();
     _snapTimer = null;
-    _snapOverlayGlobalPosition = null;
     _conflictRoomIndex = null;
     _conflictStartSlotIndex = null;
     _conflictMessage = null;
     _dragSnapStartSlotIndex = null;
+    _snapRoomIndex = null;
     if (_dragOverlay != null) {
       _dragOverlay!.remove();
       _dragOverlay = null;
@@ -667,6 +709,7 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
         classrooms.isEmpty ||
         _gridKey.currentContext == null ||
         _draggingLesson == null) {
+      _dragFingerToCardOffset = null;
       return;
     }
 
@@ -674,9 +717,12 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
     final local = box.globalToLocal(
       _dragGlobalPosition ?? details.globalPosition,
     );
+    // Drop target = cell under the card's top (LessonCell top), not the finger.
+    final cardTopLeft = local + (_dragFingerToCardOffset ?? Offset.zero);
+    _dragFingerToCardOffset = null;
 
-    final x = local.dx;
-    final y = local.dy;
+    final x = cardTopLeft.dx;
+    final y = cardTopLeft.dy;
 
     final roomIndex = (x / _roomWidth).floor().clamp(0, roomsCount - 1);
     final requestedStartSlotIndex = (y / _slotHeight).floor().clamp(
@@ -719,10 +765,11 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
 
     final lesson = _draggingLesson!;
 
-    // If nothing actually changed, skip the update.
+    // If nothing actually changed, skip the update but still clear drag state and rebuild.
     if (lesson.roomId == newClassroom.id &&
         lesson.scheduledAtId == newSlot.id) {
       _draggingLesson = null;
+      if (mounted) setState(() {});
       return;
     }
 

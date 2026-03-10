@@ -155,8 +155,9 @@ class LessonCell extends WatchingWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+            const Gap(3),
             LessonCellTeacherInfo(lesson: lesson!),
-            const Gap(4),
+            const Gap(5),
             SizedBox(
               height: 20,
               child: Container(

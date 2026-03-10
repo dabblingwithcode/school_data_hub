@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class LessonCellTeacherInfo extends WatchingWidget {
   final ScheduledLesson lesson;
@@ -60,7 +60,7 @@ class LessonCellTeacherInfo extends WatchingWidget {
 
           return Expanded(
             child: SizedBox(
-              height: 20,
+              height: 25,
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 1),
                 decoration: BoxDecoration(
@@ -77,7 +77,7 @@ class LessonCellTeacherInfo extends WatchingWidget {
                   child: Text(
                     userName,
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 14,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -93,7 +93,7 @@ class LessonCellTeacherInfo extends WatchingWidget {
           // Empty container to maintain equal spacing
           return Expanded(
             child: SizedBox(
-              height: 20, // Fixed height to match teacher containers
+              height: 25, // Fixed height to match teacher containers
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 1),
                 decoration: BoxDecoration(

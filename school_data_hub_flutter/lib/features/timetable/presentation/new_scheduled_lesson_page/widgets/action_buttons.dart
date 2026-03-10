@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
 /// Action buttons widget for the lesson form
 class ActionButtons extends StatelessWidget {
@@ -24,22 +25,24 @@ class ActionButtons extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 onPressed: onSave,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                style: AppStyles.successButtonStyle,
+
+                child: Text(
+                  isEditing ? 'SPEICHERN' : 'ERSTELLEN',
+                  style: AppStyles.buttonTextStyle,
                 ),
-                child: Text(isEditing ? 'Speichern' : 'Erstellen'),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: OutlinedButton(
+              child: ElevatedButton(
                 onPressed: onCancel,
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                style: AppStyles.cancelButtonStyle,
+
+                child: const Text(
+                  'ABBRECHEN',
+                  style: AppStyles.buttonTextStyle,
                 ),
-                child: const Text('Abbrechen'),
               ),
             ),
           ],
@@ -48,14 +51,10 @@ class ActionButtons extends StatelessWidget {
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            child: OutlinedButton(
+            child: ElevatedButton(
               onPressed: onDelete,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: const Text('Löschen'),
+              style: AppStyles.cancelButtonStyle,
+              child: const Text('LÖSCHEN', style: AppStyles.buttonTextStyle),
             ),
           ),
         ],

@@ -71,7 +71,7 @@ class RoomTimetableGridPage extends WatchingWidget {
           ),
           IconButton(
             tooltip: 'Neuer Stundenplan',
-            icon: Icon(Icons.calendar_month, size: 35),
+            icon: const Icon(Icons.calendar_month, size: 35),
             onPressed: () async {
               await Navigator.push(
                 context,
@@ -84,7 +84,7 @@ class RoomTimetableGridPage extends WatchingWidget {
           ),
           IconButton(
             tooltip: 'Lerngruppen',
-            icon: Icon(Icons.groups, size: 35),
+            icon: const Icon(Icons.groups, size: 35),
             onPressed: () {
               Navigator.push(
                 context,
@@ -96,7 +96,7 @@ class RoomTimetableGridPage extends WatchingWidget {
           ),
           IconButton(
             tooltip: 'Räume verwalten',
-            icon: Icon(Icons.door_front_door_rounded, size: 35),
+            icon: const Icon(Icons.door_front_door_rounded, size: 35),
             onPressed: () {
               Navigator.push(
                 context,
@@ -108,7 +108,7 @@ class RoomTimetableGridPage extends WatchingWidget {
           ),
           IconButton(
             tooltip: 'Fächer verwalten',
-            icon: Icon(Icons.subject, size: 35),
+            icon: const Icon(Icons.subject, size: 35),
             onPressed: () {
               Navigator.push(
                 context,

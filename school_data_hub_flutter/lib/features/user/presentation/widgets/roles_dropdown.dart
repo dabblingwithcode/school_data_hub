@@ -5,6 +5,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 const Map<Role, String> _roleLabels = {
   Role.admin: 'Admin',
   Role.teacher: 'Lehrkraft',
+  Role.specialEducator: 'SoPäd.',
   Role.specialEducatorE: 'SoFa',
   Role.specialEducatorK: 'MPT',
   Role.educator: 'Päd. Personal',

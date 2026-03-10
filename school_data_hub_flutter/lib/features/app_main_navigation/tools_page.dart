@@ -29,7 +29,6 @@ import 'package:school_data_hub_flutter/features/school_calendar/presentation/sc
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page_controller.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/room_timetable_grid/room_timetable_grid_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_page.dart';
@@ -449,7 +448,7 @@ class ToolsPage extends WatchingWidget {
                             Navigator.pop(context);
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
-                                builder: (_) => const TimetablePage(),
+                                builder: (_) => const RoomTimetableGridPage(),
                               ),
                             );
                           },
