@@ -134,6 +134,30 @@ class ScheduledLessonEndpoint extends Endpoint {
 
   Future<ScheduledLesson?> updateScheduledLesson(
       Session session, ScheduledLesson scheduledLesson) async {
+    final existing =
+        await ScheduledLesson.db.findById(session, scheduledLesson.id!);
+    if (existing == null) {
+      throw Exception(
+          'Scheduled lesson with id ${scheduledLesson.id} does not exist.');
+    }
+
+    final oldSlotId = existing.scheduledAtId;
+    final newSlotId = scheduledLesson.scheduledAtId;
+
+    if (oldSlotId != newSlotId) {
+      final lessonsStillUsingOldSlot = await ScheduledLesson.db.find(
+        session,
+        where: (t) => t.scheduledAtId.equals(oldSlotId),
+      );
+      if (lessonsStillUsingOldSlot.length <= 1) {
+        final slotToDelete =
+            await TimetableSlot.db.findById(session, oldSlotId);
+        if (slotToDelete != null) {
+          await TimetableSlot.db.deleteRow(session, slotToDelete);
+        }
+      }
+    }
+
     final updatedScheduledLesson =
         await ScheduledLesson.db.updateRow(session, scheduledLesson);
     final updatedScheduledLessonWithIncludes = await ScheduledLesson.db
@@ -167,7 +191,20 @@ class ScheduledLessonEndpoint extends Endpoint {
       throw Exception('Scheduled lesson with id $id does not exist.');
     }
 
+    final slotId = scheduledLesson.scheduledAtId;
     await ScheduledLesson.db.deleteRow(session, scheduledLesson);
+
+    final lessonsStillUsingSlot = await ScheduledLesson.db.find(
+      session,
+      where: (t) => t.scheduledAtId.equals(slotId),
+    );
+    if (lessonsStillUsingSlot.isEmpty) {
+      final slot = await TimetableSlot.db.findById(session, slotId);
+      if (slot != null) {
+        await TimetableSlot.db.deleteRow(session, slot);
+      }
+    }
+
     return true;
   }
 }

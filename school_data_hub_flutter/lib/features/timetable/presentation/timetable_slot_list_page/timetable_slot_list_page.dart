@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_slot_page/new_timetable_slot_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot_list_page/widgets/timetable_slot_list.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class TimetableSlotListPage extends WatchingWidget {
   const TimetableSlotListPage({super.key});
@@ -32,7 +32,7 @@ class TimetableSlotListPage extends WatchingWidget {
       }
 
       await Navigator.of(context).push(
-        MaterialPageRoute(
+        MaterialPageRoute<void>(
           builder: (context) =>
               NewTimetableSlotPage(timetableManager: timetableManager),
         ),

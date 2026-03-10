@@ -710,9 +710,8 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
     final startTime = _indexToTime(startSlotIndex);
     final durationMinutes = durationSlots * _slotMinutes;
 
-    final newSlot = await _findOrCreateSlotFor(
-      timetableManager,
-      timetable,
+    final newSlot = await timetableManager.findOrCreateSlotFor(
+      weekday,
       startTime,
       durationMinutes,
     );
@@ -808,51 +807,6 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
     final hour = minutes ~/ 60;
     final minute = minutes % 60;
     return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-  }
-
-  Future<TimetableSlot> _findOrCreateSlotFor(
-    TimetableManager manager,
-    Timetable timetable,
-    String startTime,
-    int durationMinutes,
-  ) async {
-    final parts = startTime.split(':');
-    final startHour = int.parse(parts[0]);
-    final startMinute = int.parse(parts[1]);
-    final startTotal = startHour * 60 + startMinute;
-    final endTotal = startTotal + durationMinutes;
-    final endHour = endTotal ~/ 60;
-    final endMinute = endTotal % 60;
-    final endTime =
-        '${endHour.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')}';
-
-    final existing = manager.timetableSlots.value.where(
-      (s) =>
-          s.day == manager.selectedWeekday.value &&
-          s.startTime == startTime &&
-          s.endTime == endTime &&
-          s.timetableId == timetable.id,
-    );
-    if (existing.isNotEmpty) {
-      return existing.first;
-    }
-
-    final slot = TimetableSlot(
-      day: manager.selectedWeekday.value,
-      startTime: startTime,
-      endTime: endTime,
-      timetableId: timetable.id!,
-    );
-    await manager.addTimetableSlot(slot);
-
-    final refreshed = manager.timetableSlots.value.where(
-      (s) =>
-          s.day == manager.selectedWeekday.value &&
-          s.startTime == startTime &&
-          s.endTime == endTime &&
-          s.timetableId == timetable.id,
-    );
-    return refreshed.isNotEmpty ? refreshed.first : slot;
   }
 }
 

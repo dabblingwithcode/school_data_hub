@@ -167,13 +167,17 @@ class NewScheduledLessonPage extends WatchingWidget {
       }
     }
 
+    // Controller for duration so we read the actual field value at save time
+    final durationController = createOnce<TextEditingController>(
+      () => TextEditingController(text: durationMinutes.value.toString()),
+    );
+
     // Watch the state values
     final selectedSubjectValue = watch(selectedSubject).value;
     final selectedClassroomValue = watch(selectedClassroom).value;
     final selectedLessonGroupValue = watch(selectedLessonGroup).value;
     final selectedTeachersValue = watch(selectedTeachers).value;
     final dropdownKeyValue = watch(dropdownKey).value;
-    final durationMinutesValue = watch(durationMinutes).value;
 
     return Scaffold(
       appBar: AppBar(
@@ -226,7 +230,8 @@ class NewScheduledLessonPage extends WatchingWidget {
                         SizedBox(
                           width: 80,
                           child: TextFormField(
-                            initialValue: durationMinutesValue.toString(),
+                            controller: durationController,
+                            key: const ValueKey('duration_minutes'),
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
@@ -313,11 +318,26 @@ class NewScheduledLessonPage extends WatchingWidget {
                           return;
                         }
 
-                        final computedSlot = await _findOrCreateSlotFor(
+                        // Read duration from the field at save time so the slot always reflects what the user entered
+                        final durationText = durationController.text.trim();
+                        final currentDurationMinutes = int.tryParse(durationText);
+                        if (currentDurationMinutes == null ||
+                            currentDurationMinutes <= 0) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Bitte geben Sie eine gültige Dauer (Minuten) ein.',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+                        final computedSlot =
+                            await timetableManager.findOrCreateSlotFor(
                           effectiveWeekday,
                           effectiveStartTime,
-                          durationMinutesValue,
-                          timetable.id!,
+                          currentDurationMinutes,
                         );
 
                         if (_isEditing) {
@@ -344,18 +364,21 @@ class NewScheduledLessonPage extends WatchingWidget {
                               modifiedAt: now,
                             );
 
-                            timetableManager.updateScheduledLesson(
+                            await timetableManager.updateScheduledLesson(
                               updatedLesson,
                             );
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Stunde erfolgreich aktualisiert mit ${selectedTeachersValue.length} Lehrer(n)',
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Stunde erfolgreich aktualisiert mit ${selectedTeachersValue.length} Lehrer(n)',
+                                  ),
+                                  backgroundColor: Colors.green,
                                 ),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
+                              );
+                              Navigator.of(context).pop();
+                            }
                           }
                         } else {
                           // Create new lesson
@@ -386,19 +409,20 @@ class NewScheduledLessonPage extends WatchingWidget {
                             createdAt: now,
                           );
 
-                          timetableManager.addScheduledLesson(newLesson);
+                          await timetableManager.addScheduledLesson(newLesson);
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Stunde erfolgreich erstellt mit ${selectedTeachersValue.length} Lehrer(n)',
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Stunde erfolgreich erstellt mit ${selectedTeachersValue.length} Lehrer(n)',
+                                ),
+                                backgroundColor: Colors.green,
                               ),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
+                            );
+                            Navigator.of(context).pop();
+                          }
                         }
-
-                        Navigator.of(context).pop();
                       },
                       onCancel: () => Navigator.of(context).pop(),
                       onDelete: _isEditing
@@ -466,51 +490,4 @@ class NewScheduledLessonPage extends WatchingWidget {
       ),
     );
   }
-}
-
-Future<TimetableSlot> _findOrCreateSlotFor(
-  Weekday day,
-  String startTime,
-  int durationMinutes,
-  int timetableId,
-) async {
-  final manager = di<TimetableManager>();
-  // Compute endTime from startTime + duration
-  final parts = startTime.split(':');
-  final startHour = int.parse(parts[0]);
-  final startMinute = int.parse(parts[1]);
-  final startTotal = startHour * 60 + startMinute;
-  final endTotal = startTotal + durationMinutes;
-  final endHour = endTotal ~/ 60;
-  final endMinute = endTotal % 60;
-  final endTime =
-      '${endHour.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')}';
-
-  final existing = manager.timetableSlots.value.where(
-    (s) =>
-        s.day == day &&
-        s.startTime == startTime &&
-        s.endTime == endTime &&
-        s.timetableId == timetableId,
-  );
-  if (existing.isNotEmpty) {
-    return existing.first;
-  }
-
-  final slot = TimetableSlot(
-    day: day,
-    startTime: startTime,
-    endTime: endTime,
-    timetableId: timetableId,
-  );
-  await manager.addTimetableSlot(slot);
-  // Best effort: try to find it again after add; fall back to local slot.
-  final refreshed = manager.timetableSlots.value.where(
-    (s) =>
-        s.day == day &&
-        s.startTime == startTime &&
-        s.endTime == endTime &&
-        s.timetableId == timetableId,
-  );
-  return refreshed.isNotEmpty ? refreshed.first : slot;
 }

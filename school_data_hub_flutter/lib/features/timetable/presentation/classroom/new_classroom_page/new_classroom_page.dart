@@ -4,9 +4,9 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_classroom_page/widgets/action_buttons.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_classroom_page/widgets/room_code_field.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_classroom_page/widgets/room_name_field.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/new_classroom_page/widgets/action_buttons.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/new_classroom_page/widgets/room_code_field.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/new_classroom_page/widgets/room_name_field.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 // Barrel exports

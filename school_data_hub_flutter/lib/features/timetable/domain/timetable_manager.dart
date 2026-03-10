@@ -210,6 +210,58 @@ class TimetableManager {
     await refreshData();
   }
 
+  /// Find an existing timetable slot for the given day, start time and duration,
+  /// or create and add one. Same logic as used when dropping a lesson in the
+  /// room timetable grid. Returns the slot (existing or newly created with id).
+  Future<TimetableSlot> findOrCreateSlotFor(
+    Weekday day,
+    String startTime,
+    int durationMinutes,
+  ) async {
+    final timetable = _dataManager.timetable.value;
+    final timetableId = timetable?.id;
+    if (timetableId == null) {
+      throw StateError('No timetable selected');
+    }
+    final parts = startTime.split(':');
+    final startHour = int.parse(parts[0]);
+    final startMinute = int.parse(parts[1]);
+    final startTotal = startHour * 60 + startMinute;
+    final endTotal = startTotal + durationMinutes;
+    final endHour = endTotal ~/ 60;
+    final endMinute = endTotal % 60;
+    final endTime =
+        '${endHour.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')}';
+
+    final existing = _dataManager.timetableSlots.value.where(
+      (s) =>
+          s.day == day &&
+          s.startTime == startTime &&
+          s.endTime == endTime &&
+          s.timetableId == timetableId,
+    );
+    if (existing.isNotEmpty) {
+      return existing.first;
+    }
+
+    final slot = TimetableSlot(
+      day: day,
+      startTime: startTime,
+      endTime: endTime,
+      timetableId: timetableId,
+    );
+    await addTimetableSlot(slot);
+
+    final refreshed = _dataManager.timetableSlots.value.where(
+      (s) =>
+          s.day == day &&
+          s.startTime == startTime &&
+          s.endTime == endTime &&
+          s.timetableId == timetableId,
+    );
+    return refreshed.isNotEmpty ? refreshed.first : slot;
+  }
+
   // Timetable Management
   Future<void> createTimetable(Timetable timetable) async {
     await _crudManager.createTimetable(timetable);

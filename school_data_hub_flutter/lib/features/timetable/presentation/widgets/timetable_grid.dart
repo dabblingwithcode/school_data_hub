@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/classroom_list_page/classroom_list_page.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/classroom_list_page/classroom_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/lesson_cell/lesson_cell.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
