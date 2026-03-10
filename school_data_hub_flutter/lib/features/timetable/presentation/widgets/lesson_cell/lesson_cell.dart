@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/lesson_cell/widgets/lesson_cell_teacher_info.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class LessonCell extends WatchingWidget {
   final ScheduledLesson? lesson;
   final TimetableSlot slot;
   final VoidCallback onTap;
-  final Function(ScheduledLesson)? onLessonReorder;
+  final void Function(ScheduledLesson)? onLessonReorder;
 
   /// When false, drag-and-drop reorder is disabled and [onTap] is used for
   /// filled cells (e.g. in room grid where tap opens editor and long-press
@@ -39,11 +39,13 @@ class LessonCell extends WatchingWidget {
     if (lesson != null) {
       if (!enableReorder) {
         return Material(
+          type: MaterialType.transparency,
           child: InkWell(
             onTap: onTap,
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.all(4.0),
+              color: Colors.transparent,
               child: _buildLessonContent(context, userManager),
             ),
           ),
@@ -52,27 +54,21 @@ class LessonCell extends WatchingWidget {
       return LongPressDraggable<ScheduledLesson>(
         data: lesson!,
         feedback: Material(
+          type: MaterialType.transparency,
           elevation: 6.0,
           child: SizedBox(
             width: 140,
             child: _buildLessonContent(context, userManager),
           ),
         ),
-        childWhenDragging: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.grey.shade300,
-              style: BorderStyle.solid,
-            ),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Center(
-            child: Icon(
-              Icons.drag_indicator,
-              color: Colors.grey.shade400,
-              size: 20,
-            ),
+        // Keep showing the LessonCell in place during drag; only the drop target
+        // shows a different state (handled by DragTarget builder below).
+        childWhenDragging: Material(
+          type: MaterialType.transparency,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(4.0),
+            child: _buildLessonContent(context, userManager),
           ),
         ),
         child: DragTarget<ScheduledLesson>(
@@ -85,6 +81,7 @@ class LessonCell extends WatchingWidget {
           },
           builder: (context, candidateData, rejectedData) {
             return Material(
+              type: MaterialType.transparency,
               child: InkWell(
                 onTap: () => _showTeacherSelection(context, timetableManager),
                 child: Container(

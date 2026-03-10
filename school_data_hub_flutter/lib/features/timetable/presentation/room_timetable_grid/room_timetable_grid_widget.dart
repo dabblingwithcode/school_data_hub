@@ -41,6 +41,7 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
   Offset? _dragGlobalPosition;
   Offset? _snapOverlayGlobalPosition;
   ScheduledLesson? _draggingLesson;
+  TimetableSlot? _dragSlot;
   Timer? _snapTimer;
   int _dragDurationSlots = 1;
   int _dragRoomsCount = 1;
@@ -50,6 +51,9 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
   int? _conflictRoomIndex;
   int? _conflictStartSlotIndex;
   String? _conflictMessage;
+
+  /// Start slot index of the current snap cell (for badge on dragged card).
+  int? _dragSnapStartSlotIndex;
 
   final GlobalKey _gridKey = GlobalKey();
   static const _snapDelayMs = 0;
@@ -209,18 +213,26 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
                                   top: _conflictStartSlotIndex! * _slotHeight,
                                   width: _roomWidth,
                                   height: _dragDurationSlots * _slotHeight,
-                                  child: Container(
-                                    color: Colors.orange.withValues(alpha: 0.7),
-                                    padding: const EdgeInsets.all(6),
-                                    child: Center(
-                                      child: Text(
-                                        _conflictMessage!,
-                                        style: const TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w500,
+                                  child: Material(
+                                    elevation: 4,
+                                    color: Colors.orange.withValues(
+                                      alpha: 0.85,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(6),
+                                      child: Center(
+                                        child: Text(
+                                          _conflictMessage!,
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          textAlign: TextAlign.center,
                                         ),
-                                        textAlign: TextAlign.center,
                                       ),
                                     ),
                                   ),
@@ -351,6 +363,8 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
     final left = roomIndex * _roomWidth;
     final top = startIndex * _slotHeight;
 
+    final isDragging = lesson.id == _draggingLesson?.id;
+
     return Positioned(
       left: left,
       top: top,
@@ -358,17 +372,36 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
       height: durationSlots * _slotHeight,
       child: ClipRect(
         child: GestureDetector(
-          onLongPressStart: (details) =>
-              _startDrag(lesson, durationSlots, classrooms.length, details),
+          onLongPressStart: (details) => _startDrag(
+            lesson,
+            slot,
+            durationSlots,
+            classrooms.length,
+            details,
+          ),
           onLongPressMoveUpdate: _updateDrag,
           onLongPressEnd: (details) =>
               _endDrag(details, classrooms.length, durationSlots),
-          child: LessonCell(
-            lesson: lesson,
-            slot: slot,
-            enableReorder: false,
-            onTap: () => _editLesson(lesson),
-          ),
+          child: isDragging
+              ? Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.drag_indicator,
+                      color: Colors.grey.shade400,
+                      size: 20,
+                    ),
+                  ),
+                )
+              : LessonCell(
+                  lesson: lesson,
+                  slot: slot,
+                  enableReorder: false,
+                  onTap: () => _editLesson(lesson),
+                ),
         ),
       ),
     );
@@ -430,6 +463,7 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
 
   void _startDrag(
     ScheduledLesson lesson,
+    TimetableSlot slot,
     int durationSlots,
     int roomsCount,
     LongPressStartDetails details,
@@ -440,7 +474,9 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
     _conflictRoomIndex = null;
     _conflictStartSlotIndex = null;
     _conflictMessage = null;
+    _dragSnapStartSlotIndex = null;
     _draggingLesson = lesson;
+    _dragSlot = slot;
     _dragDurationSlots = durationSlots;
     _dragRoomsCount = roomsCount;
     _dragGlobalPosition = details.globalPosition;
@@ -452,25 +488,69 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
       builder: (context) {
         // Only show the dragged card when we have a snapped position.
         final pos = _snapOverlayGlobalPosition;
-        if (pos == null) {
+        if (pos == null || _dragSlot == null) {
           return const SizedBox.shrink();
         }
+        final hasConflict = _conflictMessage != null;
+        final snapStartTime = _dragSnapStartSlotIndex != null
+            ? _indexToTime(_dragSnapStartSlotIndex!)
+            : null;
+
         return Positioned(
           left: pos.dx - _roomWidth / 2,
           top: pos.dy - (_dragDurationSlots * _slotHeight) / 2,
           child: Material(
+            type: MaterialType.transparency,
             elevation: 12,
-            color: Colors.orange,
-            child: SizedBox(
-              width: _roomWidth,
-              height: _dragDurationSlots * _slotHeight,
-              child: Center(
-                child: Text(
-                  lesson.lessonGroup?.name ?? 'Verschieben',
-                  style: const TextStyle(color: Colors.white),
-                  textAlign: TextAlign.center,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: _roomWidth,
+                  height: _dragDurationSlots * _slotHeight,
+                  decoration: hasConflict
+                      ? BoxDecoration(
+                          border: Border.all(color: Colors.orange, width: 3),
+                          borderRadius: BorderRadius.circular(8),
+                        )
+                      : null,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LessonCell(
+                      lesson: lesson,
+                      slot: _dragSlot!,
+                      enableReorder: false,
+                      onTap: () {},
+                    ),
+                  ),
                 ),
-              ),
+                if (snapStartTime != null)
+                  Positioned(
+                    top: -4,
+                    right: -4,
+                    child: Material(
+                      elevation: 2,
+                      borderRadius: BorderRadius.circular(6),
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        child: Text(
+                          snapStartTime,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         );
@@ -548,6 +628,7 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
         cellTopLeft +
         Offset(_roomWidth / 2, _dragDurationSlots * _slotHeight / 2);
     _snapOverlayGlobalPosition = box.localToGlobal(cellCenterLocal);
+    _dragSnapStartSlotIndex = useStartSlotIndex;
 
     if (result is RoomDragSnapConflict) {
       _conflictRoomIndex = roomIndex;
@@ -577,6 +658,7 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
     _conflictRoomIndex = null;
     _conflictStartSlotIndex = null;
     _conflictMessage = null;
+    _dragSnapStartSlotIndex = null;
     if (_dragOverlay != null) {
       _dragOverlay!.remove();
       _dragOverlay = null;

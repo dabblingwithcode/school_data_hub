@@ -172,11 +172,12 @@ class TimetableManager {
   }
 
   // CRUD Operations for Lesson Groups
-  Future<void> addLessonGroup(LessonGroup lessonGroup) async {
+  Future<LessonGroup?> addLessonGroup(LessonGroup lessonGroup) async {
     final createdLessonGroup = await _crudManager.addLessonGroup(lessonGroup);
     if (createdLessonGroup != null) {
       _dataManager.addLessonGroup(createdLessonGroup);
     }
+    return createdLessonGroup;
   }
 
   Future<void> updateLessonGroup(LessonGroup lessonGroup) async {
@@ -328,10 +329,10 @@ class TimetableManager {
     );
   }
 
-  void updatePupilMembershipsForLessonGroup(
+  Future<void> updatePupilMembershipsForLessonGroup(
     int lessonGroupId,
     List<int> pupilDataIds,
-  ) {
+  ) async {
     _membershipManager.updatePupilMembershipsForLessonGroup(
       lessonGroupId,
       pupilDataIds,
@@ -339,6 +340,10 @@ class TimetableManager {
       (updatedMemberships) {
         _dataManager.updateScheduledLessonGroupMemberships(updatedMemberships);
       },
+    );
+    await _crudManager.updatePupilMembershipsForLessonGroup(
+      lessonGroupId,
+      pupilDataIds,
     );
   }
 

@@ -20,10 +20,9 @@ class LearningGroupListCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor:
-              lessonGroup.color != null
-                  ? TimetableUtils.parseColor(lessonGroup.color!)
-                  : Theme.of(context).colorScheme.primary,
+          backgroundColor: lessonGroup.color != null
+              ? TimetableUtils.parseColor(lessonGroup.color!)
+              : Theme.of(context).colorScheme.primary,
           child: Text(
             lessonGroup.name.isNotEmpty
                 ? lessonGroup.name[0].toUpperCase()
@@ -39,7 +38,7 @@ class LearningGroupListCard extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          'Farbe: ${lessonGroup.color ?? 'Standard'}',
+          'Mitglieder: ${lessonGroup.memberships?.length ?? 0}',
           style: TextStyle(color: Colors.grey.shade600),
         ),
         trailing: Row(

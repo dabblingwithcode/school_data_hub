@@ -165,50 +165,72 @@ class NewLessonGroupPage extends WatchingWidget {
                           modifiedAt: now,
                         );
 
-                        if (_isEditing) {
-                          // Update existing lesson group
-                          timetableManager.updateLessonGroup(lessonGroupData);
+                        Future<void> doSave() async {
+                          try {
+                            if (_isEditing) {
+                              await timetableManager
+                                  .updateLessonGroup(lessonGroupData);
 
-                          // Update pupil memberships for existing lesson group
-                          if (lessonGroup?.id != null) {
-                            timetableManager
-                                .updatePupilMembershipsForLessonGroup(
+                              if (lessonGroup?.id != null) {
+                                await timetableManager
+                                    .updatePupilMembershipsForLessonGroup(
                                   lessonGroup!.id!,
                                   selectedPupilIds.value,
                                 );
-                          }
+                              }
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Klasse erfolgreich aktualisiert'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Klasse erfolgreich aktualisiert',
+                                    ),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                                Navigator.of(context).pop();
+                              }
+                            } else {
+                              final created = await timetableManager
+                                  .addLessonGroup(lessonGroupData);
 
-                          Navigator.of(context).pop();
-                        } else {
-                          // Create new lesson group
-                          timetableManager.addLessonGroup(lessonGroupData);
-
-                          // Add pupil memberships for new lesson group
-                          if (lessonGroupData.id != null &&
-                              selectedPupilIds.value.isNotEmpty) {
-                            timetableManager
-                                .updatePupilMembershipsForLessonGroup(
-                                  lessonGroupData.id!,
+                              if (created?.id != null &&
+                                  selectedPupilIds.value.isNotEmpty) {
+                                await timetableManager
+                                    .updatePupilMembershipsForLessonGroup(
+                                  created!.id!,
                                   selectedPupilIds.value,
                                 );
+                              }
+
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Klasse erfolgreich erstellt',
+                                    ),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                                Navigator.of(context).pop(
+                                  created ?? lessonGroupData,
+                                );
+                              }
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Fehler: $e',
+                                  ),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
                           }
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Klasse erfolgreich erstellt'),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-
-                          Navigator.of(context).pop(lessonGroupData);
                         }
+                        doSave();
                       },
                       onCancel: () => Navigator.of(context).pop(),
                       onDelete: _isEditing

@@ -185,6 +185,27 @@ class TimetableCrudManager {
     }
   }
 
+  Future<bool?> updatePupilMembershipsForLessonGroup(
+    int lessonGroupId,
+    List<int> pupilDataIds,
+  ) async {
+    try {
+      final result = await _apiService.updatePupilMembershipsForLessonGroup(
+        lessonGroupId,
+        pupilDataIds,
+      );
+      if (result == true) {
+        _log.info(
+          'Pupil memberships updated for lesson group $lessonGroupId',
+        );
+      }
+      return result;
+    } catch (e) {
+      _log.info('Error updating pupil memberships: $e');
+      rethrow;
+    }
+  }
+
   // Timetable CRUD operations
   Future<void> createTimetable(Timetable timetable) async {
     try {

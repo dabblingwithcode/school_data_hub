@@ -41,7 +41,7 @@ class PupilManagementSection extends WatchingWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Schüler in dieser Klasse',
+                  'Schüler in dieser Lerngruppe',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 Row(

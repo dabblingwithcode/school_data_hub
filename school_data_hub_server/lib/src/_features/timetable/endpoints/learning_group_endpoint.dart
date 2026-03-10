@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/timetable/schemas/timetable_schemas.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -19,7 +20,13 @@ class LearningGroupEndpoint extends Endpoint {
 
     final lessonGroupInDatabase =
         await LessonGroup.db.insertRow(session, lessonGroup);
-    return lessonGroupInDatabase;
+    final lessonGroupWithIncludes = await LessonGroup.db.findById(
+        session, lessonGroupInDatabase.id!,
+        include: TimetableSchemas.lessonGroupAllInclude);
+    if (lessonGroupWithIncludes == null) {
+      throw Exception('Failed to find lesson group with includes.');
+    }
+    return lessonGroupWithIncludes;
   }
 
   //- read
@@ -27,11 +34,7 @@ class LearningGroupEndpoint extends Endpoint {
   Future<List<LessonGroup>> fetchLessonGroups(Session session) async {
     final lessonGroups = await LessonGroup.db.find(
       session,
-      include: LessonGroup.include(
-        timetable: Timetable.include(),
-        scheduledLessons: ScheduledLesson.includeList(),
-        memberships: ScheduledLessonGroupMembership.includeList(),
-      ),
+      include: TimetableSchemas.lessonGroupAllInclude,
     );
     return lessonGroups;
   }
@@ -40,11 +43,7 @@ class LearningGroupEndpoint extends Endpoint {
     final lessonGroup = await LessonGroup.db.findById(
       session,
       id,
-      include: LessonGroup.include(
-        timetable: Timetable.include(),
-        scheduledLessons: ScheduledLesson.includeList(),
-        memberships: ScheduledLessonGroupMembership.includeList(),
-      ),
+      include: TimetableSchemas.lessonGroupAllInclude,
     );
     return lessonGroup;
   }
@@ -54,11 +53,7 @@ class LearningGroupEndpoint extends Endpoint {
     final lessonGroup = await LessonGroup.db.findFirstRow(
       session,
       where: (t) => t.publicId.equals(publicId),
-      include: LessonGroup.include(
-        timetable: Timetable.include(),
-        scheduledLessons: ScheduledLesson.includeList(),
-        memberships: ScheduledLessonGroupMembership.includeList(),
-      ),
+      include: TimetableSchemas.lessonGroupAllInclude,
     );
     return lessonGroup;
   }
@@ -68,11 +63,7 @@ class LearningGroupEndpoint extends Endpoint {
     final lessonGroups = await LessonGroup.db.find(
       session,
       where: (t) => t.name.equals(name),
-      include: LessonGroup.include(
-        timetable: Timetable.include(),
-        scheduledLessons: ScheduledLesson.includeList(),
-        memberships: ScheduledLessonGroupMembership.includeList(),
-      ),
+      include: TimetableSchemas.lessonGroupAllInclude,
     );
     return lessonGroups;
   }
@@ -82,11 +73,7 @@ class LearningGroupEndpoint extends Endpoint {
     final lessonGroups = await LessonGroup.db.find(
       session,
       where: (t) => t.createdBy.equals(createdBy),
-      include: LessonGroup.include(
-        timetable: Timetable.include(),
-        scheduledLessons: ScheduledLesson.includeList(),
-        memberships: ScheduledLessonGroupMembership.includeList(),
-      ),
+      include: TimetableSchemas.lessonGroupAllInclude,
     );
     return lessonGroups;
   }
@@ -96,11 +83,7 @@ class LearningGroupEndpoint extends Endpoint {
     final lessonGroups = await LessonGroup.db.find(
       session,
       where: (t) => t.timetableId.equals(timetableId),
-      include: LessonGroup.include(
-        timetable: Timetable.include(),
-        scheduledLessons: ScheduledLesson.includeList(),
-        memberships: ScheduledLessonGroupMembership.includeList(),
-      ),
+      include: TimetableSchemas.lessonGroupAllInclude,
     );
     return lessonGroups;
   }
@@ -111,7 +94,13 @@ class LearningGroupEndpoint extends Endpoint {
       Session session, LessonGroup lessonGroup) async {
     final updatedLessonGroup =
         await LessonGroup.db.updateRow(session, lessonGroup);
-    return updatedLessonGroup;
+    final updatedLessonGroupWithIncludes = await LessonGroup.db.findById(
+        session, updatedLessonGroup.id!,
+        include: TimetableSchemas.lessonGroupAllInclude);
+    if (updatedLessonGroupWithIncludes == null) {
+      throw Exception('Failed to find lesson group with includes.');
+    }
+    return updatedLessonGroupWithIncludes;
   }
 
   //- delete
