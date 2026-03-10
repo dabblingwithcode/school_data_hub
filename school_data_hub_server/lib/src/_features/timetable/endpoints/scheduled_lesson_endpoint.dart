@@ -144,12 +144,15 @@ class ScheduledLessonEndpoint extends Endpoint {
     final oldSlotId = existing.scheduledAtId;
     final newSlotId = scheduledLesson.scheduledAtId;
 
+    final updatedScheduledLesson =
+        await ScheduledLesson.db.updateRow(session, scheduledLesson);
+
     if (oldSlotId != newSlotId) {
       final lessonsStillUsingOldSlot = await ScheduledLesson.db.find(
         session,
         where: (t) => t.scheduledAtId.equals(oldSlotId),
       );
-      if (lessonsStillUsingOldSlot.length <= 1) {
+      if (lessonsStillUsingOldSlot.isEmpty) {
         final slotToDelete =
             await TimetableSlot.db.findById(session, oldSlotId);
         if (slotToDelete != null) {
@@ -158,8 +161,6 @@ class ScheduledLessonEndpoint extends Endpoint {
       }
     }
 
-    final updatedScheduledLesson =
-        await ScheduledLesson.db.updateRow(session, scheduledLesson);
     final updatedScheduledLessonWithIncludes = await ScheduledLesson.db
         .findById(session, updatedScheduledLesson.id!,
             include: TimetableSchemas.scheduledLessonAllInclude);
