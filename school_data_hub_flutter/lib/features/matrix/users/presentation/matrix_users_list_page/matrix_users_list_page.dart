@@ -194,6 +194,7 @@ class _MatrixUsersListContent extends WatchingWidget {
   static Future<Map<String?, UserWithDevices>> _loadAppUsersByMatrixId() async {
     try {
       final list = await di<UserApiService>().getAllUsersWithDevices();
+      if (list == null) return {};
       final map = <String?, UserWithDevices>{};
       for (final u in list) {
         final matrixId = u.user.matrixUserId;

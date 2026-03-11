@@ -47,6 +47,7 @@ class AdminUserEndpoint extends Endpoint {
   }
 
   /// Creates a single user (auth + UserInfo + scopes + User). Used by createUser and batchCreateUsers.
+  /// When [transaction] is provided, DB writes use it (caller owns the transaction). Otherwise uses its own transaction.
   Future<User> _createOneUser(
     Session session, {
     required String userName,
@@ -61,6 +62,7 @@ class AdminUserEndpoint extends Endpoint {
     String? matrixUserId,
     int? credit,
     Set<int>? pupilsAuth,
+    Transaction? transaction,
   }) async {
     final UserInfo? userInfo =
         await auth.Emails.createUser(session, userName, email, password);
@@ -78,10 +80,9 @@ class AdminUserEndpoint extends Endpoint {
       }
     }
 
-    final newUser = await session.db.transaction((transaction) async {
+    Future<User> runWrites(Transaction txn) async {
       userInfo!.fullName = fullName;
-      await auth.UserInfo.db
-          .updateRow(session, userInfo, transaction: transaction);
+      await auth.UserInfo.db.updateRow(session, userInfo, transaction: txn);
 
       await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
 
@@ -102,14 +103,18 @@ class AdminUserEndpoint extends Endpoint {
         matrixUserId: matrixUserId,
       );
 
-      await User.db.insertRow(session, user, transaction: transaction);
+      await User.db.insertRow(session, user, transaction: txn);
       return user;
-    });
+    }
 
-    return newUser;
+    if (transaction != null) {
+      return runWrites(transaction);
+    }
+    return session.db.transaction(runWrites);
   }
 
   /// Batch-creates users. Returns credentials for successes and errors for skipped/failed rows.
+  /// Each create runs in its own transaction; creates are executed in parallel (up to 5 at a time) to reduce timeout risk.
   Future<BatchCreateUsersResponse> batchCreateUsers(
     Session session,
     List<CreateUserRequest> requests,
@@ -121,12 +126,13 @@ class AdminUserEndpoint extends Endpoint {
     final existingEmails = <String>{};
 
     final users = await User.db.find(session);
-    for (final user in users) {
-      final userInfo = await UserInfo.db.findFirstRow(
+    final userInfoIds = users.map((u) => u.userInfoId).toSet();
+    if (userInfoIds.isNotEmpty) {
+      final infos = await auth.UserInfo.db.find(
         session,
-        where: (t) => t.id.equals(user.userInfoId),
+        where: (t) => t.id.inSet(userInfoIds),
       );
-      if (userInfo != null) {
+      for (final userInfo in infos) {
         final name = userInfo.userName;
         if (name != null && name.isNotEmpty) existingUserNames.add(name);
         final emailStr = userInfo.email;
@@ -137,6 +143,16 @@ class AdminUserEndpoint extends Endpoint {
       }
     }
 
+    // Validation pass: collect validation errors and build list of valid requests.
+    // Track names/emails added in this batch to avoid duplicates within the same file.
+    final addedInBatchUserNames = <String>{};
+    final addedInBatchEmails = <String>{};
+    final toCreate = <({
+      CreateUserRequest req,
+      int rowIndex,
+      String userName,
+      String emailLower
+    })>[];
     for (var i = 0; i < requests.length; i++) {
       final req = requests[i];
       final rowIndex = i + 1;
@@ -149,7 +165,8 @@ class AdminUserEndpoint extends Endpoint {
         ));
         continue;
       }
-      if (existingUserNames.contains(userName)) {
+      if (existingUserNames.contains(userName) ||
+          addedInBatchUserNames.contains(userName)) {
         errors.add(BatchCreateUserError(
           rowIndex: rowIndex,
           userNameOrKurzel: userName,
@@ -158,7 +175,8 @@ class AdminUserEndpoint extends Endpoint {
         continue;
       }
       final emailLower = req.email.trim().toLowerCase();
-      if (existingEmails.contains(emailLower)) {
+      if (existingEmails.contains(emailLower) ||
+          addedInBatchEmails.contains(emailLower)) {
         errors.add(BatchCreateUserError(
           rowIndex: rowIndex,
           userNameOrKurzel: userName,
@@ -166,39 +184,57 @@ class AdminUserEndpoint extends Endpoint {
         ));
         continue;
       }
+      toCreate.add((
+        req: req,
+        rowIndex: rowIndex,
+        userName: userName,
+        emailLower: emailLower
+      ));
+      addedInBatchUserNames.add(userName);
+      addedInBatchEmails.add(emailLower);
+    }
 
-      try {
-        await _createOneUser(
-          session,
-          userName: userName,
-          fullName: req.fullName,
-          email: req.email,
-          password: req.password,
-          role: req.role,
-          timeUnits: req.timeUnits,
-          reliefTimeUnits: req.reliefTimeUnits,
-          scopeNames: req.scopeNames,
-          isTester: req.isTester,
-          matrixUserId: req.matrixUserId,
-          credit: req.credit,
-          pupilsAuth: req.pupilsAuth,
-        );
-        credentials.add(CreatedUserCredential(
-          userName: userName,
-          fullName: req.fullName,
-          email: req.email,
-          password: req.password,
-        ));
-        existingUserNames.add(userName);
-        existingEmails.add(emailLower);
-      } catch (e) {
-        session.log('batchCreateUsers failed for $userName: $e');
-        errors.add(BatchCreateUserError(
-          rowIndex: rowIndex,
-          userNameOrKurzel: userName,
-          message: e.toString(),
-        ));
-      }
+    if (toCreate.isEmpty) {
+      return BatchCreateUsersResponse(credentials: credentials, errors: errors);
+    }
+
+    // Run creates in parallel with concurrency limit (5 at a time) to reduce total time.
+    // Each create uses its own transaction so we don't hold one long-lived transaction.
+    const concurrency = 5;
+    for (var start = 0; start < toCreate.length; start += concurrency) {
+      final chunk = toCreate.skip(start).take(concurrency).toList();
+      await Future.wait(chunk.map((item) async {
+        try {
+          await _createOneUser(
+            session,
+            userName: item.userName,
+            fullName: item.req.fullName,
+            email: item.req.email,
+            password: item.req.password,
+            role: item.req.role,
+            timeUnits: item.req.timeUnits,
+            reliefTimeUnits: item.req.reliefTimeUnits,
+            scopeNames: item.req.scopeNames,
+            isTester: item.req.isTester,
+            matrixUserId: item.req.matrixUserId,
+            credit: item.req.credit,
+            pupilsAuth: item.req.pupilsAuth,
+          );
+          credentials.add(CreatedUserCredential(
+            userName: item.userName,
+            fullName: item.req.fullName,
+            email: item.req.email,
+            password: item.req.password,
+          ));
+        } catch (e) {
+          session.log('batchCreateUsers failed for ${item.userName}: $e');
+          errors.add(BatchCreateUserError(
+            rowIndex: item.rowIndex,
+            userNameOrKurzel: item.userName,
+            message: e.toString(),
+          ));
+        }
+      }));
     }
 
     return BatchCreateUsersResponse(

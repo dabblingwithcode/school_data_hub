@@ -126,8 +126,8 @@ class UserManager {
   //-- Command implementations --
 
   Future<void> _fetchUsers() async {
-    final List<UserWithDevices> list = await _apiService
-        .getAllUsersWithDevices();
+    final list = await _apiService.getAllUsersWithDevices();
+    if (list == null) return;
     list.sort(
       (a, b) => (a.user.userInfo?.userName ?? '').compareTo(
         b.user.userInfo?.userName ?? '',
@@ -152,7 +152,7 @@ class UserManager {
       pupilsAuth: params.pupilsAuth,
     );
     final userWithDetails = await _apiService.getCurrentUser();
-    _addUser(userWithDetails!);
+    if (userWithDetails != null) _addUser(userWithDetails);
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -165,7 +165,7 @@ class UserManager {
       params.userEmail,
       params.newPassword,
     );
-    if (!success) {
+    if (success != true) {
       throw Exception('Passwort konnte nicht zurückgesetzt werden!');
     }
     _notificationService.showSnackBar(
@@ -179,7 +179,7 @@ class UserManager {
       params.oldPassword,
       params.newPassword,
     );
-    if (!success) {
+    if (success != true) {
       throw Exception('Passwort konnte nicht geändert werden!');
     }
     _notificationService.showSnackBar(
@@ -233,7 +233,7 @@ class UserManager {
 
   Future<void> _increaseUsersCredit() async {
     final success = await _apiService.increaseStaffCredit();
-    if (!success) {
+    if (success != true) {
       throw Exception('Guthaben konnte nicht erhöht werden!');
     }
     _notificationService.showSnackBar(
@@ -255,24 +255,28 @@ class UserManager {
       final email = row.email.trim().isEmpty
           ? '$userName@schule.local'
           : row.email.trim();
-      final scopeNames =
-          row.role == Role.admin ? ['admin'] : <String>[];
-      requests.add(CreateUserRequest(
-        userName: userName,
-        fullName: row.fullName,
-        email: email,
-        password: gen(row),
-        role: row.role,
-        timeUnits: row.timeUnits,
-        reliefTimeUnits: row.reliefTimeUnits,
-        scopeNames: scopeNames,
-        isTester: false,
-        matrixUserId: null,
-        credit: null,
-        pupilsAuth: null,
-      ));
+      final scopeNames = row.role == Role.admin ? ['admin'] : <String>[];
+      requests.add(
+        CreateUserRequest(
+          userName: userName,
+          fullName: row.fullName,
+          email: email,
+          password: gen(row),
+          role: row.role,
+          timeUnits: row.timeUnits,
+          reliefTimeUnits: row.reliefTimeUnits,
+          scopeNames: scopeNames,
+          isTester: false,
+          matrixUserId: null,
+          credit: null,
+          pupilsAuth: null,
+        ),
+      );
     }
     final response = await _apiService.batchCreateUsers(requests);
+    if (response == null) {
+      throw Exception('Benutzer-Stapelimport fehlgeschlagen.');
+    }
     final credentials = response.credentials
         .map(
           (c) => StaffCredentialEntry(

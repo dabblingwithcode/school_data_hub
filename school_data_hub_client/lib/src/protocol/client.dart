@@ -401,6 +401,7 @@ class EndpointAdminUser extends _i1.EndpointRef {
       );
 
   /// Batch-creates users. Returns credentials for successes and errors for skipped/failed rows.
+  /// Each create runs in its own transaction; creates are executed in parallel (up to 5 at a time) to reduce timeout risk.
   _i2.Future<_i13.BatchCreateUsersResponse> batchCreateUsers(
           List<_i14.CreateUserRequest> requests) =>
       caller.callServerEndpoint<_i13.BatchCreateUsersResponse>(

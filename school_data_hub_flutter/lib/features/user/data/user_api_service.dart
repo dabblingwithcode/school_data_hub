@@ -1,23 +1,33 @@
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 
 /// API service for user-related operations.
 class UserApiService {
   Client get _client => di<Client>();
 
   /// Fetch all users.
-  Future<List<User>> getAllUsers() async {
-    return _client.user.getAllUsers();
+  Future<List<User>?> getAllUsers() async {
+    return ClientHelper.apiCall(
+      call: () => _client.user.getAllUsers(),
+      errorMessage: 'Benutzer abrufen',
+    );
   }
 
   /// Fetch all users with UserInfo and list of UserDevices per user.
-  Future<List<UserWithDevices>> getAllUsersWithDevices() async {
-    return _client.user.getAllUsersWithDevices();
+  Future<List<UserWithDevices>?> getAllUsersWithDevices() async {
+    return ClientHelper.apiCall(
+      call: () => _client.user.getAllUsersWithDevices(),
+      errorMessage: 'Benutzer mit Geräten abrufen',
+    );
   }
 
   /// Get the currently authenticated user.
   Future<User?> getCurrentUser() async {
-    return _client.user.getCurrentUser();
+    return ClientHelper.apiCall<User?>(
+      call: () => _client.user.getCurrentUser(),
+      errorMessage: 'Aktuellen Benutzer abrufen',
+    );
   }
 
   /// Create a new user.
@@ -34,18 +44,21 @@ class UserApiService {
     required bool isTester,
     Set<int>? pupilsAuth,
   }) async {
-    await _client.adminUser.createUser(
-      userName: userName,
-      fullName: fullName,
-      email: email,
-      matrixUserId: matrixUserId,
-      password: password,
-      role: role,
-      timeUnits: timeUnits,
-      reliefTimeUnits: reliefTimeUnits,
-      scopeNames: scopeNames,
-      isTester: isTester,
-      pupilsAuth: pupilsAuth,
+    await ClientHelper.apiCall(
+      call: () => _client.adminUser.createUser(
+        userName: userName,
+        fullName: fullName,
+        email: email,
+        matrixUserId: matrixUserId,
+        password: password,
+        role: role,
+        timeUnits: timeUnits,
+        reliefTimeUnits: reliefTimeUnits,
+        scopeNames: scopeNames,
+        isTester: isTester,
+        pupilsAuth: pupilsAuth,
+      ),
+      errorMessage: 'Benutzer erstellen',
     );
   }
 
@@ -65,36 +78,48 @@ class UserApiService {
     String? imageUrl,
     Set<int>? pupilsAuth,
   }) async {
-    await _client.adminUser.updateUser(
-      userId,
-      userName: userName,
-      fullName: fullName,
-      email: email,
-      role: role,
-      matrixUserId: matrixUserId,
-      timeUnits: timeUnits,
-      reliefTimeUnits: reliefTimeUnits,
-      credit: credit,
-      isTester: isTester,
-      pupilsAuth: pupilsAuth,
+    await ClientHelper.apiCall(
+      call: () => _client.adminUser.updateUser(
+        userId,
+        userName: userName,
+        fullName: fullName,
+        email: email,
+        role: role,
+        matrixUserId: matrixUserId,
+        timeUnits: timeUnits,
+        reliefTimeUnits: reliefTimeUnits,
+        credit: credit,
+        isTester: isTester,
+        pupilsAuth: pupilsAuth,
+      ),
+      errorMessage: 'Benutzer aktualisieren',
     );
     // TODO: when server supports UserInfo.imageUrl, add imageUrl to the
     // endpoint and pass it here (client must be regenerated).
   }
 
   /// Reset a user's password. Returns `true` on success.
-  Future<bool> resetPassword(String userEmail, String newPassword) async {
-    return _client.adminUser.resetPassword(userEmail, newPassword);
+  Future<bool?> resetPassword(String userEmail, String newPassword) async {
+    return ClientHelper.apiCall(
+      call: () => _client.adminUser.resetPassword(userEmail, newPassword),
+      errorMessage: 'Passwort zurücksetzen',
+    );
   }
 
   /// Change the current user's password. Returns `true` on success.
-  Future<bool> changePassword(String oldPassword, String newPassword) async {
-    return _client.user.changePassword(oldPassword, newPassword);
+  Future<bool?> changePassword(String oldPassword, String newPassword) async {
+    return ClientHelper.apiCall(
+      call: () => _client.user.changePassword(oldPassword, newPassword),
+      errorMessage: 'Passwort ändern',
+    );
   }
 
   /// Delete (block) a user by ID.
   Future<void> deleteUser(int userId) async {
-    await _client.adminUser.deleteUser(userId);
+    await ClientHelper.apiCall(
+      call: () => _client.adminUser.deleteUser(userId),
+      errorMessage: 'Benutzer löschen',
+    );
   }
 
   /// Delete the auth key associated with a device. Returns updated user+devices
@@ -102,18 +127,27 @@ class UserApiService {
   Future<UserWithDevices?> deleteAuthKeyAssociatedWithDevice(
     UserDevice device,
   ) async {
-    return _client.adminUser.deleteAuthKeyAssociatedWithDevice(device);
+    return ClientHelper.apiCall<UserWithDevices?>(
+      call: () => _client.adminUser.deleteAuthKeyAssociatedWithDevice(device),
+      errorMessage: 'Geräte-Auth-Key löschen',
+    );
   }
 
   /// Increase staff credit for all users. Returns `true` on success.
-  Future<bool> increaseStaffCredit() async {
-    return _client.user.increaseStaffCredit();
+  Future<bool?> increaseStaffCredit() async {
+    return ClientHelper.apiCall(
+      call: () => _client.user.increaseStaffCredit(),
+      errorMessage: 'Mitarbeiter-Guthaben erhöhen',
+    );
   }
 
   /// Batch-creates users. Returns credentials for successes and errors for skipped/failed rows.
-  Future<BatchCreateUsersResponse> batchCreateUsers(
+  Future<BatchCreateUsersResponse?> batchCreateUsers(
     List<CreateUserRequest> requests,
   ) async {
-    return _client.adminUser.batchCreateUsers(requests);
+    return ClientHelper.apiCall(
+      call: () => _client.adminUser.batchCreateUsers(requests),
+      errorMessage: 'Benutzer-Stapelimport',
+    );
   }
 }
