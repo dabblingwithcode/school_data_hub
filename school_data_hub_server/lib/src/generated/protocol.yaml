@@ -24,6 +24,7 @@ adminSchoolDay:
   - deleteSchoolday:
 adminUser:
   - createUser:
+  - batchCreateUsers:
   - updateUser:
   - resetPassword:
   - deleteAuthKeyAssociatedWithDevice:

@@ -41,6 +41,51 @@ classDiagram {
 </style>
  
 
+class BatchCreateUsersResponse ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/batch_create_users_response.spy.yaml</size></b>
+--
+  <i>credentials</i>: <b><color:#ff962f>List<CreatedUserCredential></color></b>
+  <i>errors</i>: <b><color:#ff962f>List<BatchCreateUserError></color></b>
+
+}
+
+class BatchCreateUserError ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/batch_create_user_error.spy.yaml</size></b>
+--
+  <i>rowIndex</i>: <b><color:#ff962f>int</color></b>
+  <i>userNameOrKurzel</i>: <b><color:#ff962f>String</color></b>
+  <i>message</i>: <b><color:#ff962f>String</color></b>
+
+}
+
+class CreatedUserCredential ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/created_user_credential.spy.yaml</size></b>
+--
+  <i>userName</i>: <b><color:#ff962f>String</color></b>
+  <i>fullName</i>: <b><color:#ff962f>String</color></b>
+  <i>email</i>: <b><color:#ff962f>String</color></b>
+  <i>password</i>: <b><color:#ff962f>String</color></b>
+
+}
+
+class CreateUserRequest ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/create_user_request.spy.yaml</size></b>
+--
+  <i>userName</i>: <b><color:#ff962f>String</color></b>
+  <i>fullName</i>: <b><color:#ff962f>String</color></b>
+  <i>email</i>: <b><color:#ff962f>String</color></b>
+  <i>password</i>: <b><color:#ff962f>String</color></b>
+  <i>role</i>: <b><color:#ff962f>Role</color></b>
+  <i>timeUnits</i>: <b><color:#ff962f>int</color></b>
+  <i>reliefTimeUnits</i>: <b><color:#ff962f>int</color></b>
+  <i>scopeNames</i>: <b><color:#ff962f>List<String></color></b>
+  <i>isTester</i>: <b><color:#ff962f>bool</color></b>
+  <i>matrixUserId</i>: <b><color:#ff962f>String?</color></b>
+  <i>credit</i>: <b><color:#ff962f>int?</color></b>
+  <i>pupilsAuth</i>: <b><color:#ff962f>Set<int>?</color></b>
+
+}
+
 class HubLogEntry ##[bold]  {
 <size:14>📁</size> <b><size:12> /_features/admin/models/hub_log_entry.spy.yaml</size></b>
 --
@@ -1248,6 +1293,10 @@ enum MemberOperation #ece4ff ##[bold] {
  User::userInfo "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" module 
  PupilWorkbook::workbook "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Workbook 
 
+BatchCreateUsersResponse - BatchCreateUserError
+BatchCreateUsersResponse - CreatedUserCredential
+BatchCreateUsersResponse - User
+CreateUserRequest - Role
 HubSessionLogInfo - HubLogEntry
 HubSessionLogInfo - HubQueryLogEntry
 HubSessionLogInfo - HubSessionLogEntry

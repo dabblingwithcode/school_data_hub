@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/show_generic_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/batch_import_users/batch_import_users_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_card.dart';
@@ -162,6 +163,17 @@ class _UserListPageState extends State<UserListPage> {
                 tooltip: 'Aktualisieren',
                 icon: const Icon(Icons.refresh, size: 30),
                 onPressed: () => di<UserManager>().fetchUsers(),
+              ),
+              IconButton(
+                tooltip: 'Import aus Excel',
+                icon: const Icon(Icons.upload_file, size: 30),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (ctx) => const BatchImportUsersPage(),
+                    ),
+                  );
+                },
               ),
               IconButton(
                 tooltip: 'Neuer Benutzer',

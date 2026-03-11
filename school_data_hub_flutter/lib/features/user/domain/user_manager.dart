@@ -4,6 +4,9 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/user/data/user_api_service.dart';
+import 'package:school_data_hub_flutter/features/user/domain/batch_create_result.dart';
+import 'package:school_data_hub_flutter/features/user/domain/staff_import_password_generator.dart';
+import 'package:school_data_hub_flutter/features/user/domain/staff_import_row.dart';
 
 /// Data class for createUser command parameters.
 typedef CreateUserParams = ({
@@ -237,6 +240,60 @@ class UserManager {
       NotificationType.success,
       'Guthaben erfolgreich erhöht!',
     );
+  }
+
+  /// Batch-creates users from import rows. Passwords are generated on the client;
+  /// server validates and skips duplicate userName/email. Refreshes user list at the end.
+  Future<BatchCreateResult> batchCreateUsersFromImportRows(
+    List<StaffImportRow> rows, {
+    String Function(StaffImportRow)? generatePassword,
+  }) async {
+    final gen = generatePassword ?? (_) => generateRandomStaffPassword();
+    final requests = <CreateUserRequest>[];
+    for (final row in rows) {
+      final userName = row.kurzel.trim();
+      final email = row.email.trim().isEmpty
+          ? '$userName@schule.local'
+          : row.email.trim();
+      final scopeNames =
+          row.role == Role.admin ? ['admin'] : <String>[];
+      requests.add(CreateUserRequest(
+        userName: userName,
+        fullName: row.fullName,
+        email: email,
+        password: gen(row),
+        role: row.role,
+        timeUnits: row.timeUnits,
+        reliefTimeUnits: row.reliefTimeUnits,
+        scopeNames: scopeNames,
+        isTester: false,
+        matrixUserId: null,
+        credit: null,
+        pupilsAuth: null,
+      ));
+    }
+    final response = await _apiService.batchCreateUsers(requests);
+    final credentials = response.credentials
+        .map(
+          (c) => StaffCredentialEntry(
+            userName: c.userName,
+            fullName: c.fullName,
+            email: c.email,
+            password: c.password,
+          ),
+        )
+        .toList();
+    final errors = response.errors
+        .map(
+          (e) => BatchCreateError(
+            rowIndex: e.rowIndex,
+            userNameOrKurzel: e.userNameOrKurzel,
+            message: e.message,
+          ),
+        )
+        .toList();
+    await fetchUsersCommand.runAsync();
+    return BatchCreateResult(credentials: credentials, errors: errors);
   }
 
   //-- Convenience wrappers for backward compatibility --

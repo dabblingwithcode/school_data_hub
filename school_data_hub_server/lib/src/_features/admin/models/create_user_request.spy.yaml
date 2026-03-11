@@ -1,0 +1,15 @@
+# Request item for batch create users. Same fields as createUser params.
+class: CreateUserRequest
+fields:
+  userName: String
+  fullName: String
+  email: String
+  password: String
+  role: Role
+  timeUnits: int
+  reliefTimeUnits: int
+  scopeNames: List<String>
+  isTester: bool
+  matrixUserId: String?
+  credit: int?
+  pupilsAuth: Set<int>?

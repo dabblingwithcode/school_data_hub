@@ -29,14 +29,46 @@ class AdminUserEndpoint extends Endpoint {
     Set<int>? pupilsAuth,
   }) async {
     session.log('Creating user: $userName, $email');
+    return _createOneUser(
+      session,
+      userName: userName,
+      fullName: fullName,
+      email: email,
+      password: password,
+      role: role,
+      timeUnits: timeUnits,
+      reliefTimeUnits: reliefTimeUnits,
+      scopeNames: scopeNames,
+      isTester: isTester,
+      matrixUserId: matrixUserId,
+      credit: credit,
+      pupilsAuth: pupilsAuth,
+    );
+  }
+
+  /// Creates a single user (auth + UserInfo + scopes + User). Used by createUser and batchCreateUsers.
+  Future<User> _createOneUser(
+    Session session, {
+    required String userName,
+    required String fullName,
+    required String email,
+    required String password,
+    required Role role,
+    required int timeUnits,
+    required int reliefTimeUnits,
+    required List<String> scopeNames,
+    required bool isTester,
+    String? matrixUserId,
+    int? credit,
+    Set<int>? pupilsAuth,
+  }) async {
     final UserInfo? userInfo =
         await auth.Emails.createUser(session, userName, email, password);
 
     if (userInfo?.id == null) {
-      throw 'Failed to create user';
+      throw Exception('Failed to create user');
     }
 
-    // Convert string scopes to Scope objects
     Set<Scope> scopes = {};
     for (final scope in scopeNames) {
       if (scope == 'admin') {
@@ -47,15 +79,12 @@ class AdminUserEndpoint extends Endpoint {
     }
 
     final newUser = await session.db.transaction((transaction) async {
-      // Update the user info object
       userInfo!.fullName = fullName;
       await auth.UserInfo.db
           .updateRow(session, userInfo, transaction: transaction);
 
-      // Update scopes if provided
       await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
 
-      // Create a new User object and insert it into the database
       final user = User(
         userInfoId: userInfo.id!,
         userFlags: UserFlags(
@@ -78,6 +107,104 @@ class AdminUserEndpoint extends Endpoint {
     });
 
     return newUser;
+  }
+
+  /// Batch-creates users. Returns credentials for successes and errors for skipped/failed rows.
+  Future<BatchCreateUsersResponse> batchCreateUsers(
+    Session session,
+    List<CreateUserRequest> requests,
+  ) async {
+    final credentials = <CreatedUserCredential>[];
+    final errors = <BatchCreateUserError>[];
+
+    final existingUserNames = <String>{};
+    final existingEmails = <String>{};
+
+    final users = await User.db.find(session);
+    for (final user in users) {
+      final userInfo = await UserInfo.db.findFirstRow(
+        session,
+        where: (t) => t.id.equals(user.userInfoId),
+      );
+      if (userInfo != null) {
+        final name = userInfo.userName;
+        if (name != null && name.isNotEmpty) existingUserNames.add(name);
+        final emailStr = userInfo.email;
+        if (emailStr != null) {
+          final e = emailStr.trim().toLowerCase();
+          if (e.isNotEmpty) existingEmails.add(e);
+        }
+      }
+    }
+
+    for (var i = 0; i < requests.length; i++) {
+      final req = requests[i];
+      final rowIndex = i + 1;
+      final userName = req.userName.trim();
+      if (userName.isEmpty) {
+        errors.add(BatchCreateUserError(
+          rowIndex: rowIndex,
+          userNameOrKurzel: req.fullName,
+          message: 'Kürzel ist leer.',
+        ));
+        continue;
+      }
+      if (existingUserNames.contains(userName)) {
+        errors.add(BatchCreateUserError(
+          rowIndex: rowIndex,
+          userNameOrKurzel: userName,
+          message: 'Kürzel bereits vergeben.',
+        ));
+        continue;
+      }
+      final emailLower = req.email.trim().toLowerCase();
+      if (existingEmails.contains(emailLower)) {
+        errors.add(BatchCreateUserError(
+          rowIndex: rowIndex,
+          userNameOrKurzel: userName,
+          message: 'E-Mail bereits vergeben.',
+        ));
+        continue;
+      }
+
+      try {
+        await _createOneUser(
+          session,
+          userName: userName,
+          fullName: req.fullName,
+          email: req.email,
+          password: req.password,
+          role: req.role,
+          timeUnits: req.timeUnits,
+          reliefTimeUnits: req.reliefTimeUnits,
+          scopeNames: req.scopeNames,
+          isTester: req.isTester,
+          matrixUserId: req.matrixUserId,
+          credit: req.credit,
+          pupilsAuth: req.pupilsAuth,
+        );
+        credentials.add(CreatedUserCredential(
+          userName: userName,
+          fullName: req.fullName,
+          email: req.email,
+          password: req.password,
+        ));
+        existingUserNames.add(userName);
+        existingEmails.add(emailLower);
+      } catch (e) {
+        session.log('batchCreateUsers failed for $userName: $e');
+        errors.add(BatchCreateUserError(
+          rowIndex: rowIndex,
+          userNameOrKurzel: userName,
+          message: e.toString(),
+        ));
+      }
+    }
+
+    return BatchCreateUsersResponse(
+      credentials: credentials,
+      errors: errors,
+    );
   }
 
   /// Updates both User and UserInfo in one go. [userId] is the UserInfo id.

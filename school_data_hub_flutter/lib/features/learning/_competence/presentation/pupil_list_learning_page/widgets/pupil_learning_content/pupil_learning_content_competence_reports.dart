@@ -8,10 +8,10 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class PupilLearningContentCompetenceReports extends WatchingWidget {
@@ -23,6 +23,11 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
     final reportManager = di<CompetenceReportManager>();
     final currentSchoolSemester =
         di<SchoolCalendarManager>().currentSemester.value;
+
+    // Ensure reports are fetched when this tab is shown (parent card may have
+    // triggered fetch earlier but it's async; calling here guarantees we
+    // request and then rebuild when reportsByPupil updates).
+    callOnce((_) => reportManager.fetchReportsForPupil(pupil.pupilId));
 
     final reportsByPupil = watchValue(
       (CompetenceReportManager m) => m.reportsByPupil,

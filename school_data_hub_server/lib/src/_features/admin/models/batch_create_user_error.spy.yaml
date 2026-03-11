@@ -1,0 +1,6 @@
+# One failed or skipped row in batch create.
+class: BatchCreateUserError
+fields:
+  rowIndex: int
+  userNameOrKurzel: String
+  message: String

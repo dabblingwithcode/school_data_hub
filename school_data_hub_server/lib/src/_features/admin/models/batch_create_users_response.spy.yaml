@@ -1,0 +1,5 @@
+# Response of batch create users endpoint.
+class: BatchCreateUsersResponse
+fields:
+  credentials: List<CreatedUserCredential>
+  errors: List<BatchCreateUserError>

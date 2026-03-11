@@ -109,4 +109,11 @@ class UserApiService {
   Future<bool> increaseStaffCredit() async {
     return _client.user.increaseStaffCredit();
   }
+
+  /// Batch-creates users. Returns credentials for successes and errors for skipped/failed rows.
+  Future<BatchCreateUsersResponse> batchCreateUsers(
+    List<CreateUserRequest> requests,
+  ) async {
+    return _client.adminUser.batchCreateUsers(requests);
+  }
 }

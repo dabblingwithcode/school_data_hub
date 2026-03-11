@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/features/learning/_competence/domain/com
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/batch_import_users/batch_import_users_page.dart';
 
 class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
   const SettingsAdminSection({super.key});
@@ -89,6 +90,17 @@ class SettingsAdminSection extends AbstractSettingsSection with WatchItMixin {
           title: const Text('Förderstufen aus Datei importieren'),
 
           //onPressed:
+        ),
+        SettingsTile.navigation(
+          onPressed: (context) {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (ctx) => const BatchImportUsersPage(),
+              ),
+            );
+          },
+          leading: const Icon(Icons.upload_file),
+          title: const Text('Benutzer aus Excel importieren'),
         ),
       ],
     );
