@@ -211,7 +211,7 @@ class ToolsPage extends WatchingWidget {
                           Navigator.pop(context);
                           final List<int>? pupilIds =
                               await Navigator.of(context).push(
-                                MaterialPageRoute(
+                                MaterialPageRoute<List<int>>(
                                   builder: (ctx) => SelectPupilsListPage(
                                     selectablePupils: di<PupilProxyManager>()
                                         .getPupilsFromInternalIds(

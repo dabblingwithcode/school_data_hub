@@ -142,7 +142,7 @@ class MatrixUsersInRoomList extends WatchingWidget {
 
             final List<String> selectedUserIds =
                 await Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<List<String>>(
                     builder: (ctx) => SelectMatrixUsersList(
                       MatrixUserHelper.usersFromUserIds(availableUsers),
                     ),
@@ -167,7 +167,7 @@ class MatrixUsersInRoomList extends WatchingWidget {
             if (matrixUsers.isEmpty)
               const Text(
                 'Keine Konten in diesem Raum!',
-                style: const TextStyle(color: Colors.black, fontSize: 16),
+                style: TextStyle(color: Colors.black, fontSize: 16),
               ),
           ],
         ),
@@ -216,7 +216,7 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
         return InkWell(
           onTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (ctx) => PupilProfilePage(pupil: linkedPupil),
               ),
             );

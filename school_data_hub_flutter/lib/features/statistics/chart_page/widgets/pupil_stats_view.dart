@@ -68,7 +68,7 @@ class _PupilStatsViewState extends State<PupilStatsView> {
       buffer.writeln('Reguläre Schüler: ${dateData.regularPupils}');
       buffer.writeln('Neue Schüler: ${dateData.newPupils}');
 
-      showDialog(
+      showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Details'),

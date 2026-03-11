@@ -11,8 +11,8 @@ final _log = Logger('TimetableGrid');
 
 class TimetableGrid extends WatchingWidget {
   final TimetableManager timetableManager;
-  final Function(int lessonId) onLessonTap;
-  final Function(int slotId) onEmptySlotTap;
+  final void Function(int lessonId) onLessonTap;
+  final void Function(int slotId) onEmptySlotTap;
 
   const TimetableGrid({
     super.key,
@@ -91,7 +91,7 @@ class TimetableGrid extends WatchingWidget {
               onPressed: () async {
                 await Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (context) => const ClassroomListPage(),
                   ),
                 );
@@ -183,8 +183,8 @@ class _TimetableRow extends StatelessWidget {
   final String period;
   final List<LessonGroup> lessonGroups;
   final TimetableManager timetableManager;
-  final Function(int lessonId) onLessonTap;
-  final Function(int slotId) onEmptySlotTap;
+  final void Function(int lessonId) onLessonTap;
+  final void Function(int slotId) onEmptySlotTap;
 
   const _TimetableRow({
     required this.context,

@@ -137,7 +137,7 @@ class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
     if (pendingScores.isEmpty) return;
 
     // Show loading indicator
-    showDialog(
+    showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (context) => const Center(child: CircularProgressIndicator()),

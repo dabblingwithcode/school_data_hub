@@ -320,7 +320,7 @@ class _NewMatrixUserPageContentState extends State<_NewMatrixUserPageContent> {
                   onPressed: () async {
                     final List<String> selectedRoomIds =
                         await Navigator.of(context).push(
-                          MaterialPageRoute(
+                          MaterialPageRoute<List<String>>(
                             builder: (ctx) => SelectMatrixRoomsList(
                               MatrixRoomHelper.restOfRooms(roomIds.toList()),
                             ),

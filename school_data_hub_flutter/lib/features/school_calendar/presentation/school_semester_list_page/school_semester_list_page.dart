@@ -90,7 +90,7 @@ class SchoolSemesterListPage extends WatchingWidget {
   ) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const NewSchoolSemesterPage()),
+      MaterialPageRoute<void>(builder: (context) => const NewSchoolSemesterPage()),
     );
     // Refresh data when returning from NewSchoolSemesterPage
     await manager.fetchSchoolSemesters();
@@ -103,7 +103,7 @@ class SchoolSemesterListPage extends WatchingWidget {
   ) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (context) => NewSchoolSemesterPage(semester: semester),
       ),
     );
@@ -116,7 +116,7 @@ class SchoolSemesterListPage extends WatchingWidget {
     SchoolSemester semester,
     SchoolCalendarManager manager,
   ) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(

@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/subject_
 
 class SubjectList extends StatelessWidget {
   final List<Subject> subjects;
-  final Function(Subject) onSubjectTap;
+  final void Function(Subject) onSubjectTap;
 
   const SubjectList({
     super.key,

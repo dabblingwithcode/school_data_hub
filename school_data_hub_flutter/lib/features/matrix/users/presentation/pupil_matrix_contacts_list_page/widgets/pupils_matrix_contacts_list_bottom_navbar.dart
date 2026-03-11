@@ -35,7 +35,7 @@ class PupilMatrixContactsListBottomNavBar extends StatelessWidget {
               InkWell(
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (ctx) => const SelectCompetence(),
                     ),
                   );

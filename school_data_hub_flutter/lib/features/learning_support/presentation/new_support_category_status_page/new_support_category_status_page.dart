@@ -75,7 +75,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 onPressed: () async {
                                   final int? categoryId =
                                       await Navigator.of(context).push(
-                                        MaterialPageRoute(
+                                        MaterialPageRoute<int>(
                                           builder: (ctx) =>
                                               SelectSupportCategoryPage(
                                                 pupil: pupilManager

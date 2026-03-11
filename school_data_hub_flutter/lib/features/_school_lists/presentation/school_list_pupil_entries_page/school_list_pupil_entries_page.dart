@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
-import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
@@ -37,7 +37,6 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
   Widget build(BuildContext context) {
     final _schoolListManager = di<SchoolListManager>();
     final _schoolListFilterManager = di<SchoolListFilterManager>();
-    final _pupilManager = di<PupilProxyManager>();
     final pupilsFilter = di<PupilsFilter>();
     final filterStateManager = di<FiltersStateManager>();
     final unfilteredPupilListEntries = watch(
@@ -57,8 +56,9 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
           ),
         )
         .toList();
-    final pupilsInListListenable =
-        createOnce(() => ValueNotifier<List<PupilProxy>>([]));
+    final pupilsInListListenable = createOnce(
+      () => ValueNotifier<List<PupilProxy>>([]),
+    );
     pupilsInListListenable.value = pupilsInList;
 
     return Scaffold(
@@ -90,20 +90,18 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
                       onResetFilters: filterStateManager.resetFilters,
                       showFilterBottomSheet: (context) =>
                           showGenericFilterBottomSheet(
-                        context: context,
-                        filterList: [
-                          const CommonPupilFiltersWidget(),
-                          const SchoolListPupilEntriesFiltersWidget(),
-                        ],
-                      ),
+                            context: context,
+                            filterList: [
+                              const CommonPupilFiltersWidget(),
+                              const SchoolListPupilEntriesFiltersWidget(),
+                            ],
+                          ),
                     ),
                   ),
                   GenericSliverListWithEmptyListCheck<PupilProxy>(
                     itemsListenable: pupilsInListListenable,
-                    itemBuilder: (_, PupilProxy pupil) => SchoolListPupilEntryCard(
-                      pupil.pupilId,
-                      schoolList.id!,
-                    ),
+                    itemBuilder: (_, PupilProxy pupil) =>
+                        SchoolListPupilEntryCard(pupil.pupilId, schoolList.id!),
                   ),
                 ],
               ),
@@ -122,7 +120,7 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
                 final users = di<UserManager>().users.value;
                 final List<User>? selectedUsers = await Navigator.of(context)
                     .push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<List<User>>(
                         builder: (ctx) => SelectUsersPage(
                           selectableUsers: users
                               .where(
@@ -156,7 +154,7 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
             onPressed: () async {
               final List<int> selectedPupilIds =
                   await Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<List<int>>(
                       builder: (ctx) => SelectPupilsListPage(
                         selectablePupils: di<PupilProxyManager>()
                             .getPupilsNotListed(
@@ -193,7 +191,7 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
 
               if (context.mounted) {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (ctx) => SchoolListPdfViewPage(pdfFile: pdfFile),
                   ),
                 );

@@ -31,7 +31,7 @@ class BookLendingStatsView extends WatchingWidget {
         final dateData = bookLendingChartData[chartData.date];
         if (dateData == null) return;
 
-        showDialog(
+        showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
             title: Text(

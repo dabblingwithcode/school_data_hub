@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:listen_it/listen_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
@@ -29,8 +28,8 @@ class AuthorizationManager with ChangeNotifier {
 
   Map<int, Authorization> _authorizationsMap = {};
 
-  final Map<String, ValueListenable<PupilAuthorization?>> _pupilAuthListenables =
-      {};
+  final Map<String, ValueListenable<PupilAuthorization?>>
+  _pupilAuthListenables = {};
 
   StreamSubscription<dynamic>? _hubSubscription; // ignore: unused_field
 
@@ -124,8 +123,7 @@ class AuthorizationManager with ChangeNotifier {
   }
 
   void _removePupilAuthListenablesForAuth(int authId) {
-    _pupilAuthListenables
-        .removeWhere((key, _) => key.startsWith('$authId-'));
+    _pupilAuthListenables.removeWhere((key, _) => key.startsWith('$authId-'));
   }
 
   /// Returns a [ValueListenable] that notifies only when this pupil's

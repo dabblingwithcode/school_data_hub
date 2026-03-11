@@ -118,7 +118,7 @@ class LessonGroupDropdown extends WatchingWidget {
         InkWell(
           onTap: () async {
             final result = await Navigator.of(context).push<LessonGroup>(
-              MaterialPageRoute(
+              MaterialPageRoute<LessonGroup>(
                 builder: (context) => const NewLessonGroupPage(),
               ),
             );

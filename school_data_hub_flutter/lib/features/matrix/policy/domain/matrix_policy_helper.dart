@@ -107,7 +107,7 @@ class MatrixPolicyHelper {
     return refreshedPolicy;
   }
 
-  static String generateMatrixId({required isParent}) {
+  static String generateMatrixId({required bool isParent}) {
     var uuid = const Uuid();
     String randomUUID = uuid.v4().replaceAll('-', '');
 
@@ -118,8 +118,6 @@ class MatrixPolicyHelper {
       case false:
         return '${matrixId}_';
     }
-
-    return matrixId;
   }
 
   static String generatePassword() {

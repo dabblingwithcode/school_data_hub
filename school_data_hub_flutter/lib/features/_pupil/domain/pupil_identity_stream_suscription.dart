@@ -203,7 +203,7 @@ class PupilIdentityStream {
           );
           return false;
         }
-        final session = await crypto!.completeSession(
+        final session = await crypto.completeSession(
           pendingHandshakeResult!.myEphemeralPrivateBytes,
           pendingHandshakeResult!.myEphemeralPublicBytes,
           handshake.pubKeyBase64,

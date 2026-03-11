@@ -234,7 +234,7 @@ class SettingsSessionSection extends AbstractSettingsSection with WatchItMixin {
               await cacheManager.emptyCache();
               if (context.mounted) {
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (ctx) => const Login()),
+                  MaterialPageRoute<void>(builder: (ctx) => const Login()),
                   (route) => false,
                 );
               }

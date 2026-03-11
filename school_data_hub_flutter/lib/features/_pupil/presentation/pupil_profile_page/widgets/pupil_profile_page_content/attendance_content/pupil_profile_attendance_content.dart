@@ -37,7 +37,7 @@ class PupilAttendanceContent extends WatchingWidget {
             title: 'Fehlzeiten',
             onTitleTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (ctx) => const MissedSchooldaysPupilListPage(),
                 ),
               );

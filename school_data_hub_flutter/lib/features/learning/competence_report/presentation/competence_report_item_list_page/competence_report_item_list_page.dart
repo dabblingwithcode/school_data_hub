@@ -21,7 +21,7 @@ class CompetenceReportItemListPage extends WatchingWidget {
       CompetenceReportItem? item,
     }) {
       Navigator.of(context).push(
-        MaterialPageRoute(
+        MaterialPageRoute<void>(
           builder: (ctx) =>
               PostOrPatchReportItemPage(parentItem: parentItemId, item: item),
         ),
@@ -64,7 +64,7 @@ class CompetenceReportItemListPage extends WatchingWidget {
             icon: const Icon(Icons.add, size: 30),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (ctx) => const PostOrPatchReportItemPage(),
                 ),
               );
@@ -75,7 +75,7 @@ class CompetenceReportItemListPage extends WatchingWidget {
             icon: const Icon(Icons.sort_rounded, size: 30),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (ctx) => const SortableReportItemListPage(),
                 ),
               );

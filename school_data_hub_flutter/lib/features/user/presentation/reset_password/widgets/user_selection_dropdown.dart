@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 class UserSelectionDropdown extends StatelessWidget {
   final User? selectedUser;
   final List<User> users;
-  final Function(User?) onUserChanged;
+  final void Function(User?) onUserChanged;
 
   const UserSelectionDropdown({
     super.key,

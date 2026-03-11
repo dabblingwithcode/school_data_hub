@@ -79,7 +79,7 @@ class MatrixRoomApiService {
       },
     });
 
-    final Response response = await _apiClient.post(
+    final Response<dynamic> response = await _apiClient.post(
       _createRoom,
       data: data,
       options: _apiClient.matrixOptions,
@@ -209,7 +209,7 @@ class MatrixRoomApiService {
       return currentRoom;
     }
 
-    final Response fetchResponse = await _apiClient.get(
+    final Response<dynamic> fetchResponse = await _apiClient.get(
       _fetchRoomPowerLevelsUrl(roomId),
       options: _apiClient.matrixOptions,
     );
@@ -237,7 +237,7 @@ class MatrixRoomApiService {
     }
     payload['events'] = events;
 
-    final Response putResponse = await _apiClient.put(
+    final Response<dynamic> putResponse = await _apiClient.put(
       _fetchRoomPowerLevelsUrl(roomId),
       data: payload,
       options: _apiClient.matrixOptions,
@@ -269,7 +269,7 @@ class MatrixRoomApiService {
       _ => 'application/octet-stream',
     };
 
-    final Response uploadResponse = await _apiClient.post(
+    final Response<dynamic> uploadResponse = await _apiClient.post(
       '/_matrix/media/v3/upload',
       data: fileBytes,
       queryParameters: {'filename': fileName},
@@ -288,7 +288,7 @@ class MatrixRoomApiService {
       throw ApiException('Ungültige Antwort beim Avatar-Upload', 500);
     }
 
-    final Response stateResponse = await _apiClient.put(
+    final Response<dynamic> stateResponse = await _apiClient.put(
       _fetchRoomAvatarUrl(roomId),
       data: {'url': mxcUrl},
       options: _apiClient.matrixOptions,
@@ -318,7 +318,7 @@ class MatrixRoomApiService {
   }
 
   Future<String?> fetchRoomCanonicalAlias(String roomId) async {
-    final Response response = await _apiClient.get(
+    final Response<dynamic> response = await _apiClient.get(
       _fetchRoomCanonicalAliasUrl(roomId),
       options: _apiClient.matrixOptions,
     );
@@ -334,7 +334,7 @@ class MatrixRoomApiService {
     required String roomId,
     required String name,
   }) async {
-    final Response response = await _apiClient.put(
+    final Response<dynamic> response = await _apiClient.put(
       '/_matrix/client/v3/rooms/${_encodeRoomId(roomId)}/state/m.room.name',
       data: {'name': name},
       options: _apiClient.matrixOptions,
@@ -354,7 +354,7 @@ class MatrixRoomApiService {
     required String roomId,
     required String topic,
   }) async {
-    final Response response = await _apiClient.put(
+    final Response<dynamic> response = await _apiClient.put(
       _fetchRoomTopicUrl(roomId),
       data: {'topic': topic},
       options: _apiClient.matrixOptions,
@@ -372,7 +372,7 @@ class MatrixRoomApiService {
     required String roomId,
     required String? alias,
   }) async {
-    final Response response = await _apiClient.put(
+    final Response<dynamic> response = await _apiClient.put(
       _fetchRoomCanonicalAliasUrl(roomId),
       data: {'alias': alias?.trim().isEmpty == true ? null : alias},
       options: _apiClient.matrixOptions,
@@ -420,7 +420,7 @@ class MatrixRoomApiService {
       _log.info('Sending message to room: $roomId');
       _log.fine('Endpoint: $endpoint');
 
-      final Response response = await _apiClient.put(
+      final Response<dynamic> response = await _apiClient.put(
         endpoint,
         data: messageData, // Send as Map, let Dio handle JSON encoding
         options: _apiClient.matrixOptions,
@@ -531,7 +531,7 @@ class MatrixRoomApiService {
     }
 
     try {
-      final Response response = await _apiClient.get(
+      final Response<dynamic> response = await _apiClient.get(
         endpoint,
         queryParameters: queryParams,
         options: _apiClient.matrixOptions,
@@ -667,7 +667,7 @@ class MatrixRoomApiService {
 
       _log.info('Creating room with data: $data');
 
-      final Response response = await _apiClient.post(
+      final Response<dynamic> response = await _apiClient.post(
         '/_matrix/client/v3/createRoom',
         data: data,
         options: _apiClient.matrixOptions,
@@ -745,7 +745,7 @@ class MatrixRoomApiService {
       for (final existingRoomId in roomIds) {
         try {
           final encodedRoomId = _encodeRoomId(existingRoomId);
-          final Response membersResponse = await _apiClient.get(
+          final Response<dynamic> membersResponse = await _apiClient.get(
             '/_matrix/client/v3/rooms/$encodedRoomId/members',
             options: _apiClient.matrixOptions,
           );
@@ -888,7 +888,7 @@ class MatrixRoomApiService {
       for (final roomId in roomIds) {
         try {
           final encodedRoomId = _encodeRoomId(roomId);
-          final Response membersResponse = await _apiClient.get(
+          final Response<dynamic> membersResponse = await _apiClient.get(
             '/_matrix/client/v3/rooms/$encodedRoomId/members',
             options: _apiClient.matrixOptions,
           );
@@ -949,7 +949,7 @@ class MatrixRoomApiService {
 
   //   final data = jsonEncode({"user_id": userId});
 
-  //   final Response response = await _apiClient.post(
+  //   final Response<dynamic> response = await _apiClient.post(
   //     endpoint,
   //     data: data,
   //     options: _apiClient.matrixOptions,
@@ -1001,7 +1001,7 @@ class MatrixRoomApiService {
 
   Future<Map<String, dynamic>?> _getDirectRoomsForUser(String userId) async {
     final encodedUserId = Uri.encodeComponent(userId);
-    final Response response = await _apiClient.get(
+    final Response<dynamic> response = await _apiClient.get(
       '/_matrix/client/v3/user/$encodedUserId/account_data/m.direct',
       options: _apiClient.matrixOptions,
     );
@@ -1027,7 +1027,7 @@ class MatrixRoomApiService {
     Map<String, dynamic> directRooms,
   ) async {
     final encodedUserId = Uri.encodeComponent(userId);
-    final Response response = await _apiClient.put(
+    final Response<dynamic> response = await _apiClient.put(
       '/_matrix/client/v3/user/$encodedUserId/account_data/m.direct',
       data: directRooms,
       options: _apiClient.matrixOptions,
@@ -1059,7 +1059,7 @@ class MatrixRoomApiService {
   }
 
   Future<String?> _getCurrentUserId() async {
-    final Response whoamiResponse = await _apiClient.get(
+    final Response<dynamic> whoamiResponse = await _apiClient.get(
       '/_matrix/client/v3/account/whoami',
       options: _apiClient.matrixOptions,
     );
@@ -1084,7 +1084,7 @@ class MatrixRoomApiService {
       }
 
       // Check if the admin is already in the room
-      final Response membersResponse = await _apiClient.get(
+      final Response<dynamic> membersResponse = await _apiClient.get(
         '/_matrix/client/v3/rooms/$roomId/members',
         options: _apiClient.matrixOptions,
       );
@@ -1104,7 +1104,7 @@ class MatrixRoomApiService {
       }
 
       // If admin is not in the room, try to join it
-      final Response joinResponse = await _apiClient.post(
+      final Response<dynamic> joinResponse = await _apiClient.post(
         '/_matrix/client/v3/rooms/$roomId/join',
         options: _apiClient.matrixOptions,
       );

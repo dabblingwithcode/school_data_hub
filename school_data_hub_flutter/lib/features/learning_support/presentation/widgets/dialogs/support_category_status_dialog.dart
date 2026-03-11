@@ -8,7 +8,7 @@ final GlobalKey<FormState> _categoryStatusKey = GlobalKey<FormState>();
 final TextEditingController _textEditingController = TextEditingController();
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 
-Future supportCategoryStatusDialog(
+Future<void> supportCategoryStatusDialog(
   PupilProxy pupil,
   int goalCategoryId,
   BuildContext parentContext,

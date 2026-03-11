@@ -47,7 +47,7 @@ void setAvatar({
   }
   File? imageFile = await Navigator.push<File?>(
     context,
-    MaterialPageRoute(builder: (context) => CropAvatarView(image: image!)),
+    MaterialPageRoute<File?>(builder: (context) => CropAvatarView(image: image!)),
   );
   if (imageFile == null) {
     return;

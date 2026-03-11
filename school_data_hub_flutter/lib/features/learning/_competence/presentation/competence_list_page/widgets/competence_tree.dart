@@ -11,7 +11,7 @@ class CompetenceTree extends StatelessWidget {
   final List<Competence> competences;
   final int? parentId;
   final Color? backgroundColor;
-  final Function({int? competenceId, Competence? competence})
+  final void Function({int? competenceId, Competence? competence})
   navigateToNewOrPatchCompetencePage;
 
   const CompetenceTree({
@@ -54,7 +54,7 @@ class _CompetenceNode extends StatelessWidget {
   final Competence competence;
   final List<Competence> allCompetences;
   final Color? backgroundColor;
-  final Function({int? competenceId, Competence? competence})
+  final void Function({int? competenceId, Competence? competence})
   navigateToNewOrPatchCompetencePage;
 
   const _CompetenceNode({

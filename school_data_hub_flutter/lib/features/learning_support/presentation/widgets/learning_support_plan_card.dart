@@ -100,7 +100,7 @@ class _PlanMetadataAndActions extends StatelessWidget {
 
   void _editPlan(BuildContext context) {
     Navigator.of(context).push(
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (ctx) =>
             NewLearningSupportPlan(pupil: pupil, existingPlan: plan),
       ),
@@ -114,7 +114,7 @@ class _PlanMetadataAndActions extends StatelessWidget {
 
       if (context.mounted) {
         Navigator.of(context).push(
-          MaterialPageRoute(
+          MaterialPageRoute<void>(
             builder: (ctx) => LearningSupportPlanPdfViewPage(
               plan: plan,
               pupil: pupil,

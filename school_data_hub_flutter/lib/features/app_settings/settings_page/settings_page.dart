@@ -81,7 +81,7 @@ class SettingsPage extends WatchingWidget {
                     leading: const Icon(Icons.bug_report_rounded),
                     title: const Text('Logs'),
                     onPressed: (context) => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (ctx) => const LogsPage()),
+                      MaterialPageRoute<void>(builder: (ctx) => const LogsPage()),
                     ),
                   ),
                   if (AuthClearanceHelper.isAdmin())
@@ -91,7 +91,7 @@ class SettingsPage extends WatchingWidget {
                       onPressed: (context) {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
+                          MaterialPageRoute<void>(
                             builder: (_) => const ServerLogsPage(),
                           ),
                         );
@@ -106,7 +106,7 @@ class SettingsPage extends WatchingWidget {
                         if (!context.mounted) return;
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
+                          MaterialPageRoute<void>(
                             builder: (_) => const MatrixCorporalLogsPage(),
                           ),
                         );

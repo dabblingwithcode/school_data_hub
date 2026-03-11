@@ -64,7 +64,7 @@ class _EventStatsViewState extends State<EventStatsView> {
       buffer.writeln('Rote Karte + Abholen: ${dateData.admonitionAndBanned}');
       buffer.writeln('Sonstiges: ${dateData.otherEvent}');
 
-      showDialog(
+      showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Details'),

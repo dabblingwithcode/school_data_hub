@@ -30,7 +30,9 @@ class PupilProfileCreditContent extends WatchingWidget {
             title: 'Guthaben',
             onTitleTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => const CreditListPage()),
+                MaterialPageRoute<void>(
+                  builder: (ctx) => const CreditListPage(),
+                ),
               );
             },
             headerTrailing: Row(

@@ -119,7 +119,7 @@ class LearningSupportPlansSection extends StatelessWidget {
                       return;
                     }
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (ctx) => NewLearningSupportPlan(pupil: pupil),
                       ),
                     );

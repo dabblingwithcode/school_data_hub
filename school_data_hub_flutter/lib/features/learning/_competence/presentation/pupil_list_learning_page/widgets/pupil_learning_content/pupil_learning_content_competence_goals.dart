@@ -24,11 +24,11 @@ class PupilLearningContentCompetenceGoals extends StatelessWidget {
         GenericAsyncActionButton(
           onPressed: () async {
             Navigator.of(context).push(
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (context) => SelectCompetence(
                   onSelected: (ctx, competence) {
                     Navigator.of(ctx).pushReplacement(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (context) => NewCompetenceGoalPage(
                           pupilId: pupil.pupilId,
                           competenceId: competence.publicId,

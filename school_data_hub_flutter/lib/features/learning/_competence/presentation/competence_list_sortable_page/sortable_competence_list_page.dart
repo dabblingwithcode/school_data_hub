@@ -22,7 +22,7 @@ class SortableCompetenceListPage extends WatchingWidget {
       Competence? competence,
     }) {
       Navigator.of(context).push(
-        MaterialPageRoute(
+        MaterialPageRoute<void>(
           builder: (ctx) => PostOrPatchCompetencePage(
             parentCompetence: competenceId,
             competence: competence,
@@ -77,7 +77,7 @@ class SortableCompetenceListPage extends WatchingWidget {
             icon: const Icon(Icons.sort_rounded),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (ctx) => const SortableCompetenceListPage(),
                 ),
               );

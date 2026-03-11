@@ -78,7 +78,7 @@ class LanguagesListTiles extends WatchingWidget {
                           final pupilsWithLanguage = controller.pupils
                               .where((p) => p.language == language)
                               .toList();
-                          await showDialog(
+                          await showDialog<void>(
                             context: context,
                             builder: (context) => PupilListDialog(
                               title: language,

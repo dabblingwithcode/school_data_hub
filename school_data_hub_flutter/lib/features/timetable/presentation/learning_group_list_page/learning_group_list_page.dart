@@ -44,7 +44,7 @@ class LearningGroupListPage extends WatchingWidget {
   void _navigateToNewLessonGroup(BuildContext context) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const NewLessonGroupPage()),
+      MaterialPageRoute<void>(builder: (context) => const NewLessonGroupPage()),
     );
   }
 
@@ -54,7 +54,7 @@ class LearningGroupListPage extends WatchingWidget {
   ) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (context) => NewLessonGroupPage(lessonGroup: group),
       ),
     );
@@ -65,7 +65,7 @@ class LearningGroupListPage extends WatchingWidget {
     LessonGroup group,
     TimetableManager timetableManager,
   ) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(

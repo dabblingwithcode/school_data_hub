@@ -41,8 +41,9 @@ class CreditFiltersWidget extends WatchingWidget {
               selected: sortModeValue == PupilSortMode.sortByCredit,
               onSelected: (val) {
                 if (di<PupilsFilter>().sortMode.value ==
-                    PupilSortMode.sortByCredit)
+                    PupilSortMode.sortByCredit) {
                   return;
+                }
                 di<PupilsFilter>().setSortMode(PupilSortMode.sortByCredit);
               },
             ),
@@ -51,8 +52,9 @@ class CreditFiltersWidget extends WatchingWidget {
               selected: sortModeValue == PupilSortMode.sortByCreditEarned,
               onSelected: (val) {
                 if (di<PupilsFilter>().sortMode.value ==
-                    PupilSortMode.sortByCreditEarned)
+                    PupilSortMode.sortByCreditEarned) {
                   return;
+                }
                 di<PupilsFilter>().setSortMode(
                   PupilSortMode.sortByCreditEarned,
                 );

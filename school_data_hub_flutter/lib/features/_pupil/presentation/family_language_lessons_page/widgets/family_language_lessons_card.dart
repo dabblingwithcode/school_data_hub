@@ -57,7 +57,7 @@ class FamilyLanguageLessonsCard extends WatchingWidget {
                                       mainMenuBottomNavManager
                                           .setPupilProfileNavPage(1);
                                       Navigator.of(context).push(
-                                        MaterialPageRoute(
+                                        MaterialPageRoute<void>(
                                           builder: (ctx) =>
                                               PupilProfilePage(pupil: pupil),
                                         ),

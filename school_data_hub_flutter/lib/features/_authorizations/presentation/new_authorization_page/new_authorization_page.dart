@@ -257,7 +257,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                   onPressed: () async {
                     final List<int> selectedPupilIds =
                         await Navigator.of(context).push(
-                          MaterialPageRoute(
+                          MaterialPageRoute<List<int>>(
                             builder: (ctx) => SelectPupilsListPage(
                               selectablePupils: _pupilManager
                                   .getPupilsNotListed(pupilIds.toList()),

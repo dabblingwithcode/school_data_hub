@@ -163,7 +163,7 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
                                                 await Navigator.of(
                                                   context,
                                                 ).push<List<BookTag>>(
-                                                  MaterialPageRoute(
+                                                  MaterialPageRoute<List<BookTag>>(
                                                     builder: (context) =>
                                                         SelectBookTagsPage(
                                                           initialSelectedTags:
@@ -345,7 +345,7 @@ class _BookSearchFormPageState extends State<BookSearchFormPage> {
                     );
                     if (!context.mounted) return;
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (context) => BookSearchResultsPage(
                           title: title,
                           author: author,

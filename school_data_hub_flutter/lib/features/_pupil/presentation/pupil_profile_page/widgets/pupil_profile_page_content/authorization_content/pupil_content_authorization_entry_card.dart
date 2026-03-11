@@ -53,7 +53,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                             InkWell(
                               onTap: () {
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (ctx) =>
                                         AuthorizationPupilsPage(authorization),
                                   ),

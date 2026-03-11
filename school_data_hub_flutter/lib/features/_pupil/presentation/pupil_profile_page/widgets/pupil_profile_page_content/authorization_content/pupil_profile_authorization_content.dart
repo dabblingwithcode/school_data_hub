@@ -20,7 +20,7 @@ class PupilProfileAuthorizationContent extends StatelessWidget {
             title: 'Einwilligungen',
             onTitleTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (ctx) => const AuthorizationsListPage(),
                 ),
               );

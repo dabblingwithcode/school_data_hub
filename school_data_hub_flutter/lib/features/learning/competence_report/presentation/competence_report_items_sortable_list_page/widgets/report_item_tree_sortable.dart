@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/learning/competence_report/pres
 
 class ReportItemTreeSortable extends StatefulWidget {
   final List<CompetenceReportItem> items;
-  final Function({int? parentItemId, CompetenceReportItem? item})
+  final void Function({int? parentItemId, CompetenceReportItem? item})
   navigateToPostOrPatch;
 
   const ReportItemTreeSortable({

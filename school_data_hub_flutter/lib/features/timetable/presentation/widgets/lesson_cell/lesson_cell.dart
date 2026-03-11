@@ -255,7 +255,7 @@ class LessonCell extends WatchingWidget {
   ) {
     if (lesson?.id == null) return;
 
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => _TeacherSelectionDialog(
         lesson: lesson!,

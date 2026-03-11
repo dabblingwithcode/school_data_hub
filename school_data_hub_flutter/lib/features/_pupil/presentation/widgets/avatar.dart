@@ -530,7 +530,7 @@ void _specialInformationDialog(
   final createdBy = parts.length > 1 ? parts[1] : null;
   final createdAt = parts.length > 2 ? parts[2] : null;
 
-  showDialog(
+  showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
       icon: Icon(Icons.info, color: AppColors.backgroundColor, size: 50),

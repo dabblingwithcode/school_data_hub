@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 
 class BookLendingPupilCard extends WatchingWidget {
   final PupilBookLending passedPupilBook;
@@ -24,9 +25,10 @@ class BookLendingPupilCard extends WatchingWidget {
       (element) => element.lendingId == passedPupilBook.lendingId,
     );
     void updatepupilBookRating(int rating) {
-      // TODO: Uncomment this when the API is ready
-      // di<PupilManager>()
-      //     .patchPupilBook(lendingId: passedPupilBook.lendingId, rating: rating);
+      di<PupilBookLendingManager>().updatePupilBookLending(
+        pupilBookLending: watchedPupilBook,
+        score: (value: rating),
+      );
     }
 
     return Card(
@@ -68,7 +70,7 @@ class BookLendingPupilCard extends WatchingWidget {
                                     9,
                                   );
                                   Navigator.of(context).push(
-                                    MaterialPageRoute(
+                                    MaterialPageRoute<void>(
                                       builder: (ctx) =>
                                           PupilProfilePage(pupil: pupil),
                                     ),
@@ -186,9 +188,11 @@ class BookLendingPupilCard extends WatchingWidget {
                     parentContext: context,
                   );
                   if (status == null) return;
-                  // TODO: Uncomment this when the API is ready
-                  // await di<PupilManager>().patchPupilBook(
-                  //     lendingId: watchedPupilBook.lendingId, comment: status);
+
+                  await di<PupilBookLendingManager>().updatePupilBookLending(
+                    pupilBookLending: watchedPupilBook,
+                    status: (value: status.value),
+                  );
                 },
                 child: Text(
                   watchedPupilBook.status ?? 'Keine Einträge',

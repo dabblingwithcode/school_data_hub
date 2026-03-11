@@ -55,7 +55,7 @@ class _CreditTransactionsStatsViewState
       buffer.writeln('Ausgaben: ${dateData.outgoing}');
       buffer.writeln('Bilanz: ${dateData.balance}');
 
-      showDialog(
+      showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Details'),

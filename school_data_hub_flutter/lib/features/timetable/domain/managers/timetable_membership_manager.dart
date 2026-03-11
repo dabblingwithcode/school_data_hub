@@ -27,7 +27,7 @@ class TimetableMembershipManager {
     int lessonGroupId,
     int pupilDataId,
     List<ScheduledLessonGroupMembership> memberships,
-    Function(List<ScheduledLessonGroupMembership>) updateMembershipsCallback,
+    void Function(List<ScheduledLessonGroupMembership>) updateMembershipsCallback,
   ) {
     // Check if membership already exists
     final existingMembership = memberships
@@ -58,7 +58,7 @@ class TimetableMembershipManager {
     int lessonGroupId,
     int pupilDataId,
     List<ScheduledLessonGroupMembership> memberships,
-    Function(List<ScheduledLessonGroupMembership>) updateMembershipsCallback,
+    void Function(List<ScheduledLessonGroupMembership>) updateMembershipsCallback,
   ) {
     final updatedMemberships = memberships
         .where((membership) =>
@@ -73,7 +73,7 @@ class TimetableMembershipManager {
     int lessonGroupId,
     List<int> pupilDataIds,
     List<ScheduledLessonGroupMembership> memberships,
-    Function(List<ScheduledLessonGroupMembership>) updateMembershipsCallback,
+    void Function(List<ScheduledLessonGroupMembership>) updateMembershipsCallback,
   ) {
     // Remove existing memberships for this lesson group
     final otherMemberships = memberships.where((membership) => membership.lessonGroupId != lessonGroupId).toList();

@@ -173,7 +173,7 @@ class TimetablePdfGenerator {
                   width: 0.5,
                 ),
                 columnWidths: {
-                  0: pw.FixedColumnWidth(timeColumnWidth),
+                  0: const pw.FixedColumnWidth(timeColumnWidth),
                   for (var i = 0; i < colCount; i++)
                     i + 1: pw.FixedColumnWidth(cellWidth),
                 },

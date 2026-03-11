@@ -33,13 +33,13 @@ class TimetableFilterBottomSheet extends WatchingWidget {
 
     void navigateToNewLessonGroup() {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const NewLessonGroupPage()),
+        MaterialPageRoute<void>(builder: (context) => const NewLessonGroupPage()),
       );
     }
 
     void navigateToLearningGroupList() {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const LearningGroupListPage()),
+        MaterialPageRoute<void>(builder: (context) => const LearningGroupListPage()),
       );
     }
 

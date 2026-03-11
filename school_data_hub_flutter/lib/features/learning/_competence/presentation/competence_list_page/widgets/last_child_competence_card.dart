@@ -5,7 +5,7 @@ import 'package:school_data_hub_flutter/features/learning/_competence/presentati
 
 class LastChildCompetenceCard extends StatelessWidget {
   final Competence competence;
-  final Function({int? competenceId, Competence? competence})
+  final void Function({int? competenceId, Competence? competence})
   navigateToNewOrPatchCompetencePage;
   const LastChildCompetenceCard({
     required this.competence,

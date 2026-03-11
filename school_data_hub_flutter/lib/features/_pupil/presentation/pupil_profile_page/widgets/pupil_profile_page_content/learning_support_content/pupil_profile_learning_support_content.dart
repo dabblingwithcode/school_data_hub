@@ -20,7 +20,7 @@ class PupilProfileLearningSupportContent extends StatelessWidget {
             title: 'Förderung',
             onTitleTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (ctx) => const LearningSupportListPage(),
                 ),
               );

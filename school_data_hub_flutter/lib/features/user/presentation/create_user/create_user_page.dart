@@ -394,7 +394,7 @@ class CreateOrEditUserPage extends WatchingWidget {
                           onPressed: () async {
                             final List<int> selectedPupilIds =
                                 await Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<List<int>>(
                                     builder: (ctx) => SelectPupilsListPage(
                                       selectablePupils: pupilManager
                                           .getPupilsNotListed(

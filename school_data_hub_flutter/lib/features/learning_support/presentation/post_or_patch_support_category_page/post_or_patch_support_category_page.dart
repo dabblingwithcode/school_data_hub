@@ -112,7 +112,7 @@ class _PostOrPatchSupportCategoryPageState
 
   Future<void> _openSelectParent() async {
     final result = await Navigator.of(context).push<int>(
-      MaterialPageRoute(
+      MaterialPageRoute<int>(
         builder: (ctx) => SelectParentCategoryPage(
           movingCategoryId: widget.category?.categoryId ?? -1,
         ),
@@ -216,10 +216,7 @@ class _PostOrPatchSupportCategoryPageState
                 ElevatedButton(
                   style: AppStyles.actionButtonStyle,
                   onPressed: _submit,
-                  child: const Text(
-                    'SENDEN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  child: const Text('SENDEN', style: AppStyles.buttonTextStyle),
                 ),
                 const Gap(15),
                 ElevatedButton(

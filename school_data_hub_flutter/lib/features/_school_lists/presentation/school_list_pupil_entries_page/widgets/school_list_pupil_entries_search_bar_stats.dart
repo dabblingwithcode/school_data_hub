@@ -23,7 +23,7 @@ class SchoolListPupilEntriesSearchBarStats extends WatchingWidget {
   Widget build(BuildContext context) {
     final observedSchoolList = watchPropertyValue(
       (SchoolListManager m) => m.getSchoolListById(schoolList.id!),
-    )!;
+    );
     final pupils = watch(pupilsInList).value;
     return Container(
       decoration: BoxDecoration(

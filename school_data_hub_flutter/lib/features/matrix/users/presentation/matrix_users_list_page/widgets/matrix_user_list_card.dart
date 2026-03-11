@@ -105,7 +105,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
   }
 
   Widget _buildAvatar(MatrixUser matrixUser) {
-    final linkedPupil = MatrixUserHelper.linkedPupil(matrixUser);
+    //  final linkedPupil = MatrixUserHelper.linkedPupil(matrixUser);
 
     final imageHeaders = {'Authorization': _matrixPolicyManager.matrixToken};
 
@@ -217,7 +217,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
     final TextEditingController messageController = TextEditingController();
     bool isSending = false;
 
-    await showDialog(
+    await showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
@@ -342,15 +342,15 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
     final MatrixUserRelationship? userRelationship =
         MatrixUserHelper.getUserRelationship(matrixUser);
 
-    final borderColor =
-        !MatrixUserHelper.isLinkedToPupil(matrixUser) &&
-            matrixUser.id!.contains('_')
-        ? const Color.fromARGB(255, 255, 179, 64)
-        : userRelationship != null && userRelationship.isParent
-        ? Colors.grey
-        : !matrixUser.id!.contains('_')
-        ? const Color.fromARGB(255, 62, 37, 186)
-        : Colors.white;
+    // final borderColor =
+    //     !MatrixUserHelper.isLinkedToPupil(matrixUser) &&
+    //         matrixUser.id!.contains('_')
+    //     ? const Color.fromARGB(255, 255, 179, 64)
+    //     : userRelationship != null && userRelationship.isParent
+    //     ? Colors.grey
+    //     : !matrixUser.id!.contains('_')
+    //     ? const Color.fromARGB(255, 62, 37, 186)
+    //     : Colors.white;
 
     return Card(
       color: Colors.white,
@@ -473,7 +473,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                   return;
                                 }
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (ctx) => PupilProfilePage(
                                       pupil: MatrixUserHelper.linkedPupil(
                                         matrixUser,
@@ -609,7 +609,9 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                   'Möchten Sie das Passwort wirklich zurücksetzen?',
                             );
                             if (confirmation != true) return;
-
+                            if (!context.mounted) {
+                              return;
+                            }
                             final logOutDevices = await logoutDevicesDialog(
                               context,
                             );
@@ -623,8 +625,11 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                       : false,
                                 );
                             if (file != null) {
+                              if (!context.mounted) {
+                                return;
+                              }
                               Navigator.of(context).push(
-                                MaterialPageRoute(
+                                MaterialPageRoute<void>(
                                   builder: (context) =>
                                       PdfViewerPage(pdfFile: file),
                                 ),
@@ -681,7 +686,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                   );
                   final List<String> selectedRoomIds =
                       await Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<List<String>>(
                           builder: (ctx) =>
                               SelectMatrixRoomsList(availableRooms),
                         ),

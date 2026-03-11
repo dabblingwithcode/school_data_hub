@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,9 @@ Uint8List _normalizeKeyTopLevel(Uint8List keyBytes) {
   if (keyBytes.length == 32) return keyBytes;
   if (keyBytes.length < 32) {
     final k = Uint8List(32);
-    for (int i = 0; i < keyBytes.length; i++) k[i] = keyBytes[i];
+    for (int i = 0; i < keyBytes.length; i++) {
+      k[i] = keyBytes[i];
+    }
     return k;
   }
   return Uint8List.fromList(keyBytes.sublist(0, 32));
@@ -93,7 +94,9 @@ class CustomEncrypter {
     if (keyBytes.length == 32) return Uint8List.fromList(keyBytes);
     if (keyBytes.length < 32) {
       final k = Uint8List(32);
-      for (int i = 0; i < keyBytes.length; i++) k[i] = keyBytes[i];
+      for (int i = 0; i < keyBytes.length; i++) {
+        k[i] = keyBytes[i];
+      }
       return k;
     }
     return Uint8List.fromList(keyBytes.sublist(0, 32));
@@ -105,7 +108,9 @@ class CustomEncrypter {
 
   Uint8List _pad16(List<int> b) {
     final out = Uint8List(16);
-    for (int i = 0; i < b.length && i < 16; i++) out[i] = b[i];
+    for (int i = 0; i < b.length && i < 16; i++) {
+      out[i] = b[i];
+    }
     return out;
   }
 
@@ -244,37 +249,38 @@ class CustomEncrypter {
     // Try new format first (IV prepended).
     final iv = encryptedBytes.sublist(0, 16);
     final ciphertext = encryptedBytes.sublist(16);
-    final newResult =
-        Uint8List.fromList(_decryptCbc(iv, ciphertext, _keyBytes));
+    final newResult = Uint8List.fromList(
+      _decryptCbc(iv, ciphertext, _keyBytes),
+    );
     if (_looksLikeImage(newResult)) return newResult;
     // Legacy format: entire blob is ciphertext, fixed IV from env (old encrypt package).
     if (encryptedBytes.length % 16 != 0) return newResult;
     final fixedIv = _fixedIv();
-    return Uint8List.fromList(
-      _decryptCbc(fixedIv, encryptedBytes, _keyBytes),
-    );
+    return Uint8List.fromList(_decryptCbc(fixedIv, encryptedBytes, _keyBytes));
   }
 
   /// Async decryption: resolves key on main isolate and runs CBC in [compute] when in release/profile.
   /// Supports both new format (IV + ciphertext) and legacy encrypt-package format (ciphertext only, fixed IV).
   Future<Uint8List> decryptTheseBytesAsync(Uint8List encryptedBytes) async {
     if (encryptedBytes.length <= 16) return encryptedBytes;
-    final keyBytes =
-        Uint8List.fromList(utf8.encode(di<EnvManager>().activeEnv!.key!));
+    final keyBytes = Uint8List.fromList(
+      utf8.encode(di<EnvManager>().activeEnv!.key!),
+    );
     if (kReleaseMode || kProfileMode) {
       // Try new format first.
-      Uint8List result = await compute(
-        decryptBytesWithKey,
-        <dynamic>[encryptedBytes, keyBytes],
-      );
+      Uint8List result = await compute(decryptBytesWithKey, <dynamic>[
+        encryptedBytes,
+        keyBytes,
+      ]);
       if (_looksLikeImage(result)) return result;
       // Legacy format: ciphertext-only with fixed IV (old encrypt package).
       if (encryptedBytes.length % 16 != 0) return result;
       final fixedIv = _fixedIv();
-      return compute(
-        decryptBytesWithKey,
-        <dynamic>[encryptedBytes, keyBytes, fixedIv],
-      );
+      return compute(decryptBytesWithKey, <dynamic>[
+        encryptedBytes,
+        keyBytes,
+        fixedIv,
+      ]);
     }
     return decryptTheseBytes(encryptedBytes);
   }

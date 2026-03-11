@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/learning/competence_report/pres
 class ReportItemTree extends StatelessWidget {
   final List<CompetenceReportItem> items;
   final int? parentId;
-  final Function({int? parentItemId, CompetenceReportItem? item})
+  final void Function({int? parentItemId, CompetenceReportItem? item})
   navigateToPostOrPatch;
 
   const ReportItemTree({
@@ -47,7 +47,7 @@ class ReportItemTree extends StatelessWidget {
 class _ReportItemNode extends StatelessWidget {
   final CompetenceReportItem item;
   final List<CompetenceReportItem> allItems;
-  final Function({int? parentItemId, CompetenceReportItem? item})
+  final void Function({int? parentItemId, CompetenceReportItem? item})
   navigateToPostOrPatch;
 
   const _ReportItemNode({

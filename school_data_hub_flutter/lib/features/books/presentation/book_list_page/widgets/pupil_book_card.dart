@@ -1,17 +1,18 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 
 class PupilBookCard extends WatchingWidget {
   const PupilBookCard({
@@ -56,9 +57,9 @@ class PupilBookCard extends WatchingWidget {
                   'Ausleihe des Buches "${bookProxy.title}" wirklich löschen?',
             );
             if (result == true) {
-              // TODO: Uncomment this when the API is ready
-              // di<PupilManager>().deletePupilBook(
-              //     lendingId: pupilBook.lendingId);
+              di<PupilBookLendingManager>().deletePupilBookLending(
+                lendingId: pupilBook.lendingId,
+              );
             }
           },
           child: Padding(
@@ -76,9 +77,10 @@ class PupilBookCard extends WatchingWidget {
                           context,
                         );
                         if (file == null) return;
-                        // TODO: Uncomment this when the API is ready ?
-                        // await di<WorkbookManager>()
-                        //     .postWorkbookFile(file, book.isbn);
+                        di<PupilBookLendingManager>().addPupilBookLendingFile(
+                          pupilBookLending: pupilBook,
+                          file,
+                        );
                       },
                       // Todo: Uncomment this when the API is ready
                       // onLongPress: (bookProxy.book.imagePath == null)
@@ -100,6 +102,7 @@ class PupilBookCard extends WatchingWidget {
                       //         // );
                       //       },
                       child: Container(),
+                      // TODO: The image should show here
                       // Provider<DocumentImageData>.value(
                       //   updateShouldNotify: (oldValue, newValue) =>
                       //       oldValue.documentUrl != newValue.documentUrl,

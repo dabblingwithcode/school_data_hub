@@ -40,7 +40,7 @@ class ClassroomListPage extends WatchingWidget {
   void _navigateToNewClassroom(BuildContext context) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const NewClassroomPage()),
+      MaterialPageRoute<void>(builder: (context) => const NewClassroomPage()),
     );
     await di<TimetableManager>().refreshData();
   }
@@ -51,7 +51,7 @@ class ClassroomListPage extends WatchingWidget {
   ) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (context) => NewClassroomPage(classroom: classroom),
       ),
     );
@@ -63,7 +63,7 @@ class ClassroomListPage extends WatchingWidget {
     Classroom classroom,
     TimetableManager timetableManager,
   ) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(

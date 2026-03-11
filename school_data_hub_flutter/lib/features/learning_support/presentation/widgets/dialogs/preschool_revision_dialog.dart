@@ -138,7 +138,9 @@ Future<void> preschoolRevisionDialog(
                       createdBy: hubSessionManager.userName!,
                     );
 
-                    Navigator.of(context).pop();
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
                   },
 
                   child: const Text(

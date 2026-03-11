@@ -45,7 +45,7 @@ class ApiClient {
     _dio.options.baseUrl = normalizedBaseUrl;
   }
 
-  Options _hubOptions = Options();
+  final Options _hubOptions = Options();
   Options get hubOptions => _hubOptions;
   Options _matrixOptions = Options();
   Options get matrixOptions => _matrixOptions;
@@ -91,14 +91,14 @@ class ApiClient {
 
   //- GET:
 
-  Future<Response> get(
+  Future<Response<dynamic>> get(
     String uri, {
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final Response response = await _dio.get(
+    final Response<dynamic> response = await _dio.get(
       uri,
       queryParameters: queryParameters,
       options: options,
@@ -112,15 +112,15 @@ class ApiClient {
 
   //- PATCH:
 
-  Future<Response> patch(
+  Future<Response<dynamic>> patch(
     String uri, {
-    data,
+    dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final Response response = await _dio.patch(
+    final Response<dynamic> response = await _dio.patch(
       uri,
       data: data,
       queryParameters: queryParameters,
@@ -140,16 +140,16 @@ class ApiClient {
 
   //- POST:
 
-  Future<Response> post(
+  Future<Response<dynamic>> post(
     String uri, {
-    data,
+    dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final Response response = await _dio.post(
+    final Response<dynamic> response = await _dio.post(
       uri,
       data: data,
       queryParameters: queryParameters,
@@ -170,16 +170,16 @@ class ApiClient {
 
   //- PUT:
 
-  Future<Response> put(
+  Future<Response<dynamic>> put(
     String uri, {
-    data,
+    dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final Response response = await _dio.put(
+    final Response<dynamic> response = await _dio.put(
       uri,
       data: data,
       queryParameters: queryParameters,
@@ -199,16 +199,16 @@ class ApiClient {
 
   //- DELETE:
 
-  Future<Response> delete(
+  Future<Response<dynamic>> delete(
     String uri, {
-    data,
+    dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final Response response = await _dio.delete(
+    final Response<dynamic> response = await _dio.delete(
       uri,
       data: data,
       queryParameters: queryParameters,

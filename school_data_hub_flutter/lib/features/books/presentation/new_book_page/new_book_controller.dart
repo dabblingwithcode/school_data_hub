@@ -264,7 +264,7 @@ class NewBookController extends State<NewBook> {
   void openTagManagement(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const BookTagManagement()),
+      MaterialPageRoute<bool?>(builder: (context) => const BookTagManagement()),
     );
 
     // Refresh the book tags after returning from tag management
@@ -288,7 +288,7 @@ class NewBookController extends State<NewBook> {
 
     final result = await Navigator.push<Set<int>>(
       context,
-      MaterialPageRoute(
+      MaterialPageRoute<Set<int>>(
         builder: (context) => BookTagSelectionPage(
           allTags: allTags,
           selectedTagIds: selectedTagIds,
@@ -335,9 +335,8 @@ class NewBookController extends State<NewBook> {
       await di<BookManager>().updateBookTags(widget.isbn, selectedTags);
     }
     if (!context.mounted) return;
-    if (context.mounted) {
-      Navigator.pop(context);
-    }
+    // ignore: use_build_context_synchronously
+    Navigator.pop(context);
   }
 
   bool validateRequestDataPayload() {

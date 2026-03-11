@@ -31,7 +31,7 @@ class CompetenceGoalCard extends StatelessWidget {
         child: InkWell(
           onTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (context) =>
                     NewCompetenceGoalPage(existingGoal: pupilGoal),
               ),

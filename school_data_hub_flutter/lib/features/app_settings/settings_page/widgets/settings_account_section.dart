@@ -44,7 +44,7 @@ class SettingsAccountSection extends AbstractSettingsSection with WatchItMixin {
         SettingsTile.navigation(
           onPressed: (context) {
             Navigator.of(context).push(
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (ctx) => const UserChangePasswordPage(),
               ),
             );

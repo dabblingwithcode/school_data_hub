@@ -225,7 +225,7 @@ class EditBookController extends State<EditBook> {
   }
 
   Future<void> openBookTagSelectionPage(BuildContext context) async {
-    await showDialog(
+    await showDialog<void>(
       context: context,
       builder: (dialogContext) {
         return StatefulBuilder(
@@ -264,7 +264,7 @@ class EditBookController extends State<EditBook> {
   void openTagManagement(BuildContext context) async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const BookTagManagement()),
+      MaterialPageRoute<bool?>(builder: (context) => const BookTagManagement()),
     );
 
     // Refresh the book tags after returning from tag management

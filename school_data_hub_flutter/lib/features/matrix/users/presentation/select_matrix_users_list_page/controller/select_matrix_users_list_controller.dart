@@ -111,7 +111,7 @@ class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
     // Show confirmation dialog
 
     // Show progress dialog
-    showDialog(
+    showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
@@ -158,7 +158,7 @@ class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
         if (context.mounted) {
           _log.info('Navigating to BulkPdfViewPage with file: ${pdfFile.path}');
           Navigator.of(context).push(
-            MaterialPageRoute(
+            MaterialPageRoute<void>(
               builder: (context) => PdfViewerPage(pdfFile: pdfFile),
             ),
           );

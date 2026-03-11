@@ -71,7 +71,7 @@ class SubjectDropdown extends WatchingWidget {
         InkWell(
           onTap: () async {
             final result = await Navigator.of(context).push<Subject>(
-              MaterialPageRoute(builder: (context) => const NewSubjectPage()),
+              MaterialPageRoute<Subject>(builder: (context) => const NewSubjectPage()),
             );
 
             if (result != null && context.mounted) {

@@ -14,7 +14,7 @@ class CommonCompetenceCardSortable extends WatchingStatefulWidget {
   final Color backgroundColor;
   final int index;
   final List<Competence> allCompetences;
-  final Function({int? competenceId, Competence? competence})
+  final void Function({int? competenceId, Competence? competence})
   navigateToNewOrPatchCompetencePage;
 
   const CommonCompetenceCardSortable({

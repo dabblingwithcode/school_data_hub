@@ -39,7 +39,7 @@ class TimetableLessonManager {
     int targetSlotId,
     int targetPosition,
     List<ScheduledLesson> scheduledLessons,
-    Function(ScheduledLesson) updateLessonCallback,
+    void Function(ScheduledLesson) updateLessonCallback,
   ) {
     final lessonsInSlot = getAllLessonsForSlot(targetSlotId, scheduledLessons);
     final isSameSlot = lesson.scheduledAtId == targetSlotId;
@@ -109,7 +109,7 @@ class TimetableLessonManager {
   void compactOrdersInSlot(
     int slotId,
     List<ScheduledLesson> scheduledLessons,
-    Function(ScheduledLesson) updateLessonCallback,
+    void Function(ScheduledLesson) updateLessonCallback,
   ) {
     final lessonsInSlot = getAllLessonsForSlot(slotId, scheduledLessons)
       ..sort((a, b) => a.timetableSlotOrder.compareTo(b.timetableSlotOrder));

@@ -8,8 +8,8 @@ import 'package:flutter_it/flutter_it.dart';
 class TimeSlotDropdown extends WatchingWidget {
   final TimetableSlot? selectedSlot;
   final ValueChanged<TimetableSlot?> onSlotChanged;
-  final Function(LessonGroup) hasLessonGroupConflict;
-  final Function(Classroom) hasClassroomConflict;
+  final bool Function(LessonGroup) hasLessonGroupConflict;
+  final bool Function(Classroom) hasClassroomConflict;
 
   const TimeSlotDropdown({
     super.key,

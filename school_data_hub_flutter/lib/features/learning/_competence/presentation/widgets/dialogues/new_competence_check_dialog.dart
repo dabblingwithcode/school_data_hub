@@ -12,7 +12,7 @@ final TextEditingController _textEditingController = TextEditingController();
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
 
-Future newCompetenceCheckDialog({
+Future<void> newCompetenceCheckDialog({
   required PupilProxy pupil,
   required int competenceId,
   required bool isReport,

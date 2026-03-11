@@ -30,7 +30,7 @@ class MatrixCorporalLogCard extends StatelessWidget {
 
     void handleLongPress() {
       if (onDelete == null) return;
-      showDialog(
+      showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Eintrag löschen'),

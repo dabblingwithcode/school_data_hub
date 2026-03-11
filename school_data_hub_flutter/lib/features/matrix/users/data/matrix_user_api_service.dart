@@ -27,7 +27,7 @@ class MatrixUserApiService {
       "password": password,
       "admin": false,
       "displayname": displayName,
-      "threepids": [],
+      "threepids": <Map<String, dynamic>>[],
       "avatar_url": "",
     });
 
@@ -35,7 +35,7 @@ class MatrixUserApiService {
     _log.info('Matrix API Request:');
     _log.info('URL: ${_createMatrixUser(matrixId)}');
 
-    final Response response = await _apiClient.put(
+    final Response<dynamic> response = await _apiClient.put(
       _createMatrixUser(matrixId),
       data: data,
       options: _apiClient.matrixOptions,
@@ -66,7 +66,7 @@ class MatrixUserApiService {
 
   Future<bool> deleteMatrixUser(String userId) async {
     final data = jsonEncode({"erase": true});
-    final Response response = await _apiClient.post(
+    final Response<dynamic> response = await _apiClient.post(
       _deleteMatrixUser(userId),
       data: data,
       options: _apiClient.matrixOptions,
@@ -94,7 +94,7 @@ class MatrixUserApiService {
       "logout_devices": logoutDevices,
     });
 
-    final Response response = await _apiClient.post(
+    final Response<dynamic> response = await _apiClient.post(
       _resetPassword(userId),
       data: data,
       options: _apiClient.matrixOptions,
@@ -113,7 +113,7 @@ class MatrixUserApiService {
   }
 
   Future<MatrixUser?> fetchMatrixUserById(String userId) async {
-    final Response response = await _apiClient.get(
+    final Response<dynamic> response = await _apiClient.get(
       _fetchMatrixUser(userId),
       options: _apiClient.matrixOptions,
     );
@@ -131,7 +131,7 @@ class MatrixUserApiService {
 
   Future<String?> fetchUserAvatarUrl(String userId) async {
     final encodedUserId = Uri.encodeComponent(userId);
-    final Response response = await _apiClient.get(
+    final Response<dynamic> response = await _apiClient.get(
       '/_matrix/client/v3/profile/$encodedUserId/avatar_url',
       options: _apiClient.matrixOptions,
     );

@@ -42,7 +42,7 @@ Future<void> showConnectionCodeDialog(BuildContext context) async {
               if (code.isNotEmpty) {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (context) => PupilIdentityStreamPage(
                       role: PupilIdentityStreamRole.receiver,
                       encryptedData: null,

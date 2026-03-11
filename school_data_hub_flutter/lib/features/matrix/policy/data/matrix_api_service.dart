@@ -122,7 +122,7 @@ class MatrixApiService {
         'event_sender_user_id': eventSenderUserId,
     };
 
-    final response = await _apiClient.get(
+    final Response<dynamic> response = await _apiClient.get(
       '/_synapse/admin/v1/event_reports',
       queryParameters: queryParameters,
       options: _apiClient.matrixOptions,
@@ -141,7 +141,7 @@ class MatrixApiService {
   }
 
   Future<MatrixEventReportDetail> fetchEventReportDetail(int reportId) async {
-    final response = await _apiClient.get(
+    final Response<dynamic> response = await _apiClient.get(
       '/_synapse/admin/v1/event_reports/$reportId',
       options: _apiClient.matrixOptions,
     );
@@ -229,7 +229,7 @@ class MatrixApiService {
       name: 'MatrixApiService.putMatrixPolicy',
     );
 
-    final Response response = await _apiClient.put(
+    final Response<dynamic> response = await _apiClient.put(
       _putMatrixPolicy,
       data: policyJson,
       options: _apiClient.corporalOptions.copyWith(

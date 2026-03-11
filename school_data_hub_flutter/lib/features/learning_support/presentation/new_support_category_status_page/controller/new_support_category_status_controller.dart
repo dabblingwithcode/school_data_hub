@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/new_support_category_status_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class NewSupportCategoryStatus extends StatefulWidget {
   final String appBarTitle;
@@ -68,7 +68,7 @@ class NewSupportCategoryStatusController
     strategiesTextField2Controller.text = strategies;
   }
 
-  Future postCategoryStatus() async {
+  Future<void> postCategoryStatus() async {
     if (goalCategoryId == null) {
       return;
     }
@@ -81,7 +81,7 @@ class NewSupportCategoryStatusController
     );
   }
 
-  Future postCategoryGoal() async {
+  Future<void> postCategoryGoal() async {
     if (goalCategoryId == null) {
       return;
     }
@@ -94,7 +94,7 @@ class NewSupportCategoryStatusController
     );
   }
 
-  Future updateCategoryGoal() async {
+  Future<void> updateCategoryGoal() async {
     if (widget.existingGoal == null) {
       return;
     }

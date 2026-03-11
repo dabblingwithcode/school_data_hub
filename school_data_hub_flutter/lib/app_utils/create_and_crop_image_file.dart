@@ -26,7 +26,7 @@ Future<File?> createAndCropImageFile(BuildContext context) async {
   }
   final File? imageFile = await Navigator.push<File?>(
     context,
-    MaterialPageRoute(builder: (context) => CropAvatarView(image: image)),
+    MaterialPageRoute<File?>(builder: (context) => CropAvatarView(image: image)),
   );
   return imageFile;
 }

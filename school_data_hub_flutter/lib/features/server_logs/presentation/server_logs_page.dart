@@ -146,7 +146,7 @@ class ServerLogsPage extends WatchingWidget {
 }
 
 void _showDeleteAllDialog(BuildContext context, ServerLogsManager manager) {
-  showDialog(
+  showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
       title: const Text('Alle Logs löschen'),

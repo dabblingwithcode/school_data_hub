@@ -262,7 +262,7 @@ class _CompetenceReportPdfViewPageState
                 icon: const Icon(Icons.zoom_in),
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (context) => PdfZoomableImage(file: file),
                     ),
                   );

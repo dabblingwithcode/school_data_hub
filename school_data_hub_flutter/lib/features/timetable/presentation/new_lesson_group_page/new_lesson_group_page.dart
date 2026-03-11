@@ -248,7 +248,7 @@ class NewLessonGroupPage extends WatchingWidget {
                                   .toList();
 
                               if (scheduledLessons.isNotEmpty) {
-                                showDialog(
+                                showDialog<void>(
                                   context: context,
                                   builder: (context) => AlertDialog(
                                     title: const Text(
@@ -269,7 +269,7 @@ class NewLessonGroupPage extends WatchingWidget {
                                 return;
                               }
 
-                              showDialog(
+                              showDialog<void>(
                                 context: context,
                                 builder: (context) => AlertDialog(
                                   title: const Text('Klasse löschen'),

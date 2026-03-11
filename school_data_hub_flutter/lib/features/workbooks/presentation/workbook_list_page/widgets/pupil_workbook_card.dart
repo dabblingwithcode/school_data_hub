@@ -142,7 +142,7 @@ class PupilWorkbookCard extends WatchingWidget {
                                       //navigate to edit workbook page
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(
+                                        MaterialPageRoute<void>(
                                           builder: (context) => NewWorkbookPage(
                                             isbn: workbook.isbn,
                                             isEdit: true,

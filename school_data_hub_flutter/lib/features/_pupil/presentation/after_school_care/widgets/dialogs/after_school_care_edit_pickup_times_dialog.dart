@@ -45,7 +45,7 @@ Future<void> afterSchoolCareEditPickUpTimesDialog(
     text: currentPickUpTimes?.friday?.modality ?? '',
   );
 
-  final result = await showDialog(
+  final result = await showDialog<void>(
     context: context,
     builder: (dialogContext) {
       return AlertDialog(

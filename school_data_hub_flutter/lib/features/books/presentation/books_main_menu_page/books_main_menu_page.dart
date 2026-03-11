@@ -101,7 +101,7 @@ class BookActionsCard extends StatelessWidget {
                 maxWidth: buttonMaxWidth,
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (ctx) => const BookSearchFormPage(),
                     ),
                   );
@@ -114,7 +114,7 @@ class BookActionsCard extends StatelessWidget {
                 maxWidth: buttonMaxWidth,
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (ctx) => const BookTagManagement(),
                     ),
                   );
@@ -277,7 +277,7 @@ Future<void> _showBookInfosDialog(
     if (libraryId != null && libraryId.isNotEmpty) {
       if (!context.mounted) return;
       Navigator.of(context).push(
-        MaterialPageRoute(
+        MaterialPageRoute<void>(
           builder: (ctx) => BookInfosPage(libraryId: libraryId),
         ),
       );
@@ -292,7 +292,7 @@ Future<void> _showBookInfosDialog(
     final bookId = scannedLibraryId.replaceFirst('Buch ID: ', '').trim();
     if (context.mounted) {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (ctx) => BookInfosPage(libraryId: bookId)),
+        MaterialPageRoute<void>(builder: (ctx) => BookInfosPage(libraryId: bookId)),
       );
     }
   }
@@ -315,7 +315,7 @@ Future<void> _showNewBookDialog(
 
       if (!context.mounted) return;
       Navigator.of(context).push(
-        MaterialPageRoute(
+        MaterialPageRoute<void>(
           builder: (ctx) => NewBook(isEdit: false, isbn: int.parse(cleanIsbn)),
         ),
       );
@@ -337,7 +337,7 @@ Future<void> _showNewBookDialog(
     final cleanScannedIsbn = scannedIsbn.replaceAll('-', '');
     if (!context.mounted) return;
     Navigator.of(context).push(
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (ctx) =>
             NewBook(isEdit: false, isbn: int.parse(cleanScannedIsbn)),
       ),

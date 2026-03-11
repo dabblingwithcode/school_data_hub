@@ -55,7 +55,7 @@ class SelectMatrixUserCard extends WatchingWidget {
                       ProfileNavigationState.info.value,
                     );
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (ctx) => PupilProfilePage(pupil: pupil),
                       ),
                     );
@@ -70,7 +70,7 @@ class SelectMatrixUserCard extends WatchingWidget {
                         ProfileNavigationState.info.value,
                       );
                       Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (ctx) =>
                               PupilProfilePage(pupil: userRelationship.pupil!),
                         ),

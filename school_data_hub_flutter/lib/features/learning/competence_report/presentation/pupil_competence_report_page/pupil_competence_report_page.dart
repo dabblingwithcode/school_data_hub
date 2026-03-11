@@ -79,7 +79,7 @@ class PupilCompetenceReportPage extends WatchingWidget {
                   icon: const Icon(Icons.add, size: 30),
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (_) => NewCompetenceReportPage(pupil: pupil),
                       ),
                     );

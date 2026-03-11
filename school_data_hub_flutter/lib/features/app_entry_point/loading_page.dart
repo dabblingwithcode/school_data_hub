@@ -59,7 +59,7 @@ class LoadingPageState extends State<LoadingPage> {
                         child: InkWell(
                           onTap: () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (ctx) => const LogsPage(),
                               ),
                             );

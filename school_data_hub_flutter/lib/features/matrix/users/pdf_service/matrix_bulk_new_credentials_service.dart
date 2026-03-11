@@ -16,8 +16,8 @@ class MatrixBulkCredentialsService {
     required String matrixDomain,
     required List<MatrixUser> selectedUsers,
     required bool isStaff,
-    required Function(String) onProgress,
-    required Function(String) onError,
+    required void Function(String) onProgress,
+    required void Function(String) onError,
   }) async {
     try {
       final matrixPolicyManager = di<MatrixPolicyManager>();

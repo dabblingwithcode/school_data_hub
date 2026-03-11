@@ -145,7 +145,7 @@ class NewClassroomPage extends WatchingWidget {
                         ? () {
                             if (classroom?.id == null) return;
 
-                            showDialog(
+                            showDialog<void>(
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: const Text('Raum löschen'),

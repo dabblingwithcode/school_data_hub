@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
+import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class CommonCompetenceCard extends WatchingStatefulWidget {
   final Color competenceBackgroundColor;
-  final Function({int? competenceId, Competence? competence})
+  final void Function({int? competenceId, Competence? competence})
   navigateToNewOrPatchCompetencePage;
   final Competence competence;
   final List<Widget> children;

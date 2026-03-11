@@ -9,7 +9,7 @@ import 'package:flutter_it/flutter_it.dart';
 
 class CommonReportItemCard extends WatchingWidget {
   final CompetenceReportItem item;
-  final Function({int? parentItemId, CompetenceReportItem? item})
+  final void Function({int? parentItemId, CompetenceReportItem? item})
       navigateToPostOrPatch;
   final List<Widget> children;
 

@@ -143,7 +143,7 @@ class TimetableSlotList extends StatelessWidget {
   }
 
   void _deleteSlot(BuildContext context, TimetableSlot slot) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder:
           (context) => AlertDialog(

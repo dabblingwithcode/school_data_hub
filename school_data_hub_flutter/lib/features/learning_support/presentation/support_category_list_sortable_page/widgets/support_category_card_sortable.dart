@@ -88,7 +88,7 @@ class _SupportCategoryCardSortableState
 
   Future<void> _navigateToSelectParent(BuildContext context) async {
     final result = await Navigator.of(context).push<int>(
-      MaterialPageRoute(
+      MaterialPageRoute<int>(
         builder: (ctx) => SelectParentCategoryPage(
           movingCategoryId: widget.category.categoryId,
         ),
@@ -136,10 +136,10 @@ class _SupportCategoryCardSortableState
 
   @override
   Widget build(BuildContext context) {
-    final _expansionController = createOnce(
+    final expansionController = createOnce(
       () => CustomExpansionTileController(),
     );
-    final isExpanded = watch(_expansionController.isExpanded).value;
+    final isExpanded = watch(expansionController.isExpanded).value;
     final isRoot = widget.category.parentCategory == null;
 
     return Padding(
@@ -202,7 +202,7 @@ class _SupportCategoryCardSortableState
                   ),
                   if (_childOrder.isNotEmpty) ...[
                     CustomExpansionTileSwitch(
-                      customExpansionTileController: _expansionController,
+                      customExpansionTileController: expansionController,
                     ),
                   ],
                   if (isExpanded)
@@ -220,7 +220,7 @@ class _SupportCategoryCardSortableState
             ),
             if (_childOrder.isNotEmpty)
               CustomExpansionTileContent(
-                tileController: _expansionController,
+                tileController: expansionController,
                 widgetList: [
                   GenericReorderableListView(
                     onReorder: _onReorder,

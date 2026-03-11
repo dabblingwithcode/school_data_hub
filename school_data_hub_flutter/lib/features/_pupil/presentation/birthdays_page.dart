@@ -131,7 +131,7 @@ class BirthdaysView extends StatelessWidget {
                                         di<BottomNavManager>()
                                             .setPupilProfileNavPage(0);
                                         Navigator.of(context).push(
-                                          MaterialPageRoute(
+                                          MaterialPageRoute<void>(
                                             builder: (ctx) => PupilProfilePage(
                                               pupil: listedPupil,
                                             ),

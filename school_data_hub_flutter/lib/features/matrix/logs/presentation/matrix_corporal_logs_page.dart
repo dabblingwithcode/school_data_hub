@@ -152,7 +152,7 @@ void _showDeleteAllDialog(
   BuildContext context,
   MatrixCorporalLogsManager manager,
 ) {
-  showDialog(
+  showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
       title: const Text('Alle Logs löschen'),

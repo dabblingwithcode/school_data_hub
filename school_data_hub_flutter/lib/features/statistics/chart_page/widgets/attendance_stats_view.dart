@@ -49,7 +49,7 @@ class AttendanceStatsView extends WatchingWidget {
         buffer.writeln('Unentschuldigt: ${dateData.unexcused}');
         buffer.writeln('Abgeholt: ${dateData.goneHome}');
 
-        showDialog(
+        showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
             title: Text(
@@ -83,7 +83,7 @@ class AttendanceStatsView extends WatchingWidget {
                     ],
                   );
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (context) => const AttendanceListPage(),
                     ),
                   );

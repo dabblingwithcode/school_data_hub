@@ -57,7 +57,7 @@ class ReligionCard extends WatchingWidget {
                                       mainMenuBottomNavManager
                                           .setPupilProfileNavPage(0);
                                       Navigator.of(context).push(
-                                        MaterialPageRoute(
+                                        MaterialPageRoute<void>(
                                           builder: (ctx) =>
                                               PupilProfilePage(pupil: pupil),
                                         ),

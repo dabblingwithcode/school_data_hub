@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/widget
 void missedSchooldaysBadgesInformationDialog({
   required BuildContext context,
   bool? isAttendancePage,
-}) => showDialog(
+}) => showDialog<void>(
   context: context,
   builder: (newContext) => AlertDialog(
     title: const Text('Legende', style: TextStyle(fontWeight: FontWeight.bold)),

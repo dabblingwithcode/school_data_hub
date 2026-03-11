@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 
 typedef PupilBookLendingFilterRecord = ({
   PupilBookLendingFilter filter,
@@ -91,8 +91,8 @@ class PupilBookLendingFilterManager {
       }
     }
 
-    final pupilBookLendingFilterStateEqualsInitialValues = const MapEquality()
-        .equals(
+    final pupilBookLendingFilterStateEqualsInitialValues =
+        const MapEquality<PupilBookLendingFilter, bool>().equals(
           _pupilBookLendingFilterState.value,
           initialPupilBookLendingFilterValues,
         );

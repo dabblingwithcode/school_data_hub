@@ -20,7 +20,9 @@ class PupilSchoolListsContentCard extends StatelessWidget {
             title: 'Listen',
             onTitleTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => const SchoolListsPage()),
+                MaterialPageRoute<void>(
+                  builder: (ctx) => const SchoolListsPage(),
+                ),
               );
             },
             child: PupilSchoolListContentList(pupil: pupil),

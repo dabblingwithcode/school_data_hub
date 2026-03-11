@@ -39,8 +39,9 @@ class SchoolListStatsRow extends WatchingWidget {
                   'Möchtest du eine neue Liste mit den gleichen Kindern erstellen?',
             );
             if (confirm != true) return;
+            if (!context.mounted) return;
             Navigator.of(context).push(
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (ctx) =>
                     NewSchoolListPage(initialSchoolList: schoolList),
               ),

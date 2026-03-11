@@ -18,7 +18,7 @@ class SupportCategoryLeafCardSortable extends StatelessWidget {
 
   Future<void> _navigateToSelectParent(BuildContext context) async {
     final result = await Navigator.of(context).push<int>(
-      MaterialPageRoute(
+      MaterialPageRoute<int>(
         builder: (ctx) =>
             SelectParentCategoryPage(movingCategoryId: category.categoryId),
       ),

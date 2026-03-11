@@ -2,13 +2,13 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 typedef SupportLevelFilterRecord = ({SupportLevelType filter, bool value});
@@ -70,8 +70,11 @@ class LearningSupportFilterManager {
         record.filter: record.value,
       };
     }
-    final bool supportLevelFilterStateEqualsInitialState = const MapEquality()
-        .equals(supportLevelFilterState.value, initialSupportLevelFilterValues);
+    final bool supportLevelFilterStateEqualsInitialState =
+        const MapEquality<SupportLevelType, bool>().equals(
+          supportLevelFilterState.value,
+          initialSupportLevelFilterValues,
+        );
 
     if (supportLevelFilterStateEqualsInitialState) {
       _filtersStateManager.setFilterState(
@@ -99,10 +102,11 @@ class LearningSupportFilterManager {
         record.filter: record.value,
       };
     }
-    final bool pupilFilterStateEqualsInitialState = const MapEquality().equals(
-      _pupilFilterManager.pupilFilterState.value,
-      initialPupilFilterValues,
-    );
+    final bool pupilFilterStateEqualsInitialState =
+        const MapEquality<PupilFilter, bool>().equals(
+          _pupilFilterManager.pupilFilterState.value,
+          initialPupilFilterValues,
+        );
 
     if (pupilFilterStateEqualsInitialState) {
       _filtersStateManager.setFilterState(
@@ -130,7 +134,7 @@ class LearningSupportFilterManager {
       };
     }
     final bool currentLearningSupportPlanFilterStateEqualsInitialState =
-        const MapEquality().equals(
+        const MapEquality<CurrentLearningSupportPlan, bool>().equals(
           _currentLearningSupportPlanFilterState.value,
           initialCurrentLearningSupportPlanFilterValues,
         );

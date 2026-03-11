@@ -36,7 +36,7 @@ class SelectPupilListCard extends WatchingWidget {
               child: InkWell(
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (ctx) => PupilProfilePage(pupil: pupil),
                     ),
                   );

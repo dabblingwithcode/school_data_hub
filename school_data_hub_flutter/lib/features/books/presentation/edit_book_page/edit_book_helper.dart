@@ -11,7 +11,7 @@ class EditBookHelper {
   ) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (context) => EditBook(libraryBook: libraryBook),
       ),
     );

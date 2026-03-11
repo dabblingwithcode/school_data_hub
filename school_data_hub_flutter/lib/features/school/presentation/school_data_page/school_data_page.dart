@@ -74,7 +74,7 @@ class SchoolDataPage extends WatchingWidget {
           ElevatedButton(
             onPressed: () async {
               await Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (context) => const EditSchoolDataPage(),
                 ),
               );
@@ -123,7 +123,7 @@ class SchoolDataPage extends WatchingWidget {
                 child: ElevatedButton.icon(
                   onPressed: () async {
                     await Navigator.of(context).push(
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (context) => const EditSchoolDataPage(),
                       ),
                     );

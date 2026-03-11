@@ -27,7 +27,7 @@ class PupilEnrollmentDateCard extends StatelessWidget {
                   ProfileNavigationState.info.value,
                 );
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (ctx) => PupilProfilePage(pupil: pupil),
                   ),
                 );

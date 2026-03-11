@@ -263,7 +263,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               if (confirm != true) return;
                               if (context.mounted) {
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (ctx) => NewMatrixUserPage(
                                       pupil: pupil,
                                       matrixId:
@@ -318,7 +318,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                                     );
                                 if (file != null && context.mounted) {
                                   Navigator.of(context).push(
-                                    MaterialPageRoute(
+                                    MaterialPageRoute<void>(
                                       builder: (context) =>
                                           PdfViewerPage(pdfFile: file),
                                     ),
@@ -381,7 +381,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                                 ].map((e) => e.group).toList().join();
                               }
                               Navigator.of(context).push(
-                                MaterialPageRoute(
+                                MaterialPageRoute<void>(
                                   builder: (ctx) => NewMatrixUserPage(
                                     pupil: pupil,
                                     matrixId:
@@ -431,7 +431,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                                     );
                                 if (file != null && context.mounted) {
                                   Navigator.of(context).push(
-                                    MaterialPageRoute(
+                                    MaterialPageRoute<void>(
                                       builder: (context) =>
                                           PdfViewerPage(pdfFile: file),
                                     ),
@@ -483,7 +483,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                             child: InkWell(
                               onTap: () {
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (ctx) =>
                                         PupilProfilePage(pupil: sibling),
                                   ),

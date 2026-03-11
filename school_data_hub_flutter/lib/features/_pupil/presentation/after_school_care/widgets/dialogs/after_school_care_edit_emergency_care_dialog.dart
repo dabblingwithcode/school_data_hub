@@ -11,7 +11,7 @@ Future<void> afterSchoolCareEditEmergencyCareDialog(
   final afterSchoolCare = pupil.afterSchoolCare;
   bool? currentValue = afterSchoolCare?.emergencyCare;
 
-  await showDialog(
+  await showDialog<void>(
     context: context,
     builder: (dialogContext) {
       return StatefulBuilder(
@@ -33,17 +33,17 @@ Future<void> afterSchoolCareEditEmergencyCareDialog(
                       currentValue = value;
                     });
                   },
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Radio<bool?>(value: true),
-                      const Text('Ja'),
-                      const Gap(30),
+                      Text('Ja'),
+                      Gap(30),
                       Radio<bool?>(value: false),
-                      const Text('Nein'),
-                      const Gap(30),
+                      Text('Nein'),
+                      Gap(30),
                       Radio<bool?>(value: null),
-                      const Text('Nicht gesetzt'),
+                      Text('Nicht gesetzt'),
                     ],
                   ),
                 ),

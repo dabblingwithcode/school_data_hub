@@ -17,7 +17,7 @@ class SortableReportItemListPage extends WatchingWidget {
       CompetenceReportItem? item,
     }) {
       Navigator.of(context).push(
-        MaterialPageRoute(
+        MaterialPageRoute<void>(
           builder: (ctx) =>
               PostOrPatchReportItemPage(parentItem: parentItemId, item: item),
         ),

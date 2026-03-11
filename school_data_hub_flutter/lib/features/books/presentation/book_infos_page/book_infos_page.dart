@@ -88,7 +88,7 @@ class _BookInfosPageState extends State<BookInfosPage> {
     if (_bookProxy == null) return;
     Navigator.push(
       context,
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (context) => NewBook(
           isEdit: true,
           isbn: _bookProxy!.isbn,
@@ -241,7 +241,7 @@ class _BookInfosPageState extends State<BookInfosPage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      MaterialPageRoute<void>(
                         builder: (context) =>
                             BookInfosPage(libraryId: book.libraryId),
                       ),

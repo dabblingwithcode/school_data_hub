@@ -59,7 +59,7 @@ class ChartPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedIndex = createOnce<ValueNotifier>(
+    final selectedIndex = createOnce<ValueNotifier<int>>(
       () => ValueNotifier<int>(0),
     );
     final index = watchPropertyValue((m) => m.value, target: selectedIndex);

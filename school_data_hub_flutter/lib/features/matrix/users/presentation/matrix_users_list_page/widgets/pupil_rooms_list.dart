@@ -249,7 +249,7 @@ class MatrixUserRoomsListItem extends WatchingWidget {
                         child: InkWell(
                           onTap: () {
                             Navigator.of(context).push(
-                              MaterialPageRoute(
+                              MaterialPageRoute<void>(
                                 builder: (ctx) =>
                                     MatrixRoomEditPage(room: matrixRoom),
                               ),

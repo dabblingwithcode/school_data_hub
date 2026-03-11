@@ -14,7 +14,7 @@ class ReportItemCardSortable extends WatchingStatefulWidget {
   final CompetenceReportItem item;
   final int index;
   final List<CompetenceReportItem> allItems;
-  final Function({int? parentItemId, CompetenceReportItem? item})
+  final void Function({int? parentItemId, CompetenceReportItem? item})
   navigateToPostOrPatch;
 
   const ReportItemCardSortable({

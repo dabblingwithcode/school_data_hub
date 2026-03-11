@@ -8,7 +8,7 @@ class SelectUsersListCard extends WatchingWidget {
   final bool isSelectMode;
   final bool isSelected;
   final User passedUser;
-  final Function(int) onCardPress;
+  final void Function(int) onCardPress;
 
   const SelectUsersListCard({
     required this.isSelectMode,

@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/learning/_competence/presentati
 
 class CompetenceTreeSortable extends StatefulWidget {
   final List<Competence> competences;
-  final Function({int? competenceId, Competence? competence})
+  final void Function({int? competenceId, Competence? competence})
   navigateToNewOrPatchCompetencePage;
 
   const CompetenceTreeSortable({

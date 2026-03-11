@@ -48,18 +48,22 @@ class PupilIdentityHelper {
     return decodedJson.map(
       (key, value) => MapEntry(
         int.parse(key),
-        PupilIdentity.fromJson(_normalizeLegacyPupilIdentityJson(
-            Map<String, dynamic>.from(value as Map))),
+        PupilIdentity.fromJson(
+          _normalizeLegacyPupilIdentityJson(
+            Map<String, dynamic>.from(value as Map),
+          ),
+        ),
       ),
     );
   }
 
   /// Normalizes legacy stored identities so fromJson succeeds after model changes.
-  /// Converts specialNeeds String (e.g. "LE*SQ") to List<String>; ensures new
+  /// Converts specialNeeds String (e.g. "LE*SQ") to [List<String>]; ensures new
   /// fields (deputyGroupTutor, nationality, schoolTransitionRecommendation) exist.
   /// TODO: remove after transition has been made in production
   static Map<String, dynamic> _normalizeLegacyPupilIdentityJson(
-      Map<String, dynamic> raw) {
+    Map<String, dynamic> raw,
+  ) {
     final normalized = Map<String, dynamic>.from(raw);
 
     // Legacy: specialNeeds was stored as String, often with '*' between two codes
@@ -77,9 +81,9 @@ class PupilIdentityHelper {
       }
     }
 
-    normalized['deputyGroupTutor'] ??= null;
-    normalized['nationality'] ??= null;
-    normalized['schoolTransitionRecommendation'] ??= null;
+    normalized['deputyGroupTutor'];
+    normalized['nationality'];
+    normalized['schoolTransitionRecommendation'];
     normalized['migrationBackground'] ??= false;
 
     return normalized;
@@ -179,16 +183,19 @@ class PupilIdentityHelper {
       groupTutor: pupilIdentityStringItems[4],
       schoolGrade: schoolgrade,
       specialNeeds: _specialNeedsListFromCanonical(
-          pupilIdentityStringItems[6], pupilIdentityStringItems[7]),
+        pupilIdentityStringItems[6],
+        pupilIdentityStringItems[7],
+      ),
       deputyGroupTutor: pupilIdentityStringItems.length > 21
           ? _emptyToNull(pupilIdentityStringItems[21])
           : null,
       gender: pupilIdentityStringItems[8],
       language: pupilIdentityStringItems[9],
       migrationBackground: _parseBoolCanonical(
-          pupilIdentityStringItems.length > 10
-              ? pupilIdentityStringItems[10]
-              : ''),
+        pupilIdentityStringItems.length > 10
+            ? pupilIdentityStringItems[10]
+            : '',
+      ),
       nationality: pupilIdentityStringItems.length > 22
           ? _emptyToNull(pupilIdentityStringItems[22])
           : null,
@@ -216,20 +223,22 @@ class PupilIdentityHelper {
       leavingDate: pupilIdentityStringItems[20] == ''
           ? null
           : pupilIdentityStringItems[20].tryToDateOnlyUtc(),
-      schoolTransitionRecommendation:
-          pupilIdentityStringItems.length > 23
-              ? _emptyToNull(pupilIdentityStringItems[23])
-              : null,
+      schoolTransitionRecommendation: pupilIdentityStringItems.length > 23
+          ? _emptyToNull(pupilIdentityStringItems[23])
+          : null,
     );
 
     return newPupilIdentity;
   }
 
-  static List<String>? _specialNeedsListFromCanonical(String col6, String col7) {
-    final list = [col6, col7]
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
+  static List<String>? _specialNeedsListFromCanonical(
+    String col6,
+    String col7,
+  ) {
+    final list = [
+      col6,
+      col7,
+    ].map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
     return list.isEmpty ? null : list;
   }
 
@@ -240,7 +249,12 @@ class PupilIdentityHelper {
 
   static bool _parseBoolCanonical(String s) {
     final t = s.trim().toLowerCase();
-    return t == 'true' || t == '1' || t == 'ja' || t == 'j' || t == 'x' || t == 'yes';
+    return t == 'true' ||
+        t == '1' ||
+        t == 'ja' ||
+        t == 'j' ||
+        t == 'x' ||
+        t == 'yes';
   }
 
   Future<String> generateEncryptedPupilIdentitiesTransferString(

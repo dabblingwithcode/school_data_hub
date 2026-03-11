@@ -48,11 +48,13 @@ class ClassroomDropdown extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final classrooms = watchValue((TimetableManager m) => m.classrooms);
-    final scheduledLessons =
-        watchValue((TimetableManager m) => m.scheduledLessons);
+    final scheduledLessons = watchValue(
+      (TimetableManager m) => m.scheduledLessons,
+    );
     final selectedSlot = watchValue((TimetableManager m) => m.selectedWeekday);
 
-    final hasTargetSlot = targetWeekday != null &&
+    final hasTargetSlot =
+        targetWeekday != null &&
         targetStartTime != null &&
         targetEndTime != null;
 
@@ -119,7 +121,9 @@ class ClassroomDropdown extends WatchingWidget {
         InkWell(
           onTap: () async {
             final result = await Navigator.of(context).push<Classroom>(
-              MaterialPageRoute(builder: (context) => const NewClassroomPage()),
+              MaterialPageRoute<Classroom>(
+                builder: (context) => const NewClassroomPage(),
+              ),
             );
 
             if (result != null && context.mounted) {

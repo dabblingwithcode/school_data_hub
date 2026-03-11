@@ -78,7 +78,7 @@ class CompetenceListPage extends WatchingWidget {
             icon: const Icon(Icons.sort_rounded),
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<void>(
                   builder: (ctx) => const SortableCompetenceListPage(),
                 ),
               );

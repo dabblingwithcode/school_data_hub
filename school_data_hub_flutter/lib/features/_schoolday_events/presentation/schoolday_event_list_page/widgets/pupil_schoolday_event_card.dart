@@ -321,7 +321,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                           di<UserManager>().users.value;
                                       final List<User>? selectedUsers =
                                           await Navigator.of(context).push(
-                                            MaterialPageRoute(
+                                            MaterialPageRoute<List<User>>(
                                               builder: (ctx) => SelectUsersPage(
                                                 selectableUsers: users,
                                                 authorizedUsers:
@@ -550,7 +550,7 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                           di<UserManager>().users.value;
                                       final List<User>? selectedUsers =
                                           await Navigator.of(context).push(
-                                            MaterialPageRoute(
+                                            MaterialPageRoute<List<User>>(
                                               builder: (ctx) => SelectUsersPage(
                                                 selectableUsers: users,
                                                 authorizedUsers:

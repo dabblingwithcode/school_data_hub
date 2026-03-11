@@ -30,7 +30,7 @@ class PupilLearningContentCompetenceStatuses extends StatelessWidget {
                 final parentContext =
                     context; // Capture context before navigation
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (ctx) => SelectCompetence(
                       onSelected: (_, competence) {
                         Navigator.of(ctx).pop(); // Close SelectCompetence page

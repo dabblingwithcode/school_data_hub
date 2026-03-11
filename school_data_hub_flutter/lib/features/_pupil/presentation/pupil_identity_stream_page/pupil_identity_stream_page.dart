@@ -498,7 +498,7 @@ class PupilIdentityStreamPage extends WatchingWidget {
   Future<void> _handleSenderShutdown(BuildContext context) async {
     _hideReceiverStatusOverlay();
     await _showSenderShutdownDialog(context);
-    if (Navigator.canPop(context)) {
+    if (context.mounted) {
       Navigator.pop(context);
     }
   }
