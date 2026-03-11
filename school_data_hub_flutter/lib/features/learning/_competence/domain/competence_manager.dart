@@ -129,49 +129,34 @@ class CompetenceManager {
   //- the CompetenceFilterManager is not registered in the di yet
 
   Future<void> firstFetchCompetences() async {
-    final List<Competence> competences = await _competenceApiService
-        .getAllCompetences();
-    if (competences.isNotEmpty) {
+    final competences = await _competenceApiService.getAllCompetences();
+    if (competences != null && competences.isNotEmpty) {
       _competences.value = competences;
-
       _envManager.setPopulatedEnvServerData(competences: true);
-
       _rootCompetencesMap.clear();
-
-      _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
-        competences,
+      _rootCompetencesMap =
+          CompetenceHelper.generateRootCompetencesMap(competences);
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Kompetenzen aktualisiert!',
       );
     }
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Kompetenzen aktualisiert!',
-    );
-
-    return;
   }
 
   Future<void> fetchCompetences() async {
-    final List<Competence> competences = await _competenceApiService
-        .getAllCompetences();
-
-    final sortedCompetences = CompetenceHelper.sortCompetences(competences);
-    _competences.value = sortedCompetences;
-
-    _rootCompetencesMap.clear();
-
-    _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
-      competences,
-    );
-
-    di<CompetenceFilterManager>().refreshFilteredCompetences(competences);
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Kompetenzen aktualisiert!',
-    );
-
-    return;
+    final competences = await _competenceApiService.getAllCompetences();
+    if (competences != null) {
+      final sortedCompetences = CompetenceHelper.sortCompetences(competences);
+      _competences.value = sortedCompetences;
+      _rootCompetencesMap.clear();
+      _rootCompetencesMap =
+          CompetenceHelper.generateRootCompetencesMap(competences);
+      di<CompetenceFilterManager>().refreshFilteredCompetences(competences);
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Kompetenzen aktualisiert!',
+      );
+    }
   }
 
   Future<void> postNewCompetence({
@@ -186,8 +171,9 @@ class CompetenceManager {
       level: competenceLevel,
       indicators: indicators,
     );
-
-    upsertFromStream(newCompetence);
+    if (newCompetence != null) {
+      upsertFromStream(newCompetence);
+    }
     //- The competence is coming back from the stream, we don't need to do this
     // _competences.value = CompetenceHelper.sortCompetences([
     //   ..._competences.value,
@@ -216,27 +202,23 @@ class CompetenceManager {
       );
       return;
     }
-    final List<Competence> importedCompetences = await _competenceApiService
+    final importedCompetences = await _competenceApiService
         .importCompetencesFromJsonFile(fileResponse.path!);
-
-    final sortedCompetences = CompetenceHelper.sortCompetences(
-      importedCompetences,
-    );
-    _competences.value = sortedCompetences;
-
-    _rootCompetencesMap.clear();
-
-    _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
-      sortedCompetences,
-    );
-
-    di<CompetenceFilterManager>().refreshFilteredCompetences(sortedCompetences);
-    _envManager.setPopulatedEnvServerData(competences: true);
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Kompetenzen importiert',
-    );
+    if (importedCompetences != null) {
+      final sortedCompetences =
+          CompetenceHelper.sortCompetences(importedCompetences);
+      _competences.value = sortedCompetences;
+      _rootCompetencesMap.clear();
+      _rootCompetencesMap =
+          CompetenceHelper.generateRootCompetencesMap(sortedCompetences);
+      di<CompetenceFilterManager>()
+          .refreshFilteredCompetences(sortedCompetences);
+      _envManager.setPopulatedEnvServerData(competences: true);
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Kompetenzen importiert',
+      );
+    }
   }
 
   Future<void> updateCompetenceOrder({
@@ -251,11 +233,9 @@ class CompetenceManager {
     final verifiedUpdated = await _competenceApiService.updateCompetence(
       updatedCompetence,
     );
-    // Update in-place without notifying listeners.
-    // The sortable widgets manage their own visual order via local state.
-    // Call sortAndNotifyCompetences() when done (e.g. on page dispose)
-    // to commit the sorted order for other widgets.
-    _competences.value[index] = verifiedUpdated;
+    if (verifiedUpdated != null) {
+      _competences.value[index] = verifiedUpdated;
+    }
   }
 
   /// Sorts the competences list by order and notifies listeners.
@@ -298,22 +278,14 @@ class CompetenceManager {
     );
     final verifiedUpdatedCompetence = await _competenceApiService
         .updateCompetence(updatedCompetence);
-
+    if (verifiedUpdatedCompetence == null) {
+      return;
+    }
     final List<Competence> competences = List.from(_competences.value);
-
     competences[competenceListIndex] = verifiedUpdatedCompetence;
-
     _competences.value = competences;
-
-    di<CompetenceFilterManager>().refreshFilteredCompetences(
-      _competences.value,
-    );
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Kompetenz aktualisiert',
-    );
-
+    di<CompetenceFilterManager>()
+        .refreshFilteredCompetences(_competences.value);
     return;
   }
 
@@ -325,24 +297,19 @@ class CompetenceManager {
       );
       return;
     }
-    final bool success = await _competenceApiService.deleteCompetence(publicId);
+    final success = await _competenceApiService.deleteCompetence(publicId);
 
-    if (success) {
+    if (success == true) {
       final List<Competence> competences = List.from(_competences.value);
-
       competences.removeWhere((element) => element.publicId == publicId);
-
       _competences.value = competences;
-
-      di<CompetenceFilterManager>().refreshFilteredCompetences(
-        _competences.value,
-      );
-
+      di<CompetenceFilterManager>()
+          .refreshFilteredCompetences(_competences.value);
       _notificationService.showSnackBar(
         NotificationType.success,
         'Kompetenz gelöscht',
       );
-    } else {
+    } else if (success == false) {
       _notificationService.showSnackBar(
         NotificationType.error,
         'Fehler beim Löschen der Kompetenz',

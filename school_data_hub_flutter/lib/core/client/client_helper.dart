@@ -24,7 +24,7 @@ class ClientHelper {
     } on ServerpodClientException catch (e) {
       _notificationService.apiRunning(false);
       _notificationService.showInformationDialog(
-        'Client error calling $call: $e',
+        'API Fehler: ${errorMessage ?? "Unbekannt"}: $e',
       );
 
       if (e.toString().contains('Not authorized') ||

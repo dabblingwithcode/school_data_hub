@@ -57,16 +57,6 @@ class PupilLanguageCard extends StatelessWidget {
                       ],
                     ),
                     const Gap(5),
-                    Row(
-                      children: [
-                        const Text('Staatsangehörigkeit:'),
-                        const Gap(5),
-                        Text(
-                          pupil.nationality ?? 'Kein Eintrag',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),

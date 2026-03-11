@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -12,7 +13,6 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dar
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/communication_values.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfileCommunicationContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -43,6 +43,18 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                   icon: Icons.home_outlined,
                   label: 'Familiensprache',
                   value: pupil.language,
+                ),
+                const Gap(8),
+                PupilProfileContentRow(
+                  icon: Icons.person_outline,
+                  label: 'Migrationshintergrund',
+                  value: pupil.migrationBackground ? 'Ja' : 'Nein',
+                ),
+                const Gap(8),
+                PupilProfileContentRow(
+                  icon: Icons.person_outline,
+                  label: 'Staatsangehörigkeit',
+                  value: pupil.nationality ?? 'Kein Eintrag',
                 ),
                 const Gap(8),
                 PupilProfileContentRow(

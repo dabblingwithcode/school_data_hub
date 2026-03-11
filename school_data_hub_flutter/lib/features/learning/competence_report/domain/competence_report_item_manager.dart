@@ -62,12 +62,9 @@ class CompetenceReportItemManager {
 
   Future<void> fetchItems() async {
     final fetched = await _apiService.fetchAllCompetenceReportItems();
-    _items.value = CompetenceReportHelper.sortItems(fetched);
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Zeugniskompetenzen aktualisiert!',
-    );
+    if (fetched != null) {
+      _items.value = CompetenceReportHelper.sortItems(fetched);
+    }
   }
 
   Future<void> postNewItem({
@@ -76,17 +73,18 @@ class CompetenceReportItemManager {
     List<String>? level,
     int? order,
   }) async {
-    await _apiService.postCompetenceReportItem(
+    final result = await _apiService.postCompetenceReportItem(
       parentItem: parentItem,
       name: name,
       level: level,
       order: order,
     );
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Zeugniskompetenz erstellt',
-    );
+    if (result != null) {
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Zeugniskompetenz erstellt',
+      );
+    }
   }
 
   Future<void> updateItemOrder({
@@ -113,22 +111,23 @@ class CompetenceReportItemManager {
   }
 
   Future<void> updateItem(CompetenceReportItem item) async {
-    await _apiService.updateCompetenceReportItem(item);
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Zeugniskompetenz aktualisiert',
-    );
+    final result = await _apiService.updateCompetenceReportItem(item);
+    if (result != null) {
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Zeugniskompetenz aktualisiert',
+      );
+    }
   }
 
   Future<void> deleteItem(int publicId) async {
     final success = await _apiService.deleteCompetenceReportItem(publicId);
-    if (success) {
+    if (success == true) {
       _notificationService.showSnackBar(
         NotificationType.success,
         'Zeugniskompetenz gelöscht',
       );
-    } else {
+    } else if (success == false) {
       _notificationService.showSnackBar(
         NotificationType.error,
         'Fehler beim Löschen der Zeugniskompetenz',

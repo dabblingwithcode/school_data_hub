@@ -147,9 +147,11 @@ class CompetenceReportManager {
 
   Future<void> fetchReportsForPupil(int pupilId) async {
     final reports = await _reportApiService.fetchCompetenceReports(pupilId);
-    final map = Map<int, List<CompetenceReport>>.from(_reportsByPupil.value);
-    map[pupilId] = reports;
-    _reportsByPupil.value = map;
+    if (reports != null) {
+      final map = Map<int, List<CompetenceReport>>.from(_reportsByPupil.value);
+      map[pupilId] = reports;
+      _reportsByPupil.value = map;
+    }
   }
 
   Future<void> postReport({
@@ -159,18 +161,19 @@ class CompetenceReportManager {
     required DateTime achievedAt,
   }) async {
     final createdBy = di<HubSessionManager>().userName!;
-    await _reportApiService.postCompetenceReport(
+    final result = await _reportApiService.postCompetenceReport(
       pupilId: pupilId,
       schoolSemesterId: schoolSemesterId,
       achievement: achievement,
       achievedAt: achievedAt,
       createdBy: createdBy,
     );
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Zeugnis erstellt',
-    );
+    if (result != null) {
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Zeugnis erstellt',
+      );
+    }
   }
 
   Future<void> updateReport({
@@ -181,18 +184,19 @@ class CompetenceReportManager {
     ({DateTime? value})? modifiedAt,
   }) async {
     final modifiedBy = di<HubSessionManager>().userName!;
-    await _reportApiService.updateCompetenceReport(
+    final result = await _reportApiService.updateCompetenceReport(
       reportId,
       achievement: achievement,
       achievedAt: achievedAt,
       modifiedBy: (value: modifiedBy),
       modifiedAt: modifiedAt ?? (value: DateTime.now().toUtc()),
     );
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Zeugnis aktualisiert',
-    );
+    if (result != null) {
+      _notificationService.showSnackBar(
+        NotificationType.success,
+        'Zeugnis aktualisiert',
+      );
+    }
   }
 
   Future<void> deleteReport({
@@ -200,7 +204,7 @@ class CompetenceReportManager {
     required String reportId,
   }) async {
     final success = await _reportApiService.deleteCompetenceReport(reportId);
-    if (success) {
+    if (success == true) {
       _notificationService.showSnackBar(
         NotificationType.success,
         'Zeugnis gelöscht',
