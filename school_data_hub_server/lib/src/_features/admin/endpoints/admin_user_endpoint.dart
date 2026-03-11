@@ -1,7 +1,10 @@
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/module.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
+
+final _log = Logger('AdminUserEndpoint');
 
 /// The endpoint for admin operations.
 /// This endpoint requires the user to be logged in and have admin scope.
@@ -113,8 +116,23 @@ class AdminUserEndpoint extends Endpoint {
     return session.db.transaction(runWrites);
   }
 
+  /// Returns a user-friendly message for create failures; treats duplicate key (23505) as "already in use".
+  String _messageForCreateError(Object e) {
+    final msg = e.toString();
+    if (e is DatabaseQueryException) {
+      if (e.code == '23505') return 'E-Mail bzw. Anmeldename bereits vergeben.';
+      if (msg.contains('23505') ||
+          msg.contains('unique constraint') ||
+          msg.contains('serverpod_user_info_user_identifier')) {
+        return 'E-Mail bzw. Anmeldename bereits vergeben.';
+      }
+    }
+    return msg.isEmpty ? 'Unbekannter Fehler' : msg;
+  }
+
   /// Batch-creates users. Returns credentials for successes and errors for skipped/failed rows.
-  /// Each create runs in its own transaction; creates are executed in parallel (up to 5 at a time) to reduce timeout risk.
+  /// Each create runs in its own transaction; creates are executed in parallel (up to 5 at a time).
+  /// Duplicates are detected by the DB (unique constraint); we catch 23505 and report a friendly message.
   Future<BatchCreateUsersResponse> batchCreateUsers(
     Session session,
     List<CreateUserRequest> requests,
@@ -122,31 +140,7 @@ class AdminUserEndpoint extends Endpoint {
     final credentials = <CreatedUserCredential>[];
     final errors = <BatchCreateUserError>[];
 
-    final existingUserNames = <String>{};
-    final existingEmails = <String>{};
-
-    // Load all auth UserInfo so we consider every existing auth account (with or without a Hub User row).
-    final infos = await auth.UserInfo.db.find(session);
-    for (final userInfo in infos) {
-      final name = userInfo.userName;
-      if (name != null && name.isNotEmpty) existingUserNames.add(name);
-      final emailStr = userInfo.email;
-      if (emailStr != null) {
-        final e = emailStr.trim().toLowerCase();
-        if (e.isNotEmpty) existingEmails.add(e);
-      }
-    }
-
-    // Validation pass: collect validation errors and build list of valid requests.
-    // Track names/emails added in this batch to avoid duplicates within the same file.
-    final addedInBatchUserNames = <String>{};
-    final addedInBatchEmails = <String>{};
-    final toCreate = <({
-      CreateUserRequest req,
-      int rowIndex,
-      String userName,
-      String emailLower
-    })>[];
+    final toAttempt = <({CreateUserRequest req, int rowIndex, String userName})>[];
     for (var i = 0; i < requests.length; i++) {
       final req = requests[i];
       final rowIndex = i + 1;
@@ -159,44 +153,12 @@ class AdminUserEndpoint extends Endpoint {
         ));
         continue;
       }
-      if (existingUserNames.contains(userName) ||
-          addedInBatchUserNames.contains(userName)) {
-        errors.add(BatchCreateUserError(
-          rowIndex: rowIndex,
-          userNameOrKurzel: userName,
-          message: 'Kürzel bereits vergeben.',
-        ));
-        continue;
-      }
-      final emailLower = req.email.trim().toLowerCase();
-      if (existingEmails.contains(emailLower) ||
-          addedInBatchEmails.contains(emailLower)) {
-        errors.add(BatchCreateUserError(
-          rowIndex: rowIndex,
-          userNameOrKurzel: userName,
-          message: 'E-Mail bereits vergeben.',
-        ));
-        continue;
-      }
-      toCreate.add((
-        req: req,
-        rowIndex: rowIndex,
-        userName: userName,
-        emailLower: emailLower
-      ));
-      addedInBatchUserNames.add(userName);
-      addedInBatchEmails.add(emailLower);
+      toAttempt.add((req: req, rowIndex: rowIndex, userName: userName));
     }
 
-    if (toCreate.isEmpty) {
-      return BatchCreateUsersResponse(credentials: credentials, errors: errors);
-    }
-
-    // Run creates in parallel with concurrency limit (5 at a time) to reduce total time.
-    // Each create uses its own transaction so we don't hold one long-lived transaction.
     const concurrency = 5;
-    for (var start = 0; start < toCreate.length; start += concurrency) {
-      final chunk = toCreate.skip(start).take(concurrency).toList();
+    for (var start = 0; start < toAttempt.length; start += concurrency) {
+      final chunk = toAttempt.skip(start).take(concurrency).toList();
       await Future.wait(chunk.map((item) async {
         try {
           await _createOneUser(
@@ -222,17 +184,10 @@ class AdminUserEndpoint extends Endpoint {
           ));
         } catch (e) {
           session.log('batchCreateUsers failed for ${item.userName}: $e');
-          String message = e.toString();
-          if (e is DatabaseQueryException &&
-              (message.contains('23505') ||
-                  message.contains('unique constraint') ||
-                  message.contains('serverpod_user_info_user_identifier'))) {
-            message = 'E-Mail bzw. Anmeldename bereits vergeben.';
-          }
           errors.add(BatchCreateUserError(
             rowIndex: item.rowIndex,
             userNameOrKurzel: item.userName,
-            message: message,
+            message: _messageForCreateError(e),
           ));
         }
       }));
@@ -244,128 +199,77 @@ class AdminUserEndpoint extends Endpoint {
     );
   }
 
-  /// Streams batch create results one-by-one to avoid HTTP timeout. Same validation and create logic as [batchCreateUsers].
+  /// Streams batch create results one-by-one to avoid HTTP timeout. Duplicates are detected by the DB; we catch 23505 and yield a friendly error event.
   Stream<BatchCreateUserEvent> batchCreateUsersStream(
     Session session,
     List<CreateUserRequest> requests,
   ) async* {
-    final existingUserNames = <String>{};
-    final existingEmails = <String>{};
-
-    final infos = await auth.UserInfo.db.find(session);
-    for (final userInfo in infos) {
-      final name = userInfo.userName;
-      if (name != null && name.isNotEmpty) existingUserNames.add(name);
-      final emailStr = userInfo.email;
-      if (emailStr != null) {
-        final e = emailStr.trim().toLowerCase();
-        if (e.isNotEmpty) existingEmails.add(e);
-      }
-    }
-
-    final addedInBatchUserNames = <String>{};
-    final addedInBatchEmails = <String>{};
-    final toCreate = <({
-      CreateUserRequest req,
-      int rowIndex,
-      String userName,
-      String emailLower
-    })>[];
-
-    for (var i = 0; i < requests.length; i++) {
-      final req = requests[i];
-      final rowIndex = i + 1;
-      final userName = req.userName.trim();
-      if (userName.isEmpty) {
-        yield BatchCreateUserEvent(
-          credential: null,
-          error: BatchCreateUserError(
-            rowIndex: rowIndex,
-            userNameOrKurzel: req.fullName,
-            message: 'Kürzel ist leer.',
-          ),
-        );
-        continue;
-      }
-      if (existingUserNames.contains(userName) ||
-          addedInBatchUserNames.contains(userName)) {
-        yield BatchCreateUserEvent(
-          credential: null,
-          error: BatchCreateUserError(
-            rowIndex: rowIndex,
-            userNameOrKurzel: userName,
-            message: 'Kürzel bereits vergeben.',
-          ),
-        );
-        continue;
-      }
-      final emailLower = req.email.trim().toLowerCase();
-      if (existingEmails.contains(emailLower) ||
-          addedInBatchEmails.contains(emailLower)) {
-        yield BatchCreateUserEvent(
-          credential: null,
-          error: BatchCreateUserError(
-            rowIndex: rowIndex,
-            userNameOrKurzel: userName,
-            message: 'E-Mail bereits vergeben.',
-          ),
-        );
-        continue;
-      }
-      toCreate.add((
-        req: req,
-        rowIndex: rowIndex,
-        userName: userName,
-        emailLower: emailLower
-      ));
-      addedInBatchUserNames.add(userName);
-      addedInBatchEmails.add(emailLower);
-    }
-
-    for (final item in toCreate) {
-      try {
-        await _createOneUser(
-          session,
-          userName: item.userName,
-          fullName: item.req.fullName,
-          email: item.req.email,
-          password: item.req.password,
-          role: item.req.role,
-          timeUnits: item.req.timeUnits,
-          reliefTimeUnits: item.req.reliefTimeUnits,
-          scopeNames: item.req.scopeNames,
-          isTester: item.req.isTester,
-          matrixUserId: item.req.matrixUserId,
-          credit: item.req.credit,
-          pupilsAuth: item.req.pupilsAuth,
-        );
-        yield BatchCreateUserEvent(
-          credential: CreatedUserCredential(
-            userName: item.userName,
-            fullName: item.req.fullName,
-            email: item.req.email,
-            password: item.req.password,
-          ),
-          error: null,
-        );
-      } catch (e) {
-        session.log('batchCreateUsersStream failed for ${item.userName}: $e');
-        String message = e.toString();
-        if (e is DatabaseQueryException &&
-            (message.contains('23505') ||
-                message.contains('unique constraint') ||
-                message.contains('serverpod_user_info_user_identifier'))) {
-          message = 'E-Mail bzw. Anmeldename bereits vergeben.';
+    _log.info('[batchCreateUsersStream] start requests=${requests.length}');
+    try {
+      for (var i = 0; i < requests.length; i++) {
+        final req = requests[i];
+        final rowIndex = i + 1;
+        final userName = req.userName.trim();
+        if (userName.isEmpty) {
+          yield BatchCreateUserEvent(
+            credential: null,
+            error: BatchCreateUserError(
+              rowIndex: rowIndex,
+              userNameOrKurzel: req.fullName,
+              message: 'Kürzel ist leer.',
+            ),
+          );
+          continue;
         }
-        yield BatchCreateUserEvent(
-          credential: null,
-          error: BatchCreateUserError(
-            rowIndex: item.rowIndex,
-            userNameOrKurzel: item.userName,
-            message: message,
-          ),
-        );
+        try {
+          await _createOneUser(
+            session,
+            userName: userName,
+            fullName: req.fullName,
+            email: req.email,
+            password: req.password,
+            role: req.role,
+            timeUnits: req.timeUnits,
+            reliefTimeUnits: req.reliefTimeUnits,
+            scopeNames: req.scopeNames,
+            isTester: req.isTester,
+            matrixUserId: req.matrixUserId,
+            credit: req.credit,
+            pupilsAuth: req.pupilsAuth,
+          );
+          yield BatchCreateUserEvent(
+            credential: CreatedUserCredential(
+              userName: userName,
+              fullName: req.fullName,
+              email: req.email,
+              password: req.password,
+            ),
+            error: null,
+          );
+        } catch (e) {
+          session.log('batchCreateUsersStream failed for $userName: $e');
+          yield BatchCreateUserEvent(
+            credential: null,
+            error: BatchCreateUserError(
+              rowIndex: rowIndex,
+              userNameOrKurzel: userName,
+              message: _messageForCreateError(e),
+            ),
+          );
+        }
       }
+      _log.info('[batchCreateUsersStream] done');
+    } catch (e, st) {
+      _log.severe('[batchCreateUsersStream] uncaught error', e, st);
+      session.log('batchCreateUsersStream uncaught: $e');
+      yield BatchCreateUserEvent(
+        credential: null,
+        error: BatchCreateUserError(
+          rowIndex: 0,
+          userNameOrKurzel: '',
+          message: _messageForCreateError(e),
+        ),
+      );
     }
   }
 

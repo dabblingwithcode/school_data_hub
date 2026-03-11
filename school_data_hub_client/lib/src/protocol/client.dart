@@ -403,7 +403,8 @@ class EndpointAdminUser extends _i1.EndpointRef {
       );
 
   /// Batch-creates users. Returns credentials for successes and errors for skipped/failed rows.
-  /// Each create runs in its own transaction; creates are executed in parallel (up to 5 at a time) to reduce timeout risk.
+  /// Each create runs in its own transaction; creates are executed in parallel (up to 5 at a time).
+  /// Duplicates are detected by the DB (unique constraint); we catch 23505 and report a friendly message.
   _i2.Future<_i13.BatchCreateUsersResponse> batchCreateUsers(
           List<_i14.CreateUserRequest> requests) =>
       caller.callServerEndpoint<_i13.BatchCreateUsersResponse>(
@@ -412,7 +413,7 @@ class EndpointAdminUser extends _i1.EndpointRef {
         {'requests': requests},
       );
 
-  /// Streams batch create results one-by-one to avoid HTTP timeout. Same validation and create logic as [batchCreateUsers].
+  /// Streams batch create results one-by-one to avoid HTTP timeout. Duplicates are detected by the DB; we catch 23505 and yield a friendly error event.
   _i2.Stream<_i15.BatchCreateUserEvent> batchCreateUsersStream(
           List<_i14.CreateUserRequest> requests) =>
       caller.callStreamingServerEndpoint<_i2.Stream<_i15.BatchCreateUserEvent>,

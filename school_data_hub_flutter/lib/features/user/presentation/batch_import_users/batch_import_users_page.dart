@@ -4,17 +4,20 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:logging/logging.dart';
 import 'package:printing/printing.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/user/data/staff_excel_import_parser.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/user/domain/batch_create_result.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/batch_import_users/staff_credentials_pdf_service.dart';
+
+final _log = Logger('BatchImportUsersPage');
 
 class BatchImportUsersPage extends StatefulWidget {
   const BatchImportUsersPage({super.key});
@@ -49,7 +52,11 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
 
   Future<void> _createUsers() async {
     final rows = _parseResult?.rows ?? [];
-    if (rows.isEmpty) return;
+    _log.info('[BatchImport] Benutzer anlegen clicked, rows=${rows.length}');
+    if (rows.isEmpty) {
+      _log.warning('[BatchImport] No rows to create, returning');
+      return;
+    }
     setState(() {
       _isCreating = true;
       _batchResult = null;
@@ -61,40 +68,58 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
     final errors = <BatchCreateError>[];
 
     try {
+      _log.info('[BatchImport] Getting stream from UserManager');
       final stream = userManager.batchCreateUsersStreamFromImportRows(rows);
+      _log.info('[BatchImport] Subscribing to batchCreateUsersStream');
       _streamSubscription = stream.listen(
         (event) {
           if (!mounted) return;
           if (event.credential != null) {
             final c = event.credential!;
-            credentials.add(StaffCredentialEntry(
-              userName: c.userName,
-              fullName: c.fullName,
-              email: c.email,
-              password: c.password,
-            ));
+            credentials.add(
+              StaffCredentialEntry(
+                userName: c.userName,
+                fullName: c.fullName,
+                email: c.email,
+                password: c.password,
+              ),
+            );
             setState(() => _progressCreated = credentials.length);
+            _log.info(
+              '[BatchImport] Event: created ${credentials.length} — ${c.userName}',
+            );
           } else if (event.error != null) {
             final e = event.error!;
-            errors.add(BatchCreateError(
-              rowIndex: e.rowIndex,
-              userNameOrKurzel: e.userNameOrKurzel,
-              message: e.message,
-            ));
+            errors.add(
+              BatchCreateError(
+                rowIndex: e.rowIndex,
+                userNameOrKurzel: e.userNameOrKurzel,
+                message: e.message,
+              ),
+            );
             setState(() => _progressErrors = errors.length);
-          }
-        },
-        onError: (Object e) {
-          if (mounted) {
-            setState(() => _isCreating = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Fehler: $e')),
+            _log.info(
+              '[BatchImport] Event: error ${errors.length} — row ${e.rowIndex} ${e.userNameOrKurzel}: ${e.message}',
             );
           }
         },
+        onError: (Object e, StackTrace? st) {
+          _log.severe('[BatchImport] Stream onError', e, st);
+          if (mounted) {
+            setState(() => _isCreating = false);
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Fehler: $e')));
+          }
+        },
         onDone: () async {
+          _log.info(
+            '[BatchImport] Stream onDone — credentials=${credentials.length} errors=${errors.length}',
+          );
           if (!mounted) return;
+          _log.info('[BatchImport] Refreshing user list');
           await userManager.fetchUsersCommand.runAsync();
+          if (!mounted) return;
           setState(() {
             _batchResult = BatchCreateResult(
               credentials: credentials,
@@ -104,15 +129,19 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
             _progressCreated = 0;
             _progressErrors = 0;
           });
+          _log.info(
+            '[BatchImport] Batch complete. Success: ${credentials.length}, failures: ${errors.length}',
+          );
         },
         cancelOnError: false,
       );
-    } catch (e) {
+    } catch (e, st) {
+      _log.severe('[BatchImport] _createUsers catch', e, st);
       if (mounted) {
         setState(() => _isCreating = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fehler: $e')));
       }
     }
   }

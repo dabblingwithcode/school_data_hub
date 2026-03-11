@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -7,6 +8,8 @@ import 'package:school_data_hub_flutter/features/user/data/user_api_service.dart
 import 'package:school_data_hub_flutter/features/user/domain/batch_create_result.dart';
 import 'package:school_data_hub_flutter/features/user/domain/staff_import_password_generator.dart';
 import 'package:school_data_hub_flutter/features/user/domain/staff_import_row.dart';
+
+final _log = Logger('UserManager');
 
 /// Data class for createUser command parameters.
 typedef CreateUserParams = ({
@@ -284,6 +287,7 @@ class UserManager {
       rows,
       generatePassword: generatePassword,
     );
+    _log.info('[UserManager] batchCreateUsersStreamFromImportRows: rows=${rows.length} -> requests=${requests.length}, calling API stream');
     return _apiService.batchCreateUsersStream(requests);
   }
 
