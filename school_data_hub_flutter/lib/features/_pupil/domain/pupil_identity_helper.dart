@@ -80,6 +80,7 @@ class PupilIdentityHelper {
     normalized['deputyGroupTutor'] ??= null;
     normalized['nationality'] ??= null;
     normalized['schoolTransitionRecommendation'] ??= null;
+    normalized['migrationBackground'] ??= false;
 
     return normalized;
   }
@@ -120,8 +121,8 @@ class PupilIdentityHelper {
 
   //- OBJECT HELPERS
 
-  /// Builds the reduced sync content (id,afterSchoolCare per line) from full 20-column
-  /// newline-separated text. Column 14: OFFGANZ or non-empty -> true, else false.
+  /// Builds the reduced sync content (id,afterSchoolCare per line) from full
+  /// newline-separated text. Column 15: OFFGANZ or non-empty -> true, else false.
   /// Used when sending to backend via string transport.
   static String buildReducedPupilSyncContent(String fullCsvContent) {
     final lines = fullCsvContent.split('\n');
@@ -133,8 +134,8 @@ class PupilIdentityHelper {
       final id = int.tryParse(parts[0].trim());
       if (id == null) continue;
       final afterSchoolCare =
-          parts.length > 14 &&
-          (parts[14] == 'OFFGANZ' || parts[14].trim().isNotEmpty);
+          parts.length > 15 &&
+          (parts[15] == 'OFFGANZ' || parts[15].trim().isNotEmpty);
       reduced.add('$id,$afterSchoolCare');
     }
     return reduced.join('\n');
@@ -179,41 +180,45 @@ class PupilIdentityHelper {
       schoolGrade: schoolgrade,
       specialNeeds: _specialNeedsListFromCanonical(
           pupilIdentityStringItems[6], pupilIdentityStringItems[7]),
-      deputyGroupTutor: pupilIdentityStringItems.length > 20
-          ? _emptyToNull(pupilIdentityStringItems[20])
+      deputyGroupTutor: pupilIdentityStringItems.length > 21
+          ? _emptyToNull(pupilIdentityStringItems[21])
           : null,
       gender: pupilIdentityStringItems[8],
       language: pupilIdentityStringItems[9],
-      nationality: pupilIdentityStringItems.length > 21
-          ? _emptyToNull(pupilIdentityStringItems[21])
+      migrationBackground: _parseBoolCanonical(
+          pupilIdentityStringItems.length > 10
+              ? pupilIdentityStringItems[10]
+              : ''),
+      nationality: pupilIdentityStringItems.length > 22
+          ? _emptyToNull(pupilIdentityStringItems[22])
           : null,
-      family: pupilIdentityStringItems[10] == ''
+      family: pupilIdentityStringItems[11] == ''
           ? null
-          : pupilIdentityStringItems[10],
-      birthday: pupilIdentityStringItems[11].toDateOnlyUtc(),
-      migrationSupportEnds: pupilIdentityStringItems[12] == ''
+          : pupilIdentityStringItems[11],
+      birthday: pupilIdentityStringItems[12].toDateOnlyUtc(),
+      migrationSupportEnds: pupilIdentityStringItems[13] == ''
           ? null
-          : pupilIdentityStringItems[12].toDateOnlyUtc(),
-      pupilSince: pupilIdentityStringItems[13].toDateOnlyUtc(),
-      afterSchoolCare: pupilIdentityStringItems[14] != '' ? true : false,
-      religion: pupilIdentityStringItems[15] == ''
+          : pupilIdentityStringItems[13].toDateOnlyUtc(),
+      pupilSince: pupilIdentityStringItems[14].toDateOnlyUtc(),
+      afterSchoolCare: pupilIdentityStringItems[15] != '' ? true : false,
+      religion: pupilIdentityStringItems[16] == ''
           ? null
-          : pupilIdentityStringItems[15],
-      religionLessonsSince: pupilIdentityStringItems[16] == ''
-          ? null
-          : pupilIdentityStringItems[16].tryToDateOnlyUtc(),
-      religionLessonsCancelledAt: pupilIdentityStringItems[17] == ''
+          : pupilIdentityStringItems[16],
+      religionLessonsSince: pupilIdentityStringItems[17] == ''
           ? null
           : pupilIdentityStringItems[17].tryToDateOnlyUtc(),
-      familyLanguageLessonsSince: pupilIdentityStringItems[18] == ''
+      religionLessonsCancelledAt: pupilIdentityStringItems[18] == ''
           ? null
           : pupilIdentityStringItems[18].tryToDateOnlyUtc(),
-      leavingDate: pupilIdentityStringItems[19] == ''
+      familyLanguageLessonsSince: pupilIdentityStringItems[19] == ''
           ? null
           : pupilIdentityStringItems[19].tryToDateOnlyUtc(),
+      leavingDate: pupilIdentityStringItems[20] == ''
+          ? null
+          : pupilIdentityStringItems[20].tryToDateOnlyUtc(),
       schoolTransitionRecommendation:
-          pupilIdentityStringItems.length > 22
-              ? _emptyToNull(pupilIdentityStringItems[22])
+          pupilIdentityStringItems.length > 23
+              ? _emptyToNull(pupilIdentityStringItems[23])
               : null,
     );
 
@@ -231,6 +236,11 @@ class PupilIdentityHelper {
   static String? _emptyToNull(String s) {
     final t = s.trim();
     return t.isEmpty ? null : t;
+  }
+
+  static bool _parseBoolCanonical(String s) {
+    final t = s.trim().toLowerCase();
+    return t == 'true' || t == '1' || t == 'ja' || t == 'j' || t == 'x' || t == 'yes';
   }
 
   Future<String> generateEncryptedPupilIdentitiesTransferString(

@@ -169,6 +169,7 @@ class PupilProxy with ChangeNotifier {
 
   String? get groupTutor => _pupilIdentity.groupTutor;
   String? get deputyGroupTutor => _pupilIdentity.deputyGroupTutor;
+  bool get migrationBackground => _pupilIdentity.migrationBackground;
 
   DateTime? get migrationSupportEnds => _pupilIdentity.migrationSupportEnds;
   DateTime get pupilSince => _pupilIdentity.pupilSince;

@@ -771,6 +771,7 @@ class PupilIdentity ##[bold]  {
   <i>specialNeeds</i>: <b><color:#ff962f>List<String>?</color></b>
   <i>gender</i>: <b><color:#ff962f>String</color></b>
   <i>language</i>: <b><color:#ff962f>String</color></b>
+  <i>migrationBackground</i>: <b><color:#ff962f>bool</color></b>
   <i>nationality</i>: <b><color:#ff962f>String?</color></b>
   <i>family</i>: <b><color:#ff962f>String?</color></b>
   <i>birthday</i>: <b><color:#ff962f>DateTime</color></b>

@@ -10,6 +10,7 @@ fields:
   specialNeeds: List<String>?
   gender: String
   language: String
+  migrationBackground: bool
   nationality: String?
   family: String?
   birthday: DateTime

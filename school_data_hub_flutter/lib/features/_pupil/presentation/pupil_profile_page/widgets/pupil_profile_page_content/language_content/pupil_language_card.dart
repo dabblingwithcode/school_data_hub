@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
 class PupilLanguageCard extends StatelessWidget {
   final PupilProxy passedPupil;
@@ -26,7 +27,7 @@ class PupilLanguageCard extends StatelessWidget {
                   ProfileNavigationState.language.value,
                 );
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (ctx) => PupilProfilePage(pupil: pupil),
                   ),
                 );
@@ -44,12 +45,27 @@ class PupilLanguageCard extends StatelessWidget {
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    Text(
-                      'Familiensprache: ${pupil.language}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    const Gap(5),
+                    Row(
+                      children: [
+                        const Text('Familiensprache:'),
+                        const Gap(5),
+                        Text(
+                          pupil.language,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    const Gap(5),
+                    Row(
+                      children: [
+                        const Text('Staatsangehörigkeit:'),
+                        const Gap(5),
+                        Text(
+                          pupil.nationality ?? 'Kein Eintrag',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ],
                 ),

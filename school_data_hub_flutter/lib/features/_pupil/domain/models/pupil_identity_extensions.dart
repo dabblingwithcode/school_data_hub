@@ -23,6 +23,7 @@ extension PupilIdentityExtension on PupilIdentity {
       specialNeeds2,
       gender,
       language,
+      migrationBackground ? 'true' : 'false',
       family ?? '',
       birthday.formatDateForJson(normalizeUtc: false),
       migrationSupportEnds,
@@ -50,6 +51,7 @@ extension PupilIdentityExtension on PupilIdentity {
         const ListEquality<String>().equals(specialNeeds, other.specialNeeds) &&
         gender == other.gender &&
         language == other.language &&
+        migrationBackground == other.migrationBackground &&
         nationality == other.nationality &&
         family == other.family &&
         birthday == other.birthday &&

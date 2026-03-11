@@ -31,10 +31,10 @@ Future<String?> pickPupilIdentityFileContent() async {
 
 /// SchILD export column indices (0-based). Mapping by position, not header names.
 /// Headers: Interne ID-Nummer, Vorname, Nachname, Klasse, Klassenlehrer, Stv., Jahrgang,
-/// Förderschwerpunkt 1, Förderschwerpunkt 2, Geschlecht, Staatsangehörigkeit, Verkehrssprache,
-/// Externe ID-Nummer, Geburtsdatum, Ende Eingliederungsphase, Aufnahmedatum, bes.Merkmal,
-/// Konfession, Religionsanmeldung, Religionsabmeldung, Ausweisnummer, Übergangsempfehlung, Entlassdatum
-/// Hijacked: Ausweisnummer (20) -> family; Externe ID-Nummer (12) -> familyLanguageLessonsSince.
+/// Förderschwerpunkt 1, Förderschwerpunkt 2, Geschlecht, Staatsangehörigkeit,
+/// Migrationshintergrund vorhanden, Verkehrssprache, Externe ID-Nummer, Geburtsdatum,
+/// Ende Eingliederungsphase, Aufnahmedatum, bes.Merkmal, Konfession, Religionsanmeldung,
+/// Religionsabmeldung, Ausweisnummer, Übergangsempfehlung, Entlassdatum
 class SchildExportColumns {
   SchildExportColumns._();
 
@@ -49,17 +49,18 @@ class SchildExportColumns {
   static const int specialNeeds2 = 8; // Förderschwerpunkt 2
   static const int gender = 9; // Geschlecht
   static const int nationality = 10; // Staatsangehörigkeit (Schlüssel)
-  static const int language = 11; // Verkehrssprache in der Familie
-  static const int familyLanguageLessonsSince = 12; // Externe ID-Nummer (hijacked)
-  static const int birthday = 13; // Geburtsdatum
-  static const int migrationSupportEnds = 14; // Ende der Eingliederungsphase
-  static const int pupilSince = 15; // Aufnahmedatum
-  static const int religion = 17; // Konfession (Klartext)
-  static const int religionLessonsSince = 18; // Religionsanmeldung
-  static const int religionLessonsCancelledAt = 19; // Religionsabmeldung
-  static const int family = 20; // Ausweisnummer (hijacked for family code)
-  static const int schoolTransitionRecommendation = 21; // Übergangsempfehlung
-  static const int leavingDate = 22; // Entlassdatum
+  static const int migrationBackground = 11; // Migrationshintergrund vorhanden
+  static const int language = 12; // Verkehrssprache in der Familie
+  static const int familyLanguageLessonsSince = 13; // Externe ID-Nummer (hijacked)
+  static const int birthday = 14; // Geburtsdatum
+  static const int migrationSupportEnds = 15; // Ende der Eingliederungsphase
+  static const int pupilSince = 16; // Aufnahmedatum
+  static const int religion = 18; // Konfession (Klartext)
+  static const int religionLessonsSince = 19; // Religionsanmeldung
+  static const int religionLessonsCancelledAt = 20; // Religionsabmeldung
+  static const int family = 21; // Ausweisnummer (hijacked for family code)
+  static const int schoolTransitionRecommendation = 22; // Übergangsempfehlung
+  static const int leavingDate = 23; // Entlassdatum
 }
 
 String _xlsxToPupilIdentityLines(List<int> bytes) {
@@ -108,6 +109,9 @@ String? _rowToCanonicalLine(
   final schoolGradeStr = cellStr(SchildExportColumns.schoolGrade).trim();
   final grade = schoolGradeStr.isNotEmpty ? schoolGradeStr : 'E1';
 
+  final migrationBg =
+      _parseBoolCell(cellStr(SchildExportColumns.migrationBackground));
+
   final parts = <String>[
     idVal.toString(),
     cellStr(SchildExportColumns.firstName),
@@ -119,6 +123,7 @@ String? _rowToCanonicalLine(
     cellStr(SchildExportColumns.specialNeeds2),
     cellStr(SchildExportColumns.gender),
     cellStr(SchildExportColumns.language),
+    migrationBg ? 'true' : 'false',
     cellStr(SchildExportColumns.family),
     _normalizeDateCell(cellStr(SchildExportColumns.birthday), dateFormat),
     _normalizeDateCell(
@@ -155,6 +160,16 @@ String _cellValueToCanonicalString(dynamic value, DateFormat dateFormat) {
   }
   if (value is FormulaCellValue) return value.formula.toString();
   return value.toString();
+}
+
+/// Parses a cell string as bool (e.g. "ja", "j", "true", "1", "x" -> true).
+bool _parseBoolCell(String raw) {
+  final s = raw.trim().toLowerCase();
+  if (s.isEmpty) return false;
+  if (s == 'true' || s == '1' || s == 'ja' || s == 'j' || s == 'x' || s == 'yes') {
+    return true;
+  }
+  return false;
 }
 
 /// Returns a date string (yyyy-MM-dd) or '' if [raw] is not a valid date.

@@ -26,6 +26,7 @@ abstract class PupilIdentity
     this.specialNeeds,
     required this.gender,
     required this.language,
+    required this.migrationBackground,
     this.nationality,
     this.family,
     required this.birthday,
@@ -51,6 +52,7 @@ abstract class PupilIdentity
     List<String>? specialNeeds,
     required String gender,
     required String language,
+    required bool migrationBackground,
     String? nationality,
     String? family,
     required DateTime birthday,
@@ -80,6 +82,7 @@ abstract class PupilIdentity
           .toList(),
       gender: jsonSerialization['gender'] as String,
       language: jsonSerialization['language'] as String,
+      migrationBackground: jsonSerialization['migrationBackground'] as bool,
       nationality: jsonSerialization['nationality'] as String?,
       family: jsonSerialization['family'] as String?,
       birthday:
@@ -135,6 +138,8 @@ abstract class PupilIdentity
 
   String language;
 
+  bool migrationBackground;
+
   String? nationality;
 
   String? family;
@@ -173,6 +178,7 @@ abstract class PupilIdentity
     List<String>? specialNeeds,
     String? gender,
     String? language,
+    bool? migrationBackground,
     String? nationality,
     String? family,
     DateTime? birthday,
@@ -199,6 +205,7 @@ abstract class PupilIdentity
       if (specialNeeds != null) 'specialNeeds': specialNeeds?.toJson(),
       'gender': gender,
       'language': language,
+      'migrationBackground': migrationBackground,
       if (nationality != null) 'nationality': nationality,
       if (family != null) 'family': family,
       'birthday': birthday.toJson(),
@@ -232,6 +239,7 @@ abstract class PupilIdentity
       if (specialNeeds != null) 'specialNeeds': specialNeeds?.toJson(),
       'gender': gender,
       'language': language,
+      'migrationBackground': migrationBackground,
       if (nationality != null) 'nationality': nationality,
       if (family != null) 'family': family,
       'birthday': birthday.toJson(),
@@ -272,6 +280,7 @@ class _PupilIdentityImpl extends PupilIdentity {
     List<String>? specialNeeds,
     required String gender,
     required String language,
+    required bool migrationBackground,
     String? nationality,
     String? family,
     required DateTime birthday,
@@ -295,6 +304,7 @@ class _PupilIdentityImpl extends PupilIdentity {
           specialNeeds: specialNeeds,
           gender: gender,
           language: language,
+          migrationBackground: migrationBackground,
           nationality: nationality,
           family: family,
           birthday: birthday,
@@ -324,6 +334,7 @@ class _PupilIdentityImpl extends PupilIdentity {
     Object? specialNeeds = _Undefined,
     String? gender,
     String? language,
+    bool? migrationBackground,
     Object? nationality = _Undefined,
     Object? family = _Undefined,
     DateTime? birthday,
@@ -352,6 +363,7 @@ class _PupilIdentityImpl extends PupilIdentity {
           : this.specialNeeds?.map((e0) => e0).toList(),
       gender: gender ?? this.gender,
       language: language ?? this.language,
+      migrationBackground: migrationBackground ?? this.migrationBackground,
       nationality: nationality is String? ? nationality : this.nationality,
       family: family is String? ? family : this.family,
       birthday: birthday ?? this.birthday,
