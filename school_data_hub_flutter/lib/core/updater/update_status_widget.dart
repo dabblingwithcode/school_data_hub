@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:terminate_restart/terminate_restart.dart';
 
 /// Widget that displays update status and provides update controls
 class UpdateStatusWidget extends WatchingWidget {
@@ -115,7 +116,17 @@ class UpdateStatusWidget extends WatchingWidget {
             ),
 
             const SizedBox(height: 12),
-
+            ElevatedButton(
+              onPressed: () async {
+                await TerminateRestart.instance.restartAppWithConfirmation(
+                  context,
+                  title: 'Restart App',
+                  message: 'Do you want to restart the app?',
+                  terminate: true,
+                );
+              },
+              child: const Text('App neu starten'),
+            ),
             // Action buttons
             Row(
               children: [
@@ -191,7 +202,7 @@ class UpdateStatusWidget extends WatchingWidget {
   }
 
   void _showRestartDialog(BuildContext context) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Restart Required'),
@@ -205,10 +216,13 @@ class UpdateStatusWidget extends WatchingWidget {
             child: const Text('Later'),
           ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // You could add app restart logic here if needed
-              // For now, user needs to manually restart
+            onPressed: () async {
+              await TerminateRestart.instance.restartAppWithConfirmation(
+                context,
+                title: 'Restart App',
+                message: 'Do you want to restart the app?',
+                terminate: true,
+              );
             },
             child: const Text('OK'),
           ),

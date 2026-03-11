@@ -1,0 +1,12 @@
+SCHILD-NRW-TEXTEXPORTVORLAGE
+_Schuldaten_excel
+Schueler
+,
+
+true
+false
+FALSE
+TRUE
+
+Interne ID-Nummer;Vorname;Nachname;Klasse;Klassenlehrer: Krz.;Stv. Klassenlehrer: Krz.;Jahrgang;Förderschwerpunkt 1;Förderschwerpunkt 2;Geschlecht;Staatsangehörigkeit (Schlüssel);Verkehrssprache in der Familie;Externe ID-Nummer;Geburtsdatum;Ende der Eingliederungsphase;Aufnahmedatum;bes. Merkmal;Konfession (Klartext);Religionsanmeldung;Religionsabmeldung;Ausweisnummer;Übergangsempfehlung;Entlassdatum;
+3

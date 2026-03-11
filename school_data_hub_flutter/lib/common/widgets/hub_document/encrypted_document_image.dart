@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/get_cached_image_or_download_inage.dart';
+import 'package:school_data_hub_flutter/common/widgets/get_image_cached_or_download.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 
 class EncryptedDocumentImage extends WatchingWidget {
@@ -24,10 +24,7 @@ class EncryptedDocumentImage extends WatchingWidget {
         width: boxSize,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(5),
-          child: Image.asset(
-            'assets/document_camera.png',
-            fit: BoxFit.cover,
-          ),
+          child: Image.asset('assets/document_camera.png', fit: BoxFit.cover),
         ),
       );
     }
@@ -44,7 +41,7 @@ class EncryptedDocumentImage extends WatchingWidget {
             WidgetZoom(
               heroAnimationTag: '$documentId$randomPart',
               zoomWidget: FutureBuilder<Image>(
-                future: getCachedImageOrDownloadImage(
+                future: getImageCachedOrDownload(
                   documentId: documentId!,
                   decrypt: true,
                 ),

@@ -352,7 +352,7 @@ class EnvManager with ChangeNotifier {
 
     // Check if credentials are stored - if so, log in
     // Add a small delay to ensure everything is properly initialized
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future<void>.delayed(const Duration(milliseconds: 100));
     await _checkAndAttemptAutoLogin();
 
     // Note: registerManagersDependingOnAuthedSession is called automatically

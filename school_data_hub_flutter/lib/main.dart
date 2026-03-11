@@ -23,6 +23,7 @@ import 'package:school_data_hub_flutter/features/app_entry_point/login_page/logi
 import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_bottom_navigation.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
+import 'package:terminate_restart/terminate_restart.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
@@ -30,6 +31,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initialize media_kit backend for just_audio on Windows/Linux
   JustAudioMediaKit.ensureInitialized();
+  // Initialize TerminateRestart to handle app termination
+  TerminateRestart.instance.initialize();
   // Set the global logging level
   Logger.root.level = Level.ALL;
   di.registerSingleton<LogService>(LogService());

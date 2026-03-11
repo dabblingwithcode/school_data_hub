@@ -5,7 +5,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/get_cached_image_or_download_inage.dart';
+import 'package:school_data_hub_flutter/common/widgets/get_image_cached_or_download.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 

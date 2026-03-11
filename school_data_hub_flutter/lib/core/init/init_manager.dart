@@ -158,7 +158,7 @@ class InitManager {
     if (di.hasScope(InitScope.onMatrixEnvScope.name)) {
       _log.info('Dropping existing matrix scope before creating new one');
       await di.dropScope(InitScope.onMatrixEnvScope.name);
-      await Future.delayed(const Duration(milliseconds: 50));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
     }
 
     await di.pushNewScopeAsync(
