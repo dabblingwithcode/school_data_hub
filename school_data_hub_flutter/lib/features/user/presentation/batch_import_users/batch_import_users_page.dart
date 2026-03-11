@@ -6,7 +6,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:printing/printing.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -16,6 +15,7 @@ import 'package:school_data_hub_flutter/features/user/data/staff_excel_import_pa
 import 'package:school_data_hub_flutter/features/user/domain/batch_create_result.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/batch_import_users/staff_credentials_pdf_service.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 final _log = Logger('BatchImportUsersPage');
 
@@ -32,11 +32,12 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
   bool _isCreating = false;
   int _progressCreated = 0;
   int _progressErrors = 0;
-  StreamSubscription<BatchCreateUserEvent>? _streamSubscription;
+  StreamSubscription<BatchCreateResult>? _chunkSubscription;
 
   @override
   void dispose() {
-    _streamSubscription?.cancel();
+    _chunkSubscription?.cancel();
+    WakelockPlus.disable();
     super.dispose();
   }
 
@@ -63,86 +64,87 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
       _progressCreated = 0;
       _progressErrors = 0;
     });
+
+    await WakelockPlus.enable();
+    _log.info('[BatchImport] Wakelock enabled');
+
     final userManager = di<UserManager>();
-    final credentials = <StaffCredentialEntry>[];
-    final errors = <BatchCreateError>[];
+    final allCredentials = <StaffCredentialEntry>[];
+    final allErrors = <BatchCreateError>[];
 
     try {
-      _log.info('[BatchImport] Getting stream from UserManager');
-      final stream = userManager.batchCreateUsersStreamFromImportRows(rows);
-      _log.info('[BatchImport] Subscribing to batchCreateUsersStream');
-      _streamSubscription = stream.listen(
-        (event) {
+      final stream = userManager.batchCreateUsersInChunks(rows);
+      _log.info('[BatchImport] Subscribing to batchCreateUsersInChunks');
+      _chunkSubscription = stream.listen(
+        (chunkResult) {
           if (!mounted) return;
-          if (event.credential != null) {
-            final c = event.credential!;
-            credentials.add(
-              StaffCredentialEntry(
-                userName: c.userName,
-                fullName: c.fullName,
-                email: c.email,
-                password: c.password,
-              ),
-            );
-            setState(() => _progressCreated = credentials.length);
-            _log.info(
-              '[BatchImport] Event: created ${credentials.length} — ${c.userName}',
-            );
-          } else if (event.error != null) {
-            final e = event.error!;
-            errors.add(
-              BatchCreateError(
-                rowIndex: e.rowIndex,
-                userNameOrKurzel: e.userNameOrKurzel,
-                message: e.message,
-              ),
-            );
-            setState(() => _progressErrors = errors.length);
-            _log.info(
-              '[BatchImport] Event: error ${errors.length} — row ${e.rowIndex} ${e.userNameOrKurzel}: ${e.message}',
-            );
-          }
+          allCredentials.addAll(chunkResult.credentials);
+          allErrors.addAll(chunkResult.errors);
+          setState(() {
+            _progressCreated = allCredentials.length;
+            _progressErrors = allErrors.length;
+          });
+          _log.info(
+            '[BatchImport] Chunk done — created=${chunkResult.successCount}, '
+            'errors=${chunkResult.failureCount}, '
+            'total created=$_progressCreated, total errors=$_progressErrors',
+          );
         },
         onError: (Object e, StackTrace? st) {
-          _log.severe('[BatchImport] Stream onError', e, st);
+          _log.severe('[BatchImport] Chunk stream onError', e, st);
           if (mounted) {
             setState(() => _isCreating = false);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('Fehler: $e')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Fehler: $e')),
+            );
           }
+          WakelockPlus.disable();
         },
-        onDone: () async {
+        onDone: () {
           _log.info(
-            '[BatchImport] Stream onDone — credentials=${credentials.length} errors=${errors.length}',
+            '[BatchImport] All chunks done — '
+            'credentials=${allCredentials.length} errors=${allErrors.length}',
           );
-          if (!mounted) return;
-          _log.info('[BatchImport] Refreshing user list');
-          await userManager.fetchUsersCommand.runAsync();
+          WakelockPlus.disable();
           if (!mounted) return;
           setState(() {
             _batchResult = BatchCreateResult(
-              credentials: credentials,
-              errors: errors,
+              credentials: allCredentials,
+              errors: allErrors,
             );
             _isCreating = false;
             _progressCreated = 0;
             _progressErrors = 0;
           });
-          _log.info(
-            '[BatchImport] Batch complete. Success: ${credentials.length}, failures: ${errors.length}',
-          );
         },
         cancelOnError: false,
       );
     } catch (e, st) {
       _log.severe('[BatchImport] _createUsers catch', e, st);
+      await WakelockPlus.disable();
       if (mounted) {
         setState(() => _isCreating = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Fehler: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fehler: $e')),
+        );
       }
+    }
+  }
+
+  void _abortCreate() {
+    _log.info('[BatchImport] User aborted batch create');
+    _chunkSubscription?.cancel();
+    _chunkSubscription = null;
+    WakelockPlus.disable();
+    if (mounted) {
+      setState(() {
+        _isCreating = false;
+        _progressCreated = 0;
+        _progressErrors = 0;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Import abgebrochen.')),
+      );
     }
   }
 
@@ -262,21 +264,33 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
                       style: AppStyles.subtitle,
                     ),
                     const Gap(8),
-                    ElevatedButton.icon(
-                      style: AppStyles.actionButtonStyle,
-                      onPressed: _isCreating ? null : _createUsers,
-                      icon: _isCreating
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Icon(Icons.person_add),
-                      label: Text(
-                        _isCreating
-                            ? 'Wird erstellt… ($_progressCreated / ${_parseResult!.rows.length}, $_progressErrors Fehler)'
-                            : 'Benutzer anlegen',
-                      ),
+                    Row(
+                      children: [
+                        ElevatedButton.icon(
+                          style: AppStyles.actionButtonStyle,
+                          onPressed: _isCreating ? null : _createUsers,
+                          icon: _isCreating
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.person_add),
+                          label: Text(
+                            _isCreating
+                                ? 'Wird erstellt… ($_progressCreated / ${_parseResult!.rows.length}, $_progressErrors Fehler)'
+                                : 'Benutzer anlegen',
+                          ),
+                        ),
+                        if (_isCreating) ...[
+                          const Gap(12),
+                          OutlinedButton.icon(
+                            onPressed: _abortCreate,
+                            icon: const Icon(Icons.cancel_outlined),
+                            label: const Text('Abbrechen'),
+                          ),
+                        ],
+                      ],
                     ),
                   ],
                 ],

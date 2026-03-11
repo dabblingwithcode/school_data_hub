@@ -110,17 +110,32 @@ class AdminUserEndpoint extends Endpoint {
       return user;
     }
 
-    if (transaction != null) {
-      return runWrites(transaction);
+    try {
+      if (transaction != null) {
+        return await runWrites(transaction);
+      }
+      return await session.db.transaction(runWrites);
+    } catch (e) {
+      // auth.Emails.createUser already committed; clean up orphaned auth account
+      try {
+        await auth.UserInfo.db.deleteRow(session, userInfo!);
+      } catch (cleanupError) {
+        _log.warning(
+          '[_createOneUser] Failed to clean up orphaned auth for ${userInfo!.id}: $cleanupError',
+        );
+      }
+      rethrow;
     }
-    return session.db.transaction(runWrites);
   }
 
-  /// Returns a user-friendly message for create failures; treats duplicate key (23505) as "already in use".
+  /// Returns a user-friendly message for create failures.
   String _messageForCreateError(Object e) {
     final msg = e.toString();
     if (e is DatabaseQueryException) {
       if (e.code == '23505') return 'E-Mail bzw. Anmeldename bereits vergeben.';
+      if (e.code == '57014' || msg.contains('57014') || msg.contains('canceling statement')) {
+        return 'Verbindung unterbrochen. Bitte erneut versuchen.';
+      }
       if (msg.contains('23505') ||
           msg.contains('unique constraint') ||
           msg.contains('serverpod_user_info_user_identifier')) {
@@ -140,7 +155,8 @@ class AdminUserEndpoint extends Endpoint {
     final credentials = <CreatedUserCredential>[];
     final errors = <BatchCreateUserError>[];
 
-    final toAttempt = <({CreateUserRequest req, int rowIndex, String userName})>[];
+    final toAttempt =
+        <({CreateUserRequest req, int rowIndex, String userName})>[];
     for (var i = 0; i < requests.length; i++) {
       final req = requests[i];
       final rowIndex = i + 1;
@@ -204,7 +220,9 @@ class AdminUserEndpoint extends Endpoint {
     Session session,
     List<CreateUserRequest> requests,
   ) async* {
-    _log.info('[batchCreateUsersStream] start requests=${requests.length}');
+    session.log(
+        level: LogLevel.info,
+        '[batchCreateUsersStream] start requests=${requests.length}');
     try {
       for (var i = 0; i < requests.length; i++) {
         final req = requests[i];
@@ -258,9 +276,14 @@ class AdminUserEndpoint extends Endpoint {
           );
         }
       }
-      _log.info('[batchCreateUsersStream] done');
+      session.log(level: LogLevel.info, '[batchCreateUsersStream] done');
     } catch (e, st) {
-      _log.severe('[batchCreateUsersStream] uncaught error', e, st);
+      session.log(
+        level: LogLevel.error,
+        '[batchCreateUsersStream] uncaught error',
+        exception: e,
+        stackTrace: st,
+      );
       session.log('batchCreateUsersStream uncaught: $e');
       yield BatchCreateUserEvent(
         credential: null,

@@ -278,22 +278,74 @@ class UserManager {
     return requests;
   }
 
-  /// Streams batch create results one-by-one (avoids HTTP timeout). Caller listens and accumulates.
-  Stream<BatchCreateUserEvent> batchCreateUsersStreamFromImportRows(
+  /// Creates users in small HTTP chunks, yielding a [BatchCreateResult] per chunk.
+  ///
+  /// Each chunk is a short HTTP request to [batchCreateUsers] (not WebSocket),
+  /// so it is unaffected by the hub stream lifecycle.
+  Stream<BatchCreateResult> batchCreateUsersInChunks(
     List<StaffImportRow> rows, {
+    int chunkSize = 3,
     String Function(StaffImportRow)? generatePassword,
-  }) {
+  }) async* {
     final requests = buildCreateUserRequestsFromImportRows(
       rows,
       generatePassword: generatePassword,
     );
-    _log.info('[UserManager] batchCreateUsersStreamFromImportRows: rows=${rows.length} -> requests=${requests.length}, calling API stream');
-    return _apiService.batchCreateUsersStream(requests);
+    _log.info(
+      '[UserManager] batchCreateUsersInChunks: rows=${rows.length} -> '
+      'requests=${requests.length}, chunkSize=$chunkSize',
+    );
+
+    for (var i = 0; i < requests.length; i += chunkSize) {
+      final end = (i + chunkSize).clamp(0, requests.length);
+      final chunk = requests.sublist(i, end);
+      _log.info('[UserManager] sending chunk ${i ~/ chunkSize + 1} (indices $i..$end)');
+
+      final response = await _apiService.batchCreateUsers(chunk);
+      if (response == null) {
+        yield BatchCreateResult(
+          credentials: [],
+          errors: [
+            for (var j = 0; j < chunk.length; j++)
+              BatchCreateError(
+                rowIndex: i + j,
+                userNameOrKurzel: chunk[j].userName,
+                message: 'Server-Antwort war null.',
+              ),
+          ],
+        );
+        continue;
+      }
+
+      yield BatchCreateResult(
+        credentials: response.credentials
+            .map(
+              (c) => StaffCredentialEntry(
+                userName: c.userName,
+                fullName: c.fullName,
+                email: c.email,
+                password: c.password,
+              ),
+            )
+            .toList(),
+        errors: response.errors
+            .map(
+              (e) => BatchCreateError(
+                rowIndex: e.rowIndex + i,
+                userNameOrKurzel: e.userNameOrKurzel,
+                message: e.message,
+              ),
+            )
+            .toList(),
+      );
+    }
+
+    _log.info('[UserManager] batchCreateUsersInChunks: done');
+    await fetchUsersCommand.runAsync();
   }
 
-  /// Batch-creates users from import rows. Passwords are generated on the client;
-  /// server validates and skips duplicate userName/email. Refreshes user list at the end.
-  /// Prefer [batchCreateUsersStreamFromImportRows] for large batches to avoid timeout.
+  /// Batch-creates users from import rows in a single HTTP call.
+  /// For large batches prefer [batchCreateUsersInChunks] to avoid timeout.
   Future<BatchCreateResult> batchCreateUsersFromImportRows(
     List<StaffImportRow> rows, {
     String Function(StaffImportRow)? generatePassword,
