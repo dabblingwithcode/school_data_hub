@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/pick_file_return_content_as_string.dart';
+import 'package:school_data_hub_flutter/app_utils/pupil_identity_file_import.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -40,7 +40,7 @@ class ToolsPage extends WatchingWidget {
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
 
   void _importUnencryptedPupilIdentitySourceFile(String function) async {
-    final fileContent = await fromTextFilePickerToString();
+    final fileContent = await pickPupilIdentityFileContent();
     if (fileContent == null) return;
 
     if (function == 'update_backend') {

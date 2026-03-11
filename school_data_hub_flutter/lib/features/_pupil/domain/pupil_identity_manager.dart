@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
@@ -8,7 +7,6 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
-import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -201,90 +199,32 @@ class PupilIdentityManager {
   Future<void> updateServerFromPupilIdentityExternalSource(
     String textFileContent,
   ) async {
-    // The pupils in the string are separated by a line break - let's split them out
-    List<String> pupilIdentityTextLines = textFileContent.split('\n');
-    // Wer prepare a string with the pupils that are going to be updated later in the server
-    String pupilListTxtFileContentForBackendUpdate = '';
-    // The properties are separated by commas, let's build the pupilbase objects with them
-    List<PupilIdentity> importedPupilIdentityList = [];
+    final reducedContent =
+        PupilIdentityHelper.buildReducedPupilSyncContent(textFileContent);
 
-    for (String textLine in pupilIdentityTextLines) {
-      if (textLine != '') {
-        PupilIdentity pupilIdentity =
-            PupilIdentityHelper.decodePupilIdentityFromTextLine(textLine);
-
-        importedPupilIdentityList.add(pupilIdentity);
-
-        final bool afterSchoolCareStatus = textLine.split(',')[14] == 'OFFGANZ'
-            ? true
-            : false;
-
-        final internalIdAndAfterSchoolCareData =
-            '${int.parse(textLine.split(',')[0])},$afterSchoolCareStatus';
-
-        pupilListTxtFileContentForBackendUpdate +=
-            '$internalIdAndAfterSchoolCareData\n';
-      }
-    }
-    // We have the latest dataset from the school database.
-    // Now let's update the pupils in the server with a txt file
-    // First we generate a txt file with updatedPupils
-    // The server will automatically archive pupils that are not in the list,
-    // update the ones that are in the list,
-    // and create the ones that are not in the server.
-
-    final textFile = File('temp.txt')
-      ..writeAsStringSync(pupilListTxtFileContentForBackendUpdate);
-
-    final fileResponse = await ClientFileUpload.uploadFile(
-      file: textFile,
-      storageId: StorageId.private,
-      folder: ServerStorageFolder.temp,
-    );
-    if (fileResponse.success == false) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Die Datei konnte nicht hochgeladen werden!',
-      );
-      return;
-    }
-
-    // The backend successfuly updated the pupils, let's get the new update timestamp
-    final updateTimestamp = await PupilDataApiService()
-        .fetchLastIdentitiesUpdate();
-
-    // Now we need to store the updated pupil identities in storage
-    updatePupilIdentitiesFromUnencryptedSource(
-      pupilIdentityTextLines: textFileContent,
-      updateTimestamp: updateTimestamp,
-    );
+    // Update backend with reduced content (id,afterSchoolCare per line). Server accepts string; no file upload.
     final List<PupilData>? updatedPupilDataRepository =
         await PupilDataApiService().updateBackendPupilsDatabase(
-          filePath: fileResponse.path!,
+          reducedContent: reducedContent,
         );
     if (updatedPupilDataRepository == null) {
       return;
     }
+
+    // Only update local state after successful server update.
+    final newLastIdentitiesUpdate = DateTime.now().toUtc();
+    updatePupilIdentitiesFromUnencryptedSource(
+      pupilIdentityTextLines: textFileContent,
+      updateTimestamp: newLastIdentitiesUpdate,
+    );
     for (PupilData pupil in updatedPupilDataRepository) {
       di<PupilProxyManager>().updatePupilProxyWithPupilData(pupil);
     }
-    // We don't need the temp file any more, let's delete it
-    textFile.delete();
 
-    for (PupilIdentity element in importedPupilIdentityList) {
-      _pupilIdentities[element.id] = element;
-    }
-
-    // This is the new reference data for all the clients to adopt.
-    // We need to update the active environment and the backend with the new last identities update.
-    final newLastIdentitiesUpdate = DateTime.now().toUtc();
-    await di<EnvManager>().updateActiveEnv(
-      lastIdentitiesUpdate: newLastIdentitiesUpdate,
-    );
-    await PupilDataApiService().updateLastIdentitiesUpdate(
+    // Update server timestamp for last identities (env and fetchAllPupils already done by updatePupilIdentitiesFromUnencryptedSource).
+    await PupilDataApiService().insertLastIdentitiesUpdate(
       newLastIdentitiesUpdate,
     );
-    await di<PupilProxyManager>().fetchAllPupils();
 
     _notificationService.showSnackBar(
       NotificationType.success,

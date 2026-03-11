@@ -44,14 +44,13 @@ class PupilIdentityEndpoint extends Endpoint {
     return lastUpdate.date;
   }
 
-  Future<DateTime?> updateLastPupilIdentitiesUpdate(
+  Future<DateTime?> insertLastPupilIdentitiesUpdate(
       Session session, DateTime date) async {
-    // Create or update the last identities update record
+    // Append a new last-identities-update record (table is a log; fetch returns latest).
     var lastUpdate = await LastPupilIdentiesUpdate.db.findFirstRow(
       session,
     );
     try {
-      // Create a new record
       lastUpdate = LastPupilIdentiesUpdate(date: date);
       final newLastUpdate =
           await LastPupilIdentiesUpdate.db.insertRow(session, lastUpdate);

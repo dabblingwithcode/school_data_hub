@@ -51,7 +51,7 @@ import '../_features/learning_support/endpoints/support_category_endpoint.dart'
     as _i26;
 import '../_features/matrix/matrix_endpoint.dart' as _i27;
 import '../_features/pupil/endpoints/pupil_endpoint.dart' as _i28;
-import '../_features/pupil/endpoints/pupil_identity_enpoint.dart' as _i29;
+import '../_features/pupil/endpoints/pupil_identity_endpoint.dart' as _i29;
 import '../_features/pupil/endpoints/pupil_update_endpoint.dart' as _i30;
 import '../_features/school_data/endpoints/school_data_endpoint.dart' as _i31;
 import '../_features/school_lists/endpoints/school_list_endpoint.dart' as _i32;
@@ -538,8 +538,8 @@ class Endpoints extends _i1.EndpointDispatch {
         'updateBackendPupilDataState': _i1.MethodConnector(
           name: 'updateBackendPupilDataState',
           params: {
-            'filePath': _i1.ParameterDescription(
-              name: 'filePath',
+            'reducedContent': _i1.ParameterDescription(
+              name: 'reducedContent',
               type: _i1.getType<String>(),
               nullable: false,
             )
@@ -551,7 +551,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['adminPupil'] as _i4.AdminPupilEndpoint)
                   .updateBackendPupilDataState(
             session,
-            params['filePath'],
+            params['reducedContent'],
           ),
         )
       },
@@ -4119,8 +4119,8 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['pupilIdentity'] as _i29.PupilIdentityEndpoint)
                   .fetchLastPupilIdentitiesUpdate(session),
         ),
-        'updateLastPupilIdentitiesUpdate': _i1.MethodConnector(
-          name: 'updateLastPupilIdentitiesUpdate',
+        'insertLastPupilIdentitiesUpdate': _i1.MethodConnector(
+          name: 'insertLastPupilIdentitiesUpdate',
           params: {
             'date': _i1.ParameterDescription(
               name: 'date',
@@ -4133,7 +4133,7 @@ class Endpoints extends _i1.EndpointDispatch {
             Map<String, dynamic> params,
           ) async =>
               (endpoints['pupilIdentity'] as _i29.PupilIdentityEndpoint)
-                  .updateLastPupilIdentitiesUpdate(
+                  .insertLastPupilIdentitiesUpdate(
             session,
             params['date'],
           ),

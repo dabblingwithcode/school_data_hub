@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
-import 'package:school_data_hub_server/src/helpers/convert_file_to_content_string.dart';
 import 'package:school_data_hub_server/src/helpers/generate_pupil_from_admin_console_data.dart';
 import 'package:serverpod/serverpod.dart';
 
+/// Endpoint for admin-only pupil operations (e.g. updating backend from external source).
 class AdminPupilEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
@@ -13,15 +13,12 @@ class AdminPupilEndpoint extends Endpoint {
   @override
   Set<Scope> get requiredScopes => {Scope('serverpod.admin')};
 
+  /// Updates backend pupil state from reduced sync content. Admin only.
+  /// [reducedContent] is newline-separated lines, each line "internalId,afterSchoolCare"
+  /// with afterSchoolCare as "true" or "false".
   Future<Set<PupilData>> updateBackendPupilDataState(
-      Session session, String filePath) async {
-    // check if the file is a txt or csv file
-    final extension = filePath.split('.').last;
-    if (extension != 'txt' && extension != 'csv') {
-      throw Exception('File is not a compatible format!');
-    }
-    // read the file content
-    final content = await convertFileToContentString(session, filePath);
+      Session session, String reducedContent) async {
+    final content = reducedContent;
 
     // get all active pupils from the database and create a list
     final activePupils = await PupilData.db

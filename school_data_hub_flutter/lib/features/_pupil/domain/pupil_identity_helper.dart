@@ -89,6 +89,25 @@ class PupilIdentityHelper {
 
   //- OBJECT HELPERS
 
+  /// Builds the reduced sync content (id,afterSchoolCare per line) from full 20-column
+  /// newline-separated text. Column 14: OFFGANZ or non-empty -> true, else false.
+  /// Used when sending to backend via string transport.
+  static String buildReducedPupilSyncContent(String fullCsvContent) {
+    final lines = fullCsvContent.split('\n');
+    final reduced = <String>[];
+    for (final textLine in lines) {
+      if (textLine.isEmpty) continue;
+      final parts = textLine.split(',');
+      if (parts.isEmpty) continue;
+      final id = int.tryParse(parts[0].trim());
+      if (id == null) continue;
+      final afterSchoolCare =
+          parts.length > 14 && (parts[14] == 'OFFGANZ' || parts[14].trim().isNotEmpty);
+      reduced.add('$id,$afterSchoolCare');
+    }
+    return reduced.join('\n');
+  }
+
   static PupilIdentity decodePupilIdentityFromTextLine(String textLine) {
     final List<String> pupilIdentityStringItems = textLine.split(',');
 

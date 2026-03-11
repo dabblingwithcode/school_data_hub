@@ -185,6 +185,7 @@ class EndpointAdminLogs extends _i1.EndpointRef {
       );
 }
 
+/// Endpoint for admin-only pupil operations (e.g. updating backend from external source).
 /// {@category Endpoint}
 class EndpointAdminPupil extends _i1.EndpointRef {
   EndpointAdminPupil(_i1.EndpointCaller caller) : super(caller);
@@ -192,11 +193,15 @@ class EndpointAdminPupil extends _i1.EndpointRef {
   @override
   String get name => 'adminPupil';
 
-  _i2.Future<Set<_i7.PupilData>> updateBackendPupilDataState(String filePath) =>
+  /// Updates backend pupil state from reduced sync content. Admin only.
+  /// [reducedContent] is newline-separated lines, each line "internalId,afterSchoolCare"
+  /// with afterSchoolCare as "true" or "false".
+  _i2.Future<Set<_i7.PupilData>> updateBackendPupilDataState(
+          String reducedContent) =>
       caller.callServerEndpoint<Set<_i7.PupilData>>(
         'adminPupil',
         'updateBackendPupilDataState',
-        {'filePath': filePath},
+        {'reducedContent': reducedContent},
       );
 }
 
@@ -1952,10 +1957,10 @@ class EndpointPupilIdentity extends _i1.EndpointRef {
         {},
       );
 
-  _i2.Future<DateTime?> updateLastPupilIdentitiesUpdate(DateTime date) =>
+  _i2.Future<DateTime?> insertLastPupilIdentitiesUpdate(DateTime date) =>
       caller.callServerEndpoint<DateTime?>(
         'pupilIdentity',
-        'updateLastPupilIdentitiesUpdate',
+        'insertLastPupilIdentitiesUpdate',
         {'date': date},
       );
 

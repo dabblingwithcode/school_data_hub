@@ -4,10 +4,7 @@ PupilData generatePupilfromExternalAdminConsoleData(String importedLine) {
   // Split the line by commas and trim whitespace
   final data = importedLine.split(',');
 
-  bool afterSchoolCare = false;
-  if (data[1] == 'OFFGANZ' || data[1] == 'true') {
-    afterSchoolCare = true;
-  }
+  bool afterSchoolCare = data[1].toLowerCase() == 'true';
 
   return PupilData(
       status: PupilStatus.active,

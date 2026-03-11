@@ -36,6 +36,7 @@ dependencies:
   flutter_it: ^2.1.2
   package_info_plus: ^9.0.0
   file_picker: ^10.3.7
+  excel: ^4.0.6
   gap: ^3.0.1
   flutter_localizations: 
     sdk: flutter

@@ -1,11 +1,11 @@
 import 'dart:io';
 
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilDataApiService {
   // Private constructor
@@ -24,11 +24,13 @@ class PupilDataApiService {
   Client get _client => di<Client>();
   // - update backend pupil database
 
+  /// [reducedContent] is newline-separated lines, each line "internalId,afterSchoolCare" (true/false).
   Future<List<PupilData>?> updateBackendPupilsDatabase({
-    required String filePath,
+    required String reducedContent,
   }) async {
     final pupils = await ClientHelper.apiCall(
-      call: () => _client.adminPupil.updateBackendPupilDataState(filePath),
+      call: () =>
+          _client.adminPupil.updateBackendPupilDataState(reducedContent),
       errorMessage: 'Die Schüler konnten nicht aktualisiert werden',
     );
     return pupils?.toList();
@@ -147,12 +149,9 @@ class PupilDataApiService {
     required KindergardenInfo? kindergardenInfo,
   }) async {
     final updatedPupil = await ClientHelper.apiCall(
-      call: () => _client.pupilUpdate.updateKindergardenData(
-        pupilId,
-        kindergardenInfo,
-      ),
-      errorMessage:
-          'Der Kindergartenbesuch konnte nicht aktualisiert werden',
+      call: () =>
+          _client.pupilUpdate.updateKindergardenData(pupilId, kindergardenInfo),
+      errorMessage: 'Der Kindergartenbesuch konnte nicht aktualisiert werden',
     );
     return updatedPupil;
   }
@@ -298,9 +297,9 @@ class PupilDataApiService {
     return lastUpdate;
   }
 
-  Future<DateTime?> updateLastIdentitiesUpdate(DateTime date) async {
+  Future<DateTime?> insertLastIdentitiesUpdate(DateTime date) async {
     final updated = await ClientHelper.apiCall(
-      call: () => _client.pupilIdentity.updateLastPupilIdentitiesUpdate(date),
+      call: () => _client.pupilIdentity.insertLastPupilIdentitiesUpdate(date),
       errorMessage:
           'Die letzte Abgleich-Zeitstempel konnte nicht aktualisiert werden',
     );

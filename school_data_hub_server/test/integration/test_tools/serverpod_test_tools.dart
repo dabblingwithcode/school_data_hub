@@ -672,7 +672,7 @@ class _AdminPupilEndpoint {
 
   _i3.Future<Set<_i8.PupilData>> updateBackendPupilDataState(
     _i1.TestSessionBuilder sessionBuilder,
-    String filePath,
+    String reducedContent,
   ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
@@ -685,7 +685,7 @@ class _AdminPupilEndpoint {
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'adminPupil',
           methodName: 'updateBackendPupilDataState',
-          parameters: _i1.testObjectToJson({'filePath': filePath}),
+          parameters: _i1.testObjectToJson({'reducedContent': reducedContent}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
@@ -5394,7 +5394,7 @@ class _PupilIdentityEndpoint {
     });
   }
 
-  _i3.Future<DateTime?> updateLastPupilIdentitiesUpdate(
+  _i3.Future<DateTime?> insertLastPupilIdentitiesUpdate(
     _i1.TestSessionBuilder sessionBuilder,
     DateTime date,
   ) async {
@@ -5402,13 +5402,13 @@ class _PupilIdentityEndpoint {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
         endpoint: 'pupilIdentity',
-        method: 'updateLastPupilIdentitiesUpdate',
+        method: 'insertLastPupilIdentitiesUpdate',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
           endpointPath: 'pupilIdentity',
-          methodName: 'updateLastPupilIdentitiesUpdate',
+          methodName: 'insertLastPupilIdentitiesUpdate',
           parameters: _i1.testObjectToJson({'date': date}),
           serializationManager: _serializationManager,
         );

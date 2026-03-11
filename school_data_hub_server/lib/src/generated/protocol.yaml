@@ -170,7 +170,7 @@ pupilIdentity:
   - streamEncryptedPupilIds:
   - sendPupilIdentityMessage:
   - fetchLastPupilIdentitiesUpdate:
-  - updateLastPupilIdentitiesUpdate:
+  - insertLastPupilIdentitiesUpdate:
   - deleteLastPupilIdentitiesUpdate:
 pupilUpdate:
   - updatePupil:
