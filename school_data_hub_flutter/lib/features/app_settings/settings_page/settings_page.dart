@@ -145,7 +145,7 @@ class SettingsPage extends WatchingWidget {
                     title: const Text('App Updates überprüfen'),
                     onPressed: (context) {
                       Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<void>(
                           builder: (ctx) => const ShorebirdCodePushPage(),
                         ),
                       );

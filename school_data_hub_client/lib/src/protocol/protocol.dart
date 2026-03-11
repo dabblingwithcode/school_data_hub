@@ -1128,6 +1128,11 @@ class Protocol extends _i1.SerializationManager {
               .toList()
           : null) as T;
     }
+    if (t == _i1.getType<List<String>?>()) {
+      return (data != null
+          ? (data as List).map((e) => deserialize<String>(e)).toList()
+          : null) as T;
+    }
     if (t == _i1.getType<List<_i61.PupilListEntry>?>()) {
       return (data != null
           ? (data as List)

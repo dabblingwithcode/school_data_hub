@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
@@ -7,6 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bo
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
+import 'package:terminate_restart/terminate_restart.dart';
 
 final _log = Logger('CheckForUpdatesPage');
 
@@ -195,6 +197,26 @@ class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
                       ? const _LoadingIndicator()
                       : const Icon(Icons.refresh),
                   label: const Text('Nach Updates suchen'),
+                ),
+                const Gap(12),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (defaultTargetPlatform == TargetPlatform.android ||
+                        defaultTargetPlatform == TargetPlatform.iOS) {
+                      await TerminateRestart.instance.restartAppWithConfirmation(
+                        context,
+                        title: 'Restart App',
+                        message: 'Do you want to restart the app?',
+                        terminate: true,
+                      );
+                    } else {
+                      if (!context.mounted) return;
+                      di<NotificationService>().showInformationDialog(
+                        'Bitte schließen Sie die App manuell und starten Sie sie erneut.',
+                      );
+                    }
+                  },
+                  child: const Text('App neu starten'),
                 ),
                 const Spacer(),
               ],

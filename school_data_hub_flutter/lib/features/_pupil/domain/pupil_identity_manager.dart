@@ -78,6 +78,10 @@ class PupilIdentityManager {
   Future<void> _getPupilIdentitiesForEnv() async {
     final activeEnv = _envManager.activeEnv!;
 
+    // Legacy identities (e.g. specialNeeds as String, missing deputyGroupTutor/
+    // nationality/schoolTransitionRecommendation) are normalized in
+    // PupilIdentityHelper._jsonDecodePupilIdentities before fromJson.
+    // TODO: remove after transition has been made in production
     final Map<int, PupilIdentity> pupilIdentities =
         await PupilIdentityHelper.readPupilIdentitiesFromStorage(
           secureStorageKey: _secureStorageKey,

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 
@@ -7,7 +8,9 @@ extension PupilIdentityExtension on PupilIdentity {
         ? this.migrationSupportEnds!.formatDateForJson()
         : '';
 
-    final specialNeeds = this.specialNeeds ?? '';
+    final sn = specialNeeds;
+    final specialNeeds1 = sn != null && sn.isNotEmpty ? sn.first : '';
+    final specialNeeds2 = sn != null && sn.length > 1 ? sn[1] : '';
 
     return [
       id.toString(),
@@ -16,8 +19,8 @@ extension PupilIdentityExtension on PupilIdentity {
       group,
       groupTutor,
       schoolGrade,
-      specialNeeds,
-      '', // this is a placeholder for the second special needs field in the administrative data source
+      specialNeeds1,
+      specialNeeds2,
       gender,
       language,
       family ?? '',
@@ -30,6 +33,9 @@ extension PupilIdentityExtension on PupilIdentity {
       religionLessonsCancelledAt?.formatDateForJson(normalizeUtc: false) ?? '',
       familyLanguageLessonsSince?.formatDateForJson(normalizeUtc: false) ?? '',
       leavingDate?.formatDateForJson(normalizeUtc: false) ?? '',
+      deputyGroupTutor ?? '',
+      nationality ?? '',
+      schoolTransitionRecommendation ?? '',
     ].join(',');
   }
 
@@ -39,10 +45,12 @@ extension PupilIdentityExtension on PupilIdentity {
         lastName == other.lastName &&
         group == other.group &&
         groupTutor == other.groupTutor &&
+        deputyGroupTutor == other.deputyGroupTutor &&
         schoolGrade == other.schoolGrade &&
-        specialNeeds == other.specialNeeds &&
+        const ListEquality<String>().equals(specialNeeds, other.specialNeeds) &&
         gender == other.gender &&
         language == other.language &&
+        nationality == other.nationality &&
         family == other.family &&
         birthday == other.birthday &&
         migrationSupportEnds == other.migrationSupportEnds &&
@@ -52,6 +60,7 @@ extension PupilIdentityExtension on PupilIdentity {
         religionLessonsSince == other.religionLessonsSince &&
         religionLessonsCancelledAt == other.religionLessonsCancelledAt &&
         familyLanguageLessonsSince == other.familyLanguageLessonsSince &&
-        leavingDate == other.leavingDate;
+        leavingDate == other.leavingDate &&
+        schoolTransitionRecommendation == other.schoolTransitionRecommendation;
   }
 }

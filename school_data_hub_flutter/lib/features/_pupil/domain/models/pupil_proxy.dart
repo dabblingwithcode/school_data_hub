@@ -7,13 +7,13 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_identity_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 
 typedef SiblingsResolver = List<PupilProxy> Function(PupilProxy pupil);
@@ -142,11 +142,14 @@ class PupilProxy with ChangeNotifier {
 
   SchoolGrade get schoolGrade => _pupilIdentity.schoolGrade;
 
-  String? get specialNeeds => _pupilIdentity.specialNeeds;
+  List<String>? get specialNeeds => _pupilIdentity.specialNeeds;
   String get gender => _pupilIdentity.gender;
   String get language => _pupilIdentity.language;
   String? get family => _pupilIdentity.family;
   DateTime get birthday => _pupilIdentity.birthday;
+  String? get nationality => _pupilIdentity.nationality;
+  String? get schoolTransitionRecommendation =>
+      _pupilIdentity.schoolTransitionRecommendation;
 
   bool get isBirthdayToday {
     final today = DateTime.now();
@@ -165,6 +168,7 @@ class PupilProxy with ChangeNotifier {
   }
 
   String? get groupTutor => _pupilIdentity.groupTutor;
+  String? get deputyGroupTutor => _pupilIdentity.deputyGroupTutor;
 
   DateTime? get migrationSupportEnds => _pupilIdentity.migrationSupportEnds;
   DateTime get pupilSince => _pupilIdentity.pupilSince;

@@ -48,9 +48,40 @@ class PupilIdentityHelper {
     return decodedJson.map(
       (key, value) => MapEntry(
         int.parse(key),
-        PupilIdentity.fromJson(Map<String, dynamic>.from(value as Map)),
+        PupilIdentity.fromJson(_normalizeLegacyPupilIdentityJson(
+            Map<String, dynamic>.from(value as Map))),
       ),
     );
+  }
+
+  /// Normalizes legacy stored identities so fromJson succeeds after model changes.
+  /// Converts specialNeeds String (e.g. "LE*SQ") to List<String>; ensures new
+  /// fields (deputyGroupTutor, nationality, schoolTransitionRecommendation) exist.
+  /// TODO: remove after transition has been made in production
+  static Map<String, dynamic> _normalizeLegacyPupilIdentityJson(
+      Map<String, dynamic> raw) {
+    final normalized = Map<String, dynamic>.from(raw);
+
+    // Legacy: specialNeeds was stored as String, often with '*' between two codes
+    final sn = normalized['specialNeeds'];
+    if (sn is String) {
+      final s = (sn as String).trim();
+      if (s.isEmpty) {
+        normalized['specialNeeds'] = null;
+      } else {
+        normalized['specialNeeds'] = s
+            .split(RegExp(r'\*'))
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList();
+      }
+    }
+
+    normalized['deputyGroupTutor'] ??= null;
+    normalized['nationality'] ??= null;
+    normalized['schoolTransitionRecommendation'] ??= null;
+
+    return normalized;
   }
 
   static void checkForOutdatedPupilIdentities() {
@@ -102,7 +133,8 @@ class PupilIdentityHelper {
       final id = int.tryParse(parts[0].trim());
       if (id == null) continue;
       final afterSchoolCare =
-          parts.length > 14 && (parts[14] == 'OFFGANZ' || parts[14].trim().isNotEmpty);
+          parts.length > 14 &&
+          (parts[14] == 'OFFGANZ' || parts[14].trim().isNotEmpty);
       reduced.add('$id,$afterSchoolCare');
     }
     return reduced.join('\n');
@@ -145,14 +177,16 @@ class PupilIdentityHelper {
       group: pupilIdentityStringItems[3],
       groupTutor: pupilIdentityStringItems[4],
       schoolGrade: schoolgrade,
-      // If there is a special needs string, it may be split into two parts
-      // and concatenated to form the full special needs string.
-      specialNeeds: pupilIdentityStringItems[6] == ''
-          ? null
-          : '${pupilIdentityStringItems[6]}*${pupilIdentityStringItems[7]}',
-      //
+      specialNeeds: _specialNeedsListFromCanonical(
+          pupilIdentityStringItems[6], pupilIdentityStringItems[7]),
+      deputyGroupTutor: pupilIdentityStringItems.length > 20
+          ? _emptyToNull(pupilIdentityStringItems[20])
+          : null,
       gender: pupilIdentityStringItems[8],
       language: pupilIdentityStringItems[9],
+      nationality: pupilIdentityStringItems.length > 21
+          ? _emptyToNull(pupilIdentityStringItems[21])
+          : null,
       family: pupilIdentityStringItems[10] == ''
           ? null
           : pupilIdentityStringItems[10],
@@ -177,9 +211,26 @@ class PupilIdentityHelper {
       leavingDate: pupilIdentityStringItems[19] == ''
           ? null
           : pupilIdentityStringItems[19].tryToDateOnlyUtc(),
+      schoolTransitionRecommendation:
+          pupilIdentityStringItems.length > 22
+              ? _emptyToNull(pupilIdentityStringItems[22])
+              : null,
     );
 
     return newPupilIdentity;
+  }
+
+  static List<String>? _specialNeedsListFromCanonical(String col6, String col7) {
+    final list = [col6, col7]
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    return list.isEmpty ? null : list;
+  }
+
+  static String? _emptyToNull(String s) {
+    final t = s.trim();
+    return t.isEmpty ? null : t;
   }
 
   Future<String> generateEncryptedPupilIdentitiesTransferString(

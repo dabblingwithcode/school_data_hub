@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -116,17 +117,7 @@ class UpdateStatusWidget extends WatchingWidget {
             ),
 
             const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () async {
-                await TerminateRestart.instance.restartAppWithConfirmation(
-                  context,
-                  title: 'Restart App',
-                  message: 'Do you want to restart the app?',
-                  terminate: true,
-                );
-              },
-              child: const Text('App neu starten'),
-            ),
+
             // Action buttons
             Row(
               children: [
@@ -217,12 +208,33 @@ class UpdateStatusWidget extends WatchingWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              await TerminateRestart.instance.restartAppWithConfirmation(
-                context,
-                title: 'Restart App',
-                message: 'Do you want to restart the app?',
-                terminate: true,
-              );
+              if (defaultTargetPlatform == TargetPlatform.android ||
+                  defaultTargetPlatform == TargetPlatform.iOS) {
+                await TerminateRestart.instance.restartAppWithConfirmation(
+                  context,
+                  title: 'Restart App',
+                  message: 'Do you want to restart the app?',
+                  terminate: true,
+                );
+              } else {
+                Navigator.of(context).pop();
+                if (!context.mounted) return;
+                await showDialog<void>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('App neu starten'),
+                    content: const Text(
+                      'Bitte schließen Sie die App manuell und starten Sie sie erneut.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(ctx).pop(),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              }
             },
             child: const Text('OK'),
           ),

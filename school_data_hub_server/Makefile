@@ -1,7 +1,11 @@
-migration: ## generate updated models and create migrations
+migration: ## generate updated models, create migration, apply and generate updated UML diagram
 	serverpod generate
 	serverpod create-migration
 	dart run bin/main.dart --role maintenance --apply-migrations
+	$(MAKE) uml
+
+generate: ## generate updated models and update UML diagram
+	serverpod generate
 	$(MAKE) uml
 
 docker: ## run docker container
@@ -49,10 +53,13 @@ run:
 #	run the server
 	dart run bin/main.dart --apply-migrations
 
-uml: ## generate UML diagram
-	dart run uml_for_serverpod --config=uml_config.yaml
-	plantuml model_relations_diagram.puml -tsvg -o ..\docs\model_relations\
-	
+# Directory of this Makefile (no trailing slash, so cd works on Windows)
+SERVER_DIR := $(patsubst %/,%,$(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
+uml: ## generate UML diagram (run from school_data_hub_server so .puml and -o paths resolve)
+	cd "$(SERVER_DIR)" && dart run uml_for_serverpod --config=uml_config.yaml
+	cd "$(SERVER_DIR)" && plantuml model_relations_diagram.puml -tsvg -o ../school_data_hub_flutter/assets
+	cd "$(SERVER_DIR)" && plantuml model_relations_diagram.puml -tsvg -o ../docs/model_relations
+
 install: ## serverpod vps branch
 	dart pub global activate -sgit https://github.com/dart-lang/http.git --git-ref dart pub global activate -sgit https://github.com/dabblingwithcode/serverpod_vps.git --git-ref 36f98e900347335af2338a0e087538009b7de2f9
 

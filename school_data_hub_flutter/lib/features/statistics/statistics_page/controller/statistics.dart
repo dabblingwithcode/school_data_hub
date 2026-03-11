@@ -196,7 +196,7 @@ class StatisticsController extends State<Statistics> {
   List<PupilProxy> specialNeedsInAGivenGroup(List<PupilProxy> group) {
     List<PupilProxy> groupPupils = [];
     for (PupilProxy pupil in group) {
-      if (pupil.specialNeeds != null) {
+      if (pupil.specialNeeds != null && pupil.specialNeeds!.isNotEmpty) {
         groupPupils.add(pupil);
       }
     }

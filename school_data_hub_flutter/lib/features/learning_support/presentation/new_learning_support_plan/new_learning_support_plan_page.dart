@@ -4,9 +4,9 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 
 class NewLearningSupportPlanPage extends WatchingWidget {
   final NewLearningSupportPlanController controller;
@@ -572,16 +572,16 @@ class _PupilLanguageInfo extends StatelessWidget {
 }
 
 class _PupilSpecialNeedsInfo extends StatelessWidget {
-  final String specialNeeds;
+  final List<String> specialNeeds;
 
   const _PupilSpecialNeedsInfo({required this.specialNeeds});
 
   @override
   Widget build(BuildContext context) {
     // Special needs format: "CODE1*CODE2" (e.g., "LE*ES")
-    final parts = specialNeeds.split('*');
-    final code1 = parts.isNotEmpty ? parts[0] : '';
-    final code2 = parts.length > 1 ? parts[1] : '';
+
+    final code1 = specialNeeds.isNotEmpty ? specialNeeds[0] : '';
+    final code2 = specialNeeds.length > 1 ? specialNeeds[1] : '';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

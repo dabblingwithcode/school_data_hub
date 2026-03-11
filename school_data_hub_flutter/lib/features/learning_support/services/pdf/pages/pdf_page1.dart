@@ -592,15 +592,12 @@ class PdfPage1 {
 
   static pw.Widget _buildCodeBox(
     String code,
-    String? specialNeeds,
+    List<String>? specialNeeds,
     pw.Font font,
   ) {
-    final parts = specialNeeds?.split('*');
     final upperCode = code.toUpperCase();
-    final isActive =
-        parts != null &&
-        (parts.first.toUpperCase() == upperCode ||
-            parts.last.toUpperCase() == upperCode);
+    final isActive = specialNeeds != null &&
+        specialNeeds.any((s) => s.toUpperCase() == upperCode);
     return pw.Container(
       width: 40,
       height: 22,

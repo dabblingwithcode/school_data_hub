@@ -140,14 +140,6 @@ class MissedSchoolday <<table: <b>missed_class</b>>> #e2f0fb##[bold] {
 
 }
 
-class MissedSchooldayDto ##[bold]  {
-<size:14>📁</size> <b><size:12> /_features/attendance/models/missed_schoolday_dto.spy.yaml</size></b>
---
-  <i>missedSchoolday</i>: <b><color:#ff962f>MissedSchoolday</color></b>
-  <i>operation</i>: <b><color:#ff962f>String</color></b>
-
-}
-
 enum MissedType #ece4ff ##[bold] {
 <size:14>📁</size> <b><size:12> /_features/attendance/models/missed_type.spy.yaml</size></b>
 --
@@ -307,6 +299,21 @@ class PupilBookLending <<table: <b>pupil_book_lending</b>>> #e2f0fb##[bold] {
   <i>isbn</i>: <b><color:#ff962f>int</color></b>
  ➡️ <i>libraryBook</i> : <b><color:#ff962f>LibraryBook?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_book_lending_library_book<color:#ff962f>)</color>
  ➡️ <i>pupilBookLendingFiles</i> : <b><color:#ff962f>List<HubDocument>?</color></b>,  <b><color:#0164aa>relation</color></b>
+
+}
+
+class HubDeleteEvent ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/hub/models/hub_delete_event.spy.yaml</size></b>
+--
+  <i>objectType</i>: <b><color:#ff962f>HubObjectType</color></b>
+  <i>id</i>: <b><color:#ff962f>int</color></b>
+
+}
+
+enum HubObjectType #ece4ff ##[bold] {
+<size:14>📁</size> <b><size:12> /_features/hub/models/hub_object_type.spy.yaml</size></b>
+--
+  values: pupilData, missedSchoolday, schooldayEvent, schoolList, authorization, supportCategory, competence, competenceReport, competenceReportCheck, competenceReportItem
 
 }
 
@@ -759,10 +766,12 @@ class PupilIdentity ##[bold]  {
   <i>lastName</i>: <b><color:#ff962f>String</color></b>
   <i>group</i>: <b><color:#ff962f>String</color></b>
   <i>groupTutor</i>: <b><color:#ff962f>String</color></b>
+  <i>deputyGroupTutor</i>: <b><color:#ff962f>String?</color></b>
   <i>schoolGrade</i>: <b><color:#ff962f>SchoolGrade</color></b>
-  <i>specialNeeds</i>: <b><color:#ff962f>String?</color></b>
+  <i>specialNeeds</i>: <b><color:#ff962f>List<String>?</color></b>
   <i>gender</i>: <b><color:#ff962f>String</color></b>
   <i>language</i>: <b><color:#ff962f>String</color></b>
+  <i>nationality</i>: <b><color:#ff962f>String?</color></b>
   <i>family</i>: <b><color:#ff962f>String?</color></b>
   <i>birthday</i>: <b><color:#ff962f>DateTime</color></b>
   <i>migrationSupportEnds</i>: <b><color:#ff962f>DateTime?</color></b>
@@ -773,6 +782,7 @@ class PupilIdentity ##[bold]  {
   <i>religionLessonsCancelledAt</i>: <b><color:#ff962f>DateTime?</color></b>
   <i>familyLanguageLessonsSince</i>: <b><color:#ff962f>DateTime?</color></b>
   <i>leavingDate</i>: <b><color:#ff962f>DateTime?</color></b>
+  <i>schoolTransitionRecommendation</i>: <b><color:#ff962f>String?</color></b>
 
 }
 
@@ -1059,7 +1069,7 @@ enum Role #ece4ff ##[bold] {
 <size:14>📁</size> <b><size:12> /_features/user/models/roles.spy.yaml</size></b>
 --
   serialized: byName
-  values: admin, teacher, specialEducatorE, specialEducatorK, educator, trainee, afterSchoolCare, socialWorker, notAssigned
+  values: admin, teacher, specialEducator, specialEducatorE, specialEducatorK, educator, trainee, afterSchoolCare, socialWorker, notAssigned
 
 }
 
@@ -1243,12 +1253,11 @@ HubSessionLogInfo - HubSessionLogEntry
 HubSessionLogResult - HubSessionLogInfo
 MissedSchoolday - ContactedType
 MissedSchoolday - MissedType
-MissedSchooldayDto - MissedSchoolday
-MissedSchooldayDto - Schoolday
 LibraryBookQuery - Book
 LibraryBookQuery - BookTag
 LibraryBookQuery - LibraryBook
 LibraryBookQuery - LibraryBookLocation
+HubDeleteEvent - HubObjectType
 CompulsoryRoom - MatrixRoomType
 AfterSchoolCare - AfterSchoolCarePickUpTimes
 AfterSchoolCarePickUpTimes - PickUpInfo

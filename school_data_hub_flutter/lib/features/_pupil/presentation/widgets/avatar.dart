@@ -210,10 +210,9 @@ class AvatarWithBadges extends StatelessWidget {
     final badgeMargin = (_badgeSize / 2) + _badgeOffset;
     final containerSize = size + (badgeMargin * 2);
 
-    final specialNeedsText = pupil.specialNeeds != null
-        ? pupil.specialNeeds!.contains('*')
-              ? '${pupil.specialNeeds!.split('*').first.replaceAll('ESE', 'ES')}\n${pupil.specialNeeds!.split('*').last.replaceAll('ESE', 'ES')}'
-              : pupil.specialNeeds!.replaceAll('ESE', 'ES')
+    final specialNeedsText =
+        pupil.specialNeeds != null && pupil.specialNeeds!.isNotEmpty
+        ? pupil.specialNeeds!.map((s) => s.replaceAll('ESE', 'ES')).join('\n')
         : null;
 
     return Padding(

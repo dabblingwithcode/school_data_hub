@@ -15,18 +15,18 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/set_bulk_support_categoies_status_page.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/kindergarden_info_dialog.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/widgets/learning_support_plans_section.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/set_bulk_support_categoies_status_page.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/kindergarden_info_dialog.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class PupilProfileLearningSupportContentList extends WatchingWidget {
@@ -109,7 +109,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                         in pupil.preSchoolMedical!.preschoolMedicalFiles!)
                       InkWell(
                         onTap: () async {
-                          showDialog(
+                          showDialog<void>(
                             context: context,
                             builder: (context) => Dialog(
                               child: Container(
@@ -241,9 +241,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         PupilProfileContentRow(
           icon: Icons.accessibility_new,
           label: 'Förderschwerpunkt(e)',
-          value: pupil.specialNeeds == '' || pupil.specialNeeds == null
+          value: pupil.specialNeeds != null && pupil.specialNeeds!.isEmpty
               ? 'keins'
-              : pupil.specialNeeds!,
+              : pupil.specialNeeds!.join(', '),
         ),
         const Gap(10),
         // Learning Support Plans Section
@@ -257,7 +257,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
             InkWell(
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (ctx) =>
                         SetBulkSupportCategoriesStatusPage(pupil: pupil),
                   ),
@@ -303,7 +303,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
               style: AppStyles.actionButtonStyle,
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (ctx) => NewSupportCategoryStatus(
                       appBarTitle: 'Neuer Förderbereich',
                       pupilId: pupil.pupilId,

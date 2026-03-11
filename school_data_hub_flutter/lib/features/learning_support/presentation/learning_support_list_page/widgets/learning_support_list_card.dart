@@ -235,10 +235,12 @@ class _SupportLevelDisplay extends WatchingWidget {
         : (latestSupportLevel != null && latestSupportLevel.level != 0)
             ? AppColors.cancelButtonColor
             : AppColors.backgroundColor;
-    final specialNeedsText = specialNeeds != null
-        ? (specialNeeds.contains('*')
-            ? '${specialNeeds.split('*').first} ${specialNeeds.split('*').last}'
-            : specialNeeds.substring(0, 2))
+    final specialNeedsText = specialNeeds != null && specialNeeds.isNotEmpty
+        ? (specialNeeds.length >= 2
+            ? '${specialNeeds.first} ${specialNeeds.last}'
+            : specialNeeds.first.length >= 2
+                ? specialNeeds.first.substring(0, 2)
+                : specialNeeds.first)
         : '';
 
     return InkWell(

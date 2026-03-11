@@ -20,10 +20,12 @@ abstract class PupilIdentity implements _i1.SerializableModel {
     required this.lastName,
     required this.group,
     required this.groupTutor,
+    this.deputyGroupTutor,
     required this.schoolGrade,
     this.specialNeeds,
     required this.gender,
     required this.language,
+    this.nationality,
     this.family,
     required this.birthday,
     this.migrationSupportEnds,
@@ -34,6 +36,7 @@ abstract class PupilIdentity implements _i1.SerializableModel {
     this.religionLessonsCancelledAt,
     this.familyLanguageLessonsSince,
     this.leavingDate,
+    this.schoolTransitionRecommendation,
   });
 
   factory PupilIdentity({
@@ -42,10 +45,12 @@ abstract class PupilIdentity implements _i1.SerializableModel {
     required String lastName,
     required String group,
     required String groupTutor,
+    String? deputyGroupTutor,
     required _i2.SchoolGrade schoolGrade,
-    String? specialNeeds,
+    List<String>? specialNeeds,
     required String gender,
     required String language,
+    String? nationality,
     String? family,
     required DateTime birthday,
     DateTime? migrationSupportEnds,
@@ -56,6 +61,7 @@ abstract class PupilIdentity implements _i1.SerializableModel {
     DateTime? religionLessonsCancelledAt,
     DateTime? familyLanguageLessonsSince,
     DateTime? leavingDate,
+    String? schoolTransitionRecommendation,
   }) = _PupilIdentityImpl;
 
   factory PupilIdentity.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -65,11 +71,15 @@ abstract class PupilIdentity implements _i1.SerializableModel {
       lastName: jsonSerialization['lastName'] as String,
       group: jsonSerialization['group'] as String,
       groupTutor: jsonSerialization['groupTutor'] as String,
+      deputyGroupTutor: jsonSerialization['deputyGroupTutor'] as String?,
       schoolGrade: _i2.SchoolGrade.fromJson(
           (jsonSerialization['schoolGrade'] as String)),
-      specialNeeds: jsonSerialization['specialNeeds'] as String?,
+      specialNeeds: (jsonSerialization['specialNeeds'] as List?)
+          ?.map((e) => e as String)
+          .toList(),
       gender: jsonSerialization['gender'] as String,
       language: jsonSerialization['language'] as String,
+      nationality: jsonSerialization['nationality'] as String?,
       family: jsonSerialization['family'] as String?,
       birthday:
           _i1.DateTimeJsonExtension.fromJson(jsonSerialization['birthday']),
@@ -99,6 +109,8 @@ abstract class PupilIdentity implements _i1.SerializableModel {
           ? null
           : _i1.DateTimeJsonExtension.fromJson(
               jsonSerialization['leavingDate']),
+      schoolTransitionRecommendation:
+          jsonSerialization['schoolTransitionRecommendation'] as String?,
     );
   }
 
@@ -112,13 +124,17 @@ abstract class PupilIdentity implements _i1.SerializableModel {
 
   String groupTutor;
 
+  String? deputyGroupTutor;
+
   _i2.SchoolGrade schoolGrade;
 
-  String? specialNeeds;
+  List<String>? specialNeeds;
 
   String gender;
 
   String language;
+
+  String? nationality;
 
   String? family;
 
@@ -140,6 +156,8 @@ abstract class PupilIdentity implements _i1.SerializableModel {
 
   DateTime? leavingDate;
 
+  String? schoolTransitionRecommendation;
+
   /// Returns a shallow copy of this [PupilIdentity]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -149,10 +167,12 @@ abstract class PupilIdentity implements _i1.SerializableModel {
     String? lastName,
     String? group,
     String? groupTutor,
+    String? deputyGroupTutor,
     _i2.SchoolGrade? schoolGrade,
-    String? specialNeeds,
+    List<String>? specialNeeds,
     String? gender,
     String? language,
+    String? nationality,
     String? family,
     DateTime? birthday,
     DateTime? migrationSupportEnds,
@@ -163,6 +183,7 @@ abstract class PupilIdentity implements _i1.SerializableModel {
     DateTime? religionLessonsCancelledAt,
     DateTime? familyLanguageLessonsSince,
     DateTime? leavingDate,
+    String? schoolTransitionRecommendation,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -172,10 +193,12 @@ abstract class PupilIdentity implements _i1.SerializableModel {
       'lastName': lastName,
       'group': group,
       'groupTutor': groupTutor,
+      if (deputyGroupTutor != null) 'deputyGroupTutor': deputyGroupTutor,
       'schoolGrade': schoolGrade.toJson(),
-      if (specialNeeds != null) 'specialNeeds': specialNeeds,
+      if (specialNeeds != null) 'specialNeeds': specialNeeds?.toJson(),
       'gender': gender,
       'language': language,
+      if (nationality != null) 'nationality': nationality,
       if (family != null) 'family': family,
       'birthday': birthday.toJson(),
       if (migrationSupportEnds != null)
@@ -190,6 +213,8 @@ abstract class PupilIdentity implements _i1.SerializableModel {
       if (familyLanguageLessonsSince != null)
         'familyLanguageLessonsSince': familyLanguageLessonsSince?.toJson(),
       if (leavingDate != null) 'leavingDate': leavingDate?.toJson(),
+      if (schoolTransitionRecommendation != null)
+        'schoolTransitionRecommendation': schoolTransitionRecommendation,
     };
   }
 
@@ -208,10 +233,12 @@ class _PupilIdentityImpl extends PupilIdentity {
     required String lastName,
     required String group,
     required String groupTutor,
+    String? deputyGroupTutor,
     required _i2.SchoolGrade schoolGrade,
-    String? specialNeeds,
+    List<String>? specialNeeds,
     required String gender,
     required String language,
+    String? nationality,
     String? family,
     required DateTime birthday,
     DateTime? migrationSupportEnds,
@@ -222,16 +249,19 @@ class _PupilIdentityImpl extends PupilIdentity {
     DateTime? religionLessonsCancelledAt,
     DateTime? familyLanguageLessonsSince,
     DateTime? leavingDate,
+    String? schoolTransitionRecommendation,
   }) : super._(
           id: id,
           firstName: firstName,
           lastName: lastName,
           group: group,
           groupTutor: groupTutor,
+          deputyGroupTutor: deputyGroupTutor,
           schoolGrade: schoolGrade,
           specialNeeds: specialNeeds,
           gender: gender,
           language: language,
+          nationality: nationality,
           family: family,
           birthday: birthday,
           migrationSupportEnds: migrationSupportEnds,
@@ -242,6 +272,7 @@ class _PupilIdentityImpl extends PupilIdentity {
           religionLessonsCancelledAt: religionLessonsCancelledAt,
           familyLanguageLessonsSince: familyLanguageLessonsSince,
           leavingDate: leavingDate,
+          schoolTransitionRecommendation: schoolTransitionRecommendation,
         );
 
   /// Returns a shallow copy of this [PupilIdentity]
@@ -254,10 +285,12 @@ class _PupilIdentityImpl extends PupilIdentity {
     String? lastName,
     String? group,
     String? groupTutor,
+    Object? deputyGroupTutor = _Undefined,
     _i2.SchoolGrade? schoolGrade,
     Object? specialNeeds = _Undefined,
     String? gender,
     String? language,
+    Object? nationality = _Undefined,
     Object? family = _Undefined,
     DateTime? birthday,
     Object? migrationSupportEnds = _Undefined,
@@ -268,6 +301,7 @@ class _PupilIdentityImpl extends PupilIdentity {
     Object? religionLessonsCancelledAt = _Undefined,
     Object? familyLanguageLessonsSince = _Undefined,
     Object? leavingDate = _Undefined,
+    Object? schoolTransitionRecommendation = _Undefined,
   }) {
     return PupilIdentity(
       id: id ?? this.id,
@@ -275,10 +309,16 @@ class _PupilIdentityImpl extends PupilIdentity {
       lastName: lastName ?? this.lastName,
       group: group ?? this.group,
       groupTutor: groupTutor ?? this.groupTutor,
+      deputyGroupTutor: deputyGroupTutor is String?
+          ? deputyGroupTutor
+          : this.deputyGroupTutor,
       schoolGrade: schoolGrade ?? this.schoolGrade,
-      specialNeeds: specialNeeds is String? ? specialNeeds : this.specialNeeds,
+      specialNeeds: specialNeeds is List<String>?
+          ? specialNeeds
+          : this.specialNeeds?.map((e0) => e0).toList(),
       gender: gender ?? this.gender,
       language: language ?? this.language,
+      nationality: nationality is String? ? nationality : this.nationality,
       family: family is String? ? family : this.family,
       birthday: birthday ?? this.birthday,
       migrationSupportEnds: migrationSupportEnds is DateTime?
@@ -297,6 +337,9 @@ class _PupilIdentityImpl extends PupilIdentity {
           ? familyLanguageLessonsSince
           : this.familyLanguageLessonsSince,
       leavingDate: leavingDate is DateTime? ? leavingDate : this.leavingDate,
+      schoolTransitionRecommendation: schoolTransitionRecommendation is String?
+          ? schoolTransitionRecommendation
+          : this.schoolTransitionRecommendation,
     );
   }
 }

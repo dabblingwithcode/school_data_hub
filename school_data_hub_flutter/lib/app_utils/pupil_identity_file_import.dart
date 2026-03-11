@@ -30,28 +30,36 @@ Future<String?> pickPupilIdentityFileContent() async {
 }
 
 /// SchILD export column indices (0-based). Mapping by position, not header names.
-/// Hijacked: Ausweisnummer (14) -> family; Externe ID-Nummer (15) -> familyLanguageLessonsSince.
-/// Förderschwerpunkt 1/2 (20, 21) -> specialNeeds columns 6 and 7.
+/// Headers: Interne ID-Nummer, Vorname, Nachname, Klasse, Klassenlehrer, Stv., Jahrgang,
+/// Förderschwerpunkt 1, Förderschwerpunkt 2, Geschlecht, Staatsangehörigkeit, Verkehrssprache,
+/// Externe ID-Nummer, Geburtsdatum, Ende Eingliederungsphase, Aufnahmedatum, bes.Merkmal,
+/// Konfession, Religionsanmeldung, Religionsabmeldung, Ausweisnummer, Übergangsempfehlung, Entlassdatum
+/// Hijacked: Ausweisnummer (20) -> family; Externe ID-Nummer (12) -> familyLanguageLessonsSince.
 class SchildExportColumns {
   SchildExportColumns._();
 
-  static const int id = 0; // Schulnummer / l.d.A.Schildnummer
-  static const int group = 1; // Klasse
+  static const int id = 0; // Interne ID-Nummer
+  static const int firstName = 1; // Vorname
   static const int lastName = 2; // Nachname
-  static const int firstName = 3; // Vorname
-  static const int gender = 5; // Geschlecht
-  static const int birthday = 6; // Geburtsdatum
-  static const int religion = 8; // Rel.
-  static const int family = 14; // Ausweisnummer (hijacked for family code)
-  static const int familyLanguageLessonsSince =
-      15; // Externe ID-Nummer (hijacked for family language lessons since)
-  static const int specialNeeds1 = 20; // Förderschwerpunkt 1
-  static const int specialNeeds2 = 21; // Förderschwerpunkt 2
-  static const int groupTutor = 31; // Klassenleiter (if present)
-  static const int schoolGrade = 29; // Jahrgang (if present)
-  static const int pupilSince = 30; // Aufnahmedatum
-  static const int leavingDate =
-      32; // Datum Abgang (if present; column may vary)
+  static const int group = 3; // Klasse
+  static const int groupTutor = 4; // Klassenlehrer: Krz.
+  static const int deputyGroupTutor = 5; // Stv. Klassenlehrer: Krz.
+  static const int schoolGrade = 6; // Jahrgang
+  static const int specialNeeds1 = 7; // Förderschwerpunkt 1
+  static const int specialNeeds2 = 8; // Förderschwerpunkt 2
+  static const int gender = 9; // Geschlecht
+  static const int nationality = 10; // Staatsangehörigkeit (Schlüssel)
+  static const int language = 11; // Verkehrssprache in der Familie
+  static const int familyLanguageLessonsSince = 12; // Externe ID-Nummer (hijacked)
+  static const int birthday = 13; // Geburtsdatum
+  static const int migrationSupportEnds = 14; // Ende der Eingliederungsphase
+  static const int pupilSince = 15; // Aufnahmedatum
+  static const int religion = 17; // Konfession (Klartext)
+  static const int religionLessonsSince = 18; // Religionsanmeldung
+  static const int religionLessonsCancelledAt = 19; // Religionsabmeldung
+  static const int family = 20; // Ausweisnummer (hijacked for family code)
+  static const int schoolTransitionRecommendation = 21; // Übergangsempfehlung
+  static const int leavingDate = 22; // Entlassdatum
 }
 
 String _xlsxToPupilIdentityLines(List<int> bytes) {
@@ -110,17 +118,23 @@ String? _rowToCanonicalLine(
     cellStr(SchildExportColumns.specialNeeds1),
     cellStr(SchildExportColumns.specialNeeds2),
     cellStr(SchildExportColumns.gender),
-    '', // language - not mapped from template
+    cellStr(SchildExportColumns.language),
     cellStr(SchildExportColumns.family),
     _normalizeDateCell(cellStr(SchildExportColumns.birthday), dateFormat),
-    '', // migrationSupportEnds
+    _normalizeDateCell(
+        cellStr(SchildExportColumns.migrationSupportEnds), dateFormat),
     _normalizeDateCell(cellStr(SchildExportColumns.pupilSince), dateFormat),
-    '', // afterSchoolCare -> empty if not in export
+    '', // afterSchoolCare -> not in export
     cellStr(SchildExportColumns.religion),
-    '', // religionLessonsSince
-    '', // religionLessonsCancelledAt
+    _normalizeDateCell(
+        cellStr(SchildExportColumns.religionLessonsSince), dateFormat),
+    _normalizeDateCell(
+        cellStr(SchildExportColumns.religionLessonsCancelledAt), dateFormat),
     cellStr(SchildExportColumns.familyLanguageLessonsSince),
     _normalizeDateCell(cellStr(SchildExportColumns.leavingDate), dateFormat),
+    cellStr(SchildExportColumns.deputyGroupTutor),
+    cellStr(SchildExportColumns.nationality),
+    cellStr(SchildExportColumns.schoolTransitionRecommendation),
   ];
 
   return parts.map((p) => p.replaceAll(',', ' ')).join(',');
@@ -143,6 +157,8 @@ String _cellValueToCanonicalString(dynamic value, DateFormat dateFormat) {
   return value.toString();
 }
 
+/// Returns a date string (yyyy-MM-dd) or '' if [raw] is not a valid date.
+/// Avoids passing non-date values (e.g. category codes like "LE") into date fields.
 String _normalizeDateCell(String raw, DateFormat dateFormat) {
   final s = raw.trim();
   if (s.isEmpty) return '';
@@ -152,6 +168,6 @@ String _normalizeDateCell(String raw, DateFormat dateFormat) {
     final ddMMyyyy = DateFormat('dd.MM.yyyy').parse(s);
     return dateFormat.format(ddMMyyyy);
   } catch (_) {
-    return s;
+    return '';
   }
 }

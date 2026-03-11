@@ -5,10 +5,12 @@ fields:
   lastName: String
   group: String
   groupTutor: String
+  deputyGroupTutor: String?
   schoolGrade: SchoolGrade
-  specialNeeds: String?
+  specialNeeds: List<String>?
   gender: String
   language: String
+  nationality: String?
   family: String?
   birthday: DateTime
   migrationSupportEnds: DateTime?
@@ -19,3 +21,4 @@ fields:
   religionLessonsCancelledAt: DateTime?
   familyLanguageLessonsSince: DateTime?
   leavingDate: DateTime?
+  schoolTransitionRecommendation: String?
