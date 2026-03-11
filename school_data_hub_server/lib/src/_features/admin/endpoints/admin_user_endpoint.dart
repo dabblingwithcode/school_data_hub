@@ -125,21 +125,15 @@ class AdminUserEndpoint extends Endpoint {
     final existingUserNames = <String>{};
     final existingEmails = <String>{};
 
-    final users = await User.db.find(session);
-    final userInfoIds = users.map((u) => u.userInfoId).toSet();
-    if (userInfoIds.isNotEmpty) {
-      final infos = await auth.UserInfo.db.find(
-        session,
-        where: (t) => t.id.inSet(userInfoIds),
-      );
-      for (final userInfo in infos) {
-        final name = userInfo.userName;
-        if (name != null && name.isNotEmpty) existingUserNames.add(name);
-        final emailStr = userInfo.email;
-        if (emailStr != null) {
-          final e = emailStr.trim().toLowerCase();
-          if (e.isNotEmpty) existingEmails.add(e);
-        }
+    // Load all auth UserInfo so we consider every existing auth account (with or without a Hub User row).
+    final infos = await auth.UserInfo.db.find(session);
+    for (final userInfo in infos) {
+      final name = userInfo.userName;
+      if (name != null && name.isNotEmpty) existingUserNames.add(name);
+      final emailStr = userInfo.email;
+      if (emailStr != null) {
+        final e = emailStr.trim().toLowerCase();
+        if (e.isNotEmpty) existingEmails.add(e);
       }
     }
 
@@ -228,10 +222,17 @@ class AdminUserEndpoint extends Endpoint {
           ));
         } catch (e) {
           session.log('batchCreateUsers failed for ${item.userName}: $e');
+          String message = e.toString();
+          if (e is DatabaseQueryException &&
+              (message.contains('23505') ||
+                  message.contains('unique constraint') ||
+                  message.contains('serverpod_user_info_user_identifier'))) {
+            message = 'E-Mail bzw. Anmeldename bereits vergeben.';
+          }
           errors.add(BatchCreateUserError(
             rowIndex: item.rowIndex,
             userNameOrKurzel: item.userName,
-            message: e.toString(),
+            message: message,
           ));
         }
       }));
@@ -241,6 +242,131 @@ class AdminUserEndpoint extends Endpoint {
       credentials: credentials,
       errors: errors,
     );
+  }
+
+  /// Streams batch create results one-by-one to avoid HTTP timeout. Same validation and create logic as [batchCreateUsers].
+  Stream<BatchCreateUserEvent> batchCreateUsersStream(
+    Session session,
+    List<CreateUserRequest> requests,
+  ) async* {
+    final existingUserNames = <String>{};
+    final existingEmails = <String>{};
+
+    final infos = await auth.UserInfo.db.find(session);
+    for (final userInfo in infos) {
+      final name = userInfo.userName;
+      if (name != null && name.isNotEmpty) existingUserNames.add(name);
+      final emailStr = userInfo.email;
+      if (emailStr != null) {
+        final e = emailStr.trim().toLowerCase();
+        if (e.isNotEmpty) existingEmails.add(e);
+      }
+    }
+
+    final addedInBatchUserNames = <String>{};
+    final addedInBatchEmails = <String>{};
+    final toCreate = <({
+      CreateUserRequest req,
+      int rowIndex,
+      String userName,
+      String emailLower
+    })>[];
+
+    for (var i = 0; i < requests.length; i++) {
+      final req = requests[i];
+      final rowIndex = i + 1;
+      final userName = req.userName.trim();
+      if (userName.isEmpty) {
+        yield BatchCreateUserEvent(
+          credential: null,
+          error: BatchCreateUserError(
+            rowIndex: rowIndex,
+            userNameOrKurzel: req.fullName,
+            message: 'Kürzel ist leer.',
+          ),
+        );
+        continue;
+      }
+      if (existingUserNames.contains(userName) ||
+          addedInBatchUserNames.contains(userName)) {
+        yield BatchCreateUserEvent(
+          credential: null,
+          error: BatchCreateUserError(
+            rowIndex: rowIndex,
+            userNameOrKurzel: userName,
+            message: 'Kürzel bereits vergeben.',
+          ),
+        );
+        continue;
+      }
+      final emailLower = req.email.trim().toLowerCase();
+      if (existingEmails.contains(emailLower) ||
+          addedInBatchEmails.contains(emailLower)) {
+        yield BatchCreateUserEvent(
+          credential: null,
+          error: BatchCreateUserError(
+            rowIndex: rowIndex,
+            userNameOrKurzel: userName,
+            message: 'E-Mail bereits vergeben.',
+          ),
+        );
+        continue;
+      }
+      toCreate.add((
+        req: req,
+        rowIndex: rowIndex,
+        userName: userName,
+        emailLower: emailLower
+      ));
+      addedInBatchUserNames.add(userName);
+      addedInBatchEmails.add(emailLower);
+    }
+
+    for (final item in toCreate) {
+      try {
+        await _createOneUser(
+          session,
+          userName: item.userName,
+          fullName: item.req.fullName,
+          email: item.req.email,
+          password: item.req.password,
+          role: item.req.role,
+          timeUnits: item.req.timeUnits,
+          reliefTimeUnits: item.req.reliefTimeUnits,
+          scopeNames: item.req.scopeNames,
+          isTester: item.req.isTester,
+          matrixUserId: item.req.matrixUserId,
+          credit: item.req.credit,
+          pupilsAuth: item.req.pupilsAuth,
+        );
+        yield BatchCreateUserEvent(
+          credential: CreatedUserCredential(
+            userName: item.userName,
+            fullName: item.req.fullName,
+            email: item.req.email,
+            password: item.req.password,
+          ),
+          error: null,
+        );
+      } catch (e) {
+        session.log('batchCreateUsersStream failed for ${item.userName}: $e');
+        String message = e.toString();
+        if (e is DatabaseQueryException &&
+            (message.contains('23505') ||
+                message.contains('unique constraint') ||
+                message.contains('serverpod_user_info_user_identifier'))) {
+          message = 'E-Mail bzw. Anmeldename bereits vergeben.';
+        }
+        yield BatchCreateUserEvent(
+          credential: null,
+          error: BatchCreateUserError(
+            rowIndex: item.rowIndex,
+            userNameOrKurzel: item.userName,
+            message: message,
+          ),
+        );
+      }
+    }
   }
 
   /// Updates both User and UserInfo in one go. [userId] is the UserInfo id.

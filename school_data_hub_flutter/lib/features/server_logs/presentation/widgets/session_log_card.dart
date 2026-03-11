@@ -39,7 +39,18 @@ class SessionLogCard extends StatelessWidget {
       Clipboard.setData(
         ClipboardData(
           text:
-              '${info.sessionLogEntry.endpoint}/n${info.sessionLogEntry.error}',
+              '''
+Error: ${info.sessionLogEntry.error}
+Endpoint: ${info.sessionLogEntry.endpoint}
+Method: ${info.sessionLogEntry.method}
+Num Queries: ${info.sessionLogEntry.numQueries}
+Duration: ${info.sessionLogEntry.duration} ms
+Time: ${info.sessionLogEntry.time}
+Authenticated User ID: ${info.sessionLogEntry.authenticatedUserId}
+Is Open: ${info.sessionLogEntry.isOpen}
+Stack Trace:
+${info.sessionLogEntry.stackTrace ?? 'none set'}
+              ''',
         ),
       );
       ScaffoldMessenger.of(context).showSnackBar(

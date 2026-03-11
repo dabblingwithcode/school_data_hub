@@ -242,12 +242,11 @@ class UserManager {
     );
   }
 
-  /// Batch-creates users from import rows. Passwords are generated on the client;
-  /// server validates and skips duplicate userName/email. Refreshes user list at the end.
-  Future<BatchCreateResult> batchCreateUsersFromImportRows(
+  /// Builds [CreateUserRequest] list from import rows (shared by batch and stream).
+  List<CreateUserRequest> buildCreateUserRequestsFromImportRows(
     List<StaffImportRow> rows, {
     String Function(StaffImportRow)? generatePassword,
-  }) async {
+  }) {
     final gen = generatePassword ?? (_) => generateRandomStaffPassword();
     final requests = <CreateUserRequest>[];
     for (final row in rows) {
@@ -273,6 +272,32 @@ class UserManager {
         ),
       );
     }
+    return requests;
+  }
+
+  /// Streams batch create results one-by-one (avoids HTTP timeout). Caller listens and accumulates.
+  Stream<BatchCreateUserEvent> batchCreateUsersStreamFromImportRows(
+    List<StaffImportRow> rows, {
+    String Function(StaffImportRow)? generatePassword,
+  }) {
+    final requests = buildCreateUserRequestsFromImportRows(
+      rows,
+      generatePassword: generatePassword,
+    );
+    return _apiService.batchCreateUsersStream(requests);
+  }
+
+  /// Batch-creates users from import rows. Passwords are generated on the client;
+  /// server validates and skips duplicate userName/email. Refreshes user list at the end.
+  /// Prefer [batchCreateUsersStreamFromImportRows] for large batches to avoid timeout.
+  Future<BatchCreateResult> batchCreateUsersFromImportRows(
+    List<StaffImportRow> rows, {
+    String Function(StaffImportRow)? generatePassword,
+  }) async {
+    final requests = buildCreateUserRequestsFromImportRows(
+      rows,
+      generatePassword: generatePassword,
+    );
     final response = await _apiService.batchCreateUsers(requests);
     if (response == null) {
       throw Exception('Benutzer-Stapelimport fehlgeschlagen.');

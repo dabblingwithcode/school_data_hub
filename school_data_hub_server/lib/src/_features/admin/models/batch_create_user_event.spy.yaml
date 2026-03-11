@@ -1,0 +1,5 @@
+# One event in the batch create users stream: either a created user credential or an error.
+class: BatchCreateUserEvent
+fields:
+  credential: CreatedUserCredential?
+  error: BatchCreateUserError?

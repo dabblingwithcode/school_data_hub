@@ -1222,6 +1222,28 @@ class Endpoints extends _i1.EndpointDispatch {
             params['pupilIds'],
           ),
         ),
+        'batchCreateUsersStream': _i1.MethodStreamConnector(
+          name: 'batchCreateUsersStream',
+          params: {
+            'requests': _i1.ParameterDescription(
+              name: 'requests',
+              type: _i1.getType<List<_i51.CreateUserRequest>>(),
+              nullable: false,
+            )
+          },
+          streamParams: {},
+          returnType: _i1.MethodStreamReturnType.streamType,
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+            Map<String, Stream> streamParams,
+          ) =>
+              (endpoints['adminUser'] as _i7.AdminUserEndpoint)
+                  .batchCreateUsersStream(
+            session,
+            params['requests'],
+          ),
+        ),
       },
     );
     connectors['missedSchoolday'] = _i1.EndpointConnector(

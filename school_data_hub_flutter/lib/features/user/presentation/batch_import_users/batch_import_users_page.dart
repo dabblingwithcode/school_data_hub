@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -7,8 +8,10 @@ import 'package:printing/printing.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/user/data/staff_excel_import_parser.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/features/user/domain/batch_create_result.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/batch_import_users/staff_credentials_pdf_service.dart';
@@ -24,6 +27,15 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
   StaffImportParseResult? _parseResult;
   BatchCreateResult? _batchResult;
   bool _isCreating = false;
+  int _progressCreated = 0;
+  int _progressErrors = 0;
+  StreamSubscription<BatchCreateUserEvent>? _streamSubscription;
+
+  @override
+  void dispose() {
+    _streamSubscription?.cancel();
+    super.dispose();
+  }
 
   Future<void> _pickFile() async {
     final result = await StaffExcelImportParser.pickAndParse();
@@ -38,16 +50,63 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
   Future<void> _createUsers() async {
     final rows = _parseResult?.rows ?? [];
     if (rows.isEmpty) return;
-    setState(() => _isCreating = true);
+    setState(() {
+      _isCreating = true;
+      _batchResult = null;
+      _progressCreated = 0;
+      _progressErrors = 0;
+    });
+    final userManager = di<UserManager>();
+    final credentials = <StaffCredentialEntry>[];
+    final errors = <BatchCreateError>[];
+
     try {
-      final userManager = di<UserManager>();
-      final result = await userManager.batchCreateUsersFromImportRows(rows);
-      if (mounted) {
-        setState(() {
-          _batchResult = result;
-          _isCreating = false;
-        });
-      }
+      final stream = userManager.batchCreateUsersStreamFromImportRows(rows);
+      _streamSubscription = stream.listen(
+        (event) {
+          if (!mounted) return;
+          if (event.credential != null) {
+            final c = event.credential!;
+            credentials.add(StaffCredentialEntry(
+              userName: c.userName,
+              fullName: c.fullName,
+              email: c.email,
+              password: c.password,
+            ));
+            setState(() => _progressCreated = credentials.length);
+          } else if (event.error != null) {
+            final e = event.error!;
+            errors.add(BatchCreateError(
+              rowIndex: e.rowIndex,
+              userNameOrKurzel: e.userNameOrKurzel,
+              message: e.message,
+            ));
+            setState(() => _progressErrors = errors.length);
+          }
+        },
+        onError: (Object e) {
+          if (mounted) {
+            setState(() => _isCreating = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Fehler: $e')),
+            );
+          }
+        },
+        onDone: () async {
+          if (!mounted) return;
+          await userManager.fetchUsersCommand.runAsync();
+          setState(() {
+            _batchResult = BatchCreateResult(
+              credentials: credentials,
+              errors: errors,
+            );
+            _isCreating = false;
+            _progressCreated = 0;
+            _progressErrors = 0;
+          });
+        },
+        cancelOnError: false,
+      );
     } catch (e) {
       if (mounted) {
         setState(() => _isCreating = false);
@@ -61,7 +120,9 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
   Future<void> _printCredentials() async {
     final credentials = _batchResult?.credentials ?? [];
     if (credentials.isEmpty) return;
-    final bytes = await StaffCredentialsPdfService.generatePdfBytes(credentials);
+    final bytes = await StaffCredentialsPdfService.generatePdfBytes(
+      credentials,
+    );
     if (bytes.isEmpty || !mounted) return;
     await Printing.layoutPdf(
       onLayout: (_) async => Uint8List.fromList(bytes),
@@ -75,9 +136,7 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
     final file = await StaffCredentialsPdfService.generatePdfFile(credentials);
     if (file == null || !mounted) return;
     await Navigator.of(context).push<void>(
-      MaterialPageRoute(
-        builder: (context) => PdfViewerPage(pdfFile: file),
-      ),
+      MaterialPageRoute(builder: (context) => PdfViewerPage(pdfFile: file)),
     );
   }
 
@@ -98,10 +157,7 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Step 1: Pick file
-                const Text(
-                  '1. Datei auswählen',
-                  style: AppStyles.subtitle,
-                ),
+                const Text('1. Datei auswählen', style: AppStyles.subtitle),
                 const Gap(8),
                 ElevatedButton.icon(
                   style: AppStyles.actionButtonStyle,
@@ -119,7 +175,12 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: _parseResult!.errors
-                              .map((e) => Text(e, style: const TextStyle(fontSize: 12)))
+                              .map(
+                                (e) => Text(
+                                  e,
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              )
                               .toList(),
                         ),
                       ),
@@ -135,7 +196,9 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
                       scrollDirection: Axis.horizontal,
                       child: SingleChildScrollView(
                         child: DataTable(
-                          headingRowColor: WidgetStateProperty.all(Colors.grey.shade300),
+                          headingRowColor: WidgetStateProperty.all(
+                            Colors.grey.shade300,
+                          ),
                           columns: const [
                             DataColumn(label: Text('Vorname')),
                             DataColumn(label: Text('Nachname')),
@@ -165,7 +228,10 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
                     ),
                     const Gap(16),
                     // Step 2: Create users
-                    const Text('2. Benutzer anlegen', style: AppStyles.subtitle),
+                    const Text(
+                      '2. Benutzer anlegen',
+                      style: AppStyles.subtitle,
+                    ),
                     const Gap(8),
                     ElevatedButton.icon(
                       style: AppStyles.actionButtonStyle,
@@ -177,7 +243,11 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : const Icon(Icons.person_add),
-                      label: Text(_isCreating ? 'Wird erstellt…' : 'Benutzer anlegen'),
+                      label: Text(
+                        _isCreating
+                            ? 'Wird erstellt… ($_progressCreated / ${_parseResult!.rows.length}, $_progressErrors Fehler)'
+                            : 'Benutzer anlegen',
+                      ),
                     ),
                   ],
                 ],
@@ -196,14 +266,20 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
                         padding: const EdgeInsets.only(bottom: 4),
                         child: Text(
                           'Zeile ${e.rowIndex} (${e.userNameOrKurzel}): ${e.message}',
-                          style: TextStyle(fontSize: 12, color: Colors.red.shade800),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.red.shade800,
+                          ),
                         ),
                       ),
                     ),
                   ],
                   if (_batchResult!.credentials.isNotEmpty) ...[
                     const Gap(16),
-                    const Text('3. Zugangsdaten drucken', style: AppStyles.subtitle),
+                    const Text(
+                      '3. Zugangsdaten drucken',
+                      style: AppStyles.subtitle,
+                    ),
                     const Gap(8),
                     Row(
                       children: [
@@ -228,6 +304,7 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
           ),
         ),
       ),
+      bottomNavigationBar: const GenericBottomNavBar(),
     );
   }
 }

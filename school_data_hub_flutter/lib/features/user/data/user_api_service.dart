@@ -150,4 +150,11 @@ class UserApiService {
       errorMessage: 'Benutzer-Stapelimport',
     );
   }
+
+  /// Streams batch create results one-by-one (avoids HTTP timeout). No wrapper so caller can listen and handle errors.
+  Stream<BatchCreateUserEvent> batchCreateUsersStream(
+    List<CreateUserRequest> requests,
+  ) {
+    return _client.adminUser.batchCreateUsersStream(requests);
+  }
 }

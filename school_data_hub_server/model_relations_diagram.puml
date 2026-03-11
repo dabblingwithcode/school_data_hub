@@ -58,6 +58,15 @@ class BatchCreateUserError ##[bold]  {
 
 }
 
+class BatchCreateUserEvent ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/admin/models/batch_create_user_event.spy.yaml</size></b>
+--
+  <i># One event in the batch create users stream</i>: <b><color:#ff962f>either a created user credential or an error.</color></b>
+  <i>credential</i>: <b><color:#ff962f>CreatedUserCredential?</color></b>
+  <i>error</i>: <b><color:#ff962f>BatchCreateUserError?</color></b>
+
+}
+
 class CreatedUserCredential ##[bold]  {
 <size:14>📁</size> <b><size:12> /_features/admin/models/created_user_credential.spy.yaml</size></b>
 --
@@ -1296,6 +1305,9 @@ enum MemberOperation #ece4ff ##[bold] {
 BatchCreateUsersResponse - BatchCreateUserError
 BatchCreateUsersResponse - CreatedUserCredential
 BatchCreateUsersResponse - User
+BatchCreateUserEvent - BatchCreateUserError
+BatchCreateUserEvent - CreatedUserCredential
+BatchCreateUserEvent - User
 CreateUserRequest - Role
 HubSessionLogInfo - HubLogEntry
 HubSessionLogInfo - HubQueryLogEntry
