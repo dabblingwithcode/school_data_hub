@@ -73,8 +73,8 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
     final allErrors = <BatchCreateError>[];
 
     try {
-      final stream = userManager.batchCreateUsersInChunks(rows);
-      _log.info('[BatchImport] Subscribing to batchCreateUsersInChunks');
+      final stream = userManager.batchCreateUsersViaStream(rows);
+      _log.info('[BatchImport] Subscribing to batchCreateUsersViaStream');
       _chunkSubscription = stream.listen(
         (chunkResult) {
           if (!mounted) return;

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 
 abstract class Filter<T extends Object> with ChangeNotifier {
   Filter({
@@ -22,6 +19,11 @@ abstract class Filter<T extends Object> with ChangeNotifier {
   bool _isActive = false;
   bool get isActive => _isActive;
 
+  /// Optional callback invoked after toggle. Set by the composition root
+  /// (e.g. PupilsFilterImplementation) to wire filter state changes to
+  /// global state managers without coupling the base class to DI.
+  void Function(Filter<T> filter, bool isActive)? onToggle;
+
   void reset() {
     _isActive = false;
     notifyListeners();
@@ -29,26 +31,8 @@ abstract class Filter<T extends Object> with ChangeNotifier {
 
   void toggle(bool isActive) {
     _isActive = isActive;
-    if (isActive) {
-      di<FiltersStateManager>().setFilterState(
-        filterState: FilterState.pupil,
-        value: true,
-      );
-    } else {
-      if (!(di<PupilsFilter>().groupFilters.any((filter) => filter.isActive) ||
-          di<PupilsFilter>().schoolGradeFilters.any(
-            (filter) => filter.isActive,
-          ) ||
-          di<PupilsFilter>().textFilter.isActive)) {
-        di<FiltersStateManager>().setFilterState(
-          filterState: FilterState.pupil,
-          value: false,
-        );
-      }
-    }
-
     notifyListeners();
-    di<PupilsFilter>().refreshs();
+    onToggle?.call(this, isActive);
   }
 
   bool matches(T item);

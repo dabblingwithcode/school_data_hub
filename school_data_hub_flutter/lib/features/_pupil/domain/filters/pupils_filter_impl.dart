@@ -36,16 +36,48 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
   PupilsFilterImplementation(
     PupilProxyManager pupilsManager,
-    //   {
-    //  PupilSortMode? sortMode,
-    // }
   ) : _pupilsManager = pupilsManager {
     _log.info('PupilsFilterImplementation created');
     // We need to populate the group filters with the available groups
     final availableGroups = _pupilIdentityManager.groups.value;
     populateGroupFilters(availableGroups.toList());
+    // Wire onToggle callback for all pupil filters
+    _wireFilterToggleCallbacks();
     refreshs();
     _pupilsManager.addListener(refreshs);
+  }
+
+  /// Wires the onToggle callback on all filters so that toggling a filter
+  /// updates the global FiltersStateManager and triggers a refresh,
+  /// without the Filter base class needing to know about DI.
+  void _wireFilterToggleCallbacks() {
+    for (final filter in allPupilFilters) {
+      filter.onToggle = _onFilterToggled;
+    }
+  }
+
+  void _onFilterToggled(Filter filter, bool isActive) {
+    if (isActive) {
+      _filtersStateManager.setFilterState(
+        filterState: FilterState.pupil,
+        value: true,
+      );
+    } else {
+      final anyStillActive =
+          groupFilters.any((f) => f.isActive) ||
+          schoolGradeFilters.any((f) => f.isActive) ||
+          genderFilters.any((f) => f.isActive) ||
+          religionCourseFilters.any((f) => f.isActive) ||
+          familyLanguageFilters.any((f) => f.isActive) ||
+          _textFilter.isActive;
+      if (!anyStillActive) {
+        _filtersStateManager.setFilterState(
+          filterState: FilterState.pupil,
+          value: false,
+        );
+      }
+    }
+    refreshs();
   }
   // guard from trying to call a value when the filter is disposed
   bool _isDisposed = false;
@@ -54,6 +86,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     _isDisposed = true;
     _pupilsManager.removeListener(refreshs);
     _filteredPupils.dispose();
+    _filteredPupilIds.dispose();
+    _sortMode.dispose();
 
     super.dispose();
   }
@@ -477,5 +511,10 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
     _groupFilters.clear();
     _groupFilters.addAll(groupFilters);
+
+    // Wire onToggle callback for newly created group filters
+    for (final filter in _groupFilters) {
+      filter.onToggle = _onFilterToggled;
+    }
   }
 }

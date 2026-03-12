@@ -44,9 +44,6 @@ class NotificationService {
   NotificationService();
 
   void showSnackBar(NotificationType type, String message) {
-    if (_loadingNewInstance.value) {
-      return;
-    }
     switch (type) {
       case NotificationType.success:
         _log.info('''SNACK BAR SUCCESS:

@@ -26,7 +26,7 @@ class FilteredSchooldayEventsResult {
   final bool filterActive;
 }
 
-class SchooldayEventFilterManager {
+class SchooldayEventFilterManager implements Resettable {
   // Lazy getters to avoid circular dependency issues during initialization
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
   SchooldayEventManager get _schooldayEventManager =>
@@ -54,6 +54,7 @@ class SchooldayEventFilterManager {
     return;
   }
 
+  @override
   void resetFilters() {
     _schooldayEventsFilterState.value = {...initialSchooldayEventFilterValues};
     _filtersStateManager.setFilterState(

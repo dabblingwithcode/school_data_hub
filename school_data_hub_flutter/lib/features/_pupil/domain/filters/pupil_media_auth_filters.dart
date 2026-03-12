@@ -50,7 +50,7 @@ extension PublicMediaAuthFilterX on PublicMediaAuthFilter {
   }
 }
 
-class PupilMediaAuthFilterManager {
+class PupilMediaAuthFilterManager implements Resettable {
   FiltersStateManager get _filterStateManager => di<FiltersStateManager>();
   PupilsFilter get _pupilsFilter => di<PupilsFilter>();
 
@@ -84,6 +84,7 @@ class PupilMediaAuthFilterManager {
     _pupilsFilter.refreshs();
   }
 
+  @override
   void resetFilters() {
     _publicMediaAuthFilterState.value = {...initialPublicMediaAuthFilterValues};
     _filterStateManager.setFilterState(

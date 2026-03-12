@@ -40,20 +40,20 @@ class GlobalOverlayHost extends WatchingWidget {
         if (value.message.isEmpty) return;
         switch (value.target) {
           case NotificationTarget.informationDialog:
-            informationDialog(context, 'Info', value.message);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (context.mounted) {
+                informationDialog(context, 'Info', value.message);
+              }
+            });
             break;
           case NotificationTarget.snackBar:
-            if (_canShowSnackBarInPhase(phase)) {
-              _log.info('Showing snackBar for: "${value.message}"');
+            _log.info('Showing snackBar for: "${value.message}"');
+            WidgetsBinding.instance.addPostFrameCallback((_) {
               showSnackBarOnRootOverlay(
                 type: value.type,
                 message: value.message,
               );
-            } else {
-              _log.warning(
-                'Suppressed snackBar in phase $phase: "${value.message}"',
-              );
-            }
+            });
             break;
           case NotificationTarget.overlay:
           case NotificationTarget.idle:
@@ -112,14 +112,6 @@ Widget _buildHeavyLoadingOverlay(BuildContext context) {
       ),
     ],
   );
-}
-
-bool _canShowSnackBarInPhase(AppPhase phase) {
-  return switch (phase) {
-    AppPhase.unlogged => true,
-    AppPhase.loading => false,
-    AppPhase.loggedIn => true,
-  };
 }
 
 Widget _buildInstanceLoadingOverlay(BuildContext context) {

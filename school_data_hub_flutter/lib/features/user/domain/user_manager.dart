@@ -278,13 +278,10 @@ class UserManager {
     return requests;
   }
 
-  /// Creates users in small HTTP chunks, yielding a [BatchCreateResult] per chunk.
-  ///
-  /// Each chunk is a short HTTP request to [batchCreateUsers] (not WebSocket),
-  /// so it is unaffected by the hub stream lifecycle.
-  Stream<BatchCreateResult> batchCreateUsersInChunks(
+  /// Batch-creates users via the streaming endpoint, yielding one
+  /// [BatchCreateResult] per user (success or error).
+  Stream<BatchCreateResult> batchCreateUsersViaStream(
     List<StaffImportRow> rows, {
-    int chunkSize = 3,
     String Function(StaffImportRow)? generatePassword,
   }) async* {
     final requests = buildCreateUserRequestsFromImportRows(
@@ -292,93 +289,43 @@ class UserManager {
       generatePassword: generatePassword,
     );
     _log.info(
-      '[UserManager] batchCreateUsersInChunks: rows=${rows.length} -> '
-      'requests=${requests.length}, chunkSize=$chunkSize',
+      '[UserManager] batchCreateUsersViaStream: rows=${rows.length} -> '
+      'requests=${requests.length}',
     );
 
-    for (var i = 0; i < requests.length; i += chunkSize) {
-      final end = (i + chunkSize).clamp(0, requests.length);
-      final chunk = requests.sublist(i, end);
-      _log.info('[UserManager] sending chunk ${i ~/ chunkSize + 1} (indices $i..$end)');
+    final stream = _apiService.batchCreateUsersStream(requests);
 
-      final response = await _apiService.batchCreateUsers(chunk);
-      if (response == null) {
+    await for (final event in stream) {
+      if (event.credential != null) {
+        final c = event.credential!;
+        yield BatchCreateResult(
+          credentials: [
+            StaffCredentialEntry(
+              userName: c.userName,
+              fullName: c.fullName,
+              email: c.email,
+              password: c.password,
+            ),
+          ],
+          errors: [],
+        );
+      } else if (event.error != null) {
+        final e = event.error!;
         yield BatchCreateResult(
           credentials: [],
           errors: [
-            for (var j = 0; j < chunk.length; j++)
-              BatchCreateError(
-                rowIndex: i + j,
-                userNameOrKurzel: chunk[j].userName,
-                message: 'Server-Antwort war null.',
-              ),
+            BatchCreateError(
+              rowIndex: e.rowIndex,
+              userNameOrKurzel: e.userNameOrKurzel,
+              message: e.message,
+            ),
           ],
         );
-        continue;
       }
-
-      yield BatchCreateResult(
-        credentials: response.credentials
-            .map(
-              (c) => StaffCredentialEntry(
-                userName: c.userName,
-                fullName: c.fullName,
-                email: c.email,
-                password: c.password,
-              ),
-            )
-            .toList(),
-        errors: response.errors
-            .map(
-              (e) => BatchCreateError(
-                rowIndex: e.rowIndex + i,
-                userNameOrKurzel: e.userNameOrKurzel,
-                message: e.message,
-              ),
-            )
-            .toList(),
-      );
     }
 
-    _log.info('[UserManager] batchCreateUsersInChunks: done');
+    _log.info('[UserManager] batchCreateUsersViaStream: done');
     await fetchUsersCommand.runAsync();
-  }
-
-  /// Batch-creates users from import rows in a single HTTP call.
-  /// For large batches prefer [batchCreateUsersInChunks] to avoid timeout.
-  Future<BatchCreateResult> batchCreateUsersFromImportRows(
-    List<StaffImportRow> rows, {
-    String Function(StaffImportRow)? generatePassword,
-  }) async {
-    final requests = buildCreateUserRequestsFromImportRows(
-      rows,
-      generatePassword: generatePassword,
-    );
-    final response = await _apiService.batchCreateUsers(requests);
-    if (response == null) {
-      throw Exception('Benutzer-Stapelimport fehlgeschlagen.');
-    }
-    final credentials = response.credentials
-        .map(
-          (c) => StaffCredentialEntry(
-            userName: c.userName,
-            fullName: c.fullName,
-            email: c.email,
-            password: c.password,
-          ),
-        )
-        .toList();
-    final errors = response.errors
-        .map(
-          (e) => BatchCreateError(
-            rowIndex: e.rowIndex,
-            userNameOrKurzel: e.userNameOrKurzel,
-            message: e.message,
-          ),
-        )
-        .toList();
-    await fetchUsersCommand.runAsync();
-    return BatchCreateResult(credentials: credentials, errors: errors);
   }
 
   //-- Convenience wrappers for backward compatibility --

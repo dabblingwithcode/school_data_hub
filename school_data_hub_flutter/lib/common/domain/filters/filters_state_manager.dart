@@ -1,16 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/authorization_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/pupil_authorization_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_media_auth_filters.dart';
 
 enum FilterState {
   pupil,
@@ -38,6 +27,13 @@ const Map<FilterState, bool> _initialFilterGlobalValues = {
   FilterState.pupilBookLending: false,
 };
 
+/// Interface for filter managers that can be reset.
+/// Implemented by all feature-specific filter managers so they can
+/// register themselves with FiltersStateManager.
+abstract class Resettable {
+  void resetFilters();
+}
+
 abstract class FiltersStateManager {
   void dispose();
   bool getFilterState(FilterState filterState);
@@ -50,18 +46,21 @@ abstract class FiltersStateManager {
 
   void markFiltersActive(bool filtersOn);
 
+  void registerFilterManager(Resettable manager);
+
   void resetFilters();
 }
 
 class FiltersStateManagerImplementation implements FiltersStateManager {
   FiltersStateManagerImplementation();
 
+  final List<Resettable> _registeredFilterManagers = [];
+
   @override
   void dispose() {
     _filterStates.dispose();
     _filtersActive.dispose();
-
-    return;
+    _registeredFilterManagers.clear();
   }
 
   void init() {
@@ -110,17 +109,15 @@ class FiltersStateManagerImplementation implements FiltersStateManager {
   }
 
   @override
+  void registerFilterManager(Resettable manager) {
+    _registeredFilterManagers.add(manager);
+  }
+
+  @override
   void resetFilters() {
-    di<AttendancePupilFilterManager>().resetFilters();
-    di<PupilsFilter>().resetFilters();
-    di<PupilFilterManager>().resetFilters();
-    di<SchooldayEventFilterManager>().resetFilters();
-    di<SchoolListFilterManager>().resetFilters();
-    di<AuthorizationFilterManager>().resetFilters();
-    di<PupilAuthorizationFilterManager>().resetFilters();
-    di<LearningSupportFilterManager>().resetFilters();
-    di<PupilBookLendingFilterManager>().resetFilters();
-    di<PupilMediaAuthFilterManager>().resetFilters();
+    for (final manager in _registeredFilterManagers) {
+      manager.resetFilters();
+    }
 
     _filterStates.value = {..._initialFilterGlobalValues};
     _filtersActive.value = false;

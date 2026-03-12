@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_fi
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
-class AttendancePupilFilterManager {
+class AttendancePupilFilterManager implements Resettable {
   FiltersStateManager get _filterStateManager => di<FiltersStateManager>();
   PupilsFilter get _pupilsFilter => di<PupilsFilter>();
   SchoolCalendarManager get _schoolCalendarManager =>
@@ -67,6 +67,7 @@ class AttendancePupilFilterManager {
     _pupilsFilter.refreshs();
   }
 
+  @override
   void resetFilters() {
     _attendancePupilFilterState.value = {...initialAttendancePupilFilterValues};
     _filterStateManager.setFilterState(

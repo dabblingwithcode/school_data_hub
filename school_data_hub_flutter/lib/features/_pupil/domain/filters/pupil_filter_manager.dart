@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manag
 
 typedef PupilFilterRecord = ({PupilFilter filter, bool value});
 
-class PupilFilterManager {
+class PupilFilterManager implements Resettable {
   // final _searchText = ValueNotifier<String>('');
   // ValueListenable<String> get searchText => _searchText;
 
@@ -41,6 +41,7 @@ class PupilFilterManager {
     return;
   }
 
+  @override
   void resetFilters() {
     _pupilFilterState.value = {...initialPupilFilterValues};
 

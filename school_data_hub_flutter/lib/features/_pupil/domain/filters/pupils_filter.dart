@@ -2,6 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_text_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -87,7 +88,7 @@ class RadioButtonFilter extends Filter<PupilProxy> {
   }
 }
 
-abstract class PupilsFilter implements Listenable {
+abstract class PupilsFilter implements Listenable, Resettable {
   ValueListenable<List<PupilProxy>> get filteredPupils;
   ValueListenable<List<int>> get filteredPupilIds;
   List<Filter> get groupFilters;
@@ -110,6 +111,7 @@ abstract class PupilsFilter implements Listenable {
   void clearFilteredPupils();
 
   // reset the filters to its initial state
+  @override
   void resetFilters();
 
   // for now, we need to access the switch from outside

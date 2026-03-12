@@ -18,7 +18,7 @@ typedef CurrentLearningSupportPlanFilterRecord = ({
   bool value,
 });
 
-class LearningSupportFilterManager {
+class LearningSupportFilterManager implements Resettable {
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
   PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
   PupilsFilter get _pupilsFilter => di<PupilsFilter>();
@@ -154,6 +154,7 @@ class LearningSupportFilterManager {
     _pupilsFilter.refreshs();
   }
 
+  @override
   void resetFilters() {
     _supportLevelFilterState.value = {...initialSupportLevelFilterValues};
     _supportAreaFiltersState.value = {...initialSupportAreaFilterValues};

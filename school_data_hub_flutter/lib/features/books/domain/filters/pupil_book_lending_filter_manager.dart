@@ -12,7 +12,7 @@ typedef PupilBookLendingFilterRecord = ({
   bool value,
 });
 
-class PupilBookLendingFilterManager {
+class PupilBookLendingFilterManager implements Resettable {
   // Lazy getters to avoid circular dependency issues during initialization
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
   PupilBookLendingManager get _pupilBookLendingManager =>
@@ -44,6 +44,7 @@ class PupilBookLendingFilterManager {
     return;
   }
 
+  @override
   void resetFilters() {
     _pupilBookLendingFilterState.value = {
       ...initialPupilBookLendingFilterValues,

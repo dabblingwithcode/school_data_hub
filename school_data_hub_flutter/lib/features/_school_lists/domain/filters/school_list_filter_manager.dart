@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_fil
 import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
 
-class SchoolListFilterManager {
+class SchoolListFilterManager implements Resettable {
   SchoolListManager get _schoolListManager => di<SchoolListManager>();
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
   PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
@@ -52,6 +52,7 @@ class SchoolListFilterManager {
     _filteredSchoolLists.value = schoolLists;
   }
 
+  @override
   void resetFilters() {
     _filterState.value = false;
     _schoolListFilterState.value = Map.from(initialSchoolListFilterValues);

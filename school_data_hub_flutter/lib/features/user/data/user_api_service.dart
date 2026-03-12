@@ -141,16 +141,6 @@ class UserApiService {
     );
   }
 
-  /// Batch-creates users. Returns credentials for successes and errors for skipped/failed rows.
-  Future<BatchCreateUsersResponse?> batchCreateUsers(
-    List<CreateUserRequest> requests,
-  ) async {
-    return ClientHelper.apiCall(
-      call: () => _client.adminUser.batchCreateUsers(requests),
-      errorMessage: 'Benutzer-Stapelimport',
-    );
-  }
-
   /// Streams batch create results one-by-one (avoids HTTP timeout). No wrapper so caller can listen and handle errors.
   Stream<BatchCreateUserEvent> batchCreateUsersStream(
     List<CreateUserRequest> requests,

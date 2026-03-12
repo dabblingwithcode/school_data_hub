@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters_state_mana
 import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-class AuthorizationFilterManager {
+class AuthorizationFilterManager implements Resettable {
   AuthorizationManager get _authorizationManager => di<AuthorizationManager>();
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
   final ValueNotifier<List<Authorization>> _filteredAuthorizations =
@@ -44,6 +44,7 @@ class AuthorizationFilterManager {
     }
   }
 
+  @override
   void resetFilters() {
     _filterState.value = false;
     _filteredAuthorizations.value = _authorizationManager.authorizations.value;

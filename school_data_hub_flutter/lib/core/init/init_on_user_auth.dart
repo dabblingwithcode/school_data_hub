@@ -164,35 +164,57 @@ class InitOnUserAuth {
     );
 
     di.registerSingletonWithDependencies<AuthorizationFilterManager>(
-      () => AuthorizationFilterManager()..init(),
+      () {
+        final manager = AuthorizationFilterManager()..init();
+        di<FiltersStateManager>().registerFilterManager(manager);
+        return manager;
+      },
       dependsOn: [AuthorizationManager],
       dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<PupilAuthorizationFilterManager>(
-      () => PupilAuthorizationFilterManager(),
+      () {
+        final manager = PupilAuthorizationFilterManager();
+        di<FiltersStateManager>().registerFilterManager(manager);
+        return manager;
+      },
       dependsOn: [AuthorizationManager],
       dispose: (m) => m.dispose(),
     );
 
-    di.registerSingletonWithDependencies<PupilFilterManager>(
-      () => PupilFilterManager(),
-      dependsOn: [PupilProxyManager],
-      dispose: (m) => m.dispose(),
-    );
-    di.registerSingletonWithDependencies<PupilBookLendingFilterManager>(
-      () => PupilBookLendingFilterManager(),
-      dependsOn: [PupilBookLendingManager],
-      dispose: (m) => m.dispose(),
-    );
-
+    // Register FiltersStateManager before all filter managers so they can
+    // register themselves during construction.
     di.registerSingleton<FiltersStateManager>(
       FiltersStateManagerImplementation(),
       dispose: (m) => m.dispose(),
     );
 
+    di.registerSingletonWithDependencies<PupilFilterManager>(
+      () {
+        final manager = PupilFilterManager();
+        di<FiltersStateManager>().registerFilterManager(manager);
+        return manager;
+      },
+      dependsOn: [PupilProxyManager],
+      dispose: (m) => m.dispose(),
+    );
+    di.registerSingletonWithDependencies<PupilBookLendingFilterManager>(
+      () {
+        final manager = PupilBookLendingFilterManager();
+        di<FiltersStateManager>().registerFilterManager(manager);
+        return manager;
+      },
+      dependsOn: [PupilBookLendingManager],
+      dispose: (m) => m.dispose(),
+    );
+
     di.registerSingletonWithDependencies<LearningSupportFilterManager>(
-      () => LearningSupportFilterManager(),
+      () {
+        final manager = LearningSupportFilterManager();
+        di<FiltersStateManager>().registerFilterManager(manager);
+        return manager;
+      },
       dependsOn: [PupilProxyManager, PupilFilterManager],
       dispose: (m) => m.dispose(),
     );
@@ -204,7 +226,11 @@ class InitOnUserAuth {
     );
 
     di.registerSingletonWithDependencies<SchooldayEventFilterManager>(
-      () => SchooldayEventFilterManager(),
+      () {
+        final manager = SchooldayEventFilterManager();
+        di<FiltersStateManager>().registerFilterManager(manager);
+        return manager;
+      },
       dependsOn: [PupilProxyManager, PupilFilterManager, SchooldayEventManager],
       dispose: (m) => m.dispose(),
     );
@@ -216,13 +242,21 @@ class InitOnUserAuth {
     );
 
     di.registerSingletonWithDependencies<AttendancePupilFilterManager>(
-      () => AttendancePupilFilterManager().init(),
+      () {
+        final manager = AttendancePupilFilterManager().init();
+        di<FiltersStateManager>().registerFilterManager(manager);
+        return manager;
+      },
       dependsOn: [AttendanceManager],
       dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonWithDependencies<PupilsFilter>(
-      () => PupilsFilterImplementation(di<PupilProxyManager>()),
+      () {
+        final manager = PupilsFilterImplementation(di<PupilProxyManager>());
+        di<FiltersStateManager>().registerFilterManager(manager);
+        return manager;
+      },
       dependsOn: [
         PupilProxyManager,
         PupilFilterManager,
@@ -234,7 +268,11 @@ class InitOnUserAuth {
     );
 
     di.registerSingletonWithDependencies<PupilMediaAuthFilterManager>(
-      () => PupilMediaAuthFilterManager(),
+      () {
+        final manager = PupilMediaAuthFilterManager();
+        di<FiltersStateManager>().registerFilterManager(manager);
+        return manager;
+      },
       dependsOn: [PupilsFilter],
       dispose: (m) => m.dispose(),
     );
@@ -246,7 +284,11 @@ class InitOnUserAuth {
     );
 
     di.registerSingletonWithDependencies<SchoolListFilterManager>(
-      () => SchoolListFilterManager()..init(),
+      () {
+        final manager = SchoolListFilterManager()..init();
+        di<FiltersStateManager>().registerFilterManager(manager);
+        return manager;
+      },
       dependsOn: [PupilsFilter, SchoolListManager],
       dispose: (m) => m.dispose(),
     );

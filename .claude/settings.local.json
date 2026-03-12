@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"H:\\\\code\\\\dabblingwithcode\\\\school_data_hub\\\\school_data_hub_flutter\" && flutter analyze lib/features/user/ 2>&1)"
+    ]
+  }
+}

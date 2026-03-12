@@ -137,7 +137,7 @@ Map<AuthorizationFilter, bool> initialPupilAuthorizationFilterValues = {
   AuthorizationFilter.fileResponse: false,
 };
 
-class PupilAuthorizationFilterManager {
+class PupilAuthorizationFilterManager implements Resettable {
   final _pupilAuthorizationFilterState =
       ValueNotifier<Map<AuthorizationFilter, bool>>(
         initialPupilAuthorizationFilterValues,
@@ -151,6 +151,7 @@ class PupilAuthorizationFilterManager {
     return;
   }
 
+  @override
   void resetFilters() {
     _pupilAuthorizationFilterState.value = {
       ...initialPupilAuthorizationFilterValues,

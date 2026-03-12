@@ -49,8 +49,12 @@ class AdminUserEndpoint extends Endpoint {
     );
   }
 
-  /// Creates a single user (auth + UserInfo + scopes + User). Used by createUser and batchCreateUsers.
-  /// When [transaction] is provided, DB writes use it (caller owns the transaction). Otherwise uses its own transaction.
+  /// Creates a single user (auth + UserInfo + scopes + User).
+  ///
+  /// Note: `auth.Emails.createUser()` auto-commits (creates UserInfo + EmailAuth
+  /// on its own DB connection). `auth.Users.updateUserScopes()` doesn't accept a
+  /// transaction parameter. Therefore all writes are sequential direct calls —
+  /// wrapping in a transaction provides no atomicity benefit.
   Future<User> _createOneUser(
     Session session, {
     required String userName,
@@ -65,7 +69,6 @@ class AdminUserEndpoint extends Endpoint {
     String? matrixUserId,
     int? credit,
     Set<int>? pupilsAuth,
-    Transaction? transaction,
   }) async {
     final UserInfo? userInfo =
         await auth.Emails.createUser(session, userName, email, password);
@@ -74,21 +77,23 @@ class AdminUserEndpoint extends Endpoint {
       throw Exception('Failed to create user');
     }
 
-    Set<Scope> scopes = {};
-    for (final scope in scopeNames) {
-      if (scope == 'admin') {
-        scopes.add(Scope('serverpod.admin'));
-      } else {
-        scopes.add(Scope(scope));
-      }
-    }
-
-    Future<User> runWrites(Transaction txn) async {
+    try {
+      // Update fullName (direct, no transaction)
       userInfo!.fullName = fullName;
-      await auth.UserInfo.db.updateRow(session, userInfo, transaction: txn);
+      await auth.UserInfo.db.updateRow(session, userInfo);
 
+      // Set scopes (direct — updateUserScopes doesn't accept transaction)
+      Set<Scope> scopes = {};
+      for (final scope in scopeNames) {
+        if (scope == 'admin') {
+          scopes.add(Scope('serverpod.admin'));
+        } else {
+          scopes.add(Scope(scope));
+        }
+      }
       await auth.Users.updateUserScopes(session, userInfo.id!, scopes);
 
+      // Create User record (direct)
       final user = User(
         userInfoId: userInfo.id!,
         userFlags: UserFlags(
@@ -106,15 +111,8 @@ class AdminUserEndpoint extends Endpoint {
         matrixUserId: matrixUserId,
       );
 
-      await User.db.insertRow(session, user, transaction: txn);
+      await User.db.insertRow(session, user);
       return user;
-    }
-
-    try {
-      if (transaction != null) {
-        return await runWrites(transaction);
-      }
-      return await session.db.transaction(runWrites);
     } catch (e) {
       // auth.Emails.createUser already committed; clean up orphaned auth account
       try {
@@ -145,8 +143,7 @@ class AdminUserEndpoint extends Endpoint {
     return msg.isEmpty ? 'Unbekannter Fehler' : msg;
   }
 
-  /// Batch-creates users. Returns credentials for successes and errors for skipped/failed rows.
-  /// Each create runs in its own transaction; creates are executed in parallel (up to 5 at a time).
+  /// Batch-creates users sequentially. Returns credentials for successes and errors for skipped/failed rows.
   /// Duplicates are detected by the DB (unique constraint); we catch 23505 and report a friendly message.
   Future<BatchCreateUsersResponse> batchCreateUsers(
     Session session,
@@ -155,8 +152,6 @@ class AdminUserEndpoint extends Endpoint {
     final credentials = <CreatedUserCredential>[];
     final errors = <BatchCreateUserError>[];
 
-    final toAttempt =
-        <({CreateUserRequest req, int rowIndex, String userName})>[];
     for (var i = 0; i < requests.length; i++) {
       final req = requests[i];
       final rowIndex = i + 1;
@@ -169,44 +164,36 @@ class AdminUserEndpoint extends Endpoint {
         ));
         continue;
       }
-      toAttempt.add((req: req, rowIndex: rowIndex, userName: userName));
-    }
-
-    const concurrency = 5;
-    for (var start = 0; start < toAttempt.length; start += concurrency) {
-      final chunk = toAttempt.skip(start).take(concurrency).toList();
-      await Future.wait(chunk.map((item) async {
-        try {
-          await _createOneUser(
-            session,
-            userName: item.userName,
-            fullName: item.req.fullName,
-            email: item.req.email,
-            password: item.req.password,
-            role: item.req.role,
-            timeUnits: item.req.timeUnits,
-            reliefTimeUnits: item.req.reliefTimeUnits,
-            scopeNames: item.req.scopeNames,
-            isTester: item.req.isTester,
-            matrixUserId: item.req.matrixUserId,
-            credit: item.req.credit,
-            pupilsAuth: item.req.pupilsAuth,
-          );
-          credentials.add(CreatedUserCredential(
-            userName: item.userName,
-            fullName: item.req.fullName,
-            email: item.req.email,
-            password: item.req.password,
-          ));
-        } catch (e) {
-          session.log('batchCreateUsers failed for ${item.userName}: $e');
-          errors.add(BatchCreateUserError(
-            rowIndex: item.rowIndex,
-            userNameOrKurzel: item.userName,
-            message: _messageForCreateError(e),
-          ));
-        }
-      }));
+      try {
+        await _createOneUser(
+          session,
+          userName: userName,
+          fullName: req.fullName,
+          email: req.email,
+          password: req.password,
+          role: req.role,
+          timeUnits: req.timeUnits,
+          reliefTimeUnits: req.reliefTimeUnits,
+          scopeNames: req.scopeNames,
+          isTester: req.isTester,
+          matrixUserId: req.matrixUserId,
+          credit: req.credit,
+          pupilsAuth: req.pupilsAuth,
+        );
+        credentials.add(CreatedUserCredential(
+          userName: userName,
+          fullName: req.fullName,
+          email: req.email,
+          password: req.password,
+        ));
+      } catch (e) {
+        session.log('batchCreateUsers failed for $userName: $e');
+        errors.add(BatchCreateUserError(
+          rowIndex: rowIndex,
+          userNameOrKurzel: userName,
+          message: _messageForCreateError(e),
+        ));
+      }
     }
 
     return BatchCreateUsersResponse(
