@@ -6,14 +6,9 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -35,185 +30,176 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _schoolListManager = di<SchoolListManager>();
-    final _schoolListFilterManager = di<SchoolListFilterManager>();
+    final schoolListManager = di<SchoolListManager>();
     final pupilsFilter = di<PupilsFilter>();
     final filterStateManager = di<FiltersStateManager>();
-    final unfilteredPupilListEntries = watch(
-      _schoolListManager.getPupilEntriesProxyFromSchoolList(schoolList.id!),
-    ).pupilEntries.values.map((e) => e.pupilEntry).toList();
 
-    final pupilListEntries = _schoolListFilterManager
-        .addPupilEntryFiltersToFilteredPupils(unfilteredPupilListEntries);
-    final List<PupilProxy> filteredPupils = watchValue(
-      (PupilsFilter x) => x.filteredPupils,
+    // Stable ValueNotifier — created once, never triggers page rebuild.
+    final pupilsInList = createOnce(() => ValueNotifier<List<PupilProxy>>([]));
+
+    void recompute() {
+      final entriesProxy = schoolListManager.getPupilEntriesProxyFromSchoolList(
+        schoolList.id!,
+      );
+      final unfilteredEntries = entriesProxy.pupilEntries.values
+          .map((e) => e.pupilEntry)
+          .toList();
+      final filteredEntries = di<SchoolListFilterManager>()
+          .addPupilEntryFiltersToFilteredPupils(unfilteredEntries);
+      final filteredPupils = pupilsFilter.filteredPupils.value;
+      final newList = filteredPupils
+          .where(
+            (pupil) => filteredEntries.any((e) => e.pupilId == pupil.pupilId),
+          )
+          .toList();
+
+      // Only notify when the set of pupils actually changes — entry-level
+      // data changes (status, comment) are handled by granular card widgets.
+      final oldIds = pupilsInList.value.map((p) => p.pupilId).toList();
+      final newIds = newList.map((p) => p.pupilId).toList();
+      if (oldIds.length != newIds.length ||
+          !oldIds.every((id) => newIds.contains(id))) {
+        pupilsInList.value = newList;
+      }
+    }
+
+    // Subscribe to entries proxy (ChangeNotifier) + initial computation.
+    callOnce((_) {
+      recompute();
+      final entriesProxy = schoolListManager.getPupilEntriesProxyFromSchoolList(
+        schoolList.id!,
+      );
+      entriesProxy.addListener(recompute);
+      onDispose(() => entriesProxy.removeListener(recompute));
+    });
+
+    // React to filtered-pupils changes (text search, grade filters, etc.).
+    registerHandler(
+      target: pupilsFilter.filteredPupils,
+      handler: (_, __, ___) => recompute(),
     );
 
-    List<PupilProxy> pupilsInList = filteredPupils
-        .where(
-          (pupil) => pupilListEntries.any(
-            (pupilList) => pupilList.pupilId == pupil.pupilId,
-          ),
-        )
-        .toList();
-    final pupilsInListListenable = createOnce(
-      () => ValueNotifier<List<PupilProxy>>([]),
+    // React to school-list entry filter changes (yes/no/null/comment chips).
+    registerHandler(
+      target: di<PupilFilterManager>().pupilFilterState,
+      handler: (_, __, ___) => recompute(),
     );
-    pupilsInListListenable.value = pupilsInList;
 
-    return Scaffold(
+    return GenericListPage<PupilProxy>(
+      iconData: Icons.list,
+      title: schoolList.name,
       backgroundColor: AppColors.canvasColor,
-      appBar: GenericAppBar(iconData: Icons.list, title: schoolList.name),
-      body: RefreshIndicator(
-        onRefresh: () async => _schoolListManager.fetchSchoolLists(),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 5.0, right: 5),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 700),
-              child: CustomScrollView(
-                slivers: [
-                  GenericSliverAppBarWithSearchWidget(
-                    height: 135,
-                    searchWidgetWithStatsRow: GenericListSearchBarWithStats(
-                      statsWidget: SchoolListPupilEntriesSearchBarStats(
-                        schoolList: schoolList,
-                        pupilsInList: pupilsInListListenable,
+      maxWidth: 700,
+      sliverAppBarHeight: 135,
+      searchBarConfig: GenericListSearchBarConfig(
+        statsWidget: SchoolListPupilEntriesSearchBarStats(
+          schoolList: schoolList,
+          pupilsInList: pupilsInList,
+        ),
+        searchType: SearchType.pupil,
+        hintText: 'Schüler/in suchen',
+        refreshFunction: pupilsFilter.refreshs,
+        onChanged: (value) => pupilsFilter.textFilter.setFilterText(value),
+        searchTextSource: pupilsFilter.textFilter,
+        filtersActive: filterStateManager.filtersActive,
+        onResetFilters: filterStateManager.resetFilters,
+      ),
+      filterSheetChildren: const [
+        CommonPupilFiltersWidget(),
+        SchoolListPupilEntriesFiltersWidget(),
+      ],
+      itemsListenable: pupilsInList,
+      itemBuilder: (_, PupilProxy pupil) =>
+          SchoolListPupilEntryCard(pupil.pupilId, schoolList.id!),
+      onRefresh: () async => schoolListManager.fetchSchoolLists(),
+      bottomBarActions: [
+        // TODO: Implement clearance helper
+        if (schoolList.public != true &&
+            di<HubSessionManager>().userName == schoolList.createdBy)
+          IconButton(
+            tooltip: 'Liste teilen',
+            onPressed: () async {
+              final users = di<UserManager>().users.value;
+              final List<User>? selectedUsers = await Navigator.of(context)
+                  .push(
+                    MaterialPageRoute<List<User>>(
+                      builder: (ctx) => SelectUsersPage(
+                        selectableUsers: users
+                            .where(
+                              (user) =>
+                                  user.userInfo?.userName !=
+                                  di<HubSessionManager>().userName,
+                            )
+                            .toList(),
+                        authorizedUsers: schoolList.authorizedUsers,
                       ),
-                      searchType: SearchType.pupil,
-                      hintText: 'Schüler/in suchen',
-                      refreshFunction: pupilsFilter.refreshs,
-                      onChanged: (value) =>
-                          pupilsFilter.textFilter.setFilterText(value),
-                      searchTextSource: pupilsFilter.textFilter,
-                      filtersActive: filterStateManager.filtersActive,
-                      onResetFilters: filterStateManager.resetFilters,
-                      showFilterBottomSheet: (context) =>
-                          showGenericFilterBottomSheet(
-                            context: context,
-                            filterList: [
-                              const CommonPupilFiltersWidget(),
-                              const SchoolListPupilEntriesFiltersWidget(),
-                            ],
+                    ),
+                  );
+              if (selectedUsers == null) return;
+
+              final authorizedUsernames = selectedUsers.isEmpty
+                  ? null
+                  : selectedUsers
+                        .map((user) => user.userInfo!.userName!)
+                        .join('*');
+
+              schoolListManager.updateSchoolListProperty(
+                listId: schoolList.id!,
+                authorizedUsers: (value: authorizedUsernames),
+              );
+            },
+            icon: const Icon(Icons.share, size: 30),
+          ),
+        IconButton(
+          tooltip: 'Kinder hinzufügen',
+          icon: const Icon(Icons.add, size: 30),
+          onPressed: () async {
+            final List<int> selectedPupilIds =
+                await Navigator.of(context).push(
+                  MaterialPageRoute<List<int>>(
+                    builder: (ctx) => SelectPupilsListPage(
+                      selectablePupils: di<PupilProxyManager>()
+                          .getPupilsNotListed(
+                            pupilsInList.value
+                                .map((pupil) => pupil.pupilId)
+                                .toList(),
                           ),
                     ),
                   ),
-                  GenericSliverListWithEmptyListCheck<PupilProxy>(
-                    itemsListenable: pupilsInListListenable,
-                    itemBuilder: (_, PupilProxy pupil) =>
-                        SchoolListPupilEntryCard(pupil.pupilId, schoolList.id!),
-                  ),
-                ],
+                ) ??
+                [];
+            if (selectedPupilIds.isEmpty) return;
+            schoolListManager.updateSchoolListProperty(
+              listId: schoolList.id!,
+              operation: (
+                pupilIds: selectedPupilIds,
+                operation: MemberOperation.add,
               ),
-            ),
-          ),
+            );
+          },
         ),
-      ),
-      bottomNavigationBar: GenericBottomNavBar(
-        actions: [
-          // TODO: Implement clearance helper
-          if (schoolList.public != true &&
-              di<HubSessionManager>().userName == schoolList.createdBy)
-            IconButton(
-              tooltip: 'Liste teilen',
-              onPressed: () async {
-                final users = di<UserManager>().users.value;
-                final List<User>? selectedUsers = await Navigator.of(context)
-                    .push(
-                      MaterialPageRoute<List<User>>(
-                        builder: (ctx) => SelectUsersPage(
-                          selectableUsers: users
-                              .where(
-                                (user) =>
-                                    user.userInfo?.userName !=
-                                    di<HubSessionManager>().userName,
-                              )
-                              .toList(),
-                          authorizedUsers: schoolList.authorizedUsers,
-                        ),
-                      ),
-                    );
-                if (selectedUsers == null) return;
+        IconButton(
+          tooltip: 'Liste als PDF',
+          icon: const Icon(Icons.print, size: 30),
+          onPressed: () async {
+            final pupils = schoolListManager.getPupilsinSchoolList(
+              schoolList.id!,
+            );
+            final pdfFile = await SchoolListPdfGenerator.generateSchoolListPdf(
+              schoolList: schoolList,
+              pupils: pupils,
+            );
 
-                final authorizedUsernames = selectedUsers.isEmpty
-                    ? null
-                    : selectedUsers
-                          .map((user) => user.userInfo!.userName!)
-                          .join('*');
-
-                di<SchoolListManager>().updateSchoolListProperty(
-                  listId: schoolList.id!,
-                  authorizedUsers: (value: authorizedUsernames),
-                );
-              },
-              icon: const Icon(Icons.share, size: 30),
-            ),
-          IconButton(
-            tooltip: 'Kinder hinzufügen',
-            icon: const Icon(Icons.add, size: 30),
-            onPressed: () async {
-              final List<int> selectedPupilIds =
-                  await Navigator.of(context).push(
-                    MaterialPageRoute<List<int>>(
-                      builder: (ctx) => SelectPupilsListPage(
-                        selectablePupils: di<PupilProxyManager>()
-                            .getPupilsNotListed(
-                              pupilsInList
-                                  .map((pupil) => pupil.pupilId)
-                                  .toList(),
-                            ),
-                      ),
-                    ),
-                  ) ??
-                  [];
-              if (selectedPupilIds.isEmpty) return;
-              di<SchoolListManager>().updateSchoolListProperty(
-                listId: schoolList.id!,
-                operation: (
-                  pupilIds: selectedPupilIds,
-                  operation: MemberOperation.add,
+            if (context.mounted) {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (ctx) => SchoolListPdfViewPage(pdfFile: pdfFile),
                 ),
               );
-            },
-          ),
-          IconButton(
-            tooltip: 'Liste als PDF',
-            icon: const Icon(Icons.print, size: 30),
-            onPressed: () async {
-              final pupils = di<SchoolListManager>().getPupilsinSchoolList(
-                schoolList.id!,
-              );
-              final pdfFile =
-                  await SchoolListPdfGenerator.generateSchoolListPdf(
-                    schoolList: schoolList,
-                    pupils: pupils,
-                  );
-
-              if (context.mounted) {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => SchoolListPdfViewPage(pdfFile: pdfFile),
-                  ),
-                );
-              }
-            },
-          ),
-          GenericFilterButton(
-            isSearchBar: false,
-            filtersActive: di<FiltersStateManager>().filtersActive,
-            onLongPress: () => di<FiltersStateManager>().resetFilters(),
-            showBottomSheetFunction: (context) {
-              showGenericFilterBottomSheet(
-                context: context,
-                filterList: [
-                  const CommonPupilFiltersWidget(),
-                  const SchoolListPupilEntriesFiltersWidget(),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+            }
+          },
+        ),
+      ],
     );
   }
 }

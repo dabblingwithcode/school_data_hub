@@ -9,25 +9,22 @@ class BottomNavBarLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-    // Platform.isWindows
-    //     ?
-    Theme(
-      data: ThemeData(canvasColor: AppColors.backgroundColor),
-      child: Padding(
-        padding: Platform.isWindows
-            ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
-            : const EdgeInsets.only(left: 5, right: 5, bottom: 15),
-        child: SizedBox(
-          height: Platform.isWindows
-              ? kBottomNavigationBarHeight + 6
-              : kBottomNavigationBarHeight + 6,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
+    return Padding(
+      padding: Platform.isWindows
+          ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
+          : const EdgeInsets.only(left: 5, right: 5, bottom: 15),
+      child: SizedBox(
+        height: Platform.isWindows
+            ? kBottomNavigationBarHeight + 6
+            : kBottomNavigationBarHeight + 6,
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              child: Theme(
+                data: ThemeData(canvasColor: AppColors.backgroundColor),
                 child: bottomNavBar,
               ),
             ),
@@ -35,10 +32,6 @@ class BottomNavBarLayout extends StatelessWidget {
         ),
       ),
     );
-
-    // : Theme(
-    //     data: ThemeData(canvasColor: AppColors.backgroundColor),
-    //     child: bottomNavBar);
   }
 }
 
@@ -48,25 +41,25 @@ class BottomNavBarProfileLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(canvasColor: AppColors.backgroundColor),
-      child: Padding(
-        padding: Platform.isWindows
-            ? const EdgeInsets.only(left: 0, right: 0, bottom: 10)
-            : const EdgeInsets.only(left: 0, right: 0),
-        child: SizedBox(
-          height: Platform.isWindows
-              ? kBottomNavigationBarHeight + 20
-              : kBottomNavigationBarHeight + 30,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(10),
-                  bottomRight: Radius.circular(10),
-                ),
+    return Padding(
+      padding: Platform.isWindows
+          ? const EdgeInsets.only(left: 0, right: 0, bottom: 10)
+          : const EdgeInsets.only(left: 0, right: 0),
+      child: SizedBox(
+        height: Platform.isWindows
+            ? kBottomNavigationBarHeight + 20
+            : kBottomNavigationBarHeight + 30,
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10),
+              ),
+              child: Theme(
+                data: ThemeData(canvasColor: AppColors.backgroundColor),
                 child: bottomNavBar,
               ),
             ),
@@ -74,6 +67,5 @@ class BottomNavBarProfileLayout extends StatelessWidget {
         ),
       ),
     );
-    // : bottomNavBar;
   }
 }

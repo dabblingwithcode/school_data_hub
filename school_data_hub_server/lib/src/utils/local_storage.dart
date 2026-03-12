@@ -74,22 +74,25 @@ class LocalStorage extends DatabaseCloudStorage {
     required Session session,
     required String path,
   }) async {
-    //  final prefix = '$storageUrl/public';
+    if (storageId != 'public') return null;
 
     final file = _getFileByPath(path);
     if (!file.existsSync()) {
       session.log('File not found: $path', level: LogLevel.warning);
-      // throw LocalizedError(
-      //   message: LocalizedMessage(en: 'File not found'),
-      //   statusCode: 404,
-      // );
       return null;
     }
-    // if (prefix!.startsWith('http')) {
-    //   return Uri.parse('$prefix$path');
-    // }
-    return Uri.file(path);
-    //  return Uri.file('$prefix$path');
+
+    final config = session.server.serverpod.config;
+    return Uri(
+      scheme: config.apiServer.publicScheme,
+      host: config.apiServer.publicHost,
+      port: config.apiServer.publicPort,
+      path: '/serverpod_cloud_storage',
+      queryParameters: {
+        'method': 'file',
+        'path': path,
+      },
+    );
   }
 
   @override
@@ -119,6 +122,10 @@ class LocalStorage extends DatabaseCloudStorage {
     bool verified = true,
   }) async {
     final file = _getFileByPath(path);
+    final dir = file.parent;
+    if (!dir.existsSync()) {
+      dir.createSync(recursive: true);
+    }
     final data = byteData.buffer.asUint8List();
     file.writeAsBytesSync(data);
   }

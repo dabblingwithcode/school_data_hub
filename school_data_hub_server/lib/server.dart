@@ -45,7 +45,7 @@ void run(List<String> args) async {
   // auth configuration
   // TODO: configure this properly
   auth.AuthConfig.set(auth.AuthConfig(
-    enableUserImages: false,
+    enableUserImages: true,
     userCanEditUserName: false,
     userCanEditFullName: true,
     // other config options

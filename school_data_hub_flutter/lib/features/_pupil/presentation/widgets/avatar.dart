@@ -32,6 +32,7 @@ class AvatarImage extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watchPropertyValue((m) => m.avatarId, target: pupil);
+    watchPropertyValue((m) => m.avatarAuth, target: pupil);
     final avatar = pupil.avatar;
 
     final bool avatarAuth = (pupil.avatarAuth != null);
