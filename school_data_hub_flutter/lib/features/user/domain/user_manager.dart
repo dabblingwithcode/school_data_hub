@@ -46,7 +46,6 @@ typedef UpdateUserParams = ({
   int reliefTimeUnits,
   int credit,
   bool isTester,
-  String? imageUrl,
   Set<int>? pupilsAuth,
 });
 
@@ -215,7 +214,6 @@ class UserManager {
       reliefTimeUnits: params.reliefTimeUnits,
       credit: params.credit,
       isTester: params.isTester,
-      imageUrl: params.imageUrl,
       pupilsAuth: params.pupilsAuth,
     );
     await fetchUsersCommand.runAsync();

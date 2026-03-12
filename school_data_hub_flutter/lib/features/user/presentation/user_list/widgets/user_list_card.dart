@@ -5,10 +5,10 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart';
-import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 
 class UserListCard extends WatchingWidget {
   final UserWithDevices userWithDevices;
@@ -167,13 +167,26 @@ class _UserAvatar extends StatelessWidget {
 
   const _UserAvatar({this.info});
 
+  String? _resolveImageUrl() {
+    final url = info?.imageUrl;
+    if (url == null || url.isEmpty) return null;
+
+    return '${di<EnvManager>().activeEnv!.serverUrl}serverpod_cloud_storage?method=file&path=$url';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final imageUrl = _resolveImageUrl();
     return Padding(
       padding: const EdgeInsets.all(10),
-      child: CircularUserImage(
-        userInfo: info,
-        size: 36,
+      child: CircleAvatar(
+        radius: 30,
+        backgroundColor: Colors.grey[300],
+        backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
+        onBackgroundImageError: imageUrl != null ? (_, __) {} : null,
+        child: imageUrl == null
+            ? const Icon(Icons.person, size: 20, color: Colors.white)
+            : null,
       ),
     );
   }

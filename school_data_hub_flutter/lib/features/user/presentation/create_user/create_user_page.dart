@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -12,11 +15,15 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_set_avatar.dart'
+    show CropAvatarView;
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/widgets/scope_names_selector.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/widgets/roles_dropdown.dart';
@@ -82,9 +89,6 @@ class CreateOrEditUserPage extends WatchingWidget {
     );
     final TextEditingController emailController = createOnce(
       () => TextEditingController(text: user?.userInfo?.email ?? ''),
-    );
-    final TextEditingController imageUrlController = createOnce(
-      () => TextEditingController(text: user?.userInfo?.imageUrl ?? ''),
     );
     final TextEditingController matrixIdController = createOnce(
       () => TextEditingController(text: user?.matrixUserId ?? ''),
@@ -163,30 +167,17 @@ class CreateOrEditUserPage extends WatchingWidget {
                 children: <Widget>[
                   // Read-only Kontoinformationen when editing
                   if (_isEditing && user != null) ...[
-                    _SectionCard(
-                      title: 'Kontoinformationen',
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _ReadOnlyRow(
-                            'User-ID',
-                            '${user.id ?? user.userInfoId}',
+                    if (user.userInfo?.created != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          'Erstellt: ${user.userInfo!.created.formatDateForUser()}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
                           ),
-                          _ReadOnlyRow('UserInfo-ID', '${user.userInfoId}'),
-                          if (user.userInfo?.created != null)
-                            _ReadOnlyRow(
-                              'Erstellt',
-                              user.userInfo!.created.formatDateForUser(),
-                            ),
-                          if (user.pupilsAuth != null)
-                            _ReadOnlyRow(
-                              'Autorisierte Schüler',
-                              '${user.pupilsAuth!.length}',
-                            ),
-                        ],
+                        ),
                       ),
-                    ),
-                    const Gap(16),
                     if (devices.isNotEmpty) ...[
                       _SectionCard(
                         title: 'Geräte / Sitzungen',
@@ -264,38 +255,21 @@ class CreateOrEditUserPage extends WatchingWidget {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _AvatarPreview(
-                              imageUrlController: imageUrlController,
+                            _UserAvatarPicker(
+                              currentImageUrl: user?.userInfo?.imageUrl,
                             ),
                             const Gap(20),
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _LabeledField(
-                                    label: 'Name',
-                                    child: TextField(
-                                      controller: fullNameController,
-                                      decoration: AppStyles.textFieldDecoration(
-                                        labelText: 'Name',
-                                      ),
-                                      minLines: 1,
-                                      maxLines: 1,
-                                    ),
+                              child: _LabeledField(
+                                label: 'Name',
+                                child: TextField(
+                                  controller: fullNameController,
+                                  decoration: AppStyles.textFieldDecoration(
+                                    labelText: 'Name',
                                   ),
-                                  const Gap(16),
-                                  _LabeledField(
-                                    label: 'Profilbild-URL',
-                                    child: TextField(
-                                      controller: imageUrlController,
-                                      decoration: AppStyles.textFieldDecoration(
-                                        labelText: 'URL des Profilbilds',
-                                      ),
-                                      minLines: 1,
-                                      maxLines: 2,
-                                    ),
-                                  ),
-                                ],
+                                  minLines: 1,
+                                  maxLines: 1,
+                                ),
                               ),
                             ),
                           ],
@@ -680,9 +654,6 @@ class CreateOrEditUserPage extends WatchingWidget {
                               int.tryParse(reliefTimeUnitsController.text) ?? 0,
                           credit: int.tryParse(creditController.text) ?? 0,
                           isTester: setAsTester.value,
-                          imageUrl: imageUrlController.text.trim().isEmpty
-                              ? null
-                              : imageUrlController.text.trim(),
                           pupilsAuth: watchedPupilsAuth,
                         ));
                         if (context.mounted) Navigator.pop(context);
@@ -790,38 +761,139 @@ class CreateOrEditUserPage extends WatchingWidget {
   }
 }
 
-class _AvatarPreview extends StatelessWidget {
-  final TextEditingController imageUrlController;
+class _UserAvatarPicker extends StatefulWidget {
+  final String? currentImageUrl;
 
-  const _AvatarPreview({required this.imageUrlController});
+  const _UserAvatarPicker({this.currentImageUrl});
+
+  @override
+  State<_UserAvatarPicker> createState() => _UserAvatarPickerState();
+}
+
+class _UserAvatarPickerState extends State<_UserAvatarPicker> {
+  bool _uploading = false;
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: imageUrlController,
-      builder: (context, _) {
-        final url = imageUrlController.text.trim();
-        return Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: AppColors.backgroundColor,
-            shape: BoxShape.circle,
+    return GestureDetector(
+      onTap: _uploading ? null : _pickAndUploadImage,
+      child: Stack(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppColors.backgroundColor,
+              shape: BoxShape.circle,
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: _uploading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : _buildImage(),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: url.isEmpty
-              ? const Icon(Icons.person, size: 40, color: Colors.white)
-              : Image.network(
-                  url,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
-                      const Icon(Icons.person, size: 40, color: Colors.white),
+          if (!_uploading)
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: AppColors.interactiveColor,
+                  shape: BoxShape.circle,
                 ),
-        );
-      },
+                child: const Icon(
+                  Icons.camera_alt,
+                  size: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
+  }
+
+  Widget _buildImage() {
+    final url = widget.currentImageUrl;
+    if (url == null || url.isEmpty) {
+      return const Icon(Icons.person, size: 40, color: Colors.white);
+    }
+    // Serverpod stores user images as relative paths
+    // (e.g. "serverpod/user_images/1-2.jpg").
+    // Resolve them against the server base URL.
+    final resolvedUrl =
+        '${di<EnvManager>().activeEnv!.serverUrl}serverpod_cloud_storage?method=file&path=$url';
+    return Image.network(
+      resolvedUrl,
+      width: 80,
+      height: 80,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) =>
+          const Icon(Icons.person, size: 40, color: Colors.white),
+    );
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    ImageSource? source;
+    if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+      source = ImageSource.gallery;
+    } else {
+      source = await showModalBottomSheet<ImageSource>(
+        context: context,
+        builder: (ctx) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Kamera'),
+                onTap: () => Navigator.pop(ctx, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Galerie'),
+                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+              ),
+            ],
+          ),
+        ),
+      );
+      if (source == null) return;
+    }
+
+    final image = await ImagePicker().pickImage(source: source);
+    if (image == null || !mounted) return;
+
+    final File? croppedFile = await Navigator.push<File?>(
+      context,
+      MaterialPageRoute<File?>(builder: (ctx) => CropAvatarView(image: image)),
+    );
+    if (croppedFile == null || !mounted) return;
+
+    setState(() => _uploading = true);
+
+    final bytes = await croppedFile.readAsBytes();
+    final byteData = ByteData.view(bytes.buffer);
+    final success = await di<HubSessionManager>().uploadUserImage(byteData);
+
+    if (success) {
+      await di<UserManager>().fetchUsers();
+    }
+
+    if (mounted) {
+      setState(() => _uploading = false);
+      di<NotificationService>().showSnackBar(
+        success ? NotificationType.success : NotificationType.error,
+        success
+            ? 'Profilbild aktualisiert'
+            : 'Profilbild konnte nicht hochgeladen werden',
+      );
+    }
   }
 }
 
@@ -879,35 +951,6 @@ class _LabeledField extends StatelessWidget {
         const Gap(6),
         child,
       ],
-    );
-  }
-}
-
-class _ReadOnlyRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _ReadOnlyRow(this.label, this.value);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 160,
-            child: Text(
-              '$label:',
-              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-            ),
-          ),
-          Expanded(
-            child: SelectableText(value, style: const TextStyle(fontSize: 12)),
-          ),
-        ],
-      ),
     );
   }
 }

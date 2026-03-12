@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:flutter_it/flutter_it.dart';
-import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 
 class SelectUsersListCard extends WatchingWidget {
   final bool isSelectMode;
@@ -66,9 +66,30 @@ class SelectUsersListCard extends WatchingWidget {
             else
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: CircularUserImage(
-                  userInfo: passedUser.userInfo,
-                  size: 30,
+                child: Builder(
+                  builder: (context) {
+                    final url = passedUser.userInfo?.imageUrl;
+                    final resolvedUrl = url != null && url.isNotEmpty
+                        ? '${di<EnvManager>().activeEnv!.serverUrl}serverpod_cloud_storage?method=file&path=$url'
+                        : null;
+                    return CircleAvatar(
+                      radius: 15,
+                      backgroundColor: Colors.grey[300],
+                      backgroundImage: resolvedUrl != null
+                          ? NetworkImage(resolvedUrl)
+                          : null,
+                      onBackgroundImageError: resolvedUrl != null
+                          ? (_, __) {}
+                          : null,
+                      child: resolvedUrl == null
+                          ? const Icon(
+                              Icons.person,
+                              size: 18,
+                              color: Colors.white,
+                            )
+                          : null,
+                    );
+                  },
                 ),
               ),
             Expanded(

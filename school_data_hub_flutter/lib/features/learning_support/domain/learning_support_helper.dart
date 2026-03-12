@@ -84,32 +84,6 @@ class LearningSupportHelper {
     return goals;
   }
 
-  // //- TODO: Is this necessary?
-  // static SupportGoal? getGoalForCategory(PupilProxy pupil, int goalCategoryId) {
-  //   if (pupil.supportGoals != null) {
-  //     if (pupil.supportGoals!.isNotEmpty) {
-  //       final SupportGoal? goal = pupil.supportGoals!.lastWhereOrNull(
-  //           (element) => element.supportCategoryId == goalCategoryId);
-  //       return goal;
-  //     }
-  //     return null;
-  //   }
-  //   return null;
-  // }
-
-  // static SupportCategoryStatus? getCategoryStatus(
-  //     PupilProxy pupil, int goalCategoryId) {
-  //   if (pupil.supportCategoryStatuses != null) {
-  //     if (pupil.supportCategoryStatuses!.isNotEmpty) {
-  //       final SupportCategoryStatus? categoryStatus =
-  //           pupil.supportCategoryStatuses!.lastWhereOrNull(
-  //               (element) => element.supportCategoryId == goalCategoryId);
-  //       return categoryStatus;
-  //     }
-  //   }
-  //   return null;
-  // }
-
   static bool isAuthorizedToChangeStatus(SupportCategoryStatus status) {
     if (_sessionManager.isAdmin == true ||
         status.createdBy == _sessionManager.signedInUser!.userName) {

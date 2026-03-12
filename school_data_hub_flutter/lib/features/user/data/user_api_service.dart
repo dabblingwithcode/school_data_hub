@@ -75,7 +75,6 @@ class UserApiService {
     required int reliefTimeUnits,
     required int credit,
     required bool isTester,
-    String? imageUrl,
     Set<int>? pupilsAuth,
   }) async {
     await ClientHelper.apiCall(
@@ -94,8 +93,6 @@ class UserApiService {
       ),
       errorMessage: 'Benutzer aktualisieren',
     );
-    // TODO: when server supports UserInfo.imageUrl, add imageUrl to the
-    // endpoint and pass it here (client must be regenerated).
   }
 
   /// Reset a user's password. Returns `true` on success.
