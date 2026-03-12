@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:flutter_settings_ui/flutter_settings_ui.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_page/logs_page.dart';
 import 'package:school_data_hub_flutter/app_utils/shorebird_code_push_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -42,114 +41,140 @@ class SettingsPage extends WatchingWidget {
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
       appBar: GenericAppBar(iconData: Icons.settings, title: locale.settings),
-
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
-          child: SettingsList(
-            contentPadding: const EdgeInsets.only(top: 10),
-            sections: [
+          child: ListView(
+            children: [
               const SettingsAccountSection(),
               const SettingsSessionSection(),
               if (isAdmin) const SettingsAdminSection(),
-              SettingsSection(
-                title: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    'Über die App',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                tiles: <SettingsTile>[
-                  SettingsTile(
-                    leading: const Icon(Icons.perm_device_info_rounded),
-                    title: Text(
-                      'Versionsnummer: ${envManager.packageInfo.version}',
-                    ),
-                  ),
-                  SettingsTile(
-                    leading: const Icon(Icons.build_rounded),
-                    title: Text('Build: ${envManager.packageInfo.buildNumber}'),
-                  ),
-                  SettingsTile(
-                    leading: const Icon(Icons.build_rounded),
-                    title: Text(
-                      'Patch level: ${di<ShorebirdUpdateManager>().currentPatch?.number.toString() ?? '0'}',
-                    ),
-                  ),
-                  SettingsTile.navigation(
-                    leading: const Icon(Icons.bug_report_rounded),
-                    title: const Text('Logs'),
-                    onPressed: (context) => Navigator.of(context).push(
-                      MaterialPageRoute<void>(builder: (ctx) => const LogsPage()),
-                    ),
-                  ),
-                  if (AuthClearanceHelper.isAdmin())
-                    SettingsTile.navigation(
-                      leading: const Icon(Icons.dns_outlined),
-                      title: const Text('Server-Logs'),
-                      onPressed: (context) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute<void>(
-                            builder: (_) => const ServerLogsPage(),
-                          ),
-                        );
-                      },
-                    ),
-                  if (showMatrixLogs)
-                    SettingsTile.navigation(
-                      leading: const Icon(Icons.article_outlined),
-                      title: const Text('Matrix-Corporal-Logs'),
-                      onPressed: (context) async {
-                        await di.getAsync<MatrixPolicyManager>();
-                        if (!context.mounted) return;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute<void>(
-                            builder: (_) => const MatrixCorporalLogsPage(),
-                          ),
-                        );
-                      },
-                    ),
-                  SettingsTile.navigation(
-                    leading: const Icon(Icons.account_tree_rounded),
-                    title: const Text('Server-Datenmodell'),
-                    onPressed: (context) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const ServerModelDiagramPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  SettingsTile.navigation(
-                    leading: const Icon(Icons.info_rounded),
-                    title: const Text('App Infos'),
-                    onPressed: (context) => showAboutDialog(
-                      context: context,
-                      applicationIcon: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          'assets/schuldaten_hub_logo.png',
-                          scale: 8,
-                        ),
+              // Über die App
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Text(
+                      'Über die App',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.backgroundColor,
                       ),
-                      applicationName: 'Schuldaten App',
-                      applicationVersion: envManager.packageInfo.version,
-                      applicationLegalese: '© 2025 Schuldaten Hub',
                     ),
                   ),
-                  SettingsTile.navigation(
-                    leading: const Icon(Icons.update_rounded),
-                    title: const Text('App Updates überprüfen'),
-                    onPressed: (context) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (ctx) => const ShorebirdCodePushPage(),
+                  Card(
+                    color: Colors.white,
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.perm_device_info_rounded),
+                          title: Text(
+                            'Versionsnummer: ${envManager.packageInfo.version}',
+                          ),
                         ),
-                      );
-                    },
+                        ListTile(
+                          leading: const Icon(Icons.build_rounded),
+                          title: Text(
+                            'Build: ${envManager.packageInfo.buildNumber}',
+                          ),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.build_rounded),
+                          title: Text(
+                            'Patch level: ${di<ShorebirdUpdateManager>().currentPatch?.number.toString() ?? '0'}',
+                          ),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.bug_report_rounded),
+                          title: const Text('Logs'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (ctx) => const LogsPage(),
+                            ),
+                          ),
+                        ),
+                        if (AuthClearanceHelper.isAdmin())
+                          ListTile(
+                            leading: const Icon(Icons.dns_outlined),
+                            title: const Text('Server-Logs'),
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (_) => const ServerLogsPage(),
+                                ),
+                              );
+                            },
+                          ),
+                        if (showMatrixLogs)
+                          ListTile(
+                            leading: const Icon(Icons.article_outlined),
+                            title: const Text('Matrix-Corporal-Logs'),
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () async {
+                              await di.getAsync<MatrixPolicyManager>();
+                              if (!context.mounted) return;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (_) =>
+                                      const MatrixCorporalLogsPage(),
+                                ),
+                              );
+                            },
+                          ),
+                        ListTile(
+                          leading: const Icon(Icons.account_tree_rounded),
+                          title: const Text('Server-Datenmodell'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const ServerModelDiagramPage(),
+                              ),
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.info_rounded),
+                          title: const Text('App Infos'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => showAboutDialog(
+                            context: context,
+                            applicationIcon: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.asset(
+                                'assets/schuldaten_hub_logo.png',
+                                scale: 8,
+                              ),
+                            ),
+                            applicationName: 'Schuldaten App',
+                            applicationVersion: envManager.packageInfo.version,
+                            applicationLegalese: '© 2025 Schuldaten Hub',
+                          ),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.update_rounded),
+                          title: const Text('App Updates überprüfen'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (ctx) => const ShorebirdCodePushPage(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

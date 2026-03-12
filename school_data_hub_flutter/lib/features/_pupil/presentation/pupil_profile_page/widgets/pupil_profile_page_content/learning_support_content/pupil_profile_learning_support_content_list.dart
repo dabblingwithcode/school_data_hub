@@ -129,7 +129,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                           if (!isAdmin) {
                             di<NotificationService>().showSnackBar(
                               NotificationType.error,
-                              'Nur Admins können Dokumente ansehen',
+                              'Nur Dokumenteninhaber können Dokumente löschen',
                             );
                             return;
                           }

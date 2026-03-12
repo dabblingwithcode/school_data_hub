@@ -1,0 +1,4 @@
+class: ForceLogoutEvent
+fields:
+  userInfoId: int
+  deviceId: String

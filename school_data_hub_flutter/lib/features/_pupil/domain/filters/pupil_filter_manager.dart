@@ -45,11 +45,6 @@ class PupilFilterManager implements Resettable {
   void resetFilters() {
     _pupilFilterState.value = {...initialPupilFilterValues};
 
-    //TODO: fix this
-    //  di<SchooldayEventFilterManager>().resetFilters();
-
-    // _searchText.value = '';
-
     _sortMode.value = {...initialSortModeValues};
 
     di<FiltersStateManager>().setFilterState(

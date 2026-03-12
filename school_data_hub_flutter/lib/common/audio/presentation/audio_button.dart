@@ -72,7 +72,7 @@ class _AudioButtonState extends State<AudioButton> {
     if (!AuthClearanceHelper.isCreatorOrAdmin(widget.file.createdBy)) {
       di<NotificationService>().showSnackBar(
         NotificationType.error,
-        'Nur Admins können Dokumente löschen',
+        'Nur Dokumenteninhaber können Dokumente löschen',
       );
       return;
     }

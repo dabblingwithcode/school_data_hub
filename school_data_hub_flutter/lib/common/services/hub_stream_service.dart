@@ -7,7 +7,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
 
 final _log = Logger('HubStreamService');
@@ -46,6 +47,7 @@ class HubStreamService with WidgetsBindingObserver {
   bool _disposed = false;
   final _random = Random();
   VoidCallback? _connectivityListener;
+  String? _currentDeviceId;
 
   final _events = StreamController<Object>.broadcast();
 
@@ -61,6 +63,7 @@ class HubStreamService with WidgetsBindingObserver {
   bool get isConnected => _state.value == HubConnectionState.connected;
 
   Future<HubStreamService> init() async {
+    _currentDeviceId = (await EnvUtils.getDeviceNameAndId()).deviceId;
     _attemptConnect(isReconnect: false);
     final monitor = di<ServerpodConnectivityMonitor>();
     _connectivityListener = () {
@@ -210,9 +213,20 @@ class HubStreamService with WidgetsBindingObserver {
             _hasReceivedFirstEvent = true;
             _reconnectDelayMs = _initialReconnectDelayMs;
           }
-          if (!_disposed) {
-            _events.add(message as Object);
+          if (_disposed) return;
+
+          // Check for force-logout targeting this device.
+          if (message is ForceLogoutEvent &&
+              message.deviceId == _currentDeviceId) {
+            _log.warning(
+              '[HUB] ForceLogoutEvent received for this device — wiping data',
+            );
+            _cleanupSubscription();
+            SessionHelper.logoutAndDeleteAllInstanceData();
+            return;
           }
+
+          _events.add(message as Object);
         },
         onError: (Object error) {
           _handleStreamError(error);
@@ -240,7 +254,8 @@ class HubStreamService with WidgetsBindingObserver {
 
     if (error is ServerpodClientUnauthorized ||
         (error is ServerpodClientException && error.statusCode == 401)) {
-      di<HubSessionManager>().signOutDevice();
+      _log.warning('[HUB] Unauthorized — wiping data and signing out');
+      SessionHelper.logoutAndDeleteAllInstanceData();
       return;
     }
 

@@ -356,6 +356,14 @@ class PupilBookLending <<table: <b>pupil_book_lending</b>>> #e2f0fb##[bold] {
 
 }
 
+class ForceLogoutEvent ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/hub/models/force_logout_event.spy.yaml</size></b>
+--
+  <i>userInfoId</i>: <b><color:#ff962f>int</color></b>
+  <i>deviceId</i>: <b><color:#ff962f>String</color></b>
+
+}
+
 class HubDeleteEvent ##[bold]  {
 <size:14>📁</size> <b><size:12> /_features/hub/models/hub_delete_event.spy.yaml</size></b>
 --

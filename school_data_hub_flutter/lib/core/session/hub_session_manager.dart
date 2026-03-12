@@ -152,32 +152,33 @@ class HubSessionManager with ChangeNotifier {
   Future<bool> _signOut({required bool allDevices}) async {
     if (!isSignedIn) return true;
 
+    // Attempt to notify the server; ignore failures (e.g. key already deleted).
     try {
       if (allDevices) {
         await caller.status.signOutAllDevices();
       } else {
         await caller.status.signOutDevice();
       }
-      await caller.client.updateStreamingConnectionAuthenticationKey(null);
-
-      _signedInUser = null;
-
-      // await _handleAuthCallResultInStorage();
-
-      await keyManager.remove();
-
-      if (!_isDisposed) notifyListeners();
-
-      /// Don't forget to set the flag in [EnvManager] to false
-      /// to get to the login screen.
-      _log.info('User signed out ');
-
-      _envManager.setUserAuthenticatedFlagOnlyByHubSessionManager(false);
-
-      return true;
     } catch (e) {
-      return false;
+      _log.warning('Server sign-out call failed (key may already be deleted): $e');
     }
+
+    // Always clean up locally regardless of whether the server call succeeded.
+    try {
+      await caller.client.updateStreamingConnectionAuthenticationKey(null);
+    } catch (_) {}
+
+    _signedInUser = null;
+
+    await keyManager.remove();
+
+    if (!_isDisposed) notifyListeners();
+
+    _log.info('User signed out');
+
+    _envManager.setUserAuthenticatedFlagOnlyByHubSessionManager(false);
+
+    return true;
   }
 
   Future<void> attemptLogin({

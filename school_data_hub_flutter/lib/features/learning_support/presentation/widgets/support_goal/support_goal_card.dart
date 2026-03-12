@@ -31,9 +31,7 @@ class SupportGoalCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    watchPropertyValue((m) => m.supportGoals, target: pupil);
-    watchPropertyValue((m) => m.supportCategoryStatuses, target: pupil);
-    final learningSupportManager = di<SupportCategoryManager>();
+    watch(pupil);
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: ClipRRect(
@@ -57,10 +55,6 @@ class SupportGoalCard extends WatchingWidget {
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
-              // side: BorderSide(
-              //   color: AppColors.cardInCardBorderColor,
-              //   width: 2,
-              // ),
             ),
             color: AppColors.cardInCardColor,
             child: Column(
@@ -68,224 +62,14 @@ class SupportGoalCard extends WatchingWidget {
               children: [
                 const Gap(5),
                 if (showCategoryBadge)
-                  Row(
-                    children: [
-                      const Gap(5),
-                      ...[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 8.0,
-                            bottom: 8,
-                            left: 10,
-                            right: 10,
-                          ),
-                          child: SupportCategoryBadge(
-                            categoryId: pupil
-                                .supportGoals![goalIndex]
-                                .supportCategoryId,
-                            size: 40,
-                          ),
-                        ),
-                        const Gap(5),
-                      ],
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            final categoryId = pupil
-                                .supportGoals![goalIndex]
-                                .supportCategoryId;
-                            final statuses =
-                                pupil.supportCategoryStatuses
-                                    ?.where(
-                                      (s) => s.supportCategoryId == categoryId,
-                                    )
-                                    .toList() ??
-                                [];
-                            showDialog<void>(
-                              context: context,
-                              builder: (context) => Dialog(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 500,
-                                    maxHeight: 600,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            SupportCategoryBadge(
-                                              categoryId: categoryId,
-                                            ),
-                                            const Gap(10),
-                                            Flexible(
-                                              child: Text(
-                                                learningSupportManager
-                                                    .getSupportCategory(
-                                                      categoryId,
-                                                    )
-                                                    .name,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const Divider(),
-                                        if (statuses.isEmpty)
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              vertical: 16,
-                                            ),
-                                            child: Text(
-                                              'Keine Status vorhanden',
-                                              style: TextStyle(
-                                                fontStyle: FontStyle.italic,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          )
-                                        else
-                                          Flexible(
-                                            child: ListView.builder(
-                                              shrinkWrap: true,
-                                              itemCount: statuses.length,
-                                              itemBuilder: (context, index) {
-                                                return SupportCategoryStatusEntry(
-                                                  pupil: pupil,
-                                                  status: statuses[index],
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            learningSupportManager
-                                .getSupportCategory(
-                                  pupil
-                                      .supportGoals![goalIndex]
-                                      .supportCategoryId,
-                                )
-                                .name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.interactiveColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5, right: 10.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            LastSupportCategoryStatusSymbol(
-                              size: 40,
-                              pupil: pupil,
-                              categoryId: pupil
-                                  .supportGoals![goalIndex]
-                                  .supportCategoryId,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
+                  _CategoryBadgeRow(pupil: pupil, goalIndex: goalIndex),
                 const Gap(5),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Gap(15),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (ctx) => NewSupportCategoryStatus(
-                                appBarTitle: 'Förderziel bearbeiten',
-                                pupilId: pupil.pupilId,
-                                goalCategoryId: pupil
-                                    .supportGoals![goalIndex]
-                                    .supportCategoryId,
-                                elementType: 'goal',
-                                existingGoal: pupil.supportGoals![goalIndex],
-                              ),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          pupil.supportGoals![goalIndex].description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.groupColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                _StrategiesSection(
-                  strategies: pupil.supportGoals![goalIndex].strategies,
-                ),
+                _GoalDescriptionRow(pupil: pupil, goalIndex: goalIndex),
+                _StrategiesSection(pupil: pupil, goalIndex: goalIndex),
                 const Gap(5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Text('Erstellt von:', style: TextStyle(fontSize: 12)),
-                    const Gap(5),
-                    Text(
-                      pupil.supportGoals![goalIndex].createdBy,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const Gap(5),
-                    const Text('am', style: TextStyle(fontSize: 12)),
-                    const Gap(5),
-                    Text(
-                      pupil.supportGoals![goalIndex].createdAt
-                          .toLocal()
-                          .formatDateForUser(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const Gap(10),
-                  ],
-                ),
+                _CreatedByRow(pupil: pupil, goalIndex: goalIndex),
                 const Gap(10),
-
-                // Goal Checks Section
-                _GoalChecksSection(
-                  goal: pupil.supportGoals![goalIndex],
-                  pupilId: pupil.pupilId,
-                ),
+                _GoalChecksSection(pupil: pupil, goalIndex: goalIndex),
                 const Gap(10),
               ],
             ),
@@ -296,14 +80,227 @@ class SupportGoalCard extends WatchingWidget {
   }
 }
 
-class _StrategiesSection extends WatchingWidget {
-  final String strategies;
-  const _StrategiesSection({required this.strategies});
+class _CategoryBadgeRow extends WatchingWidget {
+  final PupilProxy pupil;
+  final int goalIndex;
+  const _CategoryBadgeRow({required this.pupil, required this.goalIndex});
 
   @override
   Widget build(BuildContext context) {
+    watch(pupil);
+    final learningSupportManager = di<SupportCategoryManager>();
+    final goal = pupil.supportGoals![goalIndex];
+    final categoryId = goal.supportCategoryId;
+
+    return Row(
+      children: [
+        const Gap(5),
+        Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+            bottom: 8,
+            left: 10,
+            right: 10,
+          ),
+          child: SupportCategoryBadge(categoryId: categoryId, size: 40),
+        ),
+        const Gap(5),
+        Expanded(
+          child: InkWell(
+            onTap: () {
+              final statuses =
+                  pupil.supportCategoryStatuses
+                      ?.where((s) => s.supportCategoryId == categoryId)
+                      .toList() ??
+                  [];
+              showDialog<void>(
+                context: context,
+                builder: (context) => Dialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: 500,
+                      maxHeight: 600,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              SupportCategoryBadge(categoryId: categoryId),
+                              const Gap(10),
+                              Flexible(
+                                child: Text(
+                                  learningSupportManager
+                                      .getSupportCategory(categoryId)
+                                      .name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Divider(),
+                          if (statuses.isEmpty)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Text(
+                                'Keine Status vorhanden',
+                                style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            )
+                          else
+                            Flexible(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: statuses.length,
+                                itemBuilder: (context, index) {
+                                  return SupportCategoryStatusEntry(
+                                    pupil: pupil,
+                                    status: statuses[index],
+                                  );
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+            child: Text(
+              learningSupportManager.getSupportCategory(categoryId).name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.interactiveColor,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 5, right: 10.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LastSupportCategoryStatusSymbol(
+                size: 40,
+                pupil: pupil,
+                categoryId: categoryId,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _GoalDescriptionRow extends WatchingWidget {
+  final PupilProxy pupil;
+  final int goalIndex;
+  const _GoalDescriptionRow({required this.pupil, required this.goalIndex});
+
+  @override
+  Widget build(BuildContext context) {
+    watch(pupil);
+    final goal = pupil.supportGoals![goalIndex];
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Gap(15),
+        Expanded(
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (ctx) => NewSupportCategoryStatus(
+                    appBarTitle: 'Förderziel bearbeiten',
+                    pupilId: pupil.pupilId,
+                    goalCategoryId: goal.supportCategoryId,
+                    elementType: 'goal',
+                    existingGoal: goal,
+                  ),
+                ),
+              );
+            },
+            child: Text(
+              goal.description,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueGrey,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CreatedByRow extends WatchingWidget {
+  final PupilProxy pupil;
+  final int goalIndex;
+  const _CreatedByRow({required this.pupil, required this.goalIndex});
+
+  @override
+  Widget build(BuildContext context) {
+    watch(pupil);
+    final goal = pupil.supportGoals![goalIndex];
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        const Text('Erstellt von:', style: TextStyle(fontSize: 12)),
+        const Gap(5),
+        Text(
+          goal.createdBy,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        ),
+        const Gap(5),
+        const Text('am', style: TextStyle(fontSize: 12)),
+        const Gap(5),
+        Text(
+          goal.createdAt.toLocal().formatDateForUser(),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        ),
+        const Gap(10),
+      ],
+    );
+  }
+}
+
+class _StrategiesSection extends WatchingWidget {
+  final PupilProxy pupil;
+  final int goalIndex;
+  const _StrategiesSection({required this.pupil, required this.goalIndex});
+
+  @override
+  Widget build(BuildContext context) {
+    watch(pupil);
     final tileController = createOnce(() => CustomExpansionTileController());
     final isExpanded = watch(tileController.isExpanded).value;
+    final strategies = pupil.supportGoals![goalIndex].strategies;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -349,16 +346,18 @@ class _StrategiesSection extends WatchingWidget {
 /// Uses [CustomExpansionTileContent] to make the checks list collapsible.
 /// The title row is always visible and acts as an expansion toggle.
 class _GoalChecksSection extends WatchingWidget {
-  final SupportGoal goal;
-  final int pupilId;
+  final PupilProxy pupil;
+  final int goalIndex;
 
-  const _GoalChecksSection({required this.goal, required this.pupilId});
+  const _GoalChecksSection({required this.pupil, required this.goalIndex});
 
   @override
   Widget build(BuildContext context) {
+    watch(pupil);
     final tileController = createOnce(() => CustomExpansionTileController());
     final isExpanded = watch(tileController.isExpanded).value;
     final learningSupportManager = di<LearningSupportManager>();
+    final goal = pupil.supportGoals![goalIndex];
     final goalChecks = goal.goalChecks ?? [];
 
     return Column(
@@ -405,7 +404,7 @@ class _GoalChecksSection extends WatchingWidget {
                 if (check != null) {
                   await learningSupportManager.postSupportGoalCheck(
                     supportGoalId: goal.id!,
-                    pupilId: pupilId,
+                    pupilId: pupil.pupilId,
                     score: check.score,
                     comment: check.comment,
                   );
@@ -432,7 +431,7 @@ class _GoalChecksSection extends WatchingWidget {
                 (check) => _GoalCheckEntry(
                   check: check,
                   supportGoalId: goal.id!,
-                  pupilId: pupilId,
+                  pupilId: pupil.pupilId,
                 ),
               ),
           ],

@@ -380,12 +380,22 @@ class AdminUserEndpoint extends Endpoint {
     final authKey = await auth.AuthKey.db
         .findFirstRow(session, where: (t) => t.id.equals(device.authId));
     if (authKey == null) throw Exception('AuthKey not found');
+
+    // Notify the targeted device to wipe its data before we delete the key.
+    session.messages.postMessage(
+      'hub_events_stream',
+      ForceLogoutEvent(
+        userInfoId: device.userInfoId,
+        deviceId: device.deviceId,
+      ),
+    );
+
     await auth.AuthKey.db.deleteRow(session, authKey);
     final user = await User.db.findFirstRow(session,
-        where: (t) => t.userInfoId.equals(authenticationInfo.userId));
+        where: (t) => t.userInfoId.equals(device.userInfoId));
     if (user == null) throw Exception('User not found');
     final userDevices = await UserDevice.db.find(session,
-        where: (t) => t.userInfoId.equals(authenticationInfo.userId));
+        where: (t) => t.userInfoId.equals(device.userInfoId));
     return UserWithDevices(user: user, userDevices: userDevices);
   }
 
