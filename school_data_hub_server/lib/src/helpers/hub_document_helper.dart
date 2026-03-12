@@ -1,8 +1,5 @@
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
-
-final _log = Logger('HubDocumentHelper');
 
 class HubDocumentHelper {
   // Create a singleton constructor
@@ -58,7 +55,7 @@ class HubDocumentHelper {
     if (hubDocument == null) {
       return false; // Document not found
     }
-    _log.info('Deleting file with path: ${hubDocument.documentPath}');
+    session.log('Deleting file with path: ${hubDocument.documentPath}');
     // Delete the file from cloud storage
     await session.storage.deleteFile(
       storageId: 'private',

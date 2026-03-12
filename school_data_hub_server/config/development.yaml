@@ -42,3 +42,8 @@ redis:
   enabled: false
   host: localhost
   port: 8091
+
+sessionLogs:
+  cleanupInterval: 24h
+  retentionPeriod: 30d
+  retentionCount: 5000

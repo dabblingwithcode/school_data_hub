@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_server/src/_features/learning/competence/helpers/import_competences_from_json_file.dart';
 import 'package:school_data_hub_server/src/_features/learning_support/helpers/import_support_categories_from_file_content_json.dart';
@@ -8,8 +7,6 @@ import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/convert_file_to_content_string.dart';
 import 'package:school_data_hub_server/src/helpers/create_first_admin.dart';
 import 'package:serverpod/serverpod.dart';
-
-final _log = Logger('PopulateTestEnvironment');
 
 Future<void> populateTestEnvironment(Session session) async {
   await createFirstAdmin(session);
@@ -22,8 +19,9 @@ Future<void> populateTestEnvironment(Session session) async {
     final testDataDir = Directory(p.join(projectRoot, 'test_data'));
 
     if (!testDataDir.existsSync()) {
-      _log.warning(
-          'Directory not found: [${testDataDir.path}] - aborting test environment population...');
+      session.log(
+          'Directory not found: [${testDataDir.path}] - aborting test environment population...',
+          level: LogLevel.warning);
       return;
     }
 
@@ -33,23 +31,20 @@ Future<void> populateTestEnvironment(Session session) async {
     final existingCompetences = await Competence.db.find(session);
 
     if (existingCompetences.isEmpty) {
-      _log.info(
-        'No competences in the database. Looking for file...',
-      );
+      session.log('No competences in the database. Looking for file...');
 
       final fileContent = await convertFileToContentString(
           session, p.join(testDataDir.path, 'competence.json'));
       final content = await importCompetencesFromFileContentJson(fileContent);
 
       if (content.isNotEmpty) {
-        _log.info('Competences file found! populating...');
+        session.log('Competences file found! populating...');
         await Competence.db.insert(session, content);
 
-        _log.fine('Competences populated successfully!');
+        session.log('Competences populated successfully!', level: LogLevel.debug);
       } else {
-        _log.warning(
-          'No competences file found in the test_data directory.',
-        );
+        session.log('No competences file found in the test_data directory.',
+            level: LogLevel.warning);
       }
     }
 
@@ -58,7 +53,7 @@ Future<void> populateTestEnvironment(Session session) async {
     final existingCategories = await SupportCategory.db.find(session);
 
     if (existingCategories.isEmpty) {
-      _log.info('No support categories in the database. Looking for file...');
+      session.log('No support categories in the database. Looking for file...');
 
       // Path to the JSON file containing support categories
       final fileContent = await convertFileToContentString(
@@ -67,16 +62,15 @@ Future<void> populateTestEnvironment(Session session) async {
       final categories =
           await importSupportCategoriesFromFileContentJson(fileContent);
       if (categories.isNotEmpty) {
-        _log.info('Support categories file found! populating...');
+        session.log('Support categories file found! populating...');
         await SupportCategory.db.insert(session, categories);
-        _log.fine('Support categories populated successfully!');
+        session.log('Support categories populated successfully!', level: LogLevel.debug);
       } else {
-        _log.warning(
-          'No support categories file found in the test_data directory.',
-        );
+        session.log('No support categories file found in the test_data directory.',
+            level: LogLevel.warning);
       }
     }
   } catch (e) {
-    _log.severe('Error populating test environment: $e');
+    session.log('Error populating test environment: $e', level: LogLevel.error);
   }
 }

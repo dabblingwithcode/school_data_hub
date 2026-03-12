@@ -1,11 +1,8 @@
 import 'dart:async';
 
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/utils/matrix_notifications/matrix_notifications.dart';
 import 'package:serverpod/serverpod.dart';
-
-final Logger _log = Logger('SchooldayEventNotificationHelper');
 
 class SchooldayEventNotificationHelper {
   /// Returns plain text notification message
@@ -38,8 +35,9 @@ class SchooldayEventNotificationHelper {
       // Send notification to all recipients
       if (recipients.isEmpty) {
         // Fallback to default recipient if no matches found
-        _log.warning(
-            'No recipients found for schoolday event ${eventWithSchoolday.id}');
+        session.log(
+            'No recipients found for schoolday event ${eventWithSchoolday.id}',
+            level: LogLevel.warning);
         return;
       }
 
@@ -64,7 +62,7 @@ class SchooldayEventNotificationHelper {
         ),
       ));
     } catch (e) {
-      _log.severe('Error sending matrix notification: $e');
+      session.log('Error sending matrix notification: $e', level: LogLevel.error);
     }
   }
 }

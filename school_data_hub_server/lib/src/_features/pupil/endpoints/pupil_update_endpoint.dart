@@ -1,10 +1,7 @@
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/_features/pupil/schemas/pupil_schemas.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:serverpod/serverpod.dart';
-
-final _log = Logger('PupilUpdateEndpoint');
 
 class PupilUpdateEndpoint extends Endpoint {
   @override
@@ -134,14 +131,15 @@ class PupilUpdateEndpoint extends Endpoint {
 
       switch (documentType) {
         case PupilDocumentType.avatar:
-          _log.info(
+          session.log(
               'Updating pupil avatar: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
 
           // if the pupil has an avatar, delete it
 
           if (pupil.avatar != null) {
-            _log.warning(
-                'Deleting old avatar document: ${pupil.avatar!.documentId}');
+            session.log(
+                'Deleting old avatar document: ${pupil.avatar!.documentId}',
+                level: LogLevel.warning);
 
             // delete the old avatar file from the storage
             session.storage.deleteFile(
@@ -166,14 +164,15 @@ class PupilUpdateEndpoint extends Endpoint {
           break;
 
         case PupilDocumentType.avatarAuth:
-          _log.info(
+          session.log(
               'Updating pupil avatarAuth: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
 
           // if the pupil has an avatar auth, delete it
 
           if (pupil.avatarAuth != null) {
-            _log.warning(
-                'Deleting old avatar auth document: ${pupil.avatar!.documentId}');
+            session.log(
+                'Deleting old avatar auth document: ${pupil.avatar!.documentId}',
+                level: LogLevel.warning);
 
             // delete the old avatar file from the storage
             session.storage.deleteFile(
@@ -199,13 +198,14 @@ class PupilUpdateEndpoint extends Endpoint {
           break;
 
         case PupilDocumentType.publicMediaAuth:
-          _log.info(
+          session.log(
               'Updating pupil public media auth: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
 
           // if the pupil has a public media auth, delete it
           if (pupil.publicMediaAuthDocument != null) {
-            _log.warning(
-                'Deleting old public media auth document: ${pupil.publicMediaAuthDocument!.documentId}');
+            session.log(
+                'Deleting old public media auth document: ${pupil.publicMediaAuthDocument!.documentId}',
+                level: LogLevel.warning);
 
             // delete the old public media auth document file from the storage
             session.storage.deleteFile(
@@ -225,7 +225,7 @@ class PupilUpdateEndpoint extends Endpoint {
           }
 
           // update the pupil with the new publi media a
-          _log.info(
+          session.log(
               'Updating pupil public media auth with id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
 
           await PupilData.db.attachRow.publicMediaAuthDocument(
@@ -239,7 +239,7 @@ class PupilUpdateEndpoint extends Endpoint {
     final updatedPupil = await PupilData.db
         .findById(session, pupil.id!, include: PupilSchemas.allInclude);
 
-    _log.fine('Updated pupil : ${updatedPupil!.toJson()}');
+    session.log('Updated pupil : ${updatedPupil!.toJson()}', level: LogLevel.debug);
     session.messages.postMessage('hub_events_stream', updatedPupil);
     return updatedPupil;
   }

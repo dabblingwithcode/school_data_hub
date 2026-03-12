@@ -1,11 +1,8 @@
 import 'dart:async';
 
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/_features/schoolday_events/helpers/schoolday_event_notification_helper.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
-
-final _log = Logger('SchooldayEventEndpoint');
 
 class SchooldayEventEndpoint extends Endpoint {
   @override
@@ -213,8 +210,9 @@ class SchooldayEventEndpoint extends Endpoint {
           // attach the processed file to the event
           // if the pupil had a processed file, delete it
           if (schooldayEvent.processedDocument != null) {
-            _log.warning(
-                'Deleting old schoolday event processed document: ${schooldayEvent.processedDocument!.documentId}');
+            session.log(
+                'Deleting old schoolday event processed document: ${schooldayEvent.processedDocument!.documentId}',
+                level: LogLevel.warning);
             // delete the old processed file from the storage
             session.storage.deleteFile(
                 storageId: 'private',
@@ -230,7 +228,7 @@ class SchooldayEventEndpoint extends Endpoint {
             // TODO: Consider exceptions and handle them gracefully here
           }
           // update the schoolday event with the new file
-          _log.info(
+          session.log(
               'Updating schoolday event document: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
           // pupil.avatar = hubDocument;
           await SchooldayEvent.db.attachRow.processedDocument(
@@ -241,8 +239,9 @@ class SchooldayEventEndpoint extends Endpoint {
           // attach the file to the event
           // if the pupil had a file, delete it
           if (schooldayEvent.document != null) {
-            _log.warning(
-                'Deleting old schoolday event document: ${schooldayEvent.document!.documentId}');
+            session.log(
+                'Deleting old schoolday event document: ${schooldayEvent.document!.documentId}',
+                level: LogLevel.warning);
             // delete the old file from the storage
             session.storage.deleteFile(
                 storageId: 'private',
@@ -256,7 +255,7 @@ class SchooldayEventEndpoint extends Endpoint {
             // TODO: Consider exceptions and handle them gracefully here
           }
           // update the schoolday event with the new file
-          _log.info(
+          session.log(
               'Updating schoolday event document: id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
           // pupil.avatar = hubDocument;
           await SchooldayEvent.db.attachRow.document(
@@ -274,7 +273,7 @@ class SchooldayEventEndpoint extends Endpoint {
               schoolday: Schoolday.include(),
             ));
 
-    _log.fine('Updated event : ${updatedEvent!.toJson()}');
+    session.log('Updated event : ${updatedEvent!.toJson()}', level: LogLevel.debug);
     session.messages.postMessage('hub_events_stream', updatedEvent);
     return updatedEvent;
   }

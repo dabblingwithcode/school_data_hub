@@ -1,10 +1,7 @@
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/module.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
-
-final _log = Logger('AdminUserEndpoint');
 
 /// The endpoint for admin operations.
 /// This endpoint requires the user to be logged in and have admin scope.
@@ -70,14 +67,15 @@ class AdminUserEndpoint extends Endpoint {
     int? credit,
     Set<int>? pupilsAuth,
   }) async {
-    final UserInfo? userInfo =
-        await auth.Emails.createUser(session, userName, email, password);
-
-    if (userInfo?.id == null) {
-      throw Exception('Failed to create user');
-    }
-
+    // Declared outside try so the catch can reference it for cleanup.
+    UserInfo? userInfo;
     try {
+      userInfo = await auth.Emails.createUser(session, userName, email, password);
+
+      if (userInfo?.id == null) {
+        throw Exception('Failed to create user');
+      }
+
       // Update fullName (direct, no transaction)
       userInfo!.fullName = fullName;
       await auth.UserInfo.db.updateRow(session, userInfo);
@@ -114,13 +112,37 @@ class AdminUserEndpoint extends Endpoint {
       await User.db.insertRow(session, user);
       return user;
     } catch (e) {
-      // auth.Emails.createUser already committed; clean up orphaned auth account
-      try {
-        await auth.UserInfo.db.deleteRow(session, userInfo!);
-      } catch (cleanupError) {
-        _log.warning(
-          '[_createOneUser] Failed to clean up orphaned auth for ${userInfo!.id}: $cleanupError',
-        );
+      if (userInfo?.id != null) {
+        // Exception happened after auth.Emails.createUser returned — delete the
+        // UserInfo it committed.
+        try {
+          await auth.UserInfo.db.deleteRow(session, userInfo!);
+        } catch (cleanupError) {
+          session.log(
+            '[_createOneUser] Failed to clean up orphaned auth for '
+            '${userInfo!.id}: $cleanupError',
+            level: LogLevel.warning,
+          );
+        }
+      } else if (e.toString().contains('serverpod_email_auth')) {
+        // auth.Emails.createUser inserted UserInfo then threw on the EmailAuth
+        // insert (e.g. duplicate email). The new UserInfo is orphaned — find it
+        // by userName and remove it.
+        try {
+          final orphan = await auth.UserInfo.db.findFirstRow(
+            session,
+            where: (t) => t.userName.equals(userName),
+          );
+          if (orphan != null) {
+            await auth.UserInfo.db.deleteRow(session, orphan);
+          }
+        } catch (cleanupError) {
+          session.log(
+            '[_createOneUser] Failed to clean up orphaned UserInfo for '
+            '$userName: $cleanupError',
+            level: LogLevel.warning,
+          );
+        }
       }
       rethrow;
     }

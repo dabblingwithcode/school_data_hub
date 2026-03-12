@@ -1,9 +1,6 @@
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
-
-final _log = Logger('CreateFirstAdmin');
 
 Future<User?> createFirstAdmin(
   Session session,
@@ -22,7 +19,7 @@ Future<User?> createFirstAdmin(
     adminPassword,
   );
   if (adminUser?.id == null) {
-    _log.severe('Failed to create admin user');
+    session.log('Failed to create admin user', level: LogLevel.error);
     return null;
   }
 
@@ -48,9 +45,9 @@ Future<User?> createFirstAdmin(
 
   await session.db.insertRow(hubUser);
 
-  _log.fine('Admin user created successfully: ');
-  _log.fine('Email: admin');
-  _log.fine('Password: admin'); // Log the password for reference
-  _log.warning('You should NOT use this in production!');
+  session.log('Admin user created successfully: ', level: LogLevel.debug);
+  session.log('Email: admin', level: LogLevel.debug);
+  session.log('Password: admin', level: LogLevel.debug); // Log the password for reference
+  session.log('You should NOT use this in production!', level: LogLevel.warning);
   return hubUser;
 }

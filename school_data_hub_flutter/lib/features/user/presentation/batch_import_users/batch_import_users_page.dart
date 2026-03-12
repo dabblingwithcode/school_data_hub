@@ -87,7 +87,7 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
           _log.info(
             '[BatchImport] Chunk done — created=${chunkResult.successCount}, '
             'errors=${chunkResult.failureCount}, '
-            'total created=$_progressCreated, total errors=$_progressErrors',
+            'total created=${allCredentials.length}, total errors=${allErrors.length}',
           );
         },
         onError: (Object e, StackTrace? st) {
@@ -343,9 +343,14 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
                     ),
                     const Gap(8),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         ElevatedButton.icon(
-                          style: AppStyles.actionButtonStyle,
+                          style: AppStyles.actionButtonStyle.copyWith(
+                            minimumSize: WidgetStateProperty.all(
+                              const Size(0, 50),
+                            ),
+                          ),
                           onPressed: _printCredentials,
                           icon: const Icon(Icons.print),
                           label: const Text('Drucken'),

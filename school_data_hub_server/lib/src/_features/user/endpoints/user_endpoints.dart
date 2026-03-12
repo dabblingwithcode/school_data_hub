@@ -1,11 +1,9 @@
-import 'package:logging/logging.dart';
-import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/_features/user/helpers/get_user_devices.dart';
+import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/serverpod_auth_server.dart';
 
 class UserEndpoint extends Endpoint {
-  final _log = Logger('UserEndpoint');
   @override
   bool get requireLogin => true;
 
@@ -65,12 +63,10 @@ class UserEndpoint extends Endpoint {
 
   Future<bool> changePassword(
       Session session, String oldPassword, String newPassword) async {
-    _log.info('oldPassword: $oldPassword');
-    _log.info('newPassword: $newPassword');
     // Get the authenticated user
     final authenticationInfo = await session.authenticated;
     if (authenticationInfo == null) {
-      _log.severe('User is not authenticated');
+      session.log('User is not authenticated', level: LogLevel.error);
       return false; // User is not authenticated
     }
     final result = await Emails.changePassword(
