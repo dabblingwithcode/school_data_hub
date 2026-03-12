@@ -72,4 +72,31 @@ class FilesEndpoint extends Endpoint {
       path: path,
     );
   }
+
+  // TODO: delete when no longer needed (legacy -> new encryption format migration)
+  /// Overwrites the stored bytes for the file identified by [documentId] with
+  /// [newEncryptedBytes] without touching the [HubDocument] record
+  /// (preserves [createdBy], [createdAt], etc.).
+  Future<bool> replaceEncryptedFileBytes(
+      Session session, String documentId, ByteData newEncryptedBytes) async {
+    final HubDocument? document = await HubDocument.db
+        .findFirstRow(session, where: (t) => t.documentId.equals(documentId));
+    if (document == null) return false;
+    final path = document.documentPath;
+    if (path == null) return false;
+    final exists = await session.storage.fileExists(
+      storageId: 'private',
+      path: path,
+    );
+    if (!exists) return false;
+    await session.storage.storeFile(
+      storageId: 'private',
+      path: path,
+      byteData: newEncryptedBytes,
+    );
+    session.log(
+        level: LogLevel.info,
+        'File with documentId $documentId replaced: $path');
+    return true;
+  }
 }

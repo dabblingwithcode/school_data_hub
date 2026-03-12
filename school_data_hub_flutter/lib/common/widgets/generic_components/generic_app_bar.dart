@@ -60,6 +60,10 @@ class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const Padding(
+            padding: EdgeInsets.only(left: 5),
+            child: HubConnectionStateIndicator(),
+          ),
           Expanded(
             child: Center(
               child: SingleChildScrollView(
@@ -75,10 +79,6 @@ class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(right: 5),
-            child: HubConnectionStateIndicator(),
           ),
         ],
       ),

@@ -25,7 +25,7 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
   static const double _timeColumnWidth = 64;
   static const double _roomHeaderHeight = 48;
   static const double _minSlotHeight = 12;
-  static const double _maxSlotHeight = 16;
+  static const double _maxSlotHeight = 12;
 
   double _slotHeight = 40;
   double _slotHeightAtScaleStart = 40;

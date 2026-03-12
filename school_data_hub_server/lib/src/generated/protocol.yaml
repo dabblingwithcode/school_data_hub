@@ -299,3 +299,4 @@ files:
   - verifyUpload:
   - getImage:
   - getUnencryptedImage:
+  - replaceEncryptedFileBytes:

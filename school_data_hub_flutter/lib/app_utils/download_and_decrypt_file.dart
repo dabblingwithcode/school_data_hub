@@ -24,16 +24,19 @@ Future<File?> downloadAndDecryptFile({
     }
 
     final fileBytes = await fileInfo.file.readAsBytes();
-    final decryptedBytes = await customEncrypter.decryptTheseBytesAsync(
-      fileBytes,
-    );
+    final (:bytes, :wasLegacy) =
+        await customEncrypter.decryptFileBytesAsync(fileBytes);
+
+    if (wasLegacy) {
+      _migrateToNewFormat(documentId, bytes, cacheManager);
+    }
 
     final tempDir = await Directory.systemTemp.createTemp();
     final extension = p.extension(documentId);
     final tempFile = File(
       '${tempDir.path}/decrypted_${documentId.hashCode}$extension',
     );
-    await tempFile.writeAsBytes(decryptedBytes);
+    await tempFile.writeAsBytes(bytes);
     return tempFile;
   }
 
@@ -62,15 +65,41 @@ Future<File?> downloadAndDecryptFile({
     return tempFile;
   }
 
-  final decryptedBytes = await customEncrypter.decryptTheseBytesAsync(
-    fileBytes,
-  );
+  final (:bytes, :wasLegacy) =
+      await customEncrypter.decryptFileBytesAsync(fileBytes);
+
+  if (wasLegacy) {
+    _migrateToNewFormat(documentId, bytes, cacheManager);
+  }
 
   final tempDir = await Directory.systemTemp.createTemp();
   final extension = p.extension(documentId);
   final tempFile = File(
     '${tempDir.path}/decrypted_${documentId.hashCode}$extension',
   );
-  await tempFile.writeAsBytes(decryptedBytes);
+  await tempFile.writeAsBytes(bytes);
   return tempFile;
+}
+
+/// Fire-and-forget: re-encrypt [plainBytes] in the new format, update the
+/// server file, and refresh the local cache — all without blocking the caller.
+void _migrateToNewFormat(
+  String documentId,
+  Uint8List plainBytes,
+  DefaultCacheManager cacheManager,
+) {
+  Future(() async {
+    try {
+      final newEncrypted = customEncrypter.encryptTheseBytes(plainBytes);
+      final byteData = ByteData.sublistView(newEncrypted);
+      final ok = await di<Client>()
+          .files
+          .replaceEncryptedFileBytes(documentId, byteData);
+      if (ok) {
+        await cacheManager.putFile(documentId, newEncrypted);
+      }
+    } catch (_) {
+      // Migration is best-effort; silently ignore failures.
+    }
+  });
 }

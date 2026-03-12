@@ -164,7 +164,8 @@ import 'package:school_data_hub_server/src/generated/_features/workbooks/models/
     as _i91;
 import 'package:school_data_hub_server/src/generated/_features/workbooks/models/workbook.dart'
     as _i92;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i93;
+import 'dart:typed_data' as _i93;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i94;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -6485,8 +6486,33 @@ class Endpoints extends _i1.EndpointDispatch {
             params['path'],
           ),
         ),
+        'replaceEncryptedFileBytes': _i1.MethodConnector(
+          name: 'replaceEncryptedFileBytes',
+          params: {
+            'documentId': _i1.ParameterDescription(
+              name: 'documentId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'newEncryptedBytes': _i1.ParameterDescription(
+              name: 'newEncryptedBytes',
+              type: _i1.getType<_i93.ByteData>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['files'] as _i45.FilesEndpoint)
+                  .replaceEncryptedFileBytes(
+            session,
+            params['documentId'],
+            params['newEncryptedBytes'],
+          ),
+        ),
       },
     );
-    modules['serverpod_auth'] = _i93.Endpoints()..initializeEndpoints(server);
+    modules['serverpod_auth'] = _i94.Endpoints()..initializeEndpoints(server);
   }
 }

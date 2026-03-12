@@ -75,6 +75,20 @@ bool _looksLikeImage(Uint8List bytes) {
       (bytes[0] == 0xFF && bytes[1] == 0xD8); // JPEG
 }
 
+/// Returns true if [bytes] look like a known audio format (magic bytes).
+bool _looksLikeAudio(Uint8List bytes) {
+  if (bytes.length < 8) return false;
+  // M4A / MP4 / AAC — ISO Base Media: 'ftyp' box starts at offset 4.
+  if (bytes[4] == 0x66 && bytes[5] == 0x74 && bytes[6] == 0x79 && bytes[7] == 0x70) return true;
+  // MP3 — MPEG sync word (0xFFE0..0xFFFF).
+  if (bytes[0] == 0xFF && (bytes[1] & 0xE0) == 0xE0) return true;
+  // WAV — 'RIFF' header.
+  if (bytes[0] == 0x52 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[3] == 0x46) return true;
+  // OGG — 'OggS' capture pattern.
+  if (bytes[0] == 0x4F && bytes[1] == 0x67 && bytes[2] == 0x67 && bytes[3] == 0x53) return true;
+  return false;
+}
+
 // --- CustomEncrypter (uses EnvManager on main isolate only) ---
 
 final customEncrypter = CustomEncrypter();
@@ -252,7 +266,7 @@ class CustomEncrypter {
     final newResult = Uint8List.fromList(
       _decryptCbc(iv, ciphertext, _keyBytes),
     );
-    if (_looksLikeImage(newResult)) return newResult;
+    if (_looksLikeImage(newResult) || _looksLikeAudio(newResult)) return newResult;
     // Legacy format: entire blob is ciphertext, fixed IV from env (old encrypt package).
     if (encryptedBytes.length % 16 != 0) return newResult;
     final fixedIv = _fixedIv();
@@ -272,7 +286,7 @@ class CustomEncrypter {
         encryptedBytes,
         keyBytes,
       ]);
-      if (_looksLikeImage(result)) return result;
+      if (_looksLikeImage(result) || _looksLikeAudio(result)) return result;
       // Legacy format: ciphertext-only with fixed IV (old encrypt package).
       if (encryptedBytes.length % 16 != 0) return result;
       final fixedIv = _fixedIv();
@@ -289,5 +303,49 @@ class CustomEncrypter {
     final iv = _fixedIv();
     final encrypted = _encryptCbc(bytes, _keyBytes, iv);
     return Uint8List.fromList([...iv, ...encrypted]);
+  }
+
+  /// Decrypts [encryptedBytes] and indicates whether the input was in the
+  /// legacy format (ciphertext-only, fixed IV) vs. the new format (IV prepended).
+  ///
+  /// Returns `({Uint8List bytes, bool wasLegacy})`.
+  /// Use [wasLegacy] to trigger a fire-and-forget re-encryption migration.
+  Future<({Uint8List bytes, bool wasLegacy})> decryptFileBytesAsync(
+      Uint8List encryptedBytes) async {
+    if (encryptedBytes.length <= 16) {
+      return (bytes: encryptedBytes, wasLegacy: false);
+    }
+    final keyBytes = Uint8List.fromList(
+      utf8.encode(di<EnvManager>().activeEnv!.key!),
+    );
+
+    // Try new format first (IV prepended).
+    final newResult = kReleaseMode || kProfileMode
+        ? await compute(decryptBytesWithKey, <dynamic>[encryptedBytes, keyBytes])
+        : decryptTheseBytes(encryptedBytes);
+
+    if (_looksLikeImage(newResult) || _looksLikeAudio(newResult)) {
+      return (bytes: newResult, wasLegacy: false);
+    }
+
+    // Legacy format: ciphertext-only, fixed IV.
+    if (encryptedBytes.length % 16 != 0) {
+      // Not block-aligned — new format result is the best we can do.
+      return (bytes: newResult, wasLegacy: false);
+    }
+
+    final fixedIv = _fixedIv();
+    final legacyResult = kReleaseMode || kProfileMode
+        ? await compute(decryptBytesWithKey,
+            <dynamic>[encryptedBytes, keyBytes, fixedIv])
+        : Uint8List.fromList(
+            _decryptCbc(fixedIv, encryptedBytes, _keyBytes));
+
+    if (_looksLikeImage(legacyResult) || _looksLikeAudio(legacyResult)) {
+      return (bytes: legacyResult, wasLegacy: true);
+    }
+
+    // Cannot determine format — return new-format result, not legacy.
+    return (bytes: newResult, wasLegacy: false);
   }
 }

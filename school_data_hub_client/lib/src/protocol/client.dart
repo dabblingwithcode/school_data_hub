@@ -402,8 +402,7 @@ class EndpointAdminUser extends _i1.EndpointRef {
         },
       );
 
-  /// Batch-creates users. Returns credentials for successes and errors for skipped/failed rows.
-  /// Each create runs in its own transaction; creates are executed in parallel (up to 5 at a time).
+  /// Batch-creates users sequentially. Returns credentials for successes and errors for skipped/failed rows.
   /// Duplicates are detected by the DB (unique constraint); we catch 23505 and report a friendly message.
   _i2.Future<_i13.BatchCreateUsersResponse> batchCreateUsers(
           List<_i14.CreateUserRequest> requests) =>
@@ -3115,6 +3114,22 @@ class EndpointFiles extends _i1.EndpointRef {
         'files',
         'getUnencryptedImage',
         {'path': path},
+      );
+
+  /// Overwrites the stored bytes for the file identified by [documentId] with
+  /// [newEncryptedBytes] without touching the [HubDocument] record
+  /// (preserves [createdBy], [createdAt], etc.).
+  _i2.Future<bool> replaceEncryptedFileBytes(
+    String documentId,
+    _i66.ByteData newEncryptedBytes,
+  ) =>
+      caller.callServerEndpoint<bool>(
+        'files',
+        'replaceEncryptedFileBytes',
+        {
+          'documentId': documentId,
+          'newEncryptedBytes': newEncryptedBytes,
+        },
       );
 }
 
