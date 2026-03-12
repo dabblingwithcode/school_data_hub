@@ -78,9 +78,9 @@ class AdminPupilEndpoint extends Endpoint {
             await PupilData.db
                 .updateRow(session, inactivePupil, transaction: transaction);
           } else {
-            final pupil = generatePupilfromExternalAdminConsoleData(line);
-            await PupilData.db
-                .insertRow(session, pupil, transaction: transaction);
+            await createPupilFromExternalAdminConsoleData(
+              session, line, transaction: transaction,
+            );
           }
         }
       }

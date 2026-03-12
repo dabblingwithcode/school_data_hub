@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
+import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -31,6 +35,32 @@ class WorkbookApiService {
     );
 
     return updatedWorkbook;
+  }
+
+  Future<Workbook?> updateWorkbookImage({
+    required int isbn,
+    required File file,
+  }) async {
+    final result = await ClientFileUpload.uploadFile(
+      file: file,
+      storageId: StorageId.public,
+      folder: ServerStorageFolder.events,
+      customPath: 'workbook_$isbn.jpg',
+    );
+    if (result.cancelled || !result.success || result.path == null) {
+      return null;
+    }
+    return await ClientHelper.apiCall(
+      call: () => _client.workbooks.updateWorkbookImage(isbn, result.path!),
+      errorMessage: 'Das Bild konnte nicht aktualisiert werden',
+    );
+  }
+
+  Future<Workbook?> deleteWorkbookImage(int isbn) async {
+    return await ClientHelper.apiCall(
+      call: () => _client.workbooks.deleteWorkbookImage(isbn),
+      errorMessage: 'Das Bild konnte nicht gelöscht werden',
+    );
   }
 
   Future<bool?> deleteWorkbook(int isbn) async {

@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 
 class SelectUsersListCard extends WatchingWidget {
   final bool isSelectMode;
@@ -63,21 +64,11 @@ class SelectUsersListCard extends WatchingWidget {
                 ),
               )
             else
-              // User avatar/icon
-              Container(
-                width: 60,
-                height: 80,
-                margin: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: AppColors.backgroundColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  passedUser.role == Role.admin
-                      ? Icons.admin_panel_settings
-                      : Icons.person,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircularUserImage(
+                  userInfo: passedUser.userInfo,
                   size: 30,
-                  color: Colors.white,
                 ),
               ),
             Expanded(

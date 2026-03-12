@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 
 final GlobalKey<FormState> _categoryStatusKey = GlobalKey<FormState>();
 final TextEditingController _textEditingController = TextEditingController();
@@ -104,15 +106,19 @@ Future<void> supportCategoryStatusDialog(
                     backgroundColor: Colors.green,
                     minimumSize: const Size.fromHeight(50),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_categoryStatusKey.currentState!.validate()) {
-                      // TODO: uncomment when ready
-                      //  _learningSupportManager
-                      //       .postSupportCategoryStatus(pupil, goalCategoryId,
-                      //           categoryStatusValue, _textEditingController.text);
-
-                      //   _textEditingController.clear();
-                      Navigator.of(parentContext).pop();
+                      await di<LearningSupportManager>()
+                          .postSupportCategoryStatus(
+                            pupilId: pupil.pupilId,
+                            supportCategoryId: goalCategoryId,
+                            status: categoryStatusValue,
+                            comment: _textEditingController.text,
+                          );
+                      _textEditingController.clear();
+                      if (parentContext.mounted) {
+                        Navigator.of(parentContext).pop();
+                      }
                     }
                   },
                   child: const Text(

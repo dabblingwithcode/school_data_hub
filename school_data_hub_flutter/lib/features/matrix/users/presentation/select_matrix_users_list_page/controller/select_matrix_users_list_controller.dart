@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
@@ -22,9 +20,6 @@ class SelectMatrixUsersList extends WatchingStatefulWidget {
 class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
   final _log = Logger('SelectMatrixUsersListController');
   List<MatrixUser>? users;
-  List<MatrixUser>? filteredUsers;
-  //TODO: This needs to be changed to specific filters!
-  Map<PupilFilter, bool>? inheritedFilters;
   TextEditingController searchController = TextEditingController();
   bool isSearchMode = false;
   bool isSearching = false;
@@ -35,12 +30,8 @@ class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
 
   @override
   void initState() {
-    //di<PupilFilterManager>().refreshFilteredPupils();
-    setState(() {
-      inheritedFilters = di<PupilFilterManager>().pupilFilterState.value;
-      users = widget.selectableMatrixUsers;
-    });
     super.initState();
+    users = widget.selectableMatrixUsers;
   }
 
   void cancelSelect() {
@@ -188,10 +179,6 @@ class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
 
   @override
   Widget build(BuildContext context) {
-    // List<MatrixUser> filteredUsers = watchValue(
-    //   (MatrixPolicyFilterManager x) => x.filteredMatrixUsers,
-    // );
-
     return SelectMatrixUsersListPage(this, users ?? []);
   }
 }

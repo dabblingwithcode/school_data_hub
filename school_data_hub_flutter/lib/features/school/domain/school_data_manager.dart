@@ -5,7 +5,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/school/domain/managers/school_data_crud_manager.dart';
+import 'package:school_data_hub_flutter/features/school/data/school_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/school/domain/managers/school_data_manager.dart'
     as data_manager;
 import 'package:school_data_hub_flutter/features/school/domain/managers/school_data_ui_manager.dart';
@@ -19,12 +19,11 @@ final _log = Logger('SchoolDataMainManager');
 class SchoolDataMainManager {
   // Sub-managers
   final data_manager.SchoolDataManager _dataManager;
-  final SchoolInfoDataManager _crudManager;
+  final _apiService = SchoolDataApiService();
   final SchoolDataUiManager _uiManager;
 
   SchoolDataMainManager()
     : _dataManager = data_manager.SchoolDataManager(),
-      _crudManager = SchoolInfoDataManager(),
       _uiManager = SchoolDataUiManager();
 
   // Expose data manager properties
@@ -61,7 +60,7 @@ class SchoolDataMainManager {
   Future<void> refreshData() async {
     _dataManager.setLoading(true);
     try {
-      final schoolData = await _crudManager.fetchSchoolData();
+      final schoolData = await _apiService.fetchSchoolData();
       if (schoolData != null) {
         _dataManager.setSchoolData(schoolData);
 
@@ -84,7 +83,7 @@ class SchoolDataMainManager {
   /// Load logo image
   Future<void> _loadLogoImage(String documentId) async {
     try {
-      final imageData = await _crudManager.getLogoImage(documentId);
+      final imageData = await _apiService.getLogoImage(documentId);
       _dataManager.setLogoImage(imageData);
     } catch (e) {
       _log.severe('Error loading logo image: $e');
@@ -94,7 +93,7 @@ class SchoolDataMainManager {
   /// Load official seal image
   Future<void> _loadOfficialSealImage(String documentId) async {
     try {
-      final imageData = await _crudManager.getOfficialSealImage(documentId);
+      final imageData = await _apiService.getOfficialSealImage(documentId);
       _dataManager.setOfficialSealImage(imageData);
     } catch (e) {
       _log.severe('Error loading official seal image: $e');
@@ -114,9 +113,9 @@ class SchoolDataMainManager {
 
       // Use update if ID exists, otherwise create new
       if (formData.id != null) {
-        savedData = await _crudManager.updateSchoolData(formData);
+        savedData = await _apiService.updateSchoolData(formData);
       } else {
-        savedData = await _crudManager.postSchoolData(formData);
+        savedData = await _apiService.postSchoolData(formData);
       }
 
       if (savedData != null) {
@@ -142,7 +141,7 @@ class SchoolDataMainManager {
 
     _dataManager.setSaving(true);
     try {
-      final updatedSchoolData = await _crudManager.uploadLogo(
+      final updatedSchoolData = await _apiService.uploadLogo(
         imageFile,
         currentSchoolData!.id!,
         createdBy,
@@ -183,7 +182,7 @@ class SchoolDataMainManager {
 
     _dataManager.setSaving(true);
     try {
-      final updatedSchoolData = await _crudManager.uploadOfficialSeal(
+      final updatedSchoolData = await _apiService.uploadOfficialSeal(
         imageFile,
         currentSchoolData!.id!,
         createdBy,
@@ -222,7 +221,7 @@ class SchoolDataMainManager {
 
     _dataManager.setSaving(true);
     try {
-      final updatedSchoolData = await _crudManager.deleteLogo(
+      final updatedSchoolData = await _apiService.deleteLogo(
         currentSchoolData!.id!,
       );
       if (updatedSchoolData == null) {
@@ -253,7 +252,7 @@ class SchoolDataMainManager {
 
     _dataManager.setSaving(true);
     try {
-      final updatedSchoolData = await _crudManager.deleteOfficialSeal(
+      final updatedSchoolData = await _apiService.deleteOfficialSeal(
         currentSchoolData!.id!,
       );
       if (updatedSchoolData == null) {

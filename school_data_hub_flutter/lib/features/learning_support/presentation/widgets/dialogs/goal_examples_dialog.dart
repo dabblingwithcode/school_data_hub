@@ -53,12 +53,11 @@ Future<Map<String, String?>?> goalExamplesDialog(
                         ),
                       ],
                     ),
-                    // TODO: uncomment when ready
-                    // Row(
-                    //   children: [
-                    //     Expanded(child: Text(goals[index].strategies!)),
-                    //   ],
-                    // ),
+                    Row(
+                      children: [
+                        Expanded(child: Text(goals[index].strategies)),
+                      ],
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [

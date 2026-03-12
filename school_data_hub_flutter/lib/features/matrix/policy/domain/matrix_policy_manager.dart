@@ -137,8 +137,6 @@ class MatrixPolicyManager {
   int _reportedEventsPageLimit = 50;
   int get reportedEventsPageLimit => _reportedEventsPageLimit;
 
-  // TODO: improve lookups with maps
-
   final _policyPendingChanges = ValueNotifier<bool>(false);
   ValueListenable<bool> get pendingChanges => _policyPendingChanges;
 
@@ -149,7 +147,7 @@ class MatrixPolicyManager {
       NotificationType.success,
       'Matrix-Räumeverwaltung wird geladen...',
     );
-    _roomManager = MatrixRoomManager(matrixAdminId!, _matrixApiService);
+    _roomManager = MatrixRoomManager(_matrixApiService);
     _userManager = MatrixUserManager(
       _matrixApiService,
       pendingChangesHandler,

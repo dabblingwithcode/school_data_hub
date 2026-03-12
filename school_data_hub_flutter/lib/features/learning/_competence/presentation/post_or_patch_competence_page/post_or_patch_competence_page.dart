@@ -91,6 +91,7 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
       message: 'Sind Sie sicher?',
     );
     if (confirm != true) return;
+    if (!mounted) return;
     Navigator.pop(context);
     await _competenceManager.deleteCompetence(widget.competence!.publicId);
   }
@@ -120,10 +121,10 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool gradeE1 = competenceLevelContainsGrade('E1');
-    bool gradeE2 = competenceLevelContainsGrade('E2');
-    bool gradeK3 = competenceLevelContainsGrade('K3');
-    bool gradeK4 = competenceLevelContainsGrade('K4');
+    bool gradeE1 = competenceLevelContainsGrade(SchoolGrade.E1.name);
+    bool gradeE2 = competenceLevelContainsGrade(SchoolGrade.E2.name);
+    bool gradeK3 = competenceLevelContainsGrade(SchoolGrade.K3.name);
+    bool gradeK4 = competenceLevelContainsGrade(SchoolGrade.K4.name);
 
     return Scaffold(
       appBar: GenericAppBar(

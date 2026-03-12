@@ -178,7 +178,6 @@ class _DocumentItem extends StatelessWidget {
           ),
         InkWell(
           onTap: () {
-            // TODO: Thie needs to be used with ZoomWidget
             showDialog<void>(
               context: context,
               builder: (context) => Dialog(
@@ -187,9 +186,13 @@ class _DocumentItem extends StatelessWidget {
                     maxWidth: 600,
                     maxHeight: 800,
                   ),
-                  child: EncryptedDocumentImage(
-                    documentId: file.documentId,
-                    size: 400,
+                  child: InteractiveViewer(
+                    minScale: 1.0,
+                    maxScale: 4.0,
+                    child: EncryptedDocumentImage(
+                      documentId: file.documentId,
+                      size: 400,
+                    ),
                   ),
                 ),
               ),

@@ -3050,6 +3050,26 @@ class EndpointWorkbooks extends _i1.EndpointRef {
         {},
       );
 
+  _i2.Future<_i65.Workbook> updateWorkbookImage(
+    int isbn,
+    String imageUrl,
+  ) =>
+      caller.callServerEndpoint<_i65.Workbook>(
+        'workbooks',
+        'updateWorkbookImage',
+        {
+          'isbn': isbn,
+          'imageUrl': imageUrl,
+        },
+      );
+
+  _i2.Future<_i65.Workbook> deleteWorkbookImage(int isbn) =>
+      caller.callServerEndpoint<_i65.Workbook>(
+        'workbooks',
+        'deleteWorkbookImage',
+        {'isbn': isbn},
+      );
+
   _i2.Future<_i65.Workbook> updateWorkbook(_i65.Workbook workbook) =>
       caller.callServerEndpoint<_i65.Workbook>(
         'workbooks',

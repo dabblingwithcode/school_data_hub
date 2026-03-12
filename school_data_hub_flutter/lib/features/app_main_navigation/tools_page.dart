@@ -28,7 +28,7 @@ import 'package:school_data_hub_flutter/features/school_calendar/presentation/sc
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/schooldays_calendar_page/schooldays_calendar_page.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page_controller.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/room_timetable_grid/room_timetable_grid_page.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_page.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_page.dart';
@@ -338,7 +338,7 @@ class ToolsPage extends WatchingWidget {
                   buttonText: 'Daten',
                 ),
                 MainMenuButton(
-                  destinationPage: const RoomTimetableGridPage(),
+                  destinationPage: const TimetablePage(),
                   buttonIcon: Icon(
                     Icons.dashboard_rounded,
                     size: 50,
@@ -448,7 +448,7 @@ class ToolsPage extends WatchingWidget {
                             Navigator.pop(context);
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
-                                builder: (_) => const RoomTimetableGridPage(),
+                                builder: (_) => const TimetablePage(),
                               ),
                             );
                           },

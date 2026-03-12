@@ -378,11 +378,6 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
     _filteredPupils.value = thisFilteredPupils;
     _filteredPupilIds.value = thisFilteredPupils.map((e) => e.pupilId).toList();
-    // if (filtersOn) {
-    //   //- TODO: Do we need this if we already use FiltersStateManager?
-    //   di<FiltersStateManager>()
-    //       .setFilterState(filterState: FilterState.pupil, value: true);
-    // }
     sortPupils();
   }
 

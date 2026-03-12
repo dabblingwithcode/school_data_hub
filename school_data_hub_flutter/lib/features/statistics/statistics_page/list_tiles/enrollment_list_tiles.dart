@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
@@ -14,15 +13,29 @@ class EnrollmentListTiles extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final seenEnrollmentDates = <DateTime>{};
-    //- TODO: Make the date dynamic based on the current school year
+    final now = DateTime.now();
+    final currentSchoolYearStart = DateTime(
+      now.month >= DateTime.august ? now.year : now.year - 1,
+      DateTime.august,
+      1,
+    );
+    final previousSchoolYearStart = DateTime(
+      currentSchoolYearStart.year - 1,
+      DateTime.august,
+      2,
+    );
+    final previousSchoolYearEnd = DateTime(
+      currentSchoolYearStart.year,
+      DateTime.july,
+      31,
+    );
     final currentYearPupils = controller.pupilsEnrolledAfterDate(
-      DateTime(2025, 08, 01),
+      currentSchoolYearStart,
     )..sort((a, b) => b.pupilSince.compareTo(a.pupilSince));
-    //- TODO: Make the date dynamic based on the current school year
     final pupilsEnrolledLastYearAfterRegulatDate =
         controller.pupilsEnrolledBetweenDates(
-          DateFormat('yyy-MM-dd').parse('2024-08-02'),
-          DateFormat('yyy-MM-dd').parse('2025-07-31'),
+          previousSchoolYearStart,
+          previousSchoolYearEnd,
         )..sort((a, b) => b.pupilSince.compareTo(a.pupilSince));
 
     return Column(

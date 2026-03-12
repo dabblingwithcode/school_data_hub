@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/features/workbooks/data/workbook_api_service.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 
 class WorkbookManager {
   final _workbookApiService = WorkbookApiService();
@@ -118,17 +121,28 @@ class WorkbookManager {
     return;
   }
 
-  // Future<void> postWorkbookFile(File imageFile, int isbn) async {
-  //   final Workbook responseWorkbook =
-  //       await _workbookApiService.postWorkbookFile(imageFile, isbn);
+  Future<void> postWorkbookFile(File imageFile, int isbn) async {
+    final updatedWorkbook = await _workbookApiService.updateWorkbookImage(
+      isbn: isbn,
+      file: imageFile,
+    );
+    if (updatedWorkbook == null) return;
+    _updateWorkbookInCollection(updatedWorkbook);
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Bild erfolgreich hochgeladen',
+    );
+  }
 
-  //   updateWorkbookInRepositoryWithResponse(responseWorkbook);
-
-  //   _notificationService.showSnackBar(
-  //       NotificationType.success, 'Bild erfolgreich hochgeladen');
-
-  //   return;
-  // }
+  Future<void> deleteWorkbookFile(int isbn) async {
+    final updatedWorkbook = await _workbookApiService.deleteWorkbookImage(isbn);
+    if (updatedWorkbook == null) return;
+    _updateWorkbookInCollection(updatedWorkbook);
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Bild erfolgreich gelöscht',
+    );
+  }
 
   Future<void> deleteWorkbook(Workbook workbook) async {
     final success = await _workbookApiService.deleteWorkbook(workbook.isbn);
@@ -142,7 +156,7 @@ class WorkbookManager {
       'Arbeitsheft erfolgreich gelöscht',
     );
 
-    //- TODO: delete all pupilWorkbooks with this isbn in memory
+    di<PupilWorkbookManager>().deleteAllPupilWorkbooks(workbook.isbn);
 
     return;
   }

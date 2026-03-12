@@ -1,7 +1,3 @@
-// ? we should move this functions to the pupil manager in future
-
-// TODO: these should be enums
-
 import 'dart:ui';
 
 import 'package:flutter_it/flutter_it.dart';
@@ -67,8 +63,6 @@ class PupilProxyHelper {
         return "Falscher Wert im Server";
     }
   }
-
-  // TODO: Should these be getters in PupilProxy?
 
   static bool hasLanguageSupport(DateTime? endOfSupport) {
     if (endOfSupport != null) {

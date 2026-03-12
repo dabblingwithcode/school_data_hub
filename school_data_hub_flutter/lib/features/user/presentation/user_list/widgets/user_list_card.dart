@@ -7,6 +7,8 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
+import 'package:serverpod_auth_client/serverpod_auth_client.dart';
+import 'package:serverpod_auth_shared_flutter/serverpod_auth_shared_flutter.dart';
 
 class UserListCard extends WatchingWidget {
   final UserWithDevices userWithDevices;
@@ -161,32 +163,17 @@ class UserListCard extends WatchingWidget {
 }
 
 class _UserAvatar extends StatelessWidget {
-  final dynamic info;
+  final UserInfo? info;
 
   const _UserAvatar({this.info});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 72,
-      height: 72,
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: AppColors.backgroundColor,
-        borderRadius: BorderRadius.circular(100),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(100),
-        child: (info?.imageUrl?.isNotEmpty ?? false) as bool
-            ? Image.network(
-                info!.imageUrl! as String,
-                width: 72,
-                height: 72,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
-                    const Icon(Icons.person, size: 36, color: Colors.white),
-              )
-            : const Icon(Icons.person, size: 36, color: Colors.white),
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: CircularUserImage(
+        userInfo: info,
+        size: 36,
       ),
     );
   }

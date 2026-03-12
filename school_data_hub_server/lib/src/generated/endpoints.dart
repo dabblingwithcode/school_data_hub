@@ -6360,6 +6360,50 @@ class Endpoints extends _i1.EndpointDispatch {
               (endpoints['workbooks'] as _i44.WorkbooksEndpoint)
                   .fetchWorkbooks(session),
         ),
+        'updateWorkbookImage': _i1.MethodConnector(
+          name: 'updateWorkbookImage',
+          params: {
+            'isbn': _i1.ParameterDescription(
+              name: 'isbn',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'imageUrl': _i1.ParameterDescription(
+              name: 'imageUrl',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['workbooks'] as _i44.WorkbooksEndpoint)
+                  .updateWorkbookImage(
+            session,
+            params['isbn'],
+            params['imageUrl'],
+          ),
+        ),
+        'deleteWorkbookImage': _i1.MethodConnector(
+          name: 'deleteWorkbookImage',
+          params: {
+            'isbn': _i1.ParameterDescription(
+              name: 'isbn',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['workbooks'] as _i44.WorkbooksEndpoint)
+                  .deleteWorkbookImage(
+            session,
+            params['isbn'],
+          ),
+        ),
         'updateWorkbook': _i1.MethodConnector(
           name: 'updateWorkbook',
           params: {

@@ -225,7 +225,6 @@ class SchooldayEventEndpoint extends Endpoint {
             await HubDocument.db.deleteRow(
                 session, schooldayEvent.processedDocument!,
                 transaction: transaction);
-            // TODO: Consider exceptions and handle them gracefully here
           }
           // update the schoolday event with the new file
           session.log(
@@ -252,7 +251,6 @@ class SchooldayEventEndpoint extends Endpoint {
             // delete the old hub document from the database
             await HubDocument.db.deleteRow(session, schooldayEvent.document!,
                 transaction: transaction);
-            // TODO: Consider exceptions and handle them gracefully here
           }
           // update the schoolday event with the new file
           session.log(

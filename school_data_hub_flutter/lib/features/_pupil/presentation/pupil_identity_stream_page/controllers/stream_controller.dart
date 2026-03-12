@@ -79,7 +79,6 @@ class PupilIdentityStreamController {
     if (role == PupilIdentityStreamRole.sender &&
         state.streamState.receiverUserName.value.isNotEmpty) {
       state.transferState.transferCounter.value += 1;
-      // TODO: here we must use a datetime sent by the sender
       final now = DateTime.now();
       final dateStr =
           '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';

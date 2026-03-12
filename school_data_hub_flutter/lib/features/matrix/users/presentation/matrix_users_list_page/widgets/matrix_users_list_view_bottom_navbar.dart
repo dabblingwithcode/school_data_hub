@@ -4,10 +4,13 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/show_generic_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/matrix_rooms_list_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_users_list_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 
@@ -129,8 +132,12 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                 ),
                 const Gap(30),
                 InkWell(
-                  // TODO: this needs to be implemented
-                  //   onTap: () => showCreditFilterBottomSheet(context),
+                  onTap: () => showGenericBottomSheet(
+                    context,
+                    const GenericFilterBottomSheet(
+                      children: [MatrixUsersFilterChips()],
+                    ),
+                  ),
                   onLongPress: () =>
                       matrixPolicyFilterManager.resetAllMatrixFilters(),
                   child: Icon(
@@ -147,40 +154,4 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
       ),
     );
   }
-
-  // void _showBulkCredentialsDialog(BuildContext context) {
-  //   final matrixUsers = _matrixPolicyManager.matrixUsers.value;
-
-  //   if (matrixUsers.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Keine Matrix-Benutzer verfügbar.')),
-  //     );
-  //     return;
-  //   }
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text('Bulk-Credentials generieren'),
-  //         content: const Text(
-  //           'Möchten Sie neue Benutzer-Codes generieren?\n\n'
-  //           'Dies wird die Passwörter der Konten zurücksetzen und neue Credentials erstellen.',
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.of(context).pop(),
-  //             child: const Text('Abbrechen'),
-  //           ),
-  //           TextButton(
-  //             onPressed: () {
-
-  //             },
-  //             child: const Text('Bestätigen'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 }

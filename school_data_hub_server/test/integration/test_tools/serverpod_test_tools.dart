@@ -8782,6 +8782,68 @@ class _WorkbooksEndpoint {
     });
   }
 
+  _i3.Future<_i66.Workbook> updateWorkbookImage(
+    _i1.TestSessionBuilder sessionBuilder,
+    int isbn,
+    String imageUrl,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'workbooks',
+        method: 'updateWorkbookImage',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'workbooks',
+          methodName: 'updateWorkbookImage',
+          parameters: _i1.testObjectToJson({
+            'isbn': isbn,
+            'imageUrl': imageUrl,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i66.Workbook>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<_i66.Workbook> deleteWorkbookImage(
+    _i1.TestSessionBuilder sessionBuilder,
+    int isbn,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'workbooks',
+        method: 'deleteWorkbookImage',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'workbooks',
+          methodName: 'deleteWorkbookImage',
+          parameters: _i1.testObjectToJson({'isbn': isbn}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i66.Workbook>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
   _i3.Future<_i66.Workbook> updateWorkbook(
     _i1.TestSessionBuilder sessionBuilder,
     _i66.Workbook workbook,

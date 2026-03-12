@@ -131,8 +131,7 @@ class MissedSchooldayCard extends StatelessWidget {
                     ),
                   ),
 
-                  // TODO: check why no modifiedBy values are stored
-                ],
+],
               ),
               if (missedSchoolday.modifiedBy != null) ...[
                 const Gap(5),

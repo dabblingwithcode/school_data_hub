@@ -54,6 +54,46 @@ class WorkbooksEndpoint extends Endpoint {
 
   //- update
 
+  Future<Workbook> updateWorkbookImage(
+    Session session,
+    int isbn,
+    String imageUrl,
+  ) async {
+    final workbook = await Workbook.db.findFirstRow(
+      session,
+      where: (t) => t.isbn.equals(isbn),
+    );
+    if (workbook == null) {
+      throw Exception('Workbook with isbn $isbn does not exist.');
+    }
+    workbook.imageUrl = imageUrl;
+    final updatedWorkbook = await Workbook.db.updateRow(session, workbook);
+    return updatedWorkbook;
+  }
+
+  Future<Workbook> deleteWorkbookImage(
+    Session session,
+    int isbn,
+  ) async {
+    final workbook = await Workbook.db.findFirstRow(
+      session,
+      where: (t) => t.isbn.equals(isbn),
+    );
+    if (workbook == null) {
+      throw Exception('Workbook with isbn $isbn does not exist.');
+    }
+    if (workbook.imageUrl.isNotEmpty &&
+        !workbook.imageUrl.startsWith('http')) {
+      await session.storage.deleteFile(
+        storageId: 'public',
+        path: workbook.imageUrl,
+      );
+    }
+    workbook.imageUrl = '';
+    final updatedWorkbook = await Workbook.db.updateRow(session, workbook);
+    return updatedWorkbook;
+  }
+
   Future<Workbook> updateWorkbook(Session session, Workbook workbook) async {
     final result = await session.db.transaction((transaction) async {
       final workbookId = await Workbook.db.updateRow(

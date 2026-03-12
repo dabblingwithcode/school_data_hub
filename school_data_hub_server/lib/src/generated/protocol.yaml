@@ -292,6 +292,8 @@ workbooks:
   - postWorkbook:
   - fetchWorkbookByIsbn:
   - fetchWorkbooks:
+  - updateWorkbookImage:
+  - deleteWorkbookImage:
   - updateWorkbook:
   - deleteWorkbook:
 files:

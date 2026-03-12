@@ -214,13 +214,7 @@ class NewSupportGoalPage extends StatelessWidget {
                             'Neues Förderziel') {
                           controller.postCategoryGoal();
                         } else {
-                          // TODO: uncomment this when the API is ready
-                          // _learningSupportManager.postSupportCategoryStatus(
-                          //     _pupilManager.getPupilByPupilId(
-                          //         controller.widget.pupilId)!,
-                          //     controller.goalCategoryId!,
-                          //     controller.categoryStatusValue,
-                          //     controller.strategiesTextField2Controller.text);
+                          controller.postCategoryStatus();
                         }
                         Navigator.pop(context);
                       },

@@ -6,7 +6,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_di
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/widgets/dialogs/after_school_care_pickup_time_dialog.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -24,15 +23,12 @@ List<Widget> pupilAfterSchoolCareContentList(
       children: [
         const Text('Abholzeit:', style: TextStyle(fontSize: 18.0)),
         const Gap(10),
-        InkWell(
-          onTap: () => pickUpTimeDialog(context, pupil, pickUpTime),
-          child: Text(
-            pickUpTime ?? 'keine',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.backgroundColor,
-            ),
+        Text(
+          pickUpTime ?? 'keine',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColors.backgroundColor,
           ),
         ),
         const Gap(5),

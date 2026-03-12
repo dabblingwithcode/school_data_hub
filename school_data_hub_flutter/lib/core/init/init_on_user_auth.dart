@@ -37,7 +37,7 @@ import 'package:school_data_hub_flutter/features/school_calendar/domain/school_c
 import 'package:school_data_hub_flutter/features/server_logs/data/server_logs_api_service.dart';
 import 'package:school_data_hub_flutter/features/server_logs/domain/server_logs_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/data/timetable_api_service.dart';
-import 'package:school_data_hub_flutter/features/timetable/timetable.dart';
+import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';

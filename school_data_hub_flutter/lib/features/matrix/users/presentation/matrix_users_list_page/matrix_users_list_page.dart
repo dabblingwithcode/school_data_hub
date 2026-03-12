@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
@@ -13,7 +14,6 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matri
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_user_app_user_map_scope.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_user_list_card.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_user_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_users_list_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/user/data/user_api_service.dart';
@@ -84,10 +84,7 @@ class _MatrixUsersListContent extends WatchingWidget {
     final pendingChanges = watchValue(
       (MatrixPolicyManager x) => x.pendingChanges,
     );
-    final filtersOn = watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
-    final matrixUsers = watchValue(
-      (MatrixPolicyFilterManager x) => x.filteredMatrixUsers,
-    );
+    final filterManager = di<MatrixPolicyFilterManager>();
 
     return FutureBuilder<Map<String?, UserWithDevices>>(
       future: _loadAppUsersByMatrixId(),
@@ -100,11 +97,40 @@ class _MatrixUsersListContent extends WatchingWidget {
             iconData: Icons.chat_rounded,
             title: 'Matrix-Konten',
             sliverAppBarHeight: 110,
-            searchWidgetWithStatsRow: MatrixUsersListSearchBar(
-              matrixUsers: matrixUsers,
+            searchBarConfig: GenericListSearchBarConfig(
+              statsWidget: ValueListenableBuilder<List<MatrixUser>>(
+                valueListenable: filterManager.filteredMatrixUsers,
+                builder: (context, matrixUsers, _) => Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.people_alt_rounded,
+                      color: AppColors.backgroundColor,
+                    ),
+                    const Gap(10),
+                    Text(
+                      matrixUsers.length.toString(),
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    const Gap(10),
+                  ],
+                ),
+              ),
+              searchType: SearchType.matrixUser,
+              hintText: 'Konten suchen',
+              refreshFunction: () => filterManager.setUsersFilterText(''),
+              onChanged: filterManager.setUsersFilterText,
+              filtersActive: filterManager.filtersOn,
+              onResetFilters: filterManager.resetAllMatrixFilters,
             ),
-            itemsListenable:
-                di<MatrixPolicyFilterManager>().filteredMatrixUsers,
+            filterSheetChildren: const [
+              MatrixUsersFilterChips(),
+            ],
+            itemsListenable: filterManager.filteredMatrixUsers,
             itemBuilder: (context, matrixUser) {
               final appUser = MatrixUserAppUserMapScope.of(
                 context,
@@ -118,7 +144,6 @@ class _MatrixUsersListContent extends WatchingWidget {
             bottomBarActions: _buildBottomBarActions(
               context,
               pendingChanges: pendingChanges,
-              filtersOn: filtersOn,
             ),
           ),
         );
@@ -129,7 +154,6 @@ class _MatrixUsersListContent extends WatchingWidget {
   List<Widget> _buildBottomBarActions(
     BuildContext context, {
     required bool pendingChanges,
-    required bool filtersOn,
   }) {
     return [
       if (pendingChanges)
@@ -175,18 +199,6 @@ class _MatrixUsersListContent extends WatchingWidget {
         tooltip: 'Zur Startseite',
         icon: const Icon(Icons.home, size: 35),
         onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-      ),
-
-      IconButton(
-        tooltip: 'Filter',
-        icon: Icon(
-          Icons.filter_list,
-          color: filtersOn ? Colors.deepOrange : Colors.white,
-          size: 30,
-        ),
-        onPressed: () => showMatrixUsersListFilterBottomSheet(context),
-        onLongPress: () =>
-            di<MatrixPolicyFilterManager>().resetAllMatrixFilters(),
       ),
     ];
   }

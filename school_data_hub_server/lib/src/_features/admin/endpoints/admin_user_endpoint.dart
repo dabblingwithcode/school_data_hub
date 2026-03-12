@@ -455,16 +455,55 @@ class AdminUserEndpoint extends Endpoint {
   }
 
   Future<void> deleteUser(Session session, int userId) async {
-    // Find the user by ID
     final user = await auth.Users.findUserByUserId(session, userId);
     if (user == null) {
       throw Exception('User not found.');
     }
 
-    // TODO: for now no flow to delete user from all tables, so just set blocked to true
-    // await session.db.deleteRow(user);
-    user.blocked = true;
-    await auth.UserInfo.db.updateRow(session, user);
+    await session.db.transaction((transaction) async {
+      // 1. UserDevice (FK to serverpod_auth_key and serverpod_user_info)
+      await UserDevice.db.deleteWhere(
+        session,
+        where: (t) => t.userInfoId.equals(userId),
+        transaction: transaction,
+      );
+
+      // 2. AuthKey (referenced by user_device, now cleared)
+      await auth.AuthKey.db.deleteWhere(
+        session,
+        where: (t) => t.userId.equals(userId),
+        transaction: transaction,
+      );
+
+      // 3. EmailAuth
+      await auth.EmailAuth.db.deleteWhere(
+        session,
+        where: (t) => t.userId.equals(userId),
+        transaction: transaction,
+      );
+
+      // 4. User (FK to serverpod_user_info with ON DELETE CASCADE,
+      //    but delete explicitly to be safe)
+      await User.db.deleteWhere(
+        session,
+        where: (t) => t.userInfoId.equals(userId),
+        transaction: transaction,
+      );
+
+      // 5. serverpod_user_image (no exported Dart class, images are disabled
+      //    but clean up any stale rows)
+      await session.db.unsafeExecute(
+        'DELETE FROM serverpod_user_image WHERE "userId" = $userId',
+        transaction: transaction,
+      );
+
+      // 6. UserInfo (last, since others reference it)
+      await auth.UserInfo.db.deleteWhere(
+        session,
+        where: (t) => t.id.equals(userId),
+        transaction: transaction,
+      );
+    });
   }
 
   Future<void> promoteUserScope(

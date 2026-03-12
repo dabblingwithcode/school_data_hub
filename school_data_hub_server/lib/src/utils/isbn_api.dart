@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:school_data_hub_server/src/utils/local_storage.dart';
 import 'package:serverpod/serverpod.dart';
 
-//- TODO: This is experimental code and should be tested before using in production
 class IsbnApiData {
   // final Uint8List? image;
   final String imagePath;

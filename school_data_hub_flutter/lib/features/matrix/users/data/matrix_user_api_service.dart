@@ -2,14 +2,14 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/features/matrix/services/api/api_client.dart';
-import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
+import 'package:school_data_hub_flutter/features/matrix/matrix_api_client/matrix_api_client.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 
 class MatrixUserApiService {
-  final ApiClient _apiClient;
+  final MatrixApiClient _apiClient;
 
-  MatrixUserApiService({required ApiClient apiClient}) : _apiClient = apiClient;
+  MatrixUserApiService({required MatrixApiClient apiClient})
+    : _apiClient = apiClient;
   final _log = Logger('MatrixUserApiService');
 
   //- CREATE MATRIX USER
@@ -42,7 +42,7 @@ class MatrixUserApiService {
     );
     // statuscode 201 means: User created
     if (!(response.statusCode == 201 || response.statusCode == 200)) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Erstellen des Benutzers',
         response.statusCode,
       );

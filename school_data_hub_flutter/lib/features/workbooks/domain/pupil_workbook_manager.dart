@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/data/pupil_workbook_api_service.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilWorkbookManager with ChangeNotifier {
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
@@ -108,6 +108,7 @@ class PupilWorkbookManager with ChangeNotifier {
     int? score,
     String? createdBy,
     DateTime? createdAt,
+
     /// Use [finishedAt: (value: date)] to set, [finishedAt: (value: null)] to clear.
     ({DateTime? value})? finishedAt,
   }) async {
@@ -116,7 +117,9 @@ class PupilWorkbookManager with ChangeNotifier {
       score: score ?? pupilWorkbook.score,
       createdBy: createdBy ?? pupilWorkbook.createdBy,
       createdAt: createdAt ?? pupilWorkbook.createdAt,
-      finishedAt: finishedAt != null ? finishedAt.value : pupilWorkbook.finishedAt,
+      finishedAt: finishedAt != null
+          ? finishedAt.value
+          : pupilWorkbook.finishedAt,
     );
 
     final updatedPupilWorkbook = await ClientHelper.apiCall(
@@ -129,8 +132,7 @@ class PupilWorkbookManager with ChangeNotifier {
     if (updatedPupilWorkbook == null) {
       return;
     }
-    // - TODO: check this AI code
-    //// Update the local collection
+
     if (_pupilWorkbooks.containsKey(pupilWorkbook.pupilId)) {
       final index = _pupilWorkbooks[pupilWorkbook.pupilId]!.indexWhere(
         (wb) => wb.isbn == pupilWorkbook.isbn,
@@ -153,6 +155,16 @@ class PupilWorkbookManager with ChangeNotifier {
   }
 
   //- delete
+
+  void deleteAllPupilWorkbooks(int isbn) {
+    for (final pupilId in _pupilWorkbooks.keys.toList()) {
+      _pupilWorkbooks[pupilId]!.removeWhere((wb) => wb.isbn == isbn);
+      if (_pupilWorkbooks[pupilId]!.isEmpty) {
+        _pupilWorkbooks.remove(pupilId);
+      }
+    }
+    notifyListeners();
+  }
 
   Future<void> deletePupilWorkbook(int pupilId, int pupilWorkbookId) async {
     final response = await ClientHelper.apiCall(

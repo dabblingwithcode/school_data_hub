@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/select_matrix_rooms_list_page.dart';
@@ -18,11 +15,6 @@ class SelectMatrixRoomsList extends WatchingStatefulWidget {
 }
 
 class SelectMatrixRoomsListController extends State<SelectMatrixRoomsList> {
-  List<MatrixRoom>? rooms;
-  List<MatrixRoom>? filteredRooms;
-  //TODO: This should be changed to speficic filters!
-
-  Map<PupilFilter, bool>? inheritedFilters;
   TextEditingController searchController = TextEditingController();
   bool isSearchMode = false;
   bool isSearching = false;
@@ -31,20 +23,8 @@ class SelectMatrixRoomsListController extends State<SelectMatrixRoomsList> {
   bool isSelectAllMode = false;
   bool isSelectMode = false;
 
-  PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
-  MatrixPolicyManager get _matrixPolicyManager => di<MatrixPolicyManager>();
   MatrixPolicyFilterManager get _matrixPolicyFilterManager =>
       di<MatrixPolicyFilterManager>();
-
-  @override
-  void initState() {
-    //_pupilFilterManager.refreshFilteredPupils();
-    setState(() {
-      inheritedFilters = _pupilFilterManager.pupilFilterState.value;
-      rooms = _matrixPolicyManager.matrixRooms.value;
-    });
-    super.initState();
-  }
 
   void cancelSelect() {
     setState(() {
@@ -97,8 +77,6 @@ class SelectMatrixRoomsListController extends State<SelectMatrixRoomsList> {
 
   @override
   Widget build(BuildContext context) {
-    // List<MatrixRoom> rooms =
-    //     watchValue((MatrixPolicyManager x) => x.matrixRooms);
     List<MatrixRoom> filteredRooms = watchValue(
       (MatrixPolicyFilterManager x) => x.filteredMatrixRooms,
     );

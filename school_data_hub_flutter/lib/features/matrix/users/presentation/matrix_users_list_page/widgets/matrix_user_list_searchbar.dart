@@ -6,6 +6,8 @@ import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/ma
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/matrix_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_users_list_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/show_generic_bottom_sheet.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 final _matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
@@ -63,7 +65,12 @@ class MatrixUsersListSearchBar extends WatchingWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () => showMatrixUsersListFilterBottomSheet(context),
+                  onTap: () => showGenericBottomSheet(
+                    context,
+                    const GenericFilterBottomSheet(
+                      children: [MatrixUsersFilterChips()],
+                    ),
+                  ),
                   onLongPress: () =>
                       _matrixPolicyFilterManager.resetAllMatrixFilters(),
                   child: Padding(

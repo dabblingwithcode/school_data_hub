@@ -14,7 +14,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/learning_support_plan_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/widgets/timetable_utils.dart';
+import 'package:school_data_hub_flutter/features/timetable/domain/timetable_utils.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 
 final _log = Logger('TimetablePdfGenerator');

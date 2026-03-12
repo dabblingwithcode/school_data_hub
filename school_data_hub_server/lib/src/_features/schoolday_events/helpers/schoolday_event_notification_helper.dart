@@ -62,7 +62,8 @@ class SchooldayEventNotificationHelper {
         ),
       ));
     } catch (e) {
-      session.log('Error sending matrix notification: $e', level: LogLevel.error);
+      session.log('Error sending matrix notification: $e',
+          level: LogLevel.error);
     }
   }
 }
@@ -73,7 +74,6 @@ String _getEventTypeText(SchooldayEventType type) => switch (type) {
       SchooldayEventType.afternoonCareAdmonition => '🟥🍽️ Rote Karte OGS',
       SchooldayEventType.parentsMeeting => '👪💬 Elterngespräch',
       SchooldayEventType.otherEvent => '🗒️ Sonstiges',
-      // TODO: Handle this case.
       SchooldayEventType.notSet => '❓️ Unbekannt',
     };
 

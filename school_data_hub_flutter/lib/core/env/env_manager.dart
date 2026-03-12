@@ -23,8 +23,8 @@ class EnvManager with ChangeNotifier {
   // - And transfer encryption keys over stream as with the pupil identities
   // - with additional one-time password to access the stream
 
-  /// TODO ADVICE: is this proxy authentication flag a hack or is this acceptable?
-
+  /// Proxy flag so [MaterialApp] can observe auth state without depending
+  /// on [HubSessionManager], which may not be registered yet.
   final _isAuthenticated = ValueNotifier<bool>(false);
 
   /// We need to observe in [MaterialApp] if a user is authenticated

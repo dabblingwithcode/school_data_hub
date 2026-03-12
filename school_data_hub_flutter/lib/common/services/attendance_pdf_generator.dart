@@ -14,7 +14,7 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/attendance_values.dart';
@@ -689,42 +689,42 @@ class MissedSchooldaysPdfGenerator {
   }
 
   /// Builds a summary page with overview statistics
-  static pw.Page _buildSummaryPage({
-    required pw.MemoryImage image,
-    required List<PupilProxy> pupils,
-    required pw.Font fontRegular,
-    required pw.Font fontBold,
-  }) {
-    return pw.Page(
-      margin: const pw.EdgeInsets.all(20),
-      build: (pw.Context context) {
-        return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            // Header
-            _buildMissedSchooldaysHeader(image, 1, 1, fontRegular, fontBold),
-            pw.SizedBox(height: 15),
+  // static pw.Page _buildSummaryPage({
+  //   required pw.MemoryImage image,
+  //   required List<PupilProxy> pupils,
+  //   required pw.Font fontRegular,
+  //   required pw.Font fontBold,
+  // }) {
+  //   return pw.Page(
+  //     margin: const pw.EdgeInsets.all(20),
+  //     build: (pw.Context context) {
+  //       return pw.Column(
+  //         crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //         children: [
+  //           // Header
+  //           _buildMissedSchooldaysHeader(image, 1, 1, fontRegular, fontBold),
+  //           pw.SizedBox(height: 15),
 
-            // Overall Statistics
-            _buildOverallStatistics(
-              pupils: pupils,
-              fontRegular: fontRegular,
-              fontBold: fontBold,
-            ),
-            pw.SizedBox(height: 20),
+  //           // Overall Statistics
+  //           _buildOverallStatistics(
+  //             pupils: pupils,
+  //             fontRegular: fontRegular,
+  //             fontBold: fontBold,
+  //           ),
+  //           pw.SizedBox(height: 20),
 
-            // Summary table
-            pw.Expanded(
-              child: _buildSummaryTable(pupils, fontRegular, fontBold),
-            ),
+  //           // Summary table
+  //           pw.Expanded(
+  //             child: _buildSummaryTable(pupils, fontRegular, fontBold),
+  //           ),
 
-            // Footer
-            _buildMissedSchooldaysFooter(fontRegular),
-          ],
-        );
-      },
-    );
-  }
+  //           // Footer
+  //           _buildMissedSchooldaysFooter(fontRegular),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   /// Builds a detailed page for a specific pupil showing all their missed schooldays
   static pw.Page _buildPupilDetailPage({
@@ -780,164 +780,164 @@ class MissedSchooldaysPdfGenerator {
   }
 
   /// Builds overall statistics for all pupils
-  static pw.Widget _buildOverallStatistics({
-    required List<PupilProxy> pupils,
-    required pw.Font fontRegular,
-    required pw.Font fontBold,
-  }) {
-    // Calculate totals
-    int totalMissedSum = 0;
-    int totalUnexcusedSum = 0;
-    int totalLateSum = 0;
-    int totalContactedSum = 0;
-    int totalGoneHomeSum = 0;
+  // static pw.Widget _buildOverallStatistics({
+  //   required List<PupilProxy> pupils,
+  //   required pw.Font fontRegular,
+  //   required pw.Font fontBold,
+  // }) {
+  //   // Calculate totals
+  //   int totalMissedSum = 0;
+  //   int totalUnexcusedSum = 0;
+  //   int totalLateSum = 0;
+  //   int totalContactedSum = 0;
+  //   int totalGoneHomeSum = 0;
 
-    for (var pupil in pupils) {
-      totalMissedSum += AttendanceStatsHelper.missedclassExcusedSum(pupil);
-      totalUnexcusedSum += AttendanceStatsHelper.missedclassUnexcusedSum(pupil);
-      totalLateSum += AttendanceStatsHelper.lateUnexcusedSum(pupil);
-      totalContactedSum += AttendanceStatsHelper.contactedSum(pupil);
-      totalGoneHomeSum += AttendanceStatsHelper.goneHomeSum(pupil);
-    }
+  //   for (var pupil in pupils) {
+  //     totalMissedSum += AttendanceStatsHelper.missedclassExcusedSum(pupil);
+  //     totalUnexcusedSum += AttendanceStatsHelper.missedclassUnexcusedSum(pupil);
+  //     totalLateSum += AttendanceStatsHelper.lateUnexcusedSum(pupil);
+  //     totalContactedSum += AttendanceStatsHelper.contactedSum(pupil);
+  //     totalGoneHomeSum += AttendanceStatsHelper.goneHomeSum(pupil);
+  //   }
 
-    return pw.Container(
-      padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: PdfColors.grey400),
-        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(5)),
-        color: PdfColors.grey100,
-      ),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(
-            'Gesamtstatistik:',
-            style: pw.TextStyle(fontSize: 14, font: fontBold),
-          ),
-          pw.SizedBox(height: 8),
-          pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
-            children: [
-              _buildStatItem(
-                'Schüler:innen',
-                pupils.length,
-                fontRegular,
-                fontBold,
-              ),
-              _buildStatItem('Entsch.', totalMissedSum, fontRegular, fontBold),
-              _buildStatItem(
-                'Unentsch.',
-                totalUnexcusedSum,
-                fontRegular,
-                fontBold,
-              ),
-              _buildStatItem('Verspätet', totalLateSum, fontRegular, fontBold),
-              _buildStatItem(
-                'Kontaktiert',
-                totalContactedSum,
-                fontRegular,
-                fontBold,
-              ),
-              _buildStatItem(
-                'Nach Hause',
-                totalGoneHomeSum,
-                fontRegular,
-                fontBold,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  //   return pw.Container(
+  //     padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+  //     decoration: pw.BoxDecoration(
+  //       border: pw.Border.all(color: PdfColors.grey400),
+  //       borderRadius: const pw.BorderRadius.all(pw.Radius.circular(5)),
+  //       color: PdfColors.grey100,
+  //     ),
+  //     child: pw.Column(
+  //       crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //       children: [
+  //         pw.Text(
+  //           'Gesamtstatistik:',
+  //           style: pw.TextStyle(fontSize: 14, font: fontBold),
+  //         ),
+  //         pw.SizedBox(height: 8),
+  //         pw.Row(
+  //           mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+  //           children: [
+  //             _buildStatItem(
+  //               'Schüler:innen',
+  //               pupils.length,
+  //               fontRegular,
+  //               fontBold,
+  //             ),
+  //             _buildStatItem('Entsch.', totalMissedSum, fontRegular, fontBold),
+  //             _buildStatItem(
+  //               'Unentsch.',
+  //               totalUnexcusedSum,
+  //               fontRegular,
+  //               fontBold,
+  //             ),
+  //             _buildStatItem('Verspätet', totalLateSum, fontRegular, fontBold),
+  //             _buildStatItem(
+  //               'Kontaktiert',
+  //               totalContactedSum,
+  //               fontRegular,
+  //               fontBold,
+  //             ),
+  //             _buildStatItem(
+  //               'Nach Hause',
+  //               totalGoneHomeSum,
+  //               fontRegular,
+  //               fontBold,
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  /// Builds summary table with all pupils
-  static pw.Widget _buildSummaryTable(
-    List<PupilProxy> pupils,
-    pw.Font fontRegular,
-    pw.Font fontBold,
-  ) {
-    if (pupils.isEmpty) {
-      return pw.Container(
-        width: double.infinity,
-        padding: const pw.EdgeInsets.all(20),
-        child: pw.Center(
-          child: pw.Text(
-            'Keine Schüler:innen in dieser Liste',
-            style: pw.TextStyle(
-              fontSize: 14,
-              fontStyle: pw.FontStyle.italic,
-              font: fontRegular,
-            ),
-          ),
-        ),
-      );
-    }
+  // /// Builds summary table with all pupils
+  // static pw.Widget _buildSummaryTable(
+  //   List<PupilProxy> pupils,
+  //   pw.Font fontRegular,
+  //   pw.Font fontBold,
+  // ) {
+  //   if (pupils.isEmpty) {
+  //     return pw.Container(
+  //       width: double.infinity,
+  //       padding: const pw.EdgeInsets.all(20),
+  //       child: pw.Center(
+  //         child: pw.Text(
+  //           'Keine Schüler:innen in dieser Liste',
+  //           style: pw.TextStyle(
+  //             fontSize: 14,
+  //             fontStyle: pw.FontStyle.italic,
+  //             font: fontRegular,
+  //           ),
+  //         ),
+  //       ),
+  //     );
+  //   }
 
-    return pw.Table(
-      border: pw.TableBorder.all(color: PdfColors.grey400),
-      columnWidths: const {
-        0: pw.FixedColumnWidth(30), // Nr.
-        1: pw.FlexColumnWidth(3), // Name
-        2: pw.FixedColumnWidth(50), // Entschuldigt
-        3: pw.FixedColumnWidth(50), // Unentschuldigt
-        4: pw.FixedColumnWidth(50), // Verspätet
-        5: pw.FixedColumnWidth(60), // Fehlstunden
-      },
-      children: [
-        // Header row
-        pw.TableRow(
-          decoration: const pw.BoxDecoration(color: PdfColors.grey200),
-          children: [
-            _buildTableCell('Nr.', fontRegular, fontBold, isHeader: true),
-            _buildTableCell('Name', fontRegular, fontBold, isHeader: true),
-            _buildTableCell('Entsch.', fontRegular, fontBold, isHeader: true),
-            _buildTableCell('Unent.', fontRegular, fontBold, isHeader: true),
-            _buildTableCell('Verspät.', fontRegular, fontBold, isHeader: true),
-            _buildTableCell('Fehlstd.', fontRegular, fontBold, isHeader: true),
-          ],
-        ),
-        // Data rows
-        ...pupils.asMap().entries.map((entry) {
-          final index = entry.key + 1;
-          final pupil = entry.value;
+  //   return pw.Table(
+  //     border: pw.TableBorder.all(color: PdfColors.grey400),
+  //     columnWidths: const {
+  //       0: pw.FixedColumnWidth(30), // Nr.
+  //       1: pw.FlexColumnWidth(3), // Name
+  //       2: pw.FixedColumnWidth(50), // Entschuldigt
+  //       3: pw.FixedColumnWidth(50), // Unentschuldigt
+  //       4: pw.FixedColumnWidth(50), // Verspätet
+  //       5: pw.FixedColumnWidth(60), // Fehlstunden
+  //     },
+  //     children: [
+  //       // Header row
+  //       pw.TableRow(
+  //         decoration: const pw.BoxDecoration(color: PdfColors.grey200),
+  //         children: [
+  //           _buildTableCell('Nr.', fontRegular, fontBold, isHeader: true),
+  //           _buildTableCell('Name', fontRegular, fontBold, isHeader: true),
+  //           _buildTableCell('Entsch.', fontRegular, fontBold, isHeader: true),
+  //           _buildTableCell('Unent.', fontRegular, fontBold, isHeader: true),
+  //           _buildTableCell('Verspät.', fontRegular, fontBold, isHeader: true),
+  //           _buildTableCell('Fehlstd.', fontRegular, fontBold, isHeader: true),
+  //         ],
+  //       ),
+  //       // Data rows
+  //       ...pupils.asMap().entries.map((entry) {
+  //         final index = entry.key + 1;
+  //         final pupil = entry.value;
 
-          final excusedSum = AttendanceStatsHelper.missedclassExcusedSum(pupil);
-          final unexcusedSum = AttendanceStatsHelper.missedclassUnexcusedSum(
-            pupil,
-          );
-          final lateSum = AttendanceStatsHelper.lateUnexcusedSum(pupil);
-          final missedHours =
-              AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
+  //         final excusedSum = AttendanceStatsHelper.missedclassExcusedSum(pupil);
+  //         final unexcusedSum = AttendanceStatsHelper.missedclassUnexcusedSum(
+  //           pupil,
+  //         );
+  //         final lateSum = AttendanceStatsHelper.lateUnexcusedSum(pupil);
+  //         final missedHours =
+  //             AttendanceHelper.missedHoursforSemesterOrSchoolyear(pupil);
 
-          return pw.TableRow(
-            children: [
-              _buildTableCell(index.toString(), fontRegular, fontBold),
-              _buildTableCell(
-                '${pupil.firstName} ${pupil.lastName}',
-                fontRegular,
-                fontBold,
-              ),
-              _buildTableCell(excusedSum.toString(), fontRegular, fontBold),
-              _buildTableCell(
-                unexcusedSum.toString(),
-                fontRegular,
-                fontBold,
-                isBold: unexcusedSum > 0,
-              ),
-              _buildTableCell(lateSum.toString(), fontRegular, fontBold),
-              _buildTableCell(
-                '${missedHours.missed}/${missedHours.unexcused}',
-                fontRegular,
-                fontBold,
-                isBold: missedHours.unexcused > 0,
-              ),
-            ],
-          );
-        }),
-      ],
-    );
-  }
+  //         return pw.TableRow(
+  //           children: [
+  //             _buildTableCell(index.toString(), fontRegular, fontBold),
+  //             _buildTableCell(
+  //               '${pupil.firstName} ${pupil.lastName}',
+  //               fontRegular,
+  //               fontBold,
+  //             ),
+  //             _buildTableCell(excusedSum.toString(), fontRegular, fontBold),
+  //             _buildTableCell(
+  //               unexcusedSum.toString(),
+  //               fontRegular,
+  //               fontBold,
+  //               isBold: unexcusedSum > 0,
+  //             ),
+  //             _buildTableCell(lateSum.toString(), fontRegular, fontBold),
+  //             _buildTableCell(
+  //               '${missedHours.missed}/${missedHours.unexcused}',
+  //               fontRegular,
+  //               fontBold,
+  //               isBold: missedHours.unexcused > 0,
+  //             ),
+  //           ],
+  //         );
+  //       }),
+  //     ],
+  //   );
+  // }
 
   /// Builds header for pupil detail page
   static pw.Widget _buildPupilDetailHeader(
@@ -1235,80 +1235,80 @@ class MissedSchooldaysPdfGenerator {
     );
   }
 
-  static pw.Widget _buildMissedSchooldaysHeader(
-    pw.MemoryImage image,
-    int pageNumber,
-    int totalPages,
-    pw.Font fontRegular,
-    pw.Font fontBold,
-  ) {
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          children: [
-            pw.Row(
-              children: [
-                pw.Image(image, width: 30, height: 30),
-                pw.SizedBox(width: 10),
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      'Schuldaten Hub',
-                      style: pw.TextStyle(fontSize: 16, font: fontBold),
-                    ),
-                    pw.Text(
-                      'Fehlzeitenliste',
-                      style: pw.TextStyle(fontSize: 10, font: fontRegular),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            pw.Text(
-              'Seite $pageNumber von $totalPages',
-              style: pw.TextStyle(fontSize: 10, font: fontRegular),
-            ),
-          ],
-        ),
-        pw.SizedBox(height: 10),
-        pw.Container(
-          width: double.infinity,
-          height: 1,
-          decoration: const pw.BoxDecoration(color: PdfColors.grey600),
-        ),
-        pw.SizedBox(height: 10),
-        pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Expanded(
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Text(
-                    'Fehlzeiten Übersicht',
-                    style: pw.TextStyle(fontSize: 20, font: fontBold),
-                  ),
-                ],
-              ),
-            ),
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.end,
-              children: [
-                pw.Text(
-                  'Erstellt am: ${DateTime.now().formatDateForUser()}',
-                  style: pw.TextStyle(fontSize: 10, font: fontRegular),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+  // static pw.Widget _buildMissedSchooldaysHeader(
+  //   pw.MemoryImage image,
+  //   int pageNumber,
+  //   int totalPages,
+  //   pw.Font fontRegular,
+  //   pw.Font fontBold,
+  // ) {
+  //   return pw.Column(
+  //     crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //     children: [
+  //       pw.Row(
+  //         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           pw.Row(
+  //             children: [
+  //               pw.Image(image, width: 30, height: 30),
+  //               pw.SizedBox(width: 10),
+  //               pw.Column(
+  //                 crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //                 children: [
+  //                   pw.Text(
+  //                     'Schuldaten Hub',
+  //                     style: pw.TextStyle(fontSize: 16, font: fontBold),
+  //                   ),
+  //                   pw.Text(
+  //                     'Fehlzeitenliste',
+  //                     style: pw.TextStyle(fontSize: 10, font: fontRegular),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //           pw.Text(
+  //             'Seite $pageNumber von $totalPages',
+  //             style: pw.TextStyle(fontSize: 10, font: fontRegular),
+  //           ),
+  //         ],
+  //       ),
+  //       pw.SizedBox(height: 10),
+  //       pw.Container(
+  //         width: double.infinity,
+  //         height: 1,
+  //         decoration: const pw.BoxDecoration(color: PdfColors.grey600),
+  //       ),
+  //       pw.SizedBox(height: 10),
+  //       pw.Row(
+  //         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+  //         crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //         children: [
+  //           pw.Expanded(
+  //             child: pw.Column(
+  //               crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //               children: [
+  //                 pw.Text(
+  //                   'Fehlzeiten Übersicht',
+  //                   style: pw.TextStyle(fontSize: 20, font: fontBold),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           pw.Column(
+  //             crossAxisAlignment: pw.CrossAxisAlignment.end,
+  //             children: [
+  //               pw.Text(
+  //                 'Erstellt am: ${DateTime.now().formatDateForUser()}',
+  //                 style: pw.TextStyle(fontSize: 10, font: fontRegular),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
 
   static pw.Widget _buildMissedSchooldaysFooter(pw.Font fontRegular) {
     return pw.Column(

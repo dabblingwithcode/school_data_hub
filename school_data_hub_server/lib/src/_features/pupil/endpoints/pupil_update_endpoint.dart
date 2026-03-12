@@ -153,7 +153,6 @@ class PupilUpdateEndpoint extends Endpoint {
             await HubDocument.db
                 .deleteRow(session, pupil.avatar!, transaction: transaction);
 
-            // TODO: Consider exceptions and handle them
           }
 
           // update the pupil with the new avatar
@@ -186,10 +185,9 @@ class PupilUpdateEndpoint extends Endpoint {
             await HubDocument.db.deleteRow(session, pupil.avatarAuth!,
                 transaction: transaction);
 
-            // TODO: Consider exceptions and handle them
           }
 
-          // update the pupil with the new avatar
+          // update the pupil with the new avatar auth
 
           await PupilData.db.attachRow.avatarAuth(
               session, pupil, hubDocumentInDatabase,
@@ -221,10 +219,9 @@ class PupilUpdateEndpoint extends Endpoint {
                 session, pupil.publicMediaAuthDocument!,
                 transaction: transaction);
 
-            // TODO: Consider exceptions and handle them
           }
 
-          // update the pupil with the new publi media a
+          // update the pupil with the new public media auth
           session.log(
               'Updating pupil public media auth with id: [${hubDocumentInDatabase.id}] documentID [${hubDocumentInDatabase.documentId}]');
 
@@ -328,31 +325,20 @@ class PupilUpdateEndpoint extends Endpoint {
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
-    return await session.db.transaction((transaction) async {
-      // TODO: preschoolmedical should never be null, so this should be removed
-      if (pupil.preSchoolMedical == null) {
-        final preSchoolMedicalInDatabase = await PreSchoolMedical.db.insertRow(
-            session,
-            PreSchoolMedical(
-              preschoolMedicalStatus: preSchoolMedicalStatus,
-              createdBy: updatedBy,
-              createdAt: DateTime.now().toUtc(),
-            ),
-            transaction: transaction);
+    if (pupil.preSchoolMedical == null) {
+      throw Exception(
+          'PreSchoolMedical record missing for pupil $pupilId');
+    }
 
-        await PupilData.db.attachRow.preSchoolMedical(
-            session, pupil, preSchoolMedicalInDatabase,
-            transaction: transaction);
-      } else {
-        final updatedPreSchoolMedicalStatus = pupil.preSchoolMedical!.copyWith(
-          preschoolMedicalStatus: preSchoolMedicalStatus,
-          updatedBy: updatedBy,
-          updatedAt: DateTime.now().toUtc(),
-        );
-        await PreSchoolMedical.db.updateRow(
-            session, updatedPreSchoolMedicalStatus,
-            transaction: transaction);
-      }
+    return await session.db.transaction((transaction) async {
+      final updatedPreSchoolMedicalStatus = pupil.preSchoolMedical!.copyWith(
+        preschoolMedicalStatus: preSchoolMedicalStatus,
+        updatedBy: updatedBy,
+        updatedAt: DateTime.now().toUtc(),
+      );
+      await PreSchoolMedical.db.updateRow(
+          session, updatedPreSchoolMedicalStatus,
+          transaction: transaction);
 
       final updatedPupil = await PupilData.db.findById(
         session,

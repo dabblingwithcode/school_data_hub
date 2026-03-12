@@ -9,7 +9,6 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dar
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog_dropdown.dart';
 
 // based on https://mobikul.com/creating-stateful-dialog-form-in-flutter/
-// TODO: It must be a better way to do this
 
 Future<void> languageDialog(
   BuildContext context,

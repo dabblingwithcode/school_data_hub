@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:school_data_hub_flutter/features/matrix/logs/data/matrix_corporal_logs_config.dart';
 import 'package:school_data_hub_flutter/features/matrix/logs/data/matrix_corporal_logs_response.dart';
-import 'package:school_data_hub_flutter/features/matrix/services/api/api_client.dart';
+import 'package:school_data_hub_flutter/features/matrix/matrix_api_client/matrix_api_client.dart';
 
 const String _logsPath = '/_matrix/corporal/logs';
 const String _configPath = '/_matrix/corporal/logs/config';
 
 class MatrixCorporalLogsApiService {
-  MatrixCorporalLogsApiService({required ApiClient apiClient})
+  MatrixCorporalLogsApiService({required MatrixApiClient apiClient})
     : _apiClient = apiClient;
 
-  final ApiClient _apiClient;
+  final MatrixApiClient _apiClient;
 
   Options get _corporalOptions =>
       _apiClient.apiOptions(tokenKey: Token.corporal);

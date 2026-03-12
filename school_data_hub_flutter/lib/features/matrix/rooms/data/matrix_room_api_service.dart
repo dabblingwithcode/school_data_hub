@@ -2,13 +2,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/features/matrix/matrix_api_client/matrix_api_client.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/models/matrix_message.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
-import 'package:school_data_hub_flutter/features/matrix/services/api/api_client.dart';
-import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
 
 enum ChatTypePreset {
   public('public_chat'),
@@ -20,13 +17,11 @@ enum ChatTypePreset {
 }
 
 class MatrixRoomApiService {
-  final ApiClient _apiClient;
+  final MatrixApiClient _apiClient;
   final _log = Logger('MatrixRoomApiService');
 
-  MatrixRoomApiService({required ApiClient apiClient}) : _apiClient = apiClient;
-
-  // TODO: There is still code left from the time where the power levels could not be set by matrix-coporal
-  //- We should clean up here.
+  MatrixRoomApiService({required MatrixApiClient apiClient})
+    : _apiClient = apiClient;
 
   //- CREATE ROOM
   static const String _createRoom = '/_matrix/client/v3/createRoom';
@@ -84,11 +79,14 @@ class MatrixRoomApiService {
       data: data,
       options: _apiClient.matrixOptions,
     );
-    //- TODO: Room version 12 will NOT respond with the complete address
-    //- It leaves the domain part out - we need to consider this in the future
     if (response.statusCode == 200) {
-      // extract the value of "room_id" out of the response
-      final String roomId = response.data['room_id'] as String;
+      // Room version 12+ may return an incomplete room_id without the domain part.
+      // If so, append the server domain to form a valid room ID.
+      String roomId = response.data['room_id'] as String;
+      if (!roomId.contains(':')) {
+        final domain = Uri.parse(_apiClient.baseUrl).host;
+        roomId = '$roomId:$domain';
+      }
       room = await fetchAdditionalRoomInfos(roomId);
     }
 
@@ -188,24 +186,15 @@ class MatrixRoomApiService {
   }
 
   //- SET ROOM POWER LEVELS
+  //- User power levels (the "users" map) are managed by matrix-corporal policy.
+  //- Only room-level event permissions (eventsDefault, reactions) are set here.
 
   Future<MatrixRoom> changeRoomPowerLevels({
     required String roomId,
-    RoomAdmin? newRoomAdmin,
-    String? adminIdToRemove,
     int? eventsDefault,
     int? reactions,
     required MatrixRoom currentRoom,
-    required String matrixAdmin,
   }) async {
-    if (newRoomAdmin != null || adminIdToRemove != null) {
-      di<NotificationService>().showInformationDialog(
-        NotificationType.info,
-        'Power levels werden von der Policy geändert.',
-      );
-      return currentRoom;
-    }
-
     if (eventsDefault == null && reactions == null) {
       return currentRoom;
     }
@@ -217,7 +206,7 @@ class MatrixRoomApiService {
 
     if (fetchResponse.statusCode != 200 ||
         fetchResponse.data is! Map<String, dynamic>) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Laden der Raum-Berechtigungen',
         fetchResponse.statusCode,
       );
@@ -245,7 +234,7 @@ class MatrixRoomApiService {
     );
 
     if (putResponse.statusCode != 200) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Setzen der Raum-Berechtigungen',
         putResponse.statusCode,
       );
@@ -278,7 +267,7 @@ class MatrixRoomApiService {
     );
 
     if (uploadResponse.statusCode != 200) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Hochladen des Raum-Avatars',
         uploadResponse.statusCode,
       );
@@ -286,7 +275,7 @@ class MatrixRoomApiService {
 
     final String? mxcUrl = uploadResponse.data['content_uri'] as String?;
     if (mxcUrl == null || mxcUrl.isEmpty) {
-      throw ApiException('Ungültige Antwort beim Avatar-Upload', 500);
+      throw MatrixApiException('Ungültige Antwort beim Avatar-Upload', 500);
     }
 
     final Response<dynamic> stateResponse = await _apiClient.put(
@@ -296,7 +285,7 @@ class MatrixRoomApiService {
     );
 
     if (stateResponse.statusCode != 200) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Setzen des Raum-Avatars',
         stateResponse.statusCode,
       );
@@ -342,7 +331,7 @@ class MatrixRoomApiService {
     );
 
     if (response.statusCode != 200) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Setzen des Raumnamens',
         response.statusCode,
       );
@@ -362,7 +351,7 @@ class MatrixRoomApiService {
     );
 
     if (response.statusCode != 200) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Setzen des Raumthemas',
         response.statusCode,
       );
@@ -380,7 +369,7 @@ class MatrixRoomApiService {
     );
 
     if (response.statusCode != 200) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Setzen des Raum-Alias',
         response.statusCode,
       );
@@ -435,7 +424,7 @@ class MatrixRoomApiService {
         _log.warning(
           'Send message failed: ${response.statusCode} - ${response.data}',
         );
-        throw ApiException(
+        throw MatrixApiException(
           'Fehler beim Senden der Nachricht: ${response.statusCode} - ${response.data}',
           response.statusCode,
         );
@@ -548,7 +537,7 @@ class MatrixRoomApiService {
             )
             .toList();
       } else {
-        throw ApiException(
+        throw MatrixApiException(
           'Fehler beim Laden der Nachrichten',
           response.statusCode,
         );
@@ -680,7 +669,7 @@ class MatrixRoomApiService {
 
         return roomId;
       } else {
-        throw ApiException(
+        throw MatrixApiException(
           'Fehler beim Erstellen des Direktnachrichten-Raums: ${response.statusCode} - ${response.data}',
           response.statusCode,
         );
@@ -861,7 +850,10 @@ class MatrixRoomApiService {
     );
 
     if (response.statusCode != 200) {
-      throw ApiException('Fehler beim Löschen des Raums', response.statusCode);
+      throw MatrixApiException(
+        'Fehler beim Löschen des Raums',
+        response.statusCode,
+      );
     }
 
     return true;

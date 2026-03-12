@@ -345,7 +345,7 @@ class CompetenceCheckCard extends StatelessWidget {
                       await di<CompetenceManager>()
                           .removeFileFromCompetenceCheck(
                             competenceCheckId: competenceCheck.checkId,
-                            fileId: documentId,
+                            documentId: documentId,
                           );
                     },
                     buttonsBackgroundColor: AppColors.backgroundColor,

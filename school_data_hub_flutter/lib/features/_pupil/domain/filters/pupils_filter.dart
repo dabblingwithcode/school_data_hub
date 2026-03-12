@@ -43,51 +43,6 @@ enum PupilProperties {
   supportAreaLearning,
 }
 
-class RadioButtonFilter extends Filter<PupilProxy> {
-  RadioButtonFilter({required super.name});
-
-  bool _isActive1 = false;
-  bool _isActive2 = false;
-
-  bool get isActive1 => _isActive1;
-  bool get isActive2 => _isActive2;
-
-  void toggle1() {
-    if (_isActive1) {
-      _isActive1 = false;
-    } else {
-      _isActive1 = true;
-      _isActive2 = false;
-    }
-
-    notifyListeners();
-  }
-
-  void toggle2() {
-    if (_isActive2) {
-      _isActive2 = false;
-    } else {
-      _isActive2 = true;
-      _isActive1 = false;
-    }
-
-    notifyListeners();
-  }
-
-  @override
-  void reset() {
-    _isActive1 = false;
-    _isActive2 = false;
-    notifyListeners();
-  }
-
-  @override
-  bool matches(PupilProxy item) {
-    // TODO: implement matches
-    throw UnimplementedError();
-  }
-}
-
 abstract class PupilsFilter implements Listenable, Resettable {
   ValueListenable<List<PupilProxy>> get filteredPupils;
   ValueListenable<List<int>> get filteredPupilIds;

@@ -25,9 +25,9 @@ class PupilProxy with ChangeNotifier {
     required PupilData pupilData,
     required PupilIdentity pupilIdentity,
     SiblingsResolver? siblingsResolver,
-  }) : _pupilIdentity = pupilIdentity {
+  })  : _pupilData = pupilData,
+        _pupilIdentity = pupilIdentity {
     _siblingsResolver = siblingsResolver;
-    updatePupil(pupilData);
   }
 
   static List<Filter<Object>> groupFilters = di<PupilsFilter>().groupFilters;
@@ -58,7 +58,7 @@ class PupilProxy with ChangeNotifier {
     FamilyLanguageFilter(FamilyLanguage.other),
   ];
 
-  late PupilData _pupilData;
+  PupilData _pupilData;
   PupilIdentity _pupilIdentity;
 
   SiblingsResolver? _siblingsResolver;
@@ -69,28 +69,27 @@ class PupilProxy with ChangeNotifier {
   // Cached competence badge counts for performance
   Map<int, int>? _competenceBadgeCounts;
 
-  bool pupilIsDirty = false;
+  static const _jsonEquality = DeepCollectionEquality();
 
   void updatePupil(PupilData pupilData) {
-    // TODO: Revisit for equality check
+    if (_jsonEquality.equals(_pupilData.toJson(), pupilData.toJson())) {
+      return;
+    }
     _pupilData = pupilData;
 
     // Invalidate cache when pupil data changes
     _competenceBadgeCounts = null;
 
-    pupilIsDirty = true;
     notifyListeners();
   }
 
   void updatePupilIdentity(PupilIdentity pupilIdentity) {
     if (!_pupilIdentity.isEqual(pupilIdentity)) _pupilIdentity = pupilIdentity;
-    pupilIsDirty = true;
     notifyListeners();
   }
 
   /// Notify listeners after an in-place mutation of pupil data.
   void notifyChanged() {
-    pupilIsDirty = true;
     notifyListeners();
   }
 

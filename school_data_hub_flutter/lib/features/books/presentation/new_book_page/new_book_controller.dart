@@ -101,8 +101,8 @@ class NewBookController extends State<NewBook> {
 
   Future<void> fetchBookData() async {
     final Book? bookData = await BookApiService().fetchBookByIsbn(widget.isbn);
-    // TODO BUG BOMB: We need to handle possible errors here, e.g. if the book is not found
-    bookTitleTextFieldController.text = bookData!.title;
+    if (bookData == null || !mounted) return;
+    bookTitleTextFieldController.text = bookData.title;
     authorTextFieldController.text = bookData.author;
     bookDescriptionTextFieldController.text = bookData.description;
 

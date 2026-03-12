@@ -3,7 +3,6 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -83,8 +82,7 @@ class SchoolDayEventHelper {
               .toList(),
         );
     if (schooldayEvents.isEmpty) {
-      // TODO: Watch out - why did we use this date?
-      // if schoolday events is empty, we return a mock date
+      // Sentinel date far in the past so pupils without events sort to the end
       return DateTime(2017, 9, 7, 17);
     }
     return getLastSchoolEventDate(schooldayEvents);
@@ -217,65 +215,6 @@ class SchoolDayEventHelper {
       default:
         return '';
     }
-  }
-
-  //- TODO: this should use  SchooldavEventReason enum
-
-  static String getSchooldayEventReasonText(String value) {
-    bool firstItem = true;
-    String schooldayEventReasonText = '';
-
-    if (value.contains(SchooldayEventReason.violenceAgainstPupils.value)) {
-      schooldayEventReasonText =
-          '${schooldayEventReasonText}Gewalt gegen Menschen';
-      firstItem = false;
-    }
-
-    if (value.contains(SchooldayEventReason.violenceAgainstThings.value)) {
-      if (firstItem == false) {
-        schooldayEventReasonText = '$schooldayEventReasonText - ';
-      }
-      schooldayEventReasonText =
-          '${schooldayEventReasonText}Gewalt gegen Sachen';
-      firstItem = false;
-    }
-    if (value.contains(SchooldayEventReason.annoyOthers.value)) {
-      if (firstItem == false) {
-        schooldayEventReasonText = '$schooldayEventReasonText - ';
-      }
-
-      schooldayEventReasonText =
-          // ignore: unnecessary_brace_in_string_interps
-          '${schooldayEventReasonText}Ärgern anderer Kinder';
-      firstItem = false;
-    }
-
-    if (value.contains(SchooldayEventReason.ignoreInstructions.value)) {
-      if (firstItem == false) {
-        schooldayEventReasonText = '$schooldayEventReasonText - ';
-      }
-      schooldayEventReasonText =
-          '${schooldayEventReasonText}Ignorieren von Anweisungen';
-      firstItem == false;
-    }
-
-    if (value.contains(SchooldayEventReason.disturbLesson.value)) {
-      if (firstItem == false) {
-        schooldayEventReasonText = '$schooldayEventReasonText - ';
-      }
-      schooldayEventReasonText =
-          '${schooldayEventReasonText}Unterrichtsstörung';
-      firstItem = false;
-    }
-
-    if (value.contains(SchooldayEventReason.other.value)) {
-      if (firstItem == false) {
-        schooldayEventReasonText = '$schooldayEventReasonText - ';
-      }
-      schooldayEventReasonText = '${schooldayEventReasonText}Sonstiges';
-      firstItem = false;
-    }
-    return schooldayEventReasonText;
   }
 
   static int comparePupilsBySchooldayEventDate(PupilProxy a, PupilProxy b) {

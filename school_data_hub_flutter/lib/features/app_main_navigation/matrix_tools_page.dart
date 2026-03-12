@@ -7,7 +7,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/room_timetable_grid/room_timetable_grid_page.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/logs/presentation/matrix_corporal_logs_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/set_matrix_environment_page/set_matrix_environment_page.dart';
@@ -104,7 +104,7 @@ class MatrixToolsPage extends WatchingWidget {
                     ),
                     MainMenuButton(
                       buttonSize: 120,
-                      destinationPage: const RoomTimetableGridPage(),
+                      destinationPage: const TimetablePage(),
                       buttonIcon: Icon(
                         Icons.grid_on,
                         size: 36,

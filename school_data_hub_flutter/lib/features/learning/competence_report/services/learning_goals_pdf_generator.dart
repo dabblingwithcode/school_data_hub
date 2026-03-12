@@ -14,9 +14,9 @@ import 'package:school_data_hub_flutter/common/services/notification_service.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 
 final _log = Logger('LearningGoalsPdfGenerator');
@@ -150,94 +150,94 @@ class LearningGoalsPdfGenerator {
   }
 
   /// Builds a summary page with overview statistics
-  static pw.Page _buildSummaryPage({
-    required pw.MemoryImage image,
-    required List<PupilProxy> pupils,
-    required pw.Font fontRegular,
-    required pw.Font fontBold,
-  }) {
-    return pw.Page(
-      margin: const pw.EdgeInsets.all(20),
-      build: (pw.Context context) {
-        return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            // Header
-            _buildHeader(image, 1, 1, fontRegular, fontBold),
-            pw.SizedBox(height: 15),
+  // static pw.Page _buildSummaryPage({
+  //   required pw.MemoryImage image,
+  //   required List<PupilProxy> pupils,
+  //   required pw.Font fontRegular,
+  //   required pw.Font fontBold,
+  // }) {
+  //   return pw.Page(
+  //     margin: const pw.EdgeInsets.all(20),
+  //     build: (pw.Context context) {
+  //       return pw.Column(
+  //         crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //         children: [
+  //           // Header
+  //           _buildHeader(image, 1, 1, fontRegular, fontBold),
+  //           pw.SizedBox(height: 15),
 
-            // Overall Statistics
-            _buildOverallStatistics(
-              pupils: pupils,
-              fontRegular: fontRegular,
-              fontBold: fontBold,
-            ),
-            pw.SizedBox(height: 20),
+  //           // Overall Statistics
+  //           _buildOverallStatistics(
+  //             pupils: pupils,
+  //             fontRegular: fontRegular,
+  //             fontBold: fontBold,
+  //           ),
+  //           pw.SizedBox(height: 20),
 
-            // Summary table
-            pw.Expanded(
-              child: _buildSummaryTable(pupils, fontRegular, fontBold),
-            ),
+  //           // Summary table
+  //           pw.Expanded(
+  //             child: _buildSummaryTable(pupils, fontRegular, fontBold),
+  //           ),
 
-            // Footer
-            _buildFooter(fontRegular),
-          ],
-        );
-      },
-    );
-  }
+  //           // Footer
+  //           _buildFooter(fontRegular),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
-  /// Builds a detailed page for a specific pupil showing all their learning goals
-  static pw.Page _buildPupilDetailPage({
-    required pw.MemoryImage image,
-    required PupilProxy pupil,
-    required List<CompetenceGoal> competenceGoals,
-    required int pageNumber,
-    required int totalPages,
-    required pw.Font fontRegular,
-    required pw.Font fontBold,
-  }) {
-    return pw.Page(
-      margin: const pw.EdgeInsets.all(20),
-      build: (pw.Context context) {
-        return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            // Header with pupil info
-            // _buildPupilDetailHeader(
-            //   image,
-            //   pupil,
-            //   pageNumber,
-            //   totalPages,
-            //   fontRegular,
-            //   fontBold,
-            // ),
-            // pw.SizedBox(height: 15),
+  // /// Builds a detailed page for a specific pupil showing all their learning goals
+  // static pw.Page _buildPupilDetailPage({
+  //   required pw.MemoryImage image,
+  //   required PupilProxy pupil,
+  //   required List<CompetenceGoal> competenceGoals,
+  //   required int pageNumber,
+  //   required int totalPages,
+  //   required pw.Font fontRegular,
+  //   required pw.Font fontBold,
+  // }) {
+  //   return pw.Page(
+  //     margin: const pw.EdgeInsets.all(20),
+  //     build: (pw.Context context) {
+  //       return pw.Column(
+  //         crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //         children: [
+  //           // Header with pupil info
+  //           // _buildPupilDetailHeader(
+  //           //   image,
+  //           //   pupil,
+  //           //   pageNumber,
+  //           //   totalPages,
+  //           //   fontRegular,
+  //           //   fontBold,
+  //           // ),
+  //           // pw.SizedBox(height: 15),
 
-            // Pupil statistics
-            // _buildPupilStatistics(pupil, fontRegular, fontBold),
-            // pw.SizedBox(height: 12),
+  //           // Pupil statistics
+  //           // _buildPupilStatistics(pupil, fontRegular, fontBold),
+  //           // pw.SizedBox(height: 12),
 
-            // Pupil info row (name, group, grade, date) at start of learning goals list
-            _buildPupilInfoRow(pupil, fontRegular, fontBold),
-            pw.SizedBox(height: 4),
+  //           // Pupil info row (name, group, grade, date) at start of learning goals list
+  //           _buildPupilInfoRow(pupil, fontRegular, fontBold),
+  //           pw.SizedBox(height: 4),
 
-            // Detailed goals list
-            pw.Expanded(
-              child: _buildDetailedGoalsTable(
-                competenceGoals,
-                fontRegular,
-                fontBold,
-              ),
-            ),
+  //           // Detailed goals list
+  //           pw.Expanded(
+  //             child: _buildDetailedGoalsTable(
+  //               competenceGoals,
+  //               fontRegular,
+  //               fontBold,
+  //             ),
+  //           ),
 
-            // Footer
-            _buildFooter(fontRegular),
-          ],
-        );
-      },
-    );
-  }
+  //           // Footer
+  //           _buildFooter(fontRegular),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   /// Builds the page header
   static pw.Widget _buildHeader(
@@ -320,170 +320,170 @@ class LearningGoalsPdfGenerator {
   }
 
   /// Builds overall statistics for all pupils
-  static pw.Widget _buildOverallStatistics({
-    required List<PupilProxy> pupils,
-    required pw.Font fontRegular,
-    required pw.Font fontBold,
-  }) {
-    // Calculate totals
-    int totalGoals = 0;
-    int achievedGoals = 0;
-    Map<int, int> goalsBySubject = {};
+  // static pw.Widget _buildOverallStatistics({
+  //   required List<PupilProxy> pupils,
+  //   required pw.Font fontRegular,
+  //   required pw.Font fontBold,
+  // }) {
+  //   // Calculate totals
+  //   int totalGoals = 0;
+  //   int achievedGoals = 0;
+  //   Map<int, int> goalsBySubject = {};
 
-    for (var pupil in pupils) {
-      final goals = pupil.competenceGoals ?? [];
-      totalGoals += goals.length;
+  //   for (var pupil in pupils) {
+  //     final goals = pupil.competenceGoals ?? [];
+  //     totalGoals += goals.length;
 
-      for (var goal in goals) {
-        // Count achieved goals (score > 0)
-        if (goal.score != null && goal.score! > 0) {
-          achievedGoals++;
-        }
+  //     for (var goal in goals) {
+  //       // Count achieved goals (score > 0)
+  //       if (goal.score != null && goal.score! > 0) {
+  //         achievedGoals++;
+  //       }
 
-        // Count by subject
-        final rootCompetence = di<CompetenceManager>().findRootCompetenceById(
-          goal.competenceId,
-        );
-        final rootId = rootCompetence.publicId;
-        goalsBySubject[rootId] = (goalsBySubject[rootId] ?? 0) + 1;
-      }
-    }
+  //       // Count by subject
+  //       final rootCompetence = di<CompetenceManager>().findRootCompetenceById(
+  //         goal.competenceId,
+  //       );
+  //       final rootId = rootCompetence.publicId;
+  //       goalsBySubject[rootId] = (goalsBySubject[rootId] ?? 0) + 1;
+  //     }
+  //   }
 
-    return pw.Container(
-      padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: PdfColors.grey400),
-        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(5)),
-        color: PdfColors.grey100,
-      ),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(
-            'Gesamtstatistik:',
-            style: pw.TextStyle(fontSize: 14, font: fontBold),
-          ),
-          pw.SizedBox(height: 8),
-          pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
-            children: [
-              _buildStatItem(
-                'Schüler:innen',
-                pupils.length,
-                fontRegular,
-                fontBold,
-              ),
-              _buildStatItem('Lernziele', totalGoals, fontRegular, fontBold),
-              _buildStatItem('Erreicht', achievedGoals, fontRegular, fontBold),
-              _buildStatItem(
-                'Offen',
-                totalGoals - achievedGoals,
-                fontRegular,
-                fontBold,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  //   return pw.Container(
+  //     padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+  //     decoration: pw.BoxDecoration(
+  //       border: pw.Border.all(color: PdfColors.grey400),
+  //       borderRadius: const pw.BorderRadius.all(pw.Radius.circular(5)),
+  //       color: PdfColors.grey100,
+  //     ),
+  //     child: pw.Column(
+  //       crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //       children: [
+  //         pw.Text(
+  //           'Gesamtstatistik:',
+  //           style: pw.TextStyle(fontSize: 14, font: fontBold),
+  //         ),
+  //         pw.SizedBox(height: 8),
+  //         pw.Row(
+  //           mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+  //           children: [
+  //             _buildStatItem(
+  //               'Schüler:innen',
+  //               pupils.length,
+  //               fontRegular,
+  //               fontBold,
+  //             ),
+  //             _buildStatItem('Lernziele', totalGoals, fontRegular, fontBold),
+  //             _buildStatItem('Erreicht', achievedGoals, fontRegular, fontBold),
+  //             _buildStatItem(
+  //               'Offen',
+  //               totalGoals - achievedGoals,
+  //               fontRegular,
+  //               fontBold,
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   /// Builds summary table with all pupils
-  static pw.Widget _buildSummaryTable(
-    List<PupilProxy> pupils,
-    pw.Font fontRegular,
-    pw.Font fontBold,
-  ) {
-    if (pupils.isEmpty) {
-      return pw.Container(
-        width: double.infinity,
-        padding: const pw.EdgeInsets.all(20),
-        child: pw.Center(
-          child: pw.Text(
-            'Keine Schüler:innen mit Lernzielen',
-            style: pw.TextStyle(
-              fontSize: 14,
-              fontStyle: pw.FontStyle.italic,
-              font: fontRegular,
-            ),
-          ),
-        ),
-      );
-    }
+  // static pw.Widget _buildSummaryTable(
+  //   List<PupilProxy> pupils,
+  //   pw.Font fontRegular,
+  //   pw.Font fontBold,
+  // ) {
+  //   if (pupils.isEmpty) {
+  //     return pw.Container(
+  //       width: double.infinity,
+  //       padding: const pw.EdgeInsets.all(20),
+  //       child: pw.Center(
+  //         child: pw.Text(
+  //           'Keine Schüler:innen mit Lernzielen',
+  //           style: pw.TextStyle(
+  //             fontSize: 14,
+  //             fontStyle: pw.FontStyle.italic,
+  //             font: fontRegular,
+  //           ),
+  //         ),
+  //       ),
+  //     );
+  //   }
 
-    return pw.Table(
-      border: pw.TableBorder.all(color: PdfColors.grey400),
-      columnWidths: const {
-        0: pw.FixedColumnWidth(30), // Nr.
-        1: pw.FlexColumnWidth(3), // Name
-        2: pw.FixedColumnWidth(50), // Gesamt
-        3: pw.FixedColumnWidth(50), // Erreicht
-        4: pw.FixedColumnWidth(50), // Offen
-        5: pw.FlexColumnWidth(2), // Fächer
-      },
-      children: [
-        // Header row
-        pw.TableRow(
-          decoration: const pw.BoxDecoration(color: PdfColors.grey200),
-          children: [
-            _buildTableCell('Nr.', fontRegular, fontBold, isHeader: true),
-            _buildTableCell('Name', fontRegular, fontBold, isHeader: true),
-            _buildTableCell('Gesamt', fontRegular, fontBold, isHeader: true),
-            _buildTableCell('Erreicht', fontRegular, fontBold, isHeader: true),
-            _buildTableCell('Offen', fontRegular, fontBold, isHeader: true),
-            _buildTableCell('Fächer', fontRegular, fontBold, isHeader: true),
-          ],
-        ),
-        // Data rows
-        ...pupils.asMap().entries.map((entry) {
-          final index = entry.key + 1;
-          final pupil = entry.value;
-          final goals = pupil.competenceGoals ?? [];
-          final achieved = goals.where((g) => g.score != null && g.score! > 0);
-          final subjects = _getSubjectsSummary(goals);
+  //   return pw.Table(
+  //     border: pw.TableBorder.all(color: PdfColors.grey400),
+  //     columnWidths: const {
+  //       0: pw.FixedColumnWidth(30), // Nr.
+  //       1: pw.FlexColumnWidth(3), // Name
+  //       2: pw.FixedColumnWidth(50), // Gesamt
+  //       3: pw.FixedColumnWidth(50), // Erreicht
+  //       4: pw.FixedColumnWidth(50), // Offen
+  //       5: pw.FlexColumnWidth(2), // Fächer
+  //     },
+  //     children: [
+  //       // Header row
+  //       pw.TableRow(
+  //         decoration: const pw.BoxDecoration(color: PdfColors.grey200),
+  //         children: [
+  //           _buildTableCell('Nr.', fontRegular, fontBold, isHeader: true),
+  //           _buildTableCell('Name', fontRegular, fontBold, isHeader: true),
+  //           _buildTableCell('Gesamt', fontRegular, fontBold, isHeader: true),
+  //           _buildTableCell('Erreicht', fontRegular, fontBold, isHeader: true),
+  //           _buildTableCell('Offen', fontRegular, fontBold, isHeader: true),
+  //           _buildTableCell('Fächer', fontRegular, fontBold, isHeader: true),
+  //         ],
+  //       ),
+  //       // Data rows
+  //       ...pupils.asMap().entries.map((entry) {
+  //         final index = entry.key + 1;
+  //         final pupil = entry.value;
+  //         final goals = pupil.competenceGoals ?? [];
+  //         final achieved = goals.where((g) => g.score != null && g.score! > 0);
+  //         final subjects = _getSubjectsSummary(goals);
 
-          return pw.TableRow(
-            children: [
-              _buildTableCell(index.toString(), fontRegular, fontBold),
-              _buildTableCell(
-                '${pupil.firstName} ${pupil.lastName}',
-                fontRegular,
-                fontBold,
-              ),
-              _buildTableCell(goals.length.toString(), fontRegular, fontBold),
-              _buildTableCell(
-                achieved.length.toString(),
-                fontRegular,
-                fontBold,
-              ),
-              _buildTableCell(
-                (goals.length - achieved.length).toString(),
-                fontRegular,
-                fontBold,
-                isBold: goals.length - achieved.length > 0,
-              ),
-              _buildTableCell(subjects, fontRegular, fontBold),
-            ],
-          );
-        }),
-      ],
-    );
-  }
+  //         return pw.TableRow(
+  //           children: [
+  //             _buildTableCell(index.toString(), fontRegular, fontBold),
+  //             _buildTableCell(
+  //               '${pupil.firstName} ${pupil.lastName}',
+  //               fontRegular,
+  //               fontBold,
+  //             ),
+  //             _buildTableCell(goals.length.toString(), fontRegular, fontBold),
+  //             _buildTableCell(
+  //               achieved.length.toString(),
+  //               fontRegular,
+  //               fontBold,
+  //             ),
+  //             _buildTableCell(
+  //               (goals.length - achieved.length).toString(),
+  //               fontRegular,
+  //               fontBold,
+  //               isBold: goals.length - achieved.length > 0,
+  //             ),
+  //             _buildTableCell(subjects, fontRegular, fontBold),
+  //           ],
+  //         );
+  //       }),
+  //     ],
+  //   );
+  // }
 
   /// Gets a summary of subjects for a pupil's goals
-  static String _getSubjectsSummary(List<CompetenceGoal> goals) {
-    Map<String, int> subjectCounts = {};
+  // static String _getSubjectsSummary(List<CompetenceGoal> goals) {
+  //   Map<String, int> subjectCounts = {};
 
-    for (var goal in goals) {
-      final rootCompetence = di<CompetenceManager>().findRootCompetenceById(
-        goal.competenceId,
-      );
-      final shortName = _getShortName(rootCompetence.publicId);
-      subjectCounts[shortName] = (subjectCounts[shortName] ?? 0) + 1;
-    }
+  //   for (var goal in goals) {
+  //     final rootCompetence = di<CompetenceManager>().findRootCompetenceById(
+  //       goal.competenceId,
+  //     );
+  //     final shortName = _getShortName(rootCompetence.publicId);
+  //     subjectCounts[shortName] = (subjectCounts[shortName] ?? 0) + 1;
+  //   }
 
-    return subjectCounts.entries.map((e) => '${e.key}:${e.value}').join(', ');
-  }
+  //   return subjectCounts.entries.map((e) => '${e.key}:${e.value}').join(', ');
+  // }
 
   /// Gets short name for a root competence
   static String _getShortName(int rootCompetenceId) {
@@ -522,140 +522,140 @@ class LearningGoalsPdfGenerator {
   }
 
   /// Builds header for pupil detail page
-  static pw.Widget _buildPupilDetailHeader(
-    pw.MemoryImage image,
-    PupilProxy pupil,
-    int pageNumber,
-    int totalPages,
-    pw.Font fontRegular,
-    pw.Font fontBold,
-  ) {
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          children: [
-            pw.Row(
-              children: [
-                pw.Image(image, width: 30, height: 30),
-                pw.SizedBox(width: 10),
-                pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      di<SchoolDataMainManager>()
-                              .schoolData
-                              .value
-                              ?.officialName ??
-                          'Schuldaten Hub',
-                      style: pw.TextStyle(fontSize: 16, font: fontBold),
-                    ),
-                    pw.Text(
-                      'Lernziele Detail',
-                      style: pw.TextStyle(fontSize: 10, font: fontRegular),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            pw.Text(
-              'Seite $pageNumber von $totalPages',
-              style: pw.TextStyle(fontSize: 10, font: fontRegular),
-            ),
-          ],
-        ),
-        pw.SizedBox(height: 10),
-        pw.Container(
-          width: double.infinity,
-          height: 1,
-          decoration: const pw.BoxDecoration(color: PdfColors.grey600),
-        ),
-        pw.SizedBox(height: 10),
-        pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          children: [
-            pw.Expanded(
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Text(
-                    '${pupil.firstName} ${pupil.lastName}',
-                    style: pw.TextStyle(fontSize: 20, font: fontBold),
-                  ),
-                  pw.SizedBox(height: 3),
-                  pw.Text(
-                    'Schüler-ID: ${pupil.pupilId}',
-                    style: pw.TextStyle(fontSize: 10, font: fontRegular),
-                  ),
-                ],
-              ),
-            ),
-            pw.Text(
-              'Erstellt am: ${DateTime.now().formatDateForUser()}',
-              style: pw.TextStyle(fontSize: 10, font: fontRegular),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+  // static pw.Widget _buildPupilDetailHeader(
+  //   pw.MemoryImage image,
+  //   PupilProxy pupil,
+  //   int pageNumber,
+  //   int totalPages,
+  //   pw.Font fontRegular,
+  //   pw.Font fontBold,
+  // ) {
+  //   return pw.Column(
+  //     crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //     children: [
+  //       pw.Row(
+  //         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           pw.Row(
+  //             children: [
+  //               pw.Image(image, width: 30, height: 30),
+  //               pw.SizedBox(width: 10),
+  //               pw.Column(
+  //                 crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //                 children: [
+  //                   pw.Text(
+  //                     di<SchoolDataMainManager>()
+  //                             .schoolData
+  //                             .value
+  //                             ?.officialName ??
+  //                         'Schuldaten Hub',
+  //                     style: pw.TextStyle(fontSize: 16, font: fontBold),
+  //                   ),
+  //                   pw.Text(
+  //                     'Lernziele Detail',
+  //                     style: pw.TextStyle(fontSize: 10, font: fontRegular),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //           pw.Text(
+  //             'Seite $pageNumber von $totalPages',
+  //             style: pw.TextStyle(fontSize: 10, font: fontRegular),
+  //           ),
+  //         ],
+  //       ),
+  //       pw.SizedBox(height: 10),
+  //       pw.Container(
+  //         width: double.infinity,
+  //         height: 1,
+  //         decoration: const pw.BoxDecoration(color: PdfColors.grey600),
+  //       ),
+  //       pw.SizedBox(height: 10),
+  //       pw.Row(
+  //         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           pw.Expanded(
+  //             child: pw.Column(
+  //               crossAxisAlignment: pw.CrossAxisAlignment.start,
+  //               children: [
+  //                 pw.Text(
+  //                   '${pupil.firstName} ${pupil.lastName}',
+  //                   style: pw.TextStyle(fontSize: 20, font: fontBold),
+  //                 ),
+  //                 pw.SizedBox(height: 3),
+  //                 pw.Text(
+  //                   'Schüler-ID: ${pupil.pupilId}',
+  //                   style: pw.TextStyle(fontSize: 10, font: fontRegular),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           pw.Text(
+  //             'Erstellt am: ${DateTime.now().formatDateForUser()}',
+  //             style: pw.TextStyle(fontSize: 10, font: fontRegular),
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  /// Builds statistics for a specific pupil
-  static pw.Widget _buildPupilStatistics(
-    PupilProxy pupil,
-    pw.Font fontRegular,
-    pw.Font fontBold,
-  ) {
-    final goals = pupil.competenceGoals ?? [];
-    final achieved = goals.where((g) => g.score != null && g.score! > 0).length;
+  // /// Builds statistics for a specific pupil
+  // static pw.Widget _buildPupilStatistics(
+  //   PupilProxy pupil,
+  //   pw.Font fontRegular,
+  //   pw.Font fontBold,
+  // ) {
+  //   final goals = pupil.competenceGoals ?? [];
+  //   final achieved = goals.where((g) => g.score != null && g.score! > 0).length;
 
-    // Group by subject
-    Map<String, int> subjectCounts = {};
-    for (var goal in goals) {
-      final rootCompetence = di<CompetenceManager>().findRootCompetenceById(
-        goal.competenceId,
-      );
-      final shortName = _getShortName(rootCompetence.publicId);
-      subjectCounts[shortName] = (subjectCounts[shortName] ?? 0) + 1;
-    }
+  //   // Group by subject
+  //   Map<String, int> subjectCounts = {};
+  //   for (var goal in goals) {
+  //     final rootCompetence = di<CompetenceManager>().findRootCompetenceById(
+  //       goal.competenceId,
+  //     );
+  //     final shortName = _getShortName(rootCompetence.publicId);
+  //     subjectCounts[shortName] = (subjectCounts[shortName] ?? 0) + 1;
+  //   }
 
-    return pw.Container(
-      padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: PdfColors.grey400),
-        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(5)),
-        color: PdfColors.grey100,
-      ),
-      child: pw.Row(
-        mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatItem('Gesamt', goals.length, fontRegular, fontBold),
-          _buildStatItem('Erreicht', achieved, fontRegular, fontBold),
-          _buildStatItem(
-            'Offen',
-            goals.length - achieved,
-            fontRegular,
-            fontBold,
-          ),
-          pw.Column(
-            children: [
-              pw.Text(
-                subjectCounts.entries
-                    .map((e) => '${e.key}:${e.value}')
-                    .join(' '),
-                style: pw.TextStyle(fontSize: 10, font: fontBold),
-              ),
-              pw.Text(
-                'nach Fach',
-                style: pw.TextStyle(fontSize: 9, font: fontRegular),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  //   return pw.Container(
+  //     padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+  //     decoration: pw.BoxDecoration(
+  //       border: pw.Border.all(color: PdfColors.grey400),
+  //       borderRadius: const pw.BorderRadius.all(pw.Radius.circular(5)),
+  //       color: PdfColors.grey100,
+  //     ),
+  //     child: pw.Row(
+  //       mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+  //       children: [
+  //         _buildStatItem('Gesamt', goals.length, fontRegular, fontBold),
+  //         _buildStatItem('Erreicht', achieved, fontRegular, fontBold),
+  //         _buildStatItem(
+  //           'Offen',
+  //           goals.length - achieved,
+  //           fontRegular,
+  //           fontBold,
+  //         ),
+  //         pw.Column(
+  //           children: [
+  //             pw.Text(
+  //               subjectCounts.entries
+  //                   .map((e) => '${e.key}:${e.value}')
+  //                   .join(' '),
+  //               style: pw.TextStyle(fontSize: 10, font: fontBold),
+  //             ),
+  //             pw.Text(
+  //               'nach Fach',
+  //               style: pw.TextStyle(fontSize: 9, font: fontRegular),
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   /// Builds a single row with pupil name (bold), group, grade and date at the
   /// beginning of the learning goals list. Uses same font size as table rows.
@@ -799,22 +799,22 @@ class LearningGoalsPdfGenerator {
   }
 
   /// Builds a stat item widget
-  static pw.Widget _buildStatItem(
-    String label,
-    int value,
-    pw.Font fontRegular,
-    pw.Font fontBold,
-  ) {
-    return pw.Column(
-      children: [
-        pw.Text(
-          value.toString(),
-          style: pw.TextStyle(fontSize: 14, font: fontBold),
-        ),
-        pw.Text(label, style: pw.TextStyle(fontSize: 9, font: fontRegular)),
-      ],
-    );
-  }
+  // static pw.Widget _buildStatItem(
+  //   String label,
+  //   int value,
+  //   pw.Font fontRegular,
+  //   pw.Font fontBold,
+  // ) {
+  //   return pw.Column(
+  //     children: [
+  //       pw.Text(
+  //         value.toString(),
+  //         style: pw.TextStyle(fontSize: 14, font: fontBold),
+  //       ),
+  //       pw.Text(label, style: pw.TextStyle(fontSize: 9, font: fontRegular)),
+  //     ],
+  //   );
+  // }
 
   /// Builds a table cell widget
   static pw.Widget _buildTableCell(

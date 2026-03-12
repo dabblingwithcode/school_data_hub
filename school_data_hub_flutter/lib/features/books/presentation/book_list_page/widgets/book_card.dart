@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
@@ -17,7 +18,6 @@ import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart'
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_page/widgets/library_book_card.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class BookCard extends WatchingWidget {
   const BookCard({required this.isbn, super.key});
@@ -41,17 +41,6 @@ class BookCard extends WatchingWidget {
     );
     final LibraryBookProxy bookProxy = bookProxies.first;
 
-    // TODO: Check if this is needed
-    // BookBorrowStatus? bookBorrowStatus = bookPupilBooks.isEmpty
-    //     ? null
-    //     : BookHelpers.getBorrowedStatus(bookPupilBooks.first);
-    // final Color borrowedColor = book.available
-    //     ? Colors.green
-    //     : bookBorrowStatus == BookBorrowStatus.since2Weeks
-    //         ? Colors.yellow
-    //         : bookBorrowStatus == BookBorrowStatus.since3Weeks
-    //             ? Colors.orange
-    //             : Colors.red;
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
@@ -144,9 +133,11 @@ class BookCard extends WatchingWidget {
                               context,
                             );
                             if (file == null) return;
-                            // TODO: Uncomment this when the API is ready ?
-                            // await di<BookManager>()
-                            //     .patchBookImage(file, bookProxy.isbn);
+
+                            await di<BookManager>().updateBookImage(
+                              file: file,
+                              isbn: bookProxy.isbn,
+                            );
                           },
                           child: UnencryptedImageInCard(
                             cacheKey: bookProxy.isbn.toString(),

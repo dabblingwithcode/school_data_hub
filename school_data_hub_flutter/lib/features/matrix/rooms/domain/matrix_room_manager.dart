@@ -14,9 +14,8 @@ class MatrixRoomManager {
   final _notificationService = di<NotificationService>();
 
   final MatrixApiService _matrixApiService;
-  final String _matrixAdminId;
 
-  MatrixRoomManager(this._matrixAdminId, this._matrixApiService);
+  MatrixRoomManager(this._matrixApiService);
 
   final _matrixRooms = ValueNotifier<List<MatrixRoom>>([]);
   ValueListenable<List<MatrixRoom>> get matrixRooms => _matrixRooms;
@@ -190,11 +189,9 @@ class MatrixRoomManager {
       final MatrixRoom updatedRoom = await _matrixApiService.roomApi
           .changeRoomPowerLevels(
             roomId: roomId,
-
             eventsDefault: eventsDefault,
             reactions: reactions,
             currentRoom: currentRoom,
-            matrixAdmin: _matrixAdminId,
           );
 
       currentRoom.eventsDefault = updatedRoom.eventsDefault;

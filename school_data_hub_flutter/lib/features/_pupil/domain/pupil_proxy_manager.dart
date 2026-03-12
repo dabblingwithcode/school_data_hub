@@ -9,8 +9,6 @@ import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart'
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/data/pupil_data_api_service.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter_impl.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
 
@@ -284,12 +282,6 @@ class PupilProxyManager extends ChangeNotifier {
     });
 
     return pupilsWithBirthdayUntilDate;
-  }
-
-  /// **TODO:** Do we need this?
-  PupilsFilter getPupilFilter() {
-    //return PupilsFilterImplementation(this, sortMode: sortMode);
-    return PupilsFilterImplementation(this);
   }
 
   //- API CALLS

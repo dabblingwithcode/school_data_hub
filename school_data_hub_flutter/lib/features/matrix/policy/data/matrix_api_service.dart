@@ -1,20 +1,17 @@
-import 'dart:developer' as developer;
-
 import 'package:dio/dio.dart';
+import 'package:school_data_hub_flutter/features/matrix/matrix_api_client/matrix_api_client.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/models/matrix_event_report.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/models/matrix_message.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/models/policy.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart'
     as room_api;
-import 'package:school_data_hub_flutter/features/matrix/services/api/api_client.dart';
-import 'package:school_data_hub_flutter/features/matrix/services/api/api_settings.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/data/matrix_user_api_service.dart';
 
 enum MatrixAuthType { matrix, corporal }
 
 class MatrixApiService {
-  late final ApiClient _apiClient;
+  late final MatrixApiClient _apiClient;
 
   String _matrixToken;
   String _corporalToken;
@@ -29,7 +26,7 @@ class MatrixApiService {
     required String corporalToken,
   }) : _matrixToken = matrixToken,
        _corporalToken = corporalToken {
-    _apiClient = ApiClient(Dio(), baseUrl: matrixUrl);
+    _apiClient = MatrixApiClient(Dio(), baseUrl: matrixUrl);
 
     _apiClient.setApiOptions(
       tokenKey: Token.matrix,
@@ -46,7 +43,7 @@ class MatrixApiService {
   }
 
   // Getters to access sub-services
-  ApiClient get apiClient => _apiClient;
+  MatrixApiClient get apiClient => _apiClient;
   MatrixUserApiService get userApi => _userApiService;
   room_api.MatrixRoomApiService get roomApi => _roomApiService;
 
@@ -93,17 +90,6 @@ class MatrixApiService {
     dir: dir,
   );
 
-  // Direct messaging methods
-  // Future<Map<String, String>> sendDirectTextMessage({
-  //   required String targetUserId,
-  //   required String text,
-  //   String? transactionId,
-  // }) => _roomApiService.sendDirectTextMessage(
-  //   targetUserId: targetUserId,
-  //   text: text,
-  //   transactionId: transactionId,
-  // );
-
   Future<MatrixEventReportsResponse> fetchEventReports({
     int? from,
     int? limit,
@@ -129,7 +115,7 @@ class MatrixApiService {
     );
 
     if (response.statusCode != 200) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Laden der Event Reports',
         response.statusCode,
       );
@@ -147,7 +133,7 @@ class MatrixApiService {
     );
 
     if (response.statusCode != 200) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Laden des Event Report Details',
         response.statusCode,
       );
@@ -165,7 +151,7 @@ class MatrixApiService {
     );
 
     if (response.statusCode != 200) {
-      throw ApiException(
+      throw MatrixApiException(
         'Fehler beim Löschen des Event Reports',
         response.statusCode,
       );
@@ -213,7 +199,10 @@ class MatrixApiService {
     );
 
     if (response.statusCode != 200) {
-      throw ApiException('Fehler beim Laden der Policy', response.statusCode);
+      throw MatrixApiException(
+        'Fehler beim Laden der Policy',
+        response.statusCode,
+      );
     }
 
     return Policy.fromJson(response.data['policy'] as Map<String, dynamic>);
@@ -223,11 +212,6 @@ class MatrixApiService {
 
   Future<void> putMatrixPolicy() async {
     final String policyJson = MatrixPolicyHelper.generatePolicyJson();
-    //TODO:; remove after debugging
-    developer.log(
-      'PUT $_putMatrixPolicy payload: $policyJson',
-      name: 'MatrixApiService.putMatrixPolicy',
-    );
 
     final Response<dynamic> response = await _apiClient.put(
       _putMatrixPolicy,
@@ -238,7 +222,10 @@ class MatrixApiService {
     );
 
     if (response.statusCode != 200) {
-      throw ApiException('Fehler beim Setzen der Policy', response.statusCode);
+      throw MatrixApiException(
+        'Fehler beim Setzen der Policy',
+        response.statusCode,
+      );
     }
 
     return;

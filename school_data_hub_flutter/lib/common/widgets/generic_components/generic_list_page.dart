@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/domain/search_text_source.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
@@ -158,6 +156,8 @@ class GenericListPage<T> extends StatelessWidget {
               bottomBarActions: bottomBarActions,
               filterSheetChildren: filterSheetChildren,
               showFilterBottomSheet: showFilter,
+              filtersActive: searchBarConfig?.filtersActive,
+              onResetFilters: searchBarConfig?.onResetFilters,
             )
           : null,
     );
@@ -203,12 +203,16 @@ class _ListPageBottomNavBar extends StatelessWidget {
     this.bottomBarActions,
     this.filterSheetChildren,
     required this.showFilterBottomSheet,
+    this.filtersActive,
+    this.onResetFilters,
   });
 
   final Widget? bottomNavigationBar;
   final List<Widget>? bottomBarActions;
   final List<Widget>? filterSheetChildren;
   final void Function(BuildContext) showFilterBottomSheet;
+  final ValueListenable<bool>? filtersActive;
+  final VoidCallback? onResetFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -216,13 +220,12 @@ class _ListPageBottomNavBar extends StatelessWidget {
     final actions = <Widget>[];
 
     if (bottomBarActions != null) actions.addAll(bottomBarActions!);
-    if (filterSheetChildren != null) {
+    if (filterSheetChildren != null && filtersActive != null) {
       actions.add(
-        // TODO; decouple the di calls from this widget
         GenericFilterButton(
           isSearchBar: false,
-          filtersActive: di<FiltersStateManager>().filtersActive,
-          onLongPress: () => di<FiltersStateManager>().resetFilters(),
+          filtersActive: filtersActive!,
+          onLongPress: onResetFilters,
           showBottomSheetFunction: showFilterBottomSheet,
         ),
       );

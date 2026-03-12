@@ -583,11 +583,11 @@ class CompetenceManager {
 
   Future<void> removeFileFromCompetenceCheck({
     required String competenceCheckId,
-    required String fileId,
+    required String documentId,
   }) async {
     try {
       final updatedPupilData = await _competenceCheckApiService
-          .removeFileFromCompetenceCheck(competenceCheckId, fileId);
+          .removeFileFromCompetenceCheck(competenceCheckId, documentId);
       di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
 
       _notificationService.showSnackBar(

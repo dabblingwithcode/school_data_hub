@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 
 class WorkbookImage extends WatchingWidget {
   final Workbook workbook;
@@ -18,13 +18,7 @@ class WorkbookImage extends WatchingWidget {
       onTap: () async {
         final File? file = await createAndCropImageFile(context);
         if (file == null) return;
-        // TODO: implement when ready
-        di<NotificationService>().showSnackBar(
-          NotificationType.warning,
-          'Not implemented yet',
-        );
-        // await di<WorkbookManager>()
-        //     .postWorkbookFile(file, workbook.isbn);
+        await di<WorkbookManager>().postWorkbookFile(file, workbook.isbn);
       },
       onLongPress: () async {
         final bool? result = await confirmationDialog(
@@ -33,14 +27,7 @@ class WorkbookImage extends WatchingWidget {
           message: 'Bild löschen?',
         );
         if (result != true) return;
-        // TODO: implement when ready
-        di<NotificationService>().showSnackBar(
-          NotificationType.warning,
-          'Not implemented yet',
-        );
-
-        // await di<WorkbookManager>()
-        //     .deleteWorkbookFile(workbook.isbn);
+        await di<WorkbookManager>().deleteWorkbookFile(workbook.isbn);
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 5.0),

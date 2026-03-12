@@ -327,7 +327,8 @@ class PupilIdentityStreamPage extends WatchingWidget {
             status = ReceiverStatus.confirmed;
           }
 
-          // TODO: switch to override confirmation
+          // TODO: replace manual confirm/reject with an override-based
+          // confirmation flow (auto-approve or single-tap override).
           return Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: ReceiverCard(
