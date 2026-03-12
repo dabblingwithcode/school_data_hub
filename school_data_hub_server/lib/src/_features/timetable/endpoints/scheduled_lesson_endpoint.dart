@@ -49,8 +49,24 @@ class ScheduledLessonEndpoint extends Endpoint {
           'Timetable slot with id ${scheduledLesson.scheduledAtId} does not exist.');
     }
 
+    // Extract teacher IDs before insert (relation lists are ignored by insertRow).
+    final teacherUserIds =
+        scheduledLesson.lessonTeachers?.map((lt) => lt.userId).toList() ?? [];
+
     final scheduledLessonInDatabase =
         await ScheduledLesson.db.insertRow(session, scheduledLesson);
+
+    // Persist junction rows for additional teachers (max 3 total).
+    for (final userId in teacherUserIds.take(3)) {
+      await ScheduledLessonTeacher.db.insertRow(
+        session,
+        ScheduledLessonTeacher(
+          userId: userId,
+          scheduledLessonId: scheduledLessonInDatabase.id!,
+        ),
+      );
+    }
+
     final scheduledLessonWithIncludes = await ScheduledLesson.db.findById(
         session, scheduledLessonInDatabase.id!,
         include: TimetableSchemas.scheduledLessonAllInclude);
@@ -144,8 +160,27 @@ class ScheduledLessonEndpoint extends Endpoint {
     final oldSlotId = existing.scheduledAtId;
     final newSlotId = scheduledLesson.scheduledAtId;
 
+    // Extract teacher IDs before update (relation lists are ignored by updateRow).
+    final teacherUserIds =
+        scheduledLesson.lessonTeachers?.map((lt) => lt.userId).toList() ?? [];
+
     final updatedScheduledLesson =
         await ScheduledLesson.db.updateRow(session, scheduledLesson);
+
+    // Replace junction rows: delete all existing, then re-insert (max 3 total).
+    await ScheduledLessonTeacher.db.deleteWhere(
+      session,
+      where: (t) => t.scheduledLessonId.equals(scheduledLesson.id!),
+    );
+    for (final userId in teacherUserIds.take(3)) {
+      await ScheduledLessonTeacher.db.insertRow(
+        session,
+        ScheduledLessonTeacher(
+          userId: userId,
+          scheduledLessonId: scheduledLesson.id!,
+        ),
+      );
+    }
 
     if (oldSlotId != newSlotId) {
       final lessonsStillUsingOldSlot = await ScheduledLesson.db.find(

@@ -5,12 +5,10 @@ import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 /// Widget for selecting teachers for a lesson.
-/// When [targetWeekday], [targetStartTime], [targetEndTime] and [scheduledLessons]
-/// are provided, the "add teacher" dropdown only lists teachers without overlap.
+/// Accepts a [ValueNotifier<List<User>>] and watches it directly so the chip
+/// list stays in sync without depending on the parent to pass updated props.
 class TeacherSelection extends WatchingWidget {
-  final List<User> selectedTeachers;
-  final ValueChanged<List<User>> onTeachersChanged;
-  final int dropdownKey;
+  final ValueNotifier<List<User>> selectedTeachersNotifier;
   final Weekday? targetWeekday;
   final String? targetStartTime;
   final String? targetEndTime;
@@ -19,9 +17,7 @@ class TeacherSelection extends WatchingWidget {
 
   const TeacherSelection({
     super.key,
-    required this.selectedTeachers,
-    required this.onTeachersChanged,
-    required this.dropdownKey,
+    required this.selectedTeachersNotifier,
     this.targetWeekday,
     this.targetStartTime,
     this.targetEndTime,
@@ -50,6 +46,13 @@ class TeacherSelection extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final users = watchValue((UserManager m) => m.users);
+    final selectedTeachers = watch(selectedTeachersNotifier).value;
+
+    // Internal key to reset the dropdown after each selection.
+    final dropdownKeyVn = createOnce<ValueNotifier<int>>(
+      () => ValueNotifier<int>(0),
+    );
+    final dropdownKeyValue = watch(dropdownKeyVn).value;
 
     final availableToAdd = users.where((user) {
       if (user.role != Role.teacher || user.id == null) return false;
@@ -100,12 +103,21 @@ class TeacherSelection extends WatchingWidget {
                             index: index,
                             totalTeachers: selectedTeachers.length,
                             onMoveUp: index > 0
-                                ? () => _moveTeacher(index, -1)
+                                ? () => _moveTeacher(
+                                      selectedTeachers,
+                                      index,
+                                      -1,
+                                    )
                                 : null,
                             onMoveDown: index < selectedTeachers.length - 1
-                                ? () => _moveTeacher(index, 1)
+                                ? () => _moveTeacher(
+                                      selectedTeachers,
+                                      index,
+                                      1,
+                                    )
                                 : null,
-                            onRemove: () => _removeTeacher(teacher),
+                            onRemove: () =>
+                                _removeTeacher(selectedTeachers, teacher),
                           );
                         }).toList(),
                       ),
@@ -124,36 +136,47 @@ class TeacherSelection extends WatchingWidget {
                     ],
                   ),
                 ),
-              // Teacher dropdown
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: DropdownButtonFormField<int>(
-                  key: Key('teacher_dropdown_$dropdownKey'),
-                  initialValue:
-                      null, // Always null since this is for adding new teachers
-                  decoration: const InputDecoration(
-                    labelText: 'Lehrer hinzufügen',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: availableToAdd.map((user) {
-                        return DropdownMenuItem<int>(
-                          value: user.id,
-                          child: Text(
-                            user.userInfo?.fullName ?? 'Unbekannter Lehrer',
+              // Teacher dropdown — hidden once the 3-teacher cap is reached.
+              if (selectedTeachers.length < 3)
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: DropdownButtonFormField<int>(
+                    key: Key('teacher_dropdown_$dropdownKeyValue'),
+                    initialValue: null,
+                    decoration: const InputDecoration(
+                      labelText: 'Lehrer hinzufügen',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: availableToAdd
+                        .map(
+                          (user) => DropdownMenuItem<int>(
+                            value: user.id,
+                            child: Text(
+                              user.userInfo?.fullName ?? 'Unbekannter Lehrer',
+                            ),
                           ),
-                        );
-                      })
-                      .toList(),
-                  onChanged: (userId) {
-                    if (userId != null) {
-                      final user = users.firstWhere((u) => u.id == userId);
-                      final newTeachers = List<User>.from(selectedTeachers)
-                        ..add(user);
-                      onTeachersChanged(newTeachers);
-                    }
-                  },
+                        )
+                        .toList(),
+                    onChanged: (userId) {
+                      if (userId != null) {
+                        final user = users.firstWhere((u) => u.id == userId);
+                        selectedTeachersNotifier.value = [
+                          ...selectedTeachers,
+                          user,
+                        ];
+                        dropdownKeyVn.value++;
+                      }
+                    },
+                  ),
+                )
+              else
+                const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text(
+                    'Maximale Anzahl von 3 Lehrern erreicht.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -161,18 +184,18 @@ class TeacherSelection extends WatchingWidget {
     );
   }
 
-  void _moveTeacher(int index, int direction) {
-    final newTeachers = List<User>.from(selectedTeachers);
+  void _moveTeacher(List<User> current, int index, int direction) {
+    final newTeachers = List<User>.from(current);
     final newIndex = index + direction;
     final temp = newTeachers[index];
     newTeachers[index] = newTeachers[newIndex];
     newTeachers[newIndex] = temp;
-    onTeachersChanged(newTeachers);
+    selectedTeachersNotifier.value = newTeachers;
   }
 
-  void _removeTeacher(User teacher) {
-    final newTeachers = List<User>.from(selectedTeachers)..remove(teacher);
-    onTeachersChanged(newTeachers);
+  void _removeTeacher(List<User> current, User teacher) {
+    selectedTeachersNotifier.value =
+        List<User>.from(current)..remove(teacher);
   }
 }
 
@@ -231,9 +254,8 @@ class _TeacherChip extends StatelessWidget {
                 Text(
                   teacher.userInfo?.fullName ?? 'Unbekannter Lehrer',
                   style: TextStyle(
-                    fontWeight: isMainTeacher
-                        ? FontWeight.bold
-                        : FontWeight.normal,
+                    fontWeight:
+                        isMainTeacher ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
                 if (isMainTeacher)
