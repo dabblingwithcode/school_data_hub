@@ -99,6 +99,10 @@ class HubStreamService with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         _appInForeground = true;
+        if (isConnected) {
+          _log.info('[HUB] App resumed — already connected, skipping');
+          break;
+        }
         _log.info('[HUB] App resumed — scheduling reconnect');
         _scheduleReconnect(
           isReconnect: true,
@@ -138,8 +142,8 @@ class HubStreamService with WidgetsBindingObserver {
     String reason = 'unknown',
   }) {
     if (!_appInForeground || _disposed) return;
+    if (_connecting) return;
     if (_reconnectTimer != null) return;
-    _cancelReconnectTimer();
     final delayWithJitter = _withJitter(delayMs);
     _log.info(
       '[HUB] reconnect_scheduled reason=$reason delayMs=$delayWithJitter',

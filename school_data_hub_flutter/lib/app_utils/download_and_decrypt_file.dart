@@ -8,15 +8,15 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 
+DefaultCacheManager get _cacheManager => di<DefaultCacheManager>();
+NotificationService get _notificationService => di<NotificationService>();
+
 Future<File?> downloadAndDecryptFile({
   required String documentId,
   required bool decrypt,
 }) async {
-  final cacheManager = di<DefaultCacheManager>();
-  final notificationService = di<NotificationService>();
-
   // Check cache
-  final fileInfo = await cacheManager.getFileFromCache(documentId);
+  final fileInfo = await _cacheManager.getFileFromCache(documentId);
 
   if (fileInfo != null && await fileInfo.file.exists()) {
     if (!decrypt) {
@@ -24,11 +24,12 @@ Future<File?> downloadAndDecryptFile({
     }
 
     final fileBytes = await fileInfo.file.readAsBytes();
-    final (:bytes, :wasLegacy) =
-        await customEncrypter.decryptFileBytesAsync(fileBytes);
+    final (:bytes, :wasLegacy) = await customEncrypter.decryptFileBytesAsync(
+      fileBytes,
+    );
 
     if (wasLegacy) {
-      _migrateToNewFormat(documentId, bytes, cacheManager);
+      _migrateToNewFormat(documentId, bytes);
     }
 
     final tempDir = await Directory.systemTemp.createTemp();
@@ -41,12 +42,12 @@ Future<File?> downloadAndDecryptFile({
   }
 
   // Download
-  notificationService.apiRunning(true);
+  _notificationService.apiRunning(true);
   final ByteData? byteData = await di<Client>().files.getImage(documentId);
-  notificationService.apiRunning(false);
+  _notificationService.apiRunning(false);
 
   if (byteData == null) {
-    notificationService.showSnackBar(
+    _notificationService.showSnackBar(
       NotificationType.error,
       'Fehler beim Laden der Datei',
     );
@@ -55,7 +56,7 @@ Future<File?> downloadAndDecryptFile({
 
   Uint8List fileBytes = byteData.buffer.asUint8List();
   // Cache it
-  await cacheManager.putFile(documentId, fileBytes);
+  await _cacheManager.putFile(documentId, fileBytes);
 
   if (!decrypt) {
     final tempDir = await Directory.systemTemp.createTemp();
@@ -65,11 +66,12 @@ Future<File?> downloadAndDecryptFile({
     return tempFile;
   }
 
-  final (:bytes, :wasLegacy) =
-      await customEncrypter.decryptFileBytesAsync(fileBytes);
+  final (:bytes, :wasLegacy) = await customEncrypter.decryptFileBytesAsync(
+    fileBytes,
+  );
 
   if (wasLegacy) {
-    _migrateToNewFormat(documentId, bytes, cacheManager);
+    _migrateToNewFormat(documentId, bytes);
   }
 
   final tempDir = await Directory.systemTemp.createTemp();
@@ -83,20 +85,17 @@ Future<File?> downloadAndDecryptFile({
 
 /// Fire-and-forget: re-encrypt [plainBytes] in the new format, update the
 /// server file, and refresh the local cache — all without blocking the caller.
-void _migrateToNewFormat(
-  String documentId,
-  Uint8List plainBytes,
-  DefaultCacheManager cacheManager,
-) {
+void _migrateToNewFormat(String documentId, Uint8List plainBytes) {
   Future(() async {
     try {
       final newEncrypted = customEncrypter.encryptTheseBytes(plainBytes);
       final byteData = ByteData.sublistView(newEncrypted);
-      final ok = await di<Client>()
-          .files
-          .replaceEncryptedFileBytes(documentId, byteData);
+      final ok = await di<Client>().files.replaceEncryptedFileBytes(
+        documentId,
+        byteData,
+      );
       if (ok) {
-        await cacheManager.putFile(documentId, newEncrypted);
+        await _cacheManager.putFile(documentId, newEncrypted);
       }
     } catch (_) {
       // Migration is best-effort; silently ignore failures.
