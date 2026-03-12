@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
@@ -25,6 +26,8 @@ enum SelectedContent {
   books,
   none,
 }
+
+final _log = Logger('CompetenceManager');
 
 class CompetenceManager {
   final _envManager = di<EnvManager>();
@@ -134,12 +137,10 @@ class CompetenceManager {
       _competences.value = competences;
       _envManager.setPopulatedEnvServerData(competences: true);
       _rootCompetencesMap.clear();
-      _rootCompetencesMap =
-          CompetenceHelper.generateRootCompetencesMap(competences);
-      _notificationService.showSnackBar(
-        NotificationType.success,
-        'Kompetenzen aktualisiert!',
+      _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+        competences,
       );
+      _log.info('Kompetenzen geladen!');
     }
   }
 
@@ -149,13 +150,11 @@ class CompetenceManager {
       final sortedCompetences = CompetenceHelper.sortCompetences(competences);
       _competences.value = sortedCompetences;
       _rootCompetencesMap.clear();
-      _rootCompetencesMap =
-          CompetenceHelper.generateRootCompetencesMap(competences);
-      di<CompetenceFilterManager>().refreshFilteredCompetences(competences);
-      _notificationService.showSnackBar(
-        NotificationType.success,
-        'Kompetenzen aktualisiert!',
+      _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+        competences,
       );
+      di<CompetenceFilterManager>().refreshFilteredCompetences(competences);
+      _log.info('Kompetenzen geladen!');
     }
   }
 
@@ -205,14 +204,17 @@ class CompetenceManager {
     final importedCompetences = await _competenceApiService
         .importCompetencesFromJsonFile(fileResponse.path!);
     if (importedCompetences != null) {
-      final sortedCompetences =
-          CompetenceHelper.sortCompetences(importedCompetences);
+      final sortedCompetences = CompetenceHelper.sortCompetences(
+        importedCompetences,
+      );
       _competences.value = sortedCompetences;
       _rootCompetencesMap.clear();
-      _rootCompetencesMap =
-          CompetenceHelper.generateRootCompetencesMap(sortedCompetences);
-      di<CompetenceFilterManager>()
-          .refreshFilteredCompetences(sortedCompetences);
+      _rootCompetencesMap = CompetenceHelper.generateRootCompetencesMap(
+        sortedCompetences,
+      );
+      di<CompetenceFilterManager>().refreshFilteredCompetences(
+        sortedCompetences,
+      );
       _envManager.setPopulatedEnvServerData(competences: true);
       _notificationService.showSnackBar(
         NotificationType.success,
@@ -284,8 +286,9 @@ class CompetenceManager {
     final List<Competence> competences = List.from(_competences.value);
     competences[competenceListIndex] = verifiedUpdatedCompetence;
     _competences.value = competences;
-    di<CompetenceFilterManager>()
-        .refreshFilteredCompetences(_competences.value);
+    di<CompetenceFilterManager>().refreshFilteredCompetences(
+      _competences.value,
+    );
     return;
   }
 
@@ -303,8 +306,9 @@ class CompetenceManager {
       final List<Competence> competences = List.from(_competences.value);
       competences.removeWhere((element) => element.publicId == publicId);
       _competences.value = competences;
-      di<CompetenceFilterManager>()
-          .refreshFilteredCompetences(_competences.value);
+      di<CompetenceFilterManager>().refreshFilteredCompetences(
+        _competences.value,
+      );
       _notificationService.showSnackBar(
         NotificationType.success,
         'Kompetenz gelöscht',

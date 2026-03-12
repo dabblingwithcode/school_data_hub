@@ -290,13 +290,9 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
 
                             if (context.mounted) {
                               Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Nachricht an ${matrixUser.displayName} gesendet!',
-                                  ),
-                                  backgroundColor: Colors.green,
-                                ),
+                              di<NotificationService>().showSnackBar(
+                                NotificationType.success,
+                                'Nachricht an ${matrixUser.displayName} gesendet!',
                               );
                             }
                           } catch (e, stackTrace) {
@@ -304,12 +300,9 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                             log('Stack trace: $stackTrace');
 
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Fehler beim Senden: $e'),
-                                  backgroundColor: Colors.red,
-                                  duration: const Duration(seconds: 5),
-                                ),
+                              di<NotificationService>().showSnackBar(
+                                NotificationType.error,
+                                'Fehler beim Senden: $e',
                               );
                             }
                           } finally {
@@ -468,6 +461,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                 );
                                 if (pupil == null) {
                                   di<NotificationService>().showInformationDialog(
+                                    NotificationType.error,
                                     'Dieser Benutzer ist keinem Schüler zugeordnet.',
                                   );
                                   return;
@@ -593,10 +587,9 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                             Clipboard.setData(
                               ClipboardData(text: matrixUser.id!),
                             );
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Copied to clipboard'),
-                              ),
+                            di<NotificationService>().showSnackBar(
+                              NotificationType.info,
+                              'Copied to clipboard',
                             );
                           },
                         ),

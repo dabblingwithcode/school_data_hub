@@ -168,6 +168,8 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                                   NotificationService
                                                                 >()
                                                                 .showInformationDialog(
+                                                                  NotificationType
+                                                                      .error,
                                                                   'Es sind keine Matrix-Admindaten hinterlegt.',
                                                                 );
                                                             return;
@@ -319,6 +321,8 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                                   NotificationService
                                                                 >()
                                                                 .showInformationDialog(
+                                                                  NotificationType
+                                                                      .error,
                                                                   'Es sind keine Matrix-Admindaten hinterlegt.',
                                                                 );
                                                             return;

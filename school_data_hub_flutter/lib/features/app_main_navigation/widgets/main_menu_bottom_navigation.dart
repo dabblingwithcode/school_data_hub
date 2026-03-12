@@ -100,6 +100,7 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation>
         unawaited(
           Future<void>.delayed(const Duration(milliseconds: 500), () {
             di<NotificationService>().showInformationDialog(
+              NotificationType.error,
               'Es fehlen noch diese Daten im Server:\n\n$missingData',
             );
           }),

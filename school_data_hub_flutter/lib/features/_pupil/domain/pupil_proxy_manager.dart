@@ -366,13 +366,11 @@ class PupilProxyManager extends ChangeNotifier {
       final deletedPupilIdentities = await di<PupilIdentityManager>()
           .deleteOrphanPupilIdentities(outdatedPupilIdentitiesIds);
       _notificationService.showInformationDialog(
+        NotificationType.info,
         'Diese Schüler_innen existieren nicht mehr in der Datenbank, Ihre Ids wurden aus dem Gerät gelöscht:\n\n$deletedPupilIdentities',
       );
     }
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Schülerdaten geladen!',
-    );
+    _log.info('Schülerdaten geladen!');
 
     notifyListeners();
   }

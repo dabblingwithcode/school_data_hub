@@ -49,6 +49,7 @@ class AttendanceCard extends WatchingWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 AvatarWithBadges(pupil: pupil, size: 80),
+                const Gap(5),
                 Expanded(
                   child: GestureDetector(
                     onLongPress: () =>
@@ -76,18 +77,19 @@ class AttendanceCard extends WatchingWidget {
                                   info,
                                   dropdownFocusNode,
                                 ),
-                              if (_shouldShowComment(info, isAndroid))
-                                _buildCommentSection(context, info, isAndroid),
                             ],
                           ),
                         ),
-                        const Gap(15),
+                        const Gap(5),
                       ],
                     ),
                   ),
                 ),
               ],
             ),
+
+            _AttendanceComment(pupil: pupil, thisDate: thisDate),
+            const Gap(10),
           ],
         ),
       ),
@@ -468,62 +470,6 @@ class AttendanceCard extends WatchingWidget {
   }
 
   // ---------------------------------------------------------------------------
-  // Comment Section
-  // ---------------------------------------------------------------------------
-
-  bool _shouldShowComment(AttendanceValues info, bool isAndroid) {
-    if (isAndroid) return info.missedTypeValue != MissedType.notSet;
-    return info.missedTypeValue != MissedType.notSet || info.returnedValue;
-  }
-
-  Widget _buildCommentSection(
-    BuildContext context,
-    AttendanceValues info,
-    bool isAndroid,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Gap(10),
-          const Text(
-            'Kommentar:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const Gap(10),
-          Expanded(
-            child: InkWell(
-              onTap: () async {
-                final result = await longTextFieldDialog(
-                  title: isAndroid ? 'Kommentar eintragen' : 'Kommentar',
-                  labelText: 'Kommentar',
-                  initialValue: isAndroid ? null : info.commentValue,
-                  parentContext: context,
-                );
-                if (result == null || result.value == info.commentValue) {
-                  return;
-                }
-                di<AttendanceManager>().updateCommentValue(
-                  pupil.pupilId,
-                  result.value,
-                  thisDate,
-                );
-              },
-              child: Text(
-                (info.commentValue == null || info.commentValue!.isEmpty)
-                    ? (isAndroid ? 'Kein Kommentar' : 'Kein Eintrag')
-                    : info.commentValue!,
-                softWrap: true,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------------------------
 
@@ -628,5 +574,80 @@ class _AttendanceData extends WatchingWidget {
 
     final info = AttendanceHelper.getAttendanceValues(missedSchoolday);
     return builder(context, info);
+  }
+}
+
+class _AttendanceComment extends WatchingWidget {
+  final PupilProxy pupil;
+  final DateTime thisDate;
+
+  const _AttendanceComment({required this.pupil, required this.thisDate});
+  bool _shouldShowComment(AttendanceValues info, bool isAndroid) {
+    if (isAndroid) return info.missedTypeValue != MissedType.notSet;
+    return info.missedTypeValue != MissedType.notSet || info.returnedValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final missedSchooldaysList = di<AttendanceManager>()
+        .getPupilMissedSchooldaysProxy(pupil.pupilId);
+
+    final missedSchoolday = watch(missedSchooldaysList).missedSchooldays
+        .firstWhereOrNull(
+          (entry) =>
+              entry.schoolday?.schoolday.isSameDate(thisDate.toLocal()) ??
+              false,
+        );
+    final info = AttendanceHelper.getAttendanceValues(missedSchoolday);
+    return _shouldShowComment(info, Platform.isAndroid)
+        ? InkWell(
+            onTap: () async {
+              final result = await longTextFieldDialog(
+                title: Platform.isAndroid ? 'Kommentar eintragen' : 'Kommentar',
+                labelText: 'Kommentar',
+                initialValue: Platform.isAndroid ? null : info.commentValue,
+                parentContext: context,
+              );
+              if (result == null || result.value == info.commentValue) {
+                return;
+              }
+              di<AttendanceManager>().updateCommentValue(
+                pupil.pupilId,
+                result.value,
+                thisDate,
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text.rich(
+                  textAlign: TextAlign.left,
+                  TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: ' Kommentar: ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                            (info.commentValue == null ||
+                                info.commentValue!.isEmpty)
+                            ? (Platform.isAndroid
+                                  ? 'Kein Kommentar'
+                                  : 'Kein Eintrag')
+                            : info.commentValue!,
+                      ),
+                    ],
+                  ),
+                  softWrap: true,
+                ),
+              ),
+            ),
+          )
+        : const SizedBox.shrink();
   }
 }

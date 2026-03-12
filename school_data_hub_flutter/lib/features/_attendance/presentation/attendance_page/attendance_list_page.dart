@@ -4,6 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/attendance_pdf_generator.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
@@ -178,11 +179,9 @@ class AttendanceListPage extends WatchingWidget {
                   }
                 } catch (e) {
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Fehler beim Erstellen der PDF: $e'),
-                        backgroundColor: Colors.red,
-                      ),
+                    di<NotificationService>().showInformationDialog(
+                      NotificationType.error,
+                      'Fehler beim Erstellen der PDF: $e',
                     );
                   }
                 }

@@ -8,12 +8,12 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_di
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/special_info_page/widgets/special_info_card_view_model.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
 class SpecialInfoCard extends WatchingWidget {
   final PupilProxy pupil;
@@ -106,10 +106,8 @@ class _SpecialInfoNameRow extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firstName =
-        watchPropertyValue((m) => m.firstName, target: pupil);
-    final lastName =
-        watchPropertyValue((m) => m.lastName, target: pupil);
+    final firstName = watchPropertyValue((m) => m.firstName, target: pupil);
+    final lastName = watchPropertyValue((m) => m.lastName, target: pupil);
     return Row(
       children: [
         Text(
@@ -149,8 +147,10 @@ class _SpecialInfoContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final specialInformation =
-        watchPropertyValue((m) => m.specialInformation, target: pupil);
+    final specialInformation = watchPropertyValue(
+      (m) => m.specialInformation,
+      target: pupil,
+    );
     final parts = specialInformation?.split('|') ?? [];
     final info = parts.isNotEmpty
         ? parts[0]
@@ -170,6 +170,7 @@ class _SpecialInfoContent extends WatchingWidget {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
                     di<NotificationService>().showInformationDialog(
+                      NotificationType.error,
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );
                     return;
@@ -226,6 +227,7 @@ class _SpecialInfoContent extends WatchingWidget {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
                     di<NotificationService>().showInformationDialog(
+                      NotificationType.error,
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );
                     return;
@@ -261,6 +263,7 @@ class _SpecialInfoContent extends WatchingWidget {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
                     di<NotificationService>().showInformationDialog(
+                      NotificationType.error,
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );
                     return;
@@ -271,9 +274,7 @@ class _SpecialInfoContent extends WatchingWidget {
                     context: context,
                     initialDate: initialDate,
                     firstDate: DateTime(2000),
-                    lastDate: DateTime.now().add(
-                      const Duration(days: 365),
-                    ),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
                     builder: (context, child) {
                       return Theme(
                         data: Theme.of(context).copyWith(

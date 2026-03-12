@@ -212,6 +212,7 @@ Future<void> supportLevelDialog(
                   onTap: () async {
                     if (textValue.isEmpty) {
                       notificationService.showInformationDialog(
+                        NotificationType.error,
                         'Das Kommentarfeld darf nicht leer sein.',
                       );
                       return;

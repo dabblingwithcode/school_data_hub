@@ -80,7 +80,7 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
           if (!mounted) return;
           allCredentials.addAll(chunkResult.credentials);
           allErrors.addAll(chunkResult.errors);
-          setState(() {
+          _safeSetState(() {
             _progressCreated = allCredentials.length;
             _progressErrors = allErrors.length;
           });
@@ -92,13 +92,13 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
         },
         onError: (Object e, StackTrace? st) {
           _log.severe('[BatchImport] Chunk stream onError', e, st);
-          if (mounted) {
-            setState(() => _isCreating = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Fehler: $e')),
-            );
-          }
           WakelockPlus.disable();
+          if (mounted) {
+            _safeSetState(() => _isCreating = false);
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Fehler: $e')));
+          }
         },
         onDone: () {
           _log.info(
@@ -107,7 +107,7 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
           );
           WakelockPlus.disable();
           if (!mounted) return;
-          setState(() {
+          _safeSetState(() {
             _batchResult = BatchCreateResult(
               credentials: allCredentials,
               errors: allErrors,
@@ -124,11 +124,19 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
       await WakelockPlus.disable();
       if (mounted) {
         setState(() => _isCreating = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Fehler: $e')));
       }
     }
+  }
+
+  /// Schedules [setState] for the next frame to avoid calling it during layout.
+  void _safeSetState(VoidCallback fn) {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(fn);
+    });
   }
 
   void _abortCreate() {
@@ -142,9 +150,9 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
         _progressCreated = 0;
         _progressErrors = 0;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Import abgebrochen.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Import abgebrochen.')));
     }
   }
 
@@ -264,33 +272,43 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
                       style: AppStyles.subtitle,
                     ),
                     const Gap(8),
-                    Row(
-                      children: [
-                        ElevatedButton.icon(
-                          style: AppStyles.actionButtonStyle,
-                          onPressed: _isCreating ? null : _createUsers,
-                          icon: _isCreating
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Icon(Icons.person_add),
-                          label: Text(
-                            _isCreating
-                                ? 'Wird erstellt… ($_progressCreated / ${_parseResult!.rows.length}, $_progressErrors Fehler)'
-                                : 'Benutzer anlegen',
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton.icon(
+                            style: AppStyles.actionButtonStyle.copyWith(
+                              minimumSize: WidgetStateProperty.all(
+                                const Size(0, 50),
+                              ),
+                            ),
+                            onPressed: _isCreating ? null : _createUsers,
+                            icon: _isCreating
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.person_add),
+                            label: Text(
+                              _isCreating
+                                  ? 'Wird erstellt… ($_progressCreated / ${_parseResult!.rows.length}, $_progressErrors Fehler)'
+                                  : 'Benutzer anlegen',
+                            ),
                           ),
-                        ),
-                        if (_isCreating) ...[
-                          const Gap(12),
-                          OutlinedButton.icon(
-                            onPressed: _abortCreate,
-                            icon: const Icon(Icons.cancel_outlined),
-                            label: const Text('Abbrechen'),
-                          ),
+                          if (_isCreating) ...[
+                            const Gap(12),
+                            OutlinedButton.icon(
+                              onPressed: _abortCreate,
+                              icon: const Icon(Icons.cancel_outlined),
+                              label: const Text('Abbrechen'),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ],
                 ],

@@ -24,8 +24,8 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
   static const double _roomWidth = 160;
   static const double _timeColumnWidth = 64;
   static const double _roomHeaderHeight = 48;
-  static const double _minSlotHeight = 16;
-  static const double _maxSlotHeight = 80;
+  static const double _minSlotHeight = 12;
+  static const double _maxSlotHeight = 16;
 
   double _slotHeight = 40;
   double _slotHeightAtScaleStart = 40;
@@ -201,6 +201,8 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
                                   slots: _slotsPerDay,
                                   roomWidth: _roomWidth,
                                   slotHeight: _slotHeight,
+                                  dayStartMinutes: _dayStartMinutes,
+                                  slotMinutes: _slotMinutes,
                                 ),
                               ),
                               // Booking layer
@@ -329,16 +331,19 @@ class _RoomTimetableGridWidgetState extends State<RoomTimetableGridWidget> {
         child: Column(
           children: List.generate(_slotsPerDay, (index) {
             final minutes = _dayStartMinutes + index * _slotMinutes;
+            final minuteOfHour = minutes % 60;
+            final showLabel = minuteOfHour % 15 == 0;
             final hour = minutes ~/ 60;
-            final minute = minutes % 60;
             final label =
                 '${hour.toString().padLeft(2, '0')}:'
-                '${minute.toString().padLeft(2, '0')}';
+                '${minuteOfHour.toString().padLeft(2, '0')}';
             return Container(
               height: _slotHeight,
               alignment: Alignment.topRight,
               padding: const EdgeInsets.only(right: 4),
-              child: Text(label, style: const TextStyle(fontSize: 11)),
+              child: showLabel
+                  ? Text(label, style: const TextStyle(fontSize: 11))
+                  : const SizedBox.shrink(),
             );
           }),
         ),
@@ -862,27 +867,42 @@ class _GridPainter extends CustomPainter {
   final int slots;
   final double roomWidth;
   final double slotHeight;
+  final int dayStartMinutes;
+  final int slotMinutes;
 
   _GridPainter({
     required this.rooms,
     required this.slots,
     required this.roomWidth,
     required this.slotHeight,
+    required this.dayStartMinutes,
+    required this.slotMinutes,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final verticalPaint = Paint()
       ..color = Colors.grey.shade300
       ..strokeWidth = 1;
 
     for (var r = 0; r <= rooms; r++) {
       final x = r * roomWidth;
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), verticalPaint);
     }
+
+    final majorLinePaint = Paint()
+      ..color = Colors.grey.shade300
+      ..strokeWidth = 1;
+    final minorLinePaint = Paint()
+      ..color = Colors.grey.shade200
+      ..strokeWidth = 1;
 
     for (var s = 0; s <= slots; s++) {
       final y = s * slotHeight;
+      final minutes = dayStartMinutes + s * slotMinutes;
+      final minuteOfHour = minutes % 60;
+      final isFifteenMinuteStep = minuteOfHour % 15 == 0;
+      final paint = isFifteenMinuteStep ? majorLinePaint : minorLinePaint;
       canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
     }
   }

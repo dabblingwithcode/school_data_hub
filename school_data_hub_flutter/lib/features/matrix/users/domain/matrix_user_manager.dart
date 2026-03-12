@@ -154,6 +154,7 @@ class MatrixUserManager {
       success = await _matrixApiService.userApi.deleteMatrixUser(userId);
     } catch (e) {
       _notificationService.showInformationDialog(
+        NotificationType.error,
         'Fehler beim Löschen vom Konto: $e',
       );
     }
@@ -162,6 +163,7 @@ class MatrixUserManager {
 
     if (!success) {
       _notificationService.showInformationDialog(
+        NotificationType.error,
         'Fehler beim Löschen vom Konto!',
       );
       return;
@@ -217,6 +219,7 @@ class MatrixUserManager {
 
     if (!success) {
       _notificationService.showInformationDialog(
+        NotificationType.error,
         'Fehler beim Zurücksetzen des Passworts!',
       );
       return null;

@@ -1,7 +1,7 @@
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 final _notificationService = di<NotificationService>();
 final _hubSessionManager = di<HubSessionManager>();
@@ -24,6 +24,7 @@ class ClientHelper {
     } on ServerpodClientException catch (e) {
       _notificationService.apiRunning(false);
       _notificationService.showInformationDialog(
+        NotificationType.error,
         'API Fehler: ${errorMessage ?? "Unbekannt"}: $e',
       );
 
@@ -31,6 +32,7 @@ class ClientHelper {
           e.toString().contains('401')) {
         // Handle authentication error specifically
         _notificationService.showInformationDialog(
+          NotificationType.error,
           'Authentication required. Please log in again.',
         );
         _hubSessionManager.signOutDevice();
@@ -40,6 +42,7 @@ class ClientHelper {
     } catch (e) {
       _notificationService.apiRunning(false);
       _notificationService.showInformationDialog(
+        NotificationType.error,
         'API Fehler:\n $errorMessage: $e',
       );
 

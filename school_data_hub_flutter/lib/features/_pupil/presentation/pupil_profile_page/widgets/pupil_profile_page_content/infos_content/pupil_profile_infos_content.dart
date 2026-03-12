@@ -11,11 +11,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/dialogues/logout_devices_dialog.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -24,6 +19,11 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profi
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/widgets/pupil_media_auth_values.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/dialogues/logout_devices_dialog.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
 
 class PupilProfileInfosContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -71,6 +71,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
                     di<NotificationService>().showInformationDialog(
+                      NotificationType.error,
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );
                     return;
@@ -103,6 +104,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName != pupil.groupTutor) {
                     di<NotificationService>().showInformationDialog(
+                      NotificationType.error,
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );
                     return;
@@ -250,6 +252,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                             onPressed: () async {
                               if (_isMatrixAuthorized() == false) {
                                 di<NotificationService>().showInformationDialog(
+                                  NotificationType.error,
                                   'Keine Berechtigung. Admin-Rechte erforderlich.',
                                 );
                                 return;
@@ -287,6 +290,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                             onPressed: () async {
                               if (_isMatrixAuthorized() == false) {
                                 di<NotificationService>().showInformationDialog(
+                                  NotificationType.error,
                                   'Keine Berechtigung. Admin-Rechte erforderlich.',
                                 );
                                 return;
@@ -582,6 +586,7 @@ bool _isMatrixAuthorized() {
   if (!di.isRegistered<MatrixPolicyManager>() ||
       !di<HubSessionManager>().isAdmin) {
     di<NotificationService>().showInformationDialog(
+      NotificationType.error,
       !di<HubSessionManager>().isAdmin
           ? 'Keine Berechtigung. Admin-Rechte erforderlich.'
           : 'Es sind keine Matrix-Admindaten hinterlegt.',

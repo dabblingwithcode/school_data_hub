@@ -197,7 +197,7 @@ class _DocumentItem extends StatelessWidget {
           },
           onLongPress: () async {
             if (!isAuthorizedToDelete) {
-              di<NotificationService>().showSnackBar(
+              di<NotificationService>().showInformationDialog(
                 NotificationType.error,
                 'Nur Admins können Dokumente löschen',
               );

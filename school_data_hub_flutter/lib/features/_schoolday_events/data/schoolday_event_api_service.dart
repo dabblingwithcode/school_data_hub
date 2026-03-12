@@ -171,6 +171,7 @@ class SchooldayEventApiService {
       );
     } catch (e) {
       _notificationService.showInformationDialog(
+        NotificationType.error,
         'Das Dokument konnte nicht aktualisiert werden: ${e.toString()}',
       );
       rethrow;

@@ -52,8 +52,7 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
         Navigator.of(context).pop(true);
       }
     } catch (e) {
-      _notificationService.showInformationDialog(e.toString());
-      _notificationService.showSnackBar(
+      _notificationService.showInformationDialog(
         NotificationType.error,
         'Fehler beim Hinzufügen des Raums: ${e.toString()}',
       );
@@ -102,8 +101,7 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
         Navigator.of(context).pop(true);
       }
     } catch (e) {
-      _notificationService.showInformationDialog(e.toString());
-      _notificationService.showSnackBar(
+      _notificationService.showInformationDialog(
         NotificationType.error,
         'Fehler beim Erstellen des Raums: ${e.toString()}',
       );

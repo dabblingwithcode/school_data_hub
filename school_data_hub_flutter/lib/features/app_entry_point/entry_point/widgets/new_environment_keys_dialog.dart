@@ -76,6 +76,7 @@ showNewEnvKeysDialog(BuildContext context) async {
                     if (serverNameController.text.isEmpty ||
                         serverUrlController.text.isEmpty) {
                       _notificationService.showInformationDialog(
+                        NotificationType.error,
                         'Bitte füllen Sie alle Felder aus.',
                       );
                       return;

@@ -200,6 +200,7 @@ class MatrixRoomApiService {
   }) async {
     if (newRoomAdmin != null || adminIdToRemove != null) {
       di<NotificationService>().showInformationDialog(
+        NotificationType.info,
         'Power levels werden von der Policy geändert.',
       );
       return currentRoom;

@@ -90,6 +90,7 @@ void main() async {
 class MyApp extends WatchingWidget {
   const MyApp({super.key});
 
+  static final navigatorKey = GlobalKey<NavigatorState>();
   static final _log = Logger('MyApp');
 
   @override
@@ -115,6 +116,7 @@ class MyApp extends WatchingWidget {
     );
 
     return MaterialApp(
+      navigatorKey: navigatorKey,
       localizationsDelegates: const <LocalizationsDelegate<Object>>[
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

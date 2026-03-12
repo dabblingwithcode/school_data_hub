@@ -9,9 +9,9 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/learning_support_plan_card.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class LearningSupportPlansSection extends StatelessWidget {
@@ -114,6 +114,7 @@ class LearningSupportPlansSection extends StatelessWidget {
                     if (pupil.supportLevelHistory == null ||
                         pupil.supportLevelHistory!.isEmpty) {
                       di<NotificationService>().showInformationDialog(
+                        NotificationType.error,
                         'Förderebene nicht festgelegt',
                       );
                       return;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
@@ -57,10 +58,9 @@ class NewSubjectPage extends WatchingWidget {
             ActionButtons(
               onSave: () async {
                 if (nameController.text.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Bitte geben Sie einen Namen ein'),
-                    ),
+                  di<NotificationService>().showSnackBar(
+                    NotificationType.warning,
+                    'Bitte geben Sie einen Namen ein',
                   );
                   return;
                 }

@@ -171,10 +171,7 @@ class SchoolListManager with ChangeNotifier {
       return;
     }
 
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      '${responseSchoolLists.length} Schullisten geladen!',
-    );
+    _log.info('${responseSchoolLists.length} Schullisten geladen!');
 
     _schoolLists.startTransAction();
     for (final schoolList in responseSchoolLists) {

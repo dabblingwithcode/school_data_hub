@@ -127,12 +127,14 @@ class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
 
   void _showRestartBanner() {
     di<NotificationService>().showInformationDialog(
+      NotificationType.info,
       'Ein neuer Patch ist verfügbar! Bitte starte die App neu.',
     );
   }
 
   void _showErrorBanner(Object error) {
     di<NotificationService>().showInformationDialog(
+      NotificationType.error,
       'Fehler beim Herunterladen des Updates: $error.',
     );
     ScaffoldMessenger.of(context)
@@ -203,15 +205,17 @@ class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
                   onPressed: () async {
                     if (defaultTargetPlatform == TargetPlatform.android ||
                         defaultTargetPlatform == TargetPlatform.iOS) {
-                      await TerminateRestart.instance.restartAppWithConfirmation(
-                        context,
-                        title: 'Restart App',
-                        message: 'Do you want to restart the app?',
-                        terminate: true,
-                      );
+                      await TerminateRestart.instance
+                          .restartAppWithConfirmation(
+                            context,
+                            title: 'Restart App',
+                            message: 'Do you want to restart the app?',
+                            terminate: true,
+                          );
                     } else {
                       if (!context.mounted) return;
                       di<NotificationService>().showInformationDialog(
+                        NotificationType.info,
                         'Bitte schließen Sie die App manuell und starten Sie sie erneut.',
                       );
                     }

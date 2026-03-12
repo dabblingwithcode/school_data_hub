@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/notification_banner.dart';
 import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
-import 'package:flutter_it/flutter_it.dart';
 
-/// App phase used to choose notification presentation (snackbar vs banner).
+final _log = Logger('GlobalOverlayHost');
+
+/// App phase used to choose notification presentation
 enum AppPhase { unlogged, loading, loggedIn }
 
 /// Single global host for notification (and future loading) overlays.
-/// Phase controls presentation: unlogged → snackbar + dialog; loading/loggedIn → banner + dialog.
+/// Phase controls presentation
 class GlobalOverlayHost extends WatchingWidget {
   const GlobalOverlayHost({
     super.key,
@@ -26,34 +28,39 @@ class GlobalOverlayHost extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notifications = createOnce<ValueNotifier<List<NotificationData>>>(
-      () => ValueNotifier<List<NotificationData>>([]),
-    );
-    watch(notifications).value;
-
     registerHandler(
       select: (NotificationService x) => x.notification,
       handler: (context, value, cancel) {
+        if (value.target == NotificationTarget.idle) return;
+        _log.info(
+          'Notification handler fired: '
+          'target=${value.target}, type=${value.type}, '
+          'message="${value.message}", phase=$phase',
+        );
         if (value.message.isEmpty) return;
-        if (value.type == NotificationType.dialog) {
-          informationDialog(context, 'Info', value.message);
-          return;
-        }
-        switch (phase) {
-          case AppPhase.unlogged:
-            snackbar(context, value.type, value.message);
+        switch (value.target) {
+          case NotificationTarget.informationDialog:
+            informationDialog(context, 'Info', value.message);
             break;
-          case AppPhase.loading:
-          case AppPhase.loggedIn:
-            notifications.value = [...notifications.value, value];
+          case NotificationTarget.snackBar:
+            if (_canShowSnackBarInPhase(phase)) {
+              _log.info('Showing snackBar for: "${value.message}"');
+              showSnackBarOnRootOverlay(
+                type: value.type,
+                message: value.message,
+              );
+            } else {
+              _log.warning(
+                'Suppressed snackBar in phase $phase: "${value.message}"',
+              );
+            }
+            break;
+          case NotificationTarget.overlay:
+          case NotificationTarget.idle:
             break;
         }
       },
     );
-
-    final showBanner =
-        (phase == AppPhase.loading || phase == AppPhase.loggedIn) &&
-        notifications.value.isNotEmpty;
 
     final loadingNewInstance = watchValue(
       (NotificationService x) => x.loadingNewInstance,
@@ -69,18 +76,6 @@ class GlobalOverlayHost extends WatchingWidget {
           Positioned.fill(child: _buildInstanceLoadingOverlay(context)),
         if (showHeavyOverlay)
           Positioned.fill(child: _buildHeavyLoadingOverlay(context)),
-        if (showBanner)
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: NotificationBanner(
-              notifications: List.from(notifications.value),
-              onDismiss: () {
-                notifications.value = [];
-              },
-            ),
-          ),
       ],
     );
   }
@@ -117,6 +112,14 @@ Widget _buildHeavyLoadingOverlay(BuildContext context) {
       ),
     ],
   );
+}
+
+bool _canShowSnackBarInPhase(AppPhase phase) {
+  return switch (phase) {
+    AppPhase.unlogged => true,
+    AppPhase.loading => false,
+    AppPhase.loggedIn => true,
+  };
 }
 
 Widget _buildInstanceLoadingOverlay(BuildContext context) {

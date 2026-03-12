@@ -86,6 +86,7 @@ class PupilIdentityStream {
       }
       if (errorString.contains('Netzwerkverbindung abgelehnt')) {
         notificationService.showInformationDialog(
+          NotificationType.error,
           'Der Server konnte nicht gefunden werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
         );
       } else {

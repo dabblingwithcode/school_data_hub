@@ -556,6 +556,7 @@ class LearningSupportManager {
       }
     } catch (e) {
       _notificationService.showInformationDialog(
+        NotificationType.error,
         'Fehler beim Importieren der Förderstufen: $e',
       );
     }

@@ -62,6 +62,7 @@ class PupilIdentityManager {
   PupilIdentity? getPupilIdentityByInternalId(int internalId) {
     if (_pupilIdentities.containsKey(internalId) == false) {
       _notificationService.showInformationDialog(
+        NotificationType.error,
         '''Die Schülerdaten mit der ID $internalId konnten nicht gefunden werden.
           Bitte überprüfen Sie die ID und versuchen Sie es erneut.''',
       );
@@ -203,8 +204,9 @@ class PupilIdentityManager {
   Future<void> updateServerFromPupilIdentityExternalSource(
     String textFileContent,
   ) async {
-    final reducedContent =
-        PupilIdentityHelper.buildReducedPupilSyncContent(textFileContent);
+    final reducedContent = PupilIdentityHelper.buildReducedPupilSyncContent(
+      textFileContent,
+    );
 
     // Update backend with reduced content (id,afterSchoolCare per line). Server accepts string; no file upload.
     final List<PupilData>? updatedPupilDataRepository =

@@ -212,13 +212,17 @@ class HubSessionManager with ChangeNotifier {
         return;
       } else {
         _notificationService.showInformationDialog(
+          NotificationType.error,
           'Login fehlgeschlagen: ${authResponse.response.failReason}',
         );
 
         return;
       }
     } catch (e) {
-      _notificationService.showInformationDialog('Fehler beim Einloggen: $e');
+      _notificationService.showInformationDialog(
+        NotificationType.error,
+        'Fehler beim Einloggen: $e',
+      );
       return;
     }
   }

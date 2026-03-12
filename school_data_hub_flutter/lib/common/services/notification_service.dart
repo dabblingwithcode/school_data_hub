@@ -1,23 +1,36 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 
 export 'package:school_data_hub_flutter/common/models/enums.dart';
 
+enum NotificationTarget { snackBar, informationDialog, overlay, idle }
+
 class NotificationData {
+  final NotificationTarget target;
   final NotificationType type;
   final String message;
 
-  NotificationData(this.type, this.message);
+  const NotificationData({
+    required this.target,
+    required this.type,
+    required this.message,
+  });
 }
 
 final _log = Logger('NotificationService');
 
 class NotificationService {
-  final _snackBar = ValueNotifier<NotificationData>(
-    NotificationData(NotificationType.success, ''),
+  final _notification = ValueNotifier<NotificationData>(
+    const NotificationData(
+      target: NotificationTarget.idle,
+      type: NotificationType.success,
+      message: '',
+    ),
   );
-  ValueListenable<NotificationData> get notification => _snackBar;
+  ValueListenable<NotificationData> get notification => _notification;
 
   final _apiRunning = ValueNotifier<bool>(false);
   ValueListenable<bool> get isRunning => _apiRunning;
@@ -26,6 +39,7 @@ class NotificationService {
 
   final _heavyLoading = ValueNotifier<bool>(false);
   ValueListenable<bool> get heavyLoading => _heavyLoading;
+  int _heavyLoadingCounter = 0;
 
   NotificationService();
 
@@ -47,21 +61,32 @@ class NotificationService {
         _log.warning('''SNACK BAR WARNING:
         $message''');
       case NotificationType.dialog:
-        _log.info('''SNACK BAR DIALOG:
-        $message''');
     }
 
-    //- TODO: Investigate when we really want to show one
-    //- before uncommenting this
-    // _snackBar.value = NotificationData(type, message);
+    _notification.value = NotificationData(
+      target: NotificationTarget.snackBar,
+      type: type,
+      message: message,
+    );
   }
 
-  void showInformationDialog(String message) {
-    _snackBar.value = NotificationData(NotificationType.dialog, message);
+  void showInformationDialog(NotificationType type, String message) {
+    _notification.value = NotificationData(
+      target: NotificationTarget.informationDialog,
+      type: type,
+      message: message,
+    );
+  }
 
-    _log.fine('''INFORMATION DIALOG:
-      $message
-      ''');
+  void showInformationDialogMessage(
+    String message, {
+    NotificationType type = NotificationType.info,
+  }) {
+    showInformationDialog(type, message);
+  }
+
+  void showErrorDialog(String message) {
+    showInformationDialogMessage(message, type: NotificationType.error);
   }
 
   void apiRunning(bool value) {
@@ -73,6 +98,36 @@ class NotificationService {
   }
 
   void setHeavyLoadingValue(bool value) {
-    _heavyLoading.value = value;
+    if (value) {
+      beginHeavyLoading();
+      return;
+    }
+    endHeavyLoading();
+  }
+
+  void beginHeavyLoading() {
+    _heavyLoadingCounter += 1;
+    if (_heavyLoadingCounter == 1) {
+      _heavyLoading.value = true;
+    }
+  }
+
+  void endHeavyLoading() {
+    if (_heavyLoadingCounter == 0) {
+      return;
+    }
+    _heavyLoadingCounter -= 1;
+    if (_heavyLoadingCounter == 0) {
+      _heavyLoading.value = false;
+    }
+  }
+
+  Future<T> runWithHeavyLoading<T>(Future<T> Function() action) async {
+    beginHeavyLoading();
+    try {
+      return await action();
+    } finally {
+      endHeavyLoading();
+    }
   }
 }

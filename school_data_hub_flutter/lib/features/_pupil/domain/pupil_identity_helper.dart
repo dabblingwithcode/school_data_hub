@@ -97,11 +97,13 @@ class PupilIdentityHelper {
     if (lastIdentitiesUpdate != null && remoteLastIdentitiesUpdate != null) {
       if (remoteLastIdentitiesUpdate.isAfter(lastIdentitiesUpdate)) {
         di<NotificationService>().showInformationDialog(
+          NotificationType.info,
           'Die gespeicherten Schüler*innen-Ids vom\n${lastIdentitiesUpdate.formatDateAndTimeForUser()}\n sind veraltet. Die neueste Version ist vom \n ${remoteLastIdentitiesUpdate.formatDateAndTimeForUser()}.\n Schüler*innen-Ids aus einer vertrauenswürdigen Quelle aktualisieren!',
         );
       }
     } else {
       di<NotificationService>().showInformationDialog(
+        NotificationType.info,
         'No last identities update found in the server.',
       );
     }

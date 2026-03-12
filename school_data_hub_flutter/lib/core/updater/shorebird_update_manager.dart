@@ -309,6 +309,7 @@ class ShorebirdUpdateManager extends ChangeNotifier {
 
   void _showRestartRequiredDialog() {
     di<NotificationService>().showInformationDialog(
+      NotificationType.info,
       'Ein Update wurde installiert. Bitte starten Sie die App neu, um die neueste Version der App zu verwenden.',
     );
   }

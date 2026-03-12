@@ -329,6 +329,7 @@ class SchooldaysCalendarPage extends WatchingWidget {
                         onDayLongPressed: (selected, focused) async {
                           if (AuthClearanceHelper.isAdmin()) {
                             di<NotificationService>().showInformationDialog(
+                              NotificationType.error,
                               'Keine Berechtigung für das Löschen von Schultagen.',
                             );
                             return;
