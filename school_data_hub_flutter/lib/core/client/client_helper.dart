@@ -1,8 +1,12 @@
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
+
+/// Status codes that indicate a server restart or transient gateway issue.
+/// These are always suppressed silently — the hub stream reconnect will
+/// trigger a re-fetch once the server is back.
+const _transientStatusCodes = {404, 502, 503};
 
 class ClientHelper {
   // Make it a singleton
@@ -22,33 +26,25 @@ class ClientHelper {
     } on ServerpodClientException catch (e) {
       di<NotificationService>().apiRunning(false);
 
-      // 502 / 503 during a server restart are expected transients.
-      // Suppress them while the hub stream is not yet connected so the
-      // reconnect-flush doesn't clutter the overlay with gateway errors.
-      if (e.statusCode == 502 || e.statusCode == 503) {
-        try {
-          final hub = di<HubStreamService>();
-          if (hub.connectionState.value != HubConnectionState.connected) {
-            return null;
-          }
-        } catch (_) {
-          // HubStreamService not yet registered — fall through to show error.
-        }
+      // Suppress transient gateway/restart errors silently.
+      if (_transientStatusCodes.contains(e.statusCode)) {
+        return null;
+      }
+
+      if (e.statusCode == 401 || e.toString().contains('Not authorized')) {
+        SessionHelper.logoutAndDeleteAllInstanceData(
+          reason:
+              'Die Sitzung ist nicht mehr gültig. '
+              'Alle lokalen Daten wurden gelöscht. '
+              'Bitte loggen Sie sich erneut ein.',
+        );
+        return null;
       }
 
       di<NotificationService>().showInformationDialog(
         NotificationType.error,
         'API Fehler: ${errorMessage ?? "Unbekannt"}: $e',
       );
-
-      if (e.toString().contains('Not authorized') ||
-          e.toString().contains('401')) {
-        di<NotificationService>().showInformationDialog(
-          NotificationType.error,
-          'Authentication required. Please log in again.',
-        );
-        di<HubSessionManager>().signOutDevice();
-      }
       return null;
     } catch (e) {
       di<NotificationService>().apiRunning(false);

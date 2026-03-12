@@ -16,7 +16,9 @@ class SessionHelper {
     return;
   }
 
-  static Future<void> logoutAndDeleteAllInstanceData() async {
+  static Future<void> logoutAndDeleteAllInstanceData({
+    String? reason,
+  }) async {
     _log.info('Deleting all instance data...');
     await PupilIdentityHelper.deletePupilIdentitiesForEnv(
       di<EnvManager>().storageKeyForPupilIdentities,
@@ -30,10 +32,17 @@ class SessionHelper {
 
     await cacheManager.emptyCache();
 
-    di<NotificationService>().showSnackBar(
-      NotificationType.success,
-      'Alle Daten gelöscht!',
-    );
+    if (reason != null) {
+      di<NotificationService>().showInformationDialog(
+        NotificationType.warning,
+        reason,
+      );
+    } else {
+      di<NotificationService>().showSnackBar(
+        NotificationType.success,
+        'Alle Daten gelöscht!',
+      );
+    }
   }
 
   static bool isAuthorized(String createdBy) {

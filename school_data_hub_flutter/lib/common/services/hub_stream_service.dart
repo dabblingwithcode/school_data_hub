@@ -222,7 +222,12 @@ class HubStreamService with WidgetsBindingObserver {
               '[HUB] ForceLogoutEvent received for this device — wiping data',
             );
             _cleanupSubscription();
-            SessionHelper.logoutAndDeleteAllInstanceData();
+            SessionHelper.logoutAndDeleteAllInstanceData(
+              reason:
+                  'Die Sitzung für dieses Gerät wurde von einem Administrator '
+                  'oder dem Besitzer/der Besitzerin  dieses Gerätes beendet. '
+                  'Alle lokalen Daten wurden gelöscht.',
+            );
             return;
           }
 
@@ -255,7 +260,12 @@ class HubStreamService with WidgetsBindingObserver {
     if (error is ServerpodClientUnauthorized ||
         (error is ServerpodClientException && error.statusCode == 401)) {
       _log.warning('[HUB] Unauthorized — wiping data and signing out');
-      SessionHelper.logoutAndDeleteAllInstanceData();
+      SessionHelper.logoutAndDeleteAllInstanceData(
+        reason:
+            'Die Sitzung ist nicht mehr gültig. '
+            'Alle lokalen Daten wurden gelöscht. '
+            'Bitte loggen Sie sich erneut ein.',
+      );
       return;
     }
 
