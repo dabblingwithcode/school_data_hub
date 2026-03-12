@@ -13,6 +13,7 @@ import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bo
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/user/data/staff_excel_import_parser.dart';
 import 'package:school_data_hub_flutter/features/user/domain/batch_create_result.dart';
+import 'package:school_data_hub_flutter/features/user/domain/staff_import_row.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/batch_import_users/staff_credentials_pdf_service.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -34,6 +35,10 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
   int _progressErrors = 0;
   StreamSubscription<BatchCreateResult>? _chunkSubscription;
 
+  // Per-row live status tracked during streaming.
+  final _successEmails = <String>{};
+  final _errorByKurzel = <String, String>{};
+
   @override
   void dispose() {
     _chunkSubscription?.cancel();
@@ -47,6 +52,8 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
       setState(() {
         _parseResult = result;
         _batchResult = null;
+        _successEmails.clear();
+        _errorByKurzel.clear();
       });
     }
   }
@@ -63,6 +70,8 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
       _batchResult = null;
       _progressCreated = 0;
       _progressErrors = 0;
+      _successEmails.clear();
+      _errorByKurzel.clear();
     });
 
     await WakelockPlus.enable();
@@ -83,6 +92,12 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
           _safeSetState(() {
             _progressCreated = allCredentials.length;
             _progressErrors = allErrors.length;
+            for (final c in chunkResult.credentials) {
+              _successEmails.add(c.email);
+            }
+            for (final e in chunkResult.errors) {
+              _errorByKurzel[e.userNameOrKurzel] = e.message;
+            }
           });
           _log.info(
             '[BatchImport] Chunk done — created=${chunkResult.successCount}, '
@@ -131,6 +146,27 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
     }
   }
 
+  Widget _buildStatusCell(StaffImportRow row) {
+    if (_successEmails.contains(row.email)) {
+      return const Icon(Icons.check_circle, color: Colors.green, size: 18);
+    }
+    final errorMsg = _errorByKurzel[row.kurzel];
+    if (errorMsg != null) {
+      return Tooltip(
+        message: errorMsg,
+        child: const Icon(Icons.error, color: Colors.red, size: 18),
+      );
+    }
+    if (_isCreating) {
+      return const SizedBox(
+        width: 16,
+        height: 16,
+        child: CircularProgressIndicator(strokeWidth: 1.5),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
   /// Schedules [setState] for the next frame to avoid calling it during layout.
   void _safeSetState(VoidCallback fn) {
     if (!mounted) return;
@@ -149,6 +185,8 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
         _isCreating = false;
         _progressCreated = 0;
         _progressErrors = 0;
+        _successEmails.clear();
+        _errorByKurzel.clear();
       });
       ScaffoldMessenger.of(
         context,
@@ -239,6 +277,7 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
                             Colors.grey.shade300,
                           ),
                           columns: const [
+                            DataColumn(label: Text('Status')),
                             DataColumn(label: Text('Vorname')),
                             DataColumn(label: Text('Nachname')),
                             DataColumn(label: Text('Kürzel')),
@@ -249,8 +288,20 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
                             DataColumn(label: Text('Relief')),
                           ],
                           rows: _parseResult!.rows.map((row) {
+                            final isSuccess = _successEmails.contains(
+                              row.email,
+                            );
+                            final isError = _errorByKurzel.containsKey(
+                              row.kurzel,
+                            );
                             return DataRow(
+                              color: WidgetStateProperty.resolveWith((_) {
+                                if (isSuccess) return Colors.green.shade100;
+                                if (isError) return Colors.red.shade100;
+                                return null;
+                              }),
                               cells: [
+                                DataCell(_buildStatusCell(row)),
                                 DataCell(Text(row.firstName)),
                                 DataCell(Text(row.lastName)),
                                 DataCell(Text(row.kurzel)),
