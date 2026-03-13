@@ -1,17 +1,16 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
 
 class SchoolListFilterManager implements Resettable {
   SchoolListManager get _schoolListManager => di<SchoolListManager>();
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
-  PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
 
   final _filteredSchoolLists = ValueNotifier<List<SchoolList>>([]);
@@ -27,10 +26,18 @@ class SchoolListFilterManager implements Resettable {
   ValueListenable<Map<SchoolListFilter, bool>> get schoolListFilterState =>
       _schoolListFilterState;
 
+  // Entry-level response filters (migrated from PupilFilterManager)
+  final _entryFilterState = ValueNotifier<Map<SchoolListEntryFilter, bool>>(
+    initialSchoolListEntryFilterValues,
+  );
+  ValueListenable<Map<SchoolListEntryFilter, bool>> get entryFilterState =>
+      _entryFilterState;
+
   void dispose() {
     _filteredSchoolLists.dispose();
     _filterState.dispose();
     _schoolListFilterState.dispose();
+    _entryFilterState.dispose();
     _schoolListManager.removeListener(_onSchoolListsChanged);
 
     return;
@@ -56,6 +63,7 @@ class SchoolListFilterManager implements Resettable {
   void resetFilters() {
     _filterState.value = false;
     _schoolListFilterState.value = Map.from(initialSchoolListFilterValues);
+    _entryFilterState.value = {...initialSchoolListEntryFilterValues};
     _filteredSchoolLists.value = _schoolListManager.schoolLists.value;
     _filtersStateManager.setFilterState(
       filterState: FilterState.schoolList,
@@ -150,32 +158,53 @@ class SchoolListFilterManager implements Resettable {
     );
   }
 
+  // Entry-level response filter methods (migrated from PupilFilterManager)
+
+  void setEntryFilter({
+    required List<SchoolListEntryFilterRecord> entryFilterRecords,
+  }) {
+    for (final record in entryFilterRecords) {
+      _entryFilterState.value = {
+        ..._entryFilterState.value,
+        record.filter: record.value,
+      };
+    }
+    final entryFilterStateEqualsInitialState =
+        const MapEquality<SchoolListEntryFilter, bool>().equals(
+          _entryFilterState.value,
+          initialSchoolListEntryFilterValues,
+        );
+
+    _filtersStateManager.setFilterState(
+      filterState: FilterState.schoolList,
+      value: !entryFilterStateEqualsInitialState,
+    );
+
+    di<PupilsFilter>().refreshs();
+  }
+
   List<PupilListEntry> addPupilEntryFiltersToFilteredPupils(
     List<PupilListEntry> pupilEntries,
   ) {
     List<PupilListEntry> filteredPupilEntries = [];
     bool filterIsOn = false;
     for (PupilListEntry pupilEntry in pupilEntries) {
-      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
-              .schoolListYesResponse]! &&
+      if (_entryFilterState.value[SchoolListEntryFilter.yesResponse]! &&
           pupilEntry.status != true) {
         filterIsOn = true;
         continue;
       }
-      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
-              .schoolListNoResponse]! &&
+      if (_entryFilterState.value[SchoolListEntryFilter.noResponse]! &&
           pupilEntry.status != false) {
         filterIsOn = true;
         continue;
       }
-      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
-              .schoolListNullResponse]! &&
+      if (_entryFilterState.value[SchoolListEntryFilter.nullResponse]! &&
           pupilEntry.status != null) {
         filterIsOn = true;
         continue;
       }
-      if (_pupilFilterManager.pupilFilterState.value[PupilFilter
-              .schoolListCommentResponse]! &&
+      if (_entryFilterState.value[SchoolListEntryFilter.commentResponse]! &&
           pupilEntry.comment == null) {
         filterIsOn = true;
         continue;

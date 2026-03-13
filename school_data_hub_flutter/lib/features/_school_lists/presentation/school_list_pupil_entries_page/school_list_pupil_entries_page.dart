@@ -8,7 +8,6 @@ import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -82,7 +81,7 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
 
     // React to school-list entry filter changes (yes/no/null/comment chips).
     registerHandler(
-      target: di<PupilFilterManager>().pupilFilterState,
+      target: di<SchoolListFilterManager>().entryFilterState,
       handler: (_, __, ___) => recompute(),
     );
 

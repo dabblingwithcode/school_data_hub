@@ -54,6 +54,8 @@ abstract class PupilsFilter implements Listenable, Resettable {
   List<Filter> get genderFilters;
   List<Filter> get religionCourseFilters;
   List<Filter> get familyLanguageFilters;
+  List<Filter> get afterSchoolCareFilters;
+  Filter get migrationSupportFilter;
   PupilTextFilter get textFilter;
 
   /// must be called when this object is no longer needed

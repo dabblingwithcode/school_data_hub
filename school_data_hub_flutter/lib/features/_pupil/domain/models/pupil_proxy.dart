@@ -59,6 +59,14 @@ class PupilProxy with ChangeNotifier {
     FamilyLanguageFilter(FamilyLanguage.other),
   ];
 
+  static List<AfterSchoolCareFilter> afterSchoolCareFilters = [
+    AfterSchoolCareFilter(hasAfterSchoolCare: true),
+    AfterSchoolCareFilter(hasAfterSchoolCare: false),
+  ];
+
+  static MigrationSupportFilter migrationSupportFilter =
+      MigrationSupportFilter();
+
   PupilData _pupilData;
   PupilIdentity _pupilIdentity;
 

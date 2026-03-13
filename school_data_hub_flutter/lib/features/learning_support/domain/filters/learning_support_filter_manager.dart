@@ -2,8 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
@@ -20,7 +18,6 @@ typedef CurrentLearningSupportPlanFilterRecord = ({
 
 class LearningSupportFilterManager implements Resettable {
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
-  PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
   PupilsFilter get _pupilsFilter => di<PupilsFilter>();
   SupportCategoryManager get _learningSupportManager =>
       di<SupportCategoryManager>();
@@ -102,13 +99,13 @@ class LearningSupportFilterManager implements Resettable {
         record.filter: record.value,
       };
     }
-    final bool pupilFilterStateEqualsInitialState =
-        const MapEquality<PupilFilter, bool>().equals(
-          _pupilFilterManager.pupilFilterState.value,
-          initialPupilFilterValues,
+    final bool supportAreaFilterStateEqualsInitialState =
+        const MapEquality<SupportArea, bool>().equals(
+          _supportAreaFiltersState.value,
+          initialSupportAreaFilterValues,
         );
 
-    if (pupilFilterStateEqualsInitialState) {
+    if (supportAreaFilterStateEqualsInitialState) {
       _filtersStateManager.setFilterState(
         filterState: FilterState.pupilLegacy,
         value: false,

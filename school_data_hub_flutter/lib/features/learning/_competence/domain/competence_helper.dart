@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
@@ -290,7 +290,7 @@ class CompetenceHelper {
     required Competence competence,
   }) {
     List<PupilProxy> pupils = [];
-    final filteredPupils = di<PupilFilterManager>().filteredPupils;
+    final filteredPupils = di<PupilsFilter>().filteredPupils;
     for (PupilProxy pupil in filteredPupils.value) {
       if (pupil.specialNeeds != null && pupil.specialNeeds!.contains('LE')) {
         pupils.add(pupil);

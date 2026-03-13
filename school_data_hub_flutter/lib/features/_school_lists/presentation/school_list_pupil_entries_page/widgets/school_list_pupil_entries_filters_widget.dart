@@ -2,25 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_enums.dart';
+import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-final _pupilFilterManager = di<PupilFilterManager>();
+final _schoolListFilterManager = di<SchoolListFilterManager>();
 
 class SchoolListPupilEntriesFiltersWidget extends WatchingWidget {
   const SchoolListPupilEntriesFiltersWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Map<PupilFilter, bool> activeFilters = watchValue(
-      (PupilFilterManager x) => x.pupilFilterState,
+    Map<SchoolListEntryFilter, bool> activeFilters = watchValue(
+      (SchoolListFilterManager x) => x.entryFilterState,
     );
-    bool valueYesResponse = activeFilters[PupilFilter.schoolListYesResponse]!;
-    bool valueNoResponse = activeFilters[PupilFilter.schoolListNoResponse]!;
-    bool valueNullResponse = activeFilters[PupilFilter.schoolListNullResponse]!;
+    bool valueYesResponse =
+        activeFilters[SchoolListEntryFilter.yesResponse]!;
+    bool valueNoResponse =
+        activeFilters[SchoolListEntryFilter.noResponse]!;
+    bool valueNullResponse =
+        activeFilters[SchoolListEntryFilter.nullResponse]!;
     bool valueCommentResponse =
-        activeFilters[PupilFilter.schoolListCommentResponse]!;
+        activeFilters[SchoolListEntryFilter.commentResponse]!;
 
     return Column(
       children: [
@@ -36,21 +39,30 @@ class SchoolListPupilEntriesFiltersWidget extends WatchingWidget {
               selected: valueYesResponse,
               onSelected: (val) {
                 if (val) {
-                  _pupilFilterManager.setPupilFilter(
-                    pupilFilterRecords: [
-                      (filter: PupilFilter.schoolListYesResponse, value: true),
-                      (filter: PupilFilter.schoolListNoResponse, value: false),
+                  _schoolListFilterManager.setEntryFilter(
+                    entryFilterRecords: [
                       (
-                        filter: PupilFilter.schoolListNullResponse,
+                        filter: SchoolListEntryFilter.yesResponse,
+                        value: true,
+                      ),
+                      (
+                        filter: SchoolListEntryFilter.noResponse,
+                        value: false,
+                      ),
+                      (
+                        filter: SchoolListEntryFilter.nullResponse,
                         value: false,
                       ),
                     ],
                   );
                   return;
                 }
-                _pupilFilterManager.setPupilFilter(
-                  pupilFilterRecords: [
-                    (filter: PupilFilter.schoolListYesResponse, value: false),
+                _schoolListFilterManager.setEntryFilter(
+                  entryFilterRecords: [
+                    (
+                      filter: SchoolListEntryFilter.yesResponse,
+                      value: false,
+                    ),
                   ],
                 );
               },
@@ -60,21 +72,27 @@ class SchoolListPupilEntriesFiltersWidget extends WatchingWidget {
               selected: valueNoResponse,
               onSelected: (val) {
                 if (val) {
-                  _pupilFilterManager.setPupilFilter(
-                    pupilFilterRecords: [
-                      (filter: PupilFilter.schoolListNoResponse, value: true),
-                      (filter: PupilFilter.schoolListYesResponse, value: false),
+                  _schoolListFilterManager.setEntryFilter(
+                    entryFilterRecords: [
                       (
-                        filter: PupilFilter.schoolListNullResponse,
+                        filter: SchoolListEntryFilter.noResponse,
+                        value: true,
+                      ),
+                      (
+                        filter: SchoolListEntryFilter.yesResponse,
+                        value: false,
+                      ),
+                      (
+                        filter: SchoolListEntryFilter.nullResponse,
                         value: false,
                       ),
                     ],
                   );
                   return;
                 }
-                _pupilFilterManager.setPupilFilter(
-                  pupilFilterRecords: [
-                    (filter: PupilFilter.schoolListNoResponse, value: val),
+                _schoolListFilterManager.setEntryFilter(
+                  entryFilterRecords: [
+                    (filter: SchoolListEntryFilter.noResponse, value: val),
                   ],
                 );
               },
@@ -84,18 +102,27 @@ class SchoolListPupilEntriesFiltersWidget extends WatchingWidget {
               selected: valueNullResponse,
               onSelected: (val) {
                 if (val) {
-                  _pupilFilterManager.setPupilFilter(
-                    pupilFilterRecords: [
-                      (filter: PupilFilter.schoolListNullResponse, value: true),
-                      (filter: PupilFilter.schoolListYesResponse, value: false),
-                      (filter: PupilFilter.schoolListNoResponse, value: false),
+                  _schoolListFilterManager.setEntryFilter(
+                    entryFilterRecords: [
+                      (
+                        filter: SchoolListEntryFilter.nullResponse,
+                        value: true,
+                      ),
+                      (
+                        filter: SchoolListEntryFilter.yesResponse,
+                        value: false,
+                      ),
+                      (
+                        filter: SchoolListEntryFilter.noResponse,
+                        value: false,
+                      ),
                     ],
                   );
                   return;
                 }
-                _pupilFilterManager.setPupilFilter(
-                  pupilFilterRecords: [
-                    (filter: PupilFilter.schoolListNullResponse, value: val),
+                _schoolListFilterManager.setEntryFilter(
+                  entryFilterRecords: [
+                    (filter: SchoolListEntryFilter.nullResponse, value: val),
                   ],
                 );
               },
@@ -104,9 +131,12 @@ class SchoolListPupilEntriesFiltersWidget extends WatchingWidget {
               label: 'Kommentar',
               selected: valueCommentResponse,
               onSelected: (val) {
-                _pupilFilterManager.setPupilFilter(
-                  pupilFilterRecords: [
-                    (filter: PupilFilter.schoolListCommentResponse, value: val),
+                _schoolListFilterManager.setEntryFilter(
+                  entryFilterRecords: [
+                    (
+                      filter: SchoolListEntryFilter.commentResponse,
+                      value: val,
+                    ),
                   ],
                 );
               },

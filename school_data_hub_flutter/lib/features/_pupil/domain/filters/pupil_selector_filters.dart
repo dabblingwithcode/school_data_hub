@@ -2,6 +2,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 
 class SchoolGradeFilter extends SelectorFilter<PupilProxy, SchoolGrade> {
   SchoolGradeFilter(SchoolGrade schoolGrade)
@@ -66,4 +67,23 @@ class GenderFilter extends SelectorFilter<PupilProxy, Gender> {
   bool matches(PupilProxy item) {
     return selector(item).value == (name == '♂️' ? 'm' : 'w');
   }
+}
+
+class AfterSchoolCareFilter extends Filter<PupilProxy> {
+  final bool hasAfterSchoolCare;
+  AfterSchoolCareFilter({required this.hasAfterSchoolCare})
+    : super(name: hasAfterSchoolCare ? 'OGS' : 'nicht OGS');
+
+  @override
+  bool matches(PupilProxy item) => hasAfterSchoolCare
+      ? item.afterSchoolCare != null
+      : item.afterSchoolCare == null;
+}
+
+class MigrationSupportFilter extends Filter<PupilProxy> {
+  MigrationSupportFilter() : super(name: 'Erstförderung');
+
+  @override
+  bool matches(PupilProxy item) =>
+      PupilProxyHelper.hasLanguageSupport(item.migrationSupportEnds);
 }

@@ -8,8 +8,6 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -31,27 +29,16 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
   List<PupilProxy>? pupils;
   final _selectablePupilsListenable = ValueNotifier<List<PupilProxy>>([]);
 
-  Map<PupilFilter, bool>? inheritedFilters;
-
   List<int> selectedPupilIds = [];
   bool isSelectAllMode = false;
   bool isSelectMode = false;
 
   PupilProxyManager get _pupilManager => di<PupilProxyManager>();
-  PupilFilterManager get _pupilFilerManager => di<PupilFilterManager>();
 
   @override
   void dispose() {
     _selectablePupilsListenable.dispose();
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    setState(() {
-      inheritedFilters = _pupilFilerManager.pupilFilterState.value;
-    });
-    super.initState();
   }
 
   void cancelSelect() {

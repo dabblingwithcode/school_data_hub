@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 
@@ -87,7 +88,14 @@ class NotificationService {
   }
 
   void apiRunning(bool value) {
-    _apiRunning.value = value;
+    final phase = SchedulerBinding.instance.schedulerPhase;
+    if (phase == SchedulerPhase.persistentCallbacks) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _apiRunning.value = value;
+      });
+    } else {
+      _apiRunning.value = value;
+    }
   }
 
   void setNewInstanceLoadingValue(bool value) {

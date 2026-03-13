@@ -55,6 +55,7 @@ class SchildExportColumns {
   static const int birthday = 14; // Geburtsdatum
   static const int migrationSupportEnds = 15; // Ende der Eingliederungsphase
   static const int pupilSince = 16; // Aufnahmedatum
+  static const int afterSchoolCare = 17; // bes. Merkmal (e.g. OFFGANZ = OGS)
   static const int religion = 18; // Konfession (Klartext)
   static const int religionLessonsSince = 19; // Religionsanmeldung
   static const int religionLessonsCancelledAt = 20; // Religionsabmeldung
@@ -129,7 +130,7 @@ String? _rowToCanonicalLine(
     _normalizeDateCell(
         cellStr(SchildExportColumns.migrationSupportEnds), dateFormat),
     _normalizeDateCell(cellStr(SchildExportColumns.pupilSince), dateFormat),
-    '', // afterSchoolCare -> not in export
+    cellStr(SchildExportColumns.afterSchoolCare), // bes. Merkmal (OFFGANZ = OGS)
     cellStr(SchildExportColumns.religion),
     _normalizeDateCell(
         cellStr(SchildExportColumns.religionLessonsSince), dateFormat),

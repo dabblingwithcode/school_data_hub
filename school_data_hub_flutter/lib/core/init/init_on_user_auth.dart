@@ -12,7 +12,6 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/filters/atte
 import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/authorization_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/pupil_authorization_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_media_auth_filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter_impl.dart';
@@ -190,15 +189,6 @@ class InitOnUserAuth {
       dispose: (m) => m.dispose(),
     );
 
-    di.registerSingletonWithDependencies<PupilFilterManager>(
-      () {
-        final manager = PupilFilterManager();
-        di<FiltersStateManager>().registerFilterManager(manager);
-        return manager;
-      },
-      dependsOn: [PupilProxyManager],
-      dispose: (m) => m.dispose(),
-    );
     di.registerSingletonWithDependencies<PupilBookLendingFilterManager>(
       () {
         final manager = PupilBookLendingFilterManager();
@@ -215,7 +205,7 @@ class InitOnUserAuth {
         di<FiltersStateManager>().registerFilterManager(manager);
         return manager;
       },
-      dependsOn: [PupilProxyManager, PupilFilterManager],
+      dependsOn: [PupilProxyManager],
       dispose: (m) => m.dispose(),
     );
 
@@ -231,7 +221,7 @@ class InitOnUserAuth {
         di<FiltersStateManager>().registerFilterManager(manager);
         return manager;
       },
-      dependsOn: [PupilProxyManager, PupilFilterManager, SchooldayEventManager],
+      dependsOn: [PupilProxyManager, SchooldayEventManager],
       dispose: (m) => m.dispose(),
     );
 
@@ -259,7 +249,6 @@ class InitOnUserAuth {
       },
       dependsOn: [
         PupilProxyManager,
-        PupilFilterManager,
         LearningSupportFilterManager,
         SchooldayEventFilterManager,
         AttendancePupilFilterManager,

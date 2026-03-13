@@ -3,123 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 
 typedef AuthorizationFilterRecord = ({
   AuthorizationFilter authorizationFilter,
   bool value,
 });
-
-// class AuthorizationFilter extends Filter<PupilProxy> {
-//   AuthorizationFilter({
-//     required super.name,
-//   });
-
-//   Authorization? _authorization;
-//   Authorization? get authorization => _authorization;
-
-//   void setAuthorization(Authorization authorization) {
-//     _authorization = authorization;
-//     toggle(true);
-//     notifyListeners();
-//   }
-
-//   @override
-//   void reset() {
-//     _authorization = null;
-//     super.reset();
-//   }
-
-//   @override
-//   bool matches(PupilProxy item) {
-//     return addAuthorizationFiltersToPupil(item, authorization!);
-//   }
-// }
-
-final activeFilters = di<PupilFilterManager>();
-
-// bool addAuthorizationFiltersToPupil(
-//   PupilProxy pupil,
-//   Authorization authorization,
-// ) {
-//   // Check first if the filtered pupil is in the authorization. If not, continue with next one.
-
-//   final PupilAuthorization? pupilAuthorization = pupil.authorizations!
-//       .firstWhereOrNull((pupilAuthorization) =>
-//           pupilAuthorization.originAuthorization ==
-//           authorization.authorizationId);
-
-//   if (pupilAuthorization == null) {
-//     return false;
-//   }
-//   // This one is - let's apply the authorization filters
-
-//   if (activeFilters.filterState.value[PupilFilter.authorizationYesResponse]! &&
-//       pupilAuthorization.status == false) {
-//     return false;
-//   }
-//   if (activeFilters.filterState.value[PupilFilter.authorizationNoResponse]! &&
-//       pupilAuthorization.status == true) {
-//     return false;
-//   }
-//   if (activeFilters.filterState.value[PupilFilter.authorizationNullResponse]! &&
-//       pupilAuthorization.status != null) {
-//     return false;
-//   }
-//   if (activeFilters
-//           .filterState.value[PupilFilter.authorizationCommentResponse]! &&
-//       pupilAuthorization.comment == null) {
-//     return false;
-//   }
-
-//   return true;
-// }
-
-// List<PupilProxy> addAuthorizationFiltersToFilteredPupils(
-//   List<PupilProxy> pupils,
-//   Authorization authorization,
-// ) {
-//   List<PupilProxy> filteredPupils = [];
-
-//   for (PupilProxy pupil in pupils) {
-//     // Check first if the filtered pupil is in the authorization. If not, continue with next one.
-
-//     final PupilAuthorization? pupilAuthorization = pupil.authorizations!
-//         .firstWhereOrNull((pupilAuthorization) =>
-//             pupilAuthorization.originAuthorization ==
-//             authorization.authorizationId);
-
-//     if (pupilAuthorization == null) {
-//       continue;
-//     }
-//     // This one is - let's apply the authorization filters
-
-//     if (activeFilters
-//             .filterState.value[PupilFilter.authorizationYesResponse]! &&
-//         pupilAuthorization.status == false) {
-//       continue;
-//     }
-//     if (activeFilters.filterState.value[PupilFilter.authorizationNoResponse]! &&
-//         pupilAuthorization.status == true) {
-//       continue;
-//     }
-//     if (activeFilters
-//             .filterState.value[PupilFilter.authorizationNullResponse]! &&
-//         pupilAuthorization.status != null) {
-//       continue;
-//     }
-//     if (activeFilters
-//             .filterState.value[PupilFilter.authorizationCommentResponse]! &&
-//         pupilAuthorization.comment == null) {
-//       continue;
-//     }
-
-//     filteredPupils.add(pupil);
-//   }
-//   return filteredPupils;
-// }
 
 enum AuthorizationFilter {
   yes,
@@ -192,32 +81,32 @@ class PupilAuthorizationFilterManager implements Resettable {
     List<PupilAuthorization> filteredPupilAuthorizations = [];
     bool filterIsOn = false;
     for (PupilAuthorization pupilAuthorization in pupilAuthorizations) {
-      if (activeFilters.pupilFilterState.value[PupilFilter
-              .authorizationPositive]! &&
+      if (_pupilAuthorizationFilterState
+              .value[AuthorizationFilter.yes]! &&
           pupilAuthorization.status != true) {
         filterIsOn = true;
         continue;
       }
-      if (activeFilters.pupilFilterState.value[PupilFilter
-              .authorizationNegative]! &&
+      if (_pupilAuthorizationFilterState
+              .value[AuthorizationFilter.no]! &&
           pupilAuthorization.status != false) {
         filterIsOn = true;
         continue;
       }
-      if (activeFilters.pupilFilterState.value[PupilFilter
-              .authorizationNoValue]! &&
+      if (_pupilAuthorizationFilterState
+              .value[AuthorizationFilter.nullResponse]! &&
           pupilAuthorization.status != null) {
         filterIsOn = true;
         continue;
       }
-      if (activeFilters.pupilFilterState.value[PupilFilter
-              .authorizationComment]! &&
+      if (_pupilAuthorizationFilterState
+              .value[AuthorizationFilter.commentResponse]! &&
           pupilAuthorization.comment == null) {
         filterIsOn = true;
         continue;
       }
-      if (activeFilters.pupilFilterState.value[PupilFilter
-              .authorizationNoFile]! &&
+      if (_pupilAuthorizationFilterState
+              .value[AuthorizationFilter.fileResponse]! &&
           pupilAuthorization.fileId != null) {
         filterIsOn = true;
         continue;

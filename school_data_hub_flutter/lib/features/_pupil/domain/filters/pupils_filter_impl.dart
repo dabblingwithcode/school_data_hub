@@ -5,15 +5,12 @@ import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_text_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
@@ -29,7 +26,6 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       di<LearningSupportFilterManager>();
   SchooldayEventFilterManager get _schooldayEventFilterManager =>
       di<SchooldayEventFilterManager>();
-  // PupilFilterManager get _pupilFilterManager => di<PupilFilterManager>();
   AttendancePupilFilterManager get _attendancePupilFilterManager =>
       di<AttendancePupilFilterManager>();
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
@@ -69,6 +65,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
           genderFilters.any((f) => f.isActive) ||
           religionCourseFilters.any((f) => f.isActive) ||
           familyLanguageFilters.any((f) => f.isActive) ||
+          afterSchoolCareFilters.any((f) => f.isActive) ||
+          migrationSupportFilter.isActive ||
           _textFilter.isActive;
       if (!anyStillActive) {
         _filtersStateManager.setFilterState(
@@ -127,6 +125,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     ...genderFilters,
     ...religionCourseFilters,
     ...familyLanguageFilters,
+    ...afterSchoolCareFilters,
+    migrationSupportFilter,
     _textFilter,
   ];
 
@@ -169,9 +169,6 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     // checks if any not yet migrated filters are active
 
     final bool specificFiltersOn =
-        di<PupilFilterManager>().pupilFilterState.value.values.any(
-          (x) => x == true,
-        ) ||
         _schooldayEventFilterManager.schooldayEventsFilterState.value.values
             .any((x) => x == true) ||
         _learningSupportFilterManager.supportLevelFilterState.value.values.any(
@@ -324,12 +321,13 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
       // after school care filters
 
-      if (di<PupilFilterManager>().pupilFilterState.value[PupilFilter
-                  .afterSchoolCare]! &&
-              pupil.afterSchoolCare == null ||
-          di<PupilFilterManager>().pupilFilterState.value[PupilFilter
-                  .noAfterSchoolCare]! &&
-              pupil.afterSchoolCare != null) {
+      bool isAnyAfterSchoolCareFilterActive = afterSchoolCareFilters.any(
+        (filter) => filter.isActive,
+      );
+      if (isAnyAfterSchoolCareFilterActive &&
+          !afterSchoolCareFilters.any(
+            (filter) => filter.isActive && filter.matches(pupil),
+          )) {
         if (filtersOn == false) filtersOn = true;
         continue;
       }
@@ -367,9 +365,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
       // language support filters
 
-      if (di<PupilFilterManager>().pupilFilterState.value[PupilFilter
-              .migrationSupport]! &&
-          !PupilProxyHelper.hasLanguageSupport(pupil.migrationSupportEnds)) {
+      if (migrationSupportFilter.isActive &&
+          !migrationSupportFilter.matches(pupil)) {
         if (filtersOn == false) filtersOn = true;
         continue;
       }
@@ -497,6 +494,12 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
   @override
   List<Filter> get familyLanguageFilters => PupilProxy.familyLanguageFilters;
+
+  @override
+  List<Filter> get afterSchoolCareFilters => PupilProxy.afterSchoolCareFilters;
+
+  @override
+  Filter get migrationSupportFilter => PupilProxy.migrationSupportFilter;
 
   @override
   void populateGroupFilters(List<String> groupIds) {

@@ -4,8 +4,6 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:flutter_it/flutter_it.dart';
@@ -16,14 +14,12 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final learningSupportFilterManager = di<LearningSupportFilterManager>();
-    final pupilFilterLocator = di<PupilFilterManager>();
-    Map<PupilFilter, bool> activePupilFilters = watchValue(
-      (PupilFilterManager x) => x.pupilFilterState,
-    );
-
-    bool valueOgs = activePupilFilters[PupilFilter.afterSchoolCare]!;
-
-    bool valueNotOgs = activePupilFilters[PupilFilter.noAfterSchoolCare]!;
+    final pupilsFilter = di<PupilsFilter>();
+    final ogsFilters = pupilsFilter.afterSchoolCareFilters;
+    final ogsFilter = ogsFilters[0];
+    final notOgsFilter = ogsFilters[1];
+    bool valueOgs = watch(ogsFilter).isActive;
+    bool valueNotOgs = watch(notOgsFilter).isActive;
 
     //- LEARNING SUPPORT FILTERS
     Map<SupportLevelType, bool> supportLevelFilters = watchValue(
@@ -89,44 +85,20 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   label: 'OGS',
                   selected: valueOgs,
                   onSelected: (val) {
-                    if (val == true) {
-                      // in case ogs is selected, not ogs should be deselected
-
-                      pupilFilterLocator.setPupilFilter(
-                        pupilFilterRecords: [
-                          (filter: PupilFilter.noAfterSchoolCare, value: false),
-                          (filter: PupilFilter.afterSchoolCare, value: val),
-                        ],
-                      );
-                      return;
+                    if (val) {
+                      notOgsFilter.reset();
                     }
-
-                    pupilFilterLocator.setPupilFilter(
-                      pupilFilterRecords: [
-                        (filter: PupilFilter.afterSchoolCare, value: val),
-                      ],
-                    );
+                    ogsFilter.toggle(val);
                   },
                 ),
                 ThemedFilterChip(
                   label: 'nicht OGS',
                   selected: valueNotOgs,
                   onSelected: (val) {
-                    if (val == true) {
-                      // in case not ogs is selected, ogs should be deselected
-                      pupilFilterLocator.setPupilFilter(
-                        pupilFilterRecords: [
-                          (filter: PupilFilter.afterSchoolCare, value: false),
-                          (filter: PupilFilter.noAfterSchoolCare, value: val),
-                        ],
-                      );
-                      return;
+                    if (val) {
+                      ogsFilter.reset();
                     }
-                    pupilFilterLocator.setPupilFilter(
-                      pupilFilterRecords: [
-                        (filter: PupilFilter.noAfterSchoolCare, value: val),
-                      ],
-                    );
+                    notOgsFilter.toggle(val);
                   },
                 ),
               ],
