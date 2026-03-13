@@ -5,7 +5,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/custom_checkbox_either_or.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
@@ -196,56 +195,54 @@ class AuthorizationPupilCard extends WatchingWidget {
                 ),
               ],
             ),
-            const Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Gap(10),
-                Text(
-                  'Kommentar: ',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Gap(5),
-              ],
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Gap(10),
-                Expanded(
-                  child: InkWell(
-                    onTap: () async {
-                      final result = await longTextFieldDialog(
-                        title: 'Kommentar ändern',
-                        labelText: 'Kommentar',
-                        initialValue: pupilAuthorization.comment,
-                        parentContext: context,
-                      );
-                      if (result == null ||
-                          result.value == pupilAuthorization.comment ||
-                          result.value == '') {
-                        return;
-                      }
+            InkWell(
+              onTap: () async {
+                final result = await longTextFieldDialog(
+                  title: 'Kommentar ändern',
+                  labelText: 'Kommentar',
+                  initialValue: pupilAuthorization.comment,
+                  parentContext: context,
+                );
+                if (result == null ||
+                    result.value == pupilAuthorization.comment ||
+                    result.value == '') {
+                  return;
+                }
 
-                      await di<AuthorizationManager>().updatePupilAuthorization(
-                        pupilId: pupil.pupilId,
-                        authorizationId: authorization.id!,
-                        status: null,
-                        comment: result.value,
-                      );
-                    },
-                    child: Text(
-                      pupilAuthorization.comment != null
-                          ? pupilAuthorization.comment!
-                          : 'kein Kommentar',
-                      style: TextStyle(color: AppColors.backgroundColor),
-                      textAlign: TextAlign.left,
-                      maxLines: 3,
-                      softWrap: true,
+                await di<AuthorizationManager>().updatePupilAuthorization(
+                  pupilId: pupil.pupilId,
+                  authorizationId: authorization.id!,
+                  status: null,
+                  comment: result.value,
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(
+                    textAlign: TextAlign.left,
+                    TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: ' Kommentar: ',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: (pupilAuthorization.comment == null ||
+                                  pupilAuthorization.comment!.isEmpty)
+                              ? 'Kein Kommentar'
+                              : pupilAuthorization.comment!,
+                        ),
+                      ],
                     ),
+                    softWrap: true,
                   ),
                 ),
-              ],
+              ),
             ),
             const Gap(10),
           ],

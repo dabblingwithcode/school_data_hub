@@ -3,7 +3,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/custom_checkbox_either_or.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -167,12 +166,32 @@ class _EntryComment extends WatchingWidget {
           comment: (value: null),
         );
       },
-      child: Text(
-        pupilEntry.comment != null && pupilEntry.comment != ''
-            ? pupilEntry.comment!
-            : 'kein Kommentar',
-        textAlign: TextAlign.left,
-        style: TextStyle(fontSize: 16, color: AppColors.backgroundColor),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 10),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text.rich(
+            textAlign: TextAlign.left,
+            TextSpan(
+              children: [
+                const TextSpan(
+                  text: ' Kommentar: ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextSpan(
+                  text: (pupilEntry.comment == null ||
+                          pupilEntry.comment!.isEmpty)
+                      ? 'Kein Kommentar'
+                      : pupilEntry.comment!,
+                ),
+              ],
+            ),
+            softWrap: true,
+          ),
+        ),
       ),
     );
   }

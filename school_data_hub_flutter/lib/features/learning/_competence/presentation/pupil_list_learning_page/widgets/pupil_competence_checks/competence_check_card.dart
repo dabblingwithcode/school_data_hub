@@ -354,69 +354,51 @@ class CompetenceCheckCard extends StatelessWidget {
                 ],
               ),
               const Gap(15),
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () async {
-                      if (isAuthorized) {
-                        final result = await longTextFieldDialog(
-                          parentContext: context,
-                          title: 'Status',
-                          labelText: 'Status eingeben',
-                          initialValue: competenceCheck.comment,
-                        );
-                        if (result == null ||
-                            result.value == competenceCheck.comment) {
-                          return;
-                        }
-
-                        await di<CompetenceManager>().updateCompetenceCheck(
-                          competenceCheckId: competenceCheck.checkId,
-                          competenceComment: (value: result.value),
-                        );
-                      }
-                    },
-                    child: Text(
-                      'Kommentar:',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.interactiveColor,
+              InkWell(
+                onTap: () async {
+                  if (!isAuthorized) return;
+                  final result = await longTextFieldDialog(
+                    parentContext: context,
+                    title: 'Kommentar',
+                    labelText: 'Kommentar eingeben',
+                    initialValue: competenceCheck.comment,
+                  );
+                  if (result == null ||
+                      result.value == competenceCheck.comment) {
+                    return;
+                  }
+                  await di<CompetenceManager>().updateCompetenceCheck(
+                    competenceCheckId: competenceCheck.checkId,
+                    competenceComment: (value: result.value),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text.rich(
+                      textAlign: TextAlign.left,
+                      TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: ' Kommentar: ',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(
+                            text: (competenceCheck.comment == null ||
+                                    competenceCheck.comment!.isEmpty)
+                                ? 'Kein Kommentar'
+                                : competenceCheck.comment!,
+                          ),
+                        ],
                       ),
+                      softWrap: true,
                     ),
                   ),
-                  const Gap(5),
-                  Flexible(
-                    child: InkWell(
-                      onTap: () async {
-                        if (isAuthorized) {
-                          final result = await longTextFieldDialog(
-                            parentContext: context,
-                            title: 'Kommentar',
-                            labelText: 'Kommentar eingeben',
-                            initialValue: competenceCheck.comment,
-                          );
-                          if (result == null ||
-                              result.value == competenceCheck.comment) {
-                            return;
-                          }
-
-                          await di<CompetenceManager>().updateCompetenceCheck(
-                            competenceCheckId: competenceCheck.checkId,
-                            competenceComment: (value: result.value),
-                          );
-                        }
-                      },
-                      child: Text(
-                        (competenceCheck.comment == null ||
-                                competenceCheck.comment!.isEmpty)
-                            ? 'Kein Kommentar'
-                            : competenceCheck.comment!,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),

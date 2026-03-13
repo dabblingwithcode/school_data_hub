@@ -298,8 +298,6 @@ class PupilWorkbookCard extends WatchingWidget {
                   ],
                 ),
                 const Gap(10),
-                const Text('Kommentar:'),
-                const Gap(5),
                 InkWell(
                   onTap: () async {
                     final result = await longTextFieldDialog(
@@ -317,14 +315,31 @@ class PupilWorkbookCard extends WatchingWidget {
                       comment: (value: result.value),
                     );
                   },
-                  child: Text(
-                    thisPupilWorkbook.comment == null ||
-                            thisPupilWorkbook.comment! == ''
-                        ? 'Kein Kommentar'
-                        : thisPupilWorkbook.comment!,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: AppColors.interactiveColor,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text.rich(
+                        textAlign: TextAlign.left,
+                        TextSpan(
+                          children: [
+                            const TextSpan(
+                              text: ' Kommentar: ',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text: (thisPupilWorkbook.comment == null ||
+                                      thisPupilWorkbook.comment!.isEmpty)
+                                  ? 'Kein Kommentar'
+                                  : thisPupilWorkbook.comment!,
+                            ),
+                          ],
+                        ),
+                        softWrap: true,
+                      ),
                     ),
                   ),
                 ),

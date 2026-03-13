@@ -5,7 +5,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
@@ -318,69 +317,53 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
           ],
         ),
         if (competenceCheck != null) ...[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Gap(10),
-              InkWell(
-                onTap: () async {
-                  if (SessionHelper.isAuthorized(competenceCheck.createdBy)) {
-                    final result = await longTextFieldDialog(
-                      parentContext: context,
-                      title: 'Kommentar',
-                      labelText: 'Kommentar eingeben',
-                      initialValue: competenceCheck.comment,
-                    );
-                    if (result == null ||
-                        result.value == competenceCheck.comment) {
-                      return;
-                    }
-                    await di<CompetenceManager>().updateCompetenceCheck(
-                      competenceCheckId: competenceCheck.checkId,
-                      competenceComment: (value: result.value),
-                    );
-                  }
-                },
-                child: Text(
-                  'Kommentar:',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.interactiveColor,
+          InkWell(
+            onTap: () async {
+              if (!SessionHelper.isAuthorized(competenceCheck.createdBy)) {
+                return;
+              }
+              final result = await longTextFieldDialog(
+                parentContext: context,
+                title: 'Kommentar',
+                labelText: 'Kommentar eingeben',
+                initialValue: competenceCheck.comment,
+              );
+              if (result == null ||
+                  result.value == competenceCheck.comment) {
+                return;
+              }
+              await di<CompetenceManager>().updateCompetenceCheck(
+                competenceCheckId: competenceCheck.checkId,
+                competenceComment: (value: result.value),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text.rich(
+                  textAlign: TextAlign.left,
+                  TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: ' Kommentar: ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text: (competenceCheck.comment == null ||
+                                competenceCheck.comment!.isEmpty)
+                            ? 'Kein Kommentar'
+                            : competenceCheck.comment!,
+                      ),
+                    ],
                   ),
+                  softWrap: true,
                 ),
               ),
-              const Gap(5),
-              Flexible(
-                child: InkWell(
-                  onTap: () async {
-                    if (SessionHelper.isAuthorized(competenceCheck.createdBy)) {
-                      final result = await longTextFieldDialog(
-                        parentContext: context,
-                        title: 'Kommentar',
-                        labelText: 'Kommentar eingeben',
-                        initialValue: competenceCheck.comment,
-                      );
-                      if (result == null ||
-                          result.value == competenceCheck.comment) {
-                        return;
-                      }
-                      await di<CompetenceManager>().updateCompetenceCheck(
-                        competenceCheckId: competenceCheck.checkId,
-                        competenceComment: (value: result.value),
-                      );
-                    }
-                  },
-                  child: Text(
-                    (competenceCheck.comment == null ||
-                            competenceCheck.comment!.isEmpty)
-                        ? 'Kein Kommentar'
-                        : competenceCheck.comment!,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
           const Gap(10),
         ],

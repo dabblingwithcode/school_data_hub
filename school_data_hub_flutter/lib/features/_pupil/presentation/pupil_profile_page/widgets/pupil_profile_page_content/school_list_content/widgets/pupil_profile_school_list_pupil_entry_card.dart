@@ -148,55 +148,50 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                 ],
               ),
               const Gap(5),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Kommentar',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  const Spacer(),
-                  Text(
-                    pupilListEntry.entryBy ?? '',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(5),
-              Row(
-                children: [
-                  Flexible(
-                    child: InkWell(
-                      onTap: () async {
-                        final result = await longTextFieldDialog(
-                          title: 'Kommentar',
-                          initialValue: pupilListEntry.comment ?? '',
-                          labelText: 'Kommentar eintragen',
-                          parentContext: context,
-                        );
-                        if (result == null ||
-                            result.value == pupilListEntry.comment) {
-                          return;
-                        }
-                        await schoolListManager.updatePupilListEntry(
-                          entry: pupilListEntry,
-                          comment: (value: result.value),
-                        );
-                      },
-                      child: Text(
-                        pupilListEntry.comment ?? 'kein Kommentar',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.interactiveColor,
-                        ),
+              InkWell(
+                onTap: () async {
+                  final result = await longTextFieldDialog(
+                    title: 'Kommentar',
+                    initialValue: pupilListEntry.comment ?? '',
+                    labelText: 'Kommentar eintragen',
+                    parentContext: context,
+                  );
+                  if (result == null ||
+                      result.value == pupilListEntry.comment) {
+                    return;
+                  }
+                  await schoolListManager.updatePupilListEntry(
+                    entry: pupilListEntry,
+                    comment: (value: result.value),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text.rich(
+                      textAlign: TextAlign.left,
+                      TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: ' Kommentar: ',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          TextSpan(
+                            text: (pupilListEntry.comment == null ||
+                                    pupilListEntry.comment!.isEmpty)
+                                ? 'Kein Kommentar'
+                                : pupilListEntry.comment!,
+                          ),
+                        ],
                       ),
+                      softWrap: true,
                     ),
                   ),
-                ],
+                ),
               ),
             ],
           ),

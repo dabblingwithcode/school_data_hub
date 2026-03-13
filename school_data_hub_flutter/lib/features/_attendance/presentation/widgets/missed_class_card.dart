@@ -117,21 +117,29 @@ class MissedSchooldayCard extends StatelessWidget {
                 ],
               ),
               const Gap(5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Text('Kommentar:'),
-                  const Gap(5),
-                  Expanded(
-                    child: Text(
-                      missedSchoolday.comment ?? 'kein Eintrag',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.visible,
-                      softWrap: true,
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(
+                    textAlign: TextAlign.left,
+                    TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: ' Kommentar: ',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: missedSchoolday.comment ?? 'kein Eintrag',
+                        ),
+                      ],
                     ),
+                    softWrap: true,
                   ),
-
-],
+                ),
               ),
               if (missedSchoolday.modifiedBy != null) ...[
                 const Gap(5),
