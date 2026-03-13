@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
@@ -45,6 +46,32 @@ class HubConnectionStateIndicator extends WatchingWidget {
   }
 }
 
+class HubApiRunningStateIndicator extends WatchingWidget {
+  static const double _radius = 5;
+
+  const HubApiRunningStateIndicator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isRunning = watchValue((NotificationService x) => x.isRunning);
+    return isRunning
+        ? Row(
+            children: [
+              const SizedBox(width: 2),
+              Container(
+                width: _radius * 2,
+                height: _radius * 2,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.orange,
+                ),
+              ),
+            ],
+          )
+        : const SizedBox.shrink();
+  }
+}
+
 class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData iconData;
   final String title;
@@ -64,6 +91,7 @@ class GenericAppBar extends StatelessWidget implements PreferredSizeWidget {
             padding: EdgeInsets.only(left: 5),
             child: HubConnectionStateIndicator(),
           ),
+          const HubApiRunningStateIndicator(),
           Expanded(
             child: Center(
               child: SingleChildScrollView(
