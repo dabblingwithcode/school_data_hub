@@ -4,13 +4,11 @@ import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bo
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/post_or_patch_support_category_page/post_or_patch_support_category_page.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/controller/category_list_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/widgets/support_category_tree.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/sortable_support_category_list_page.dart';
 
 class CategoryListPage extends WatchingWidget {
-  final CategoryListController controller;
-  const CategoryListPage(this.controller, {super.key});
+  const CategoryListPage({super.key});
 
   @override
   Widget build(BuildContext context) {

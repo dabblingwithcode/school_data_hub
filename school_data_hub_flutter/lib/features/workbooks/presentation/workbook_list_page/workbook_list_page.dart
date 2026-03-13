@@ -15,15 +15,14 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
-import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/workbook_card.dart';
 
 class WorkbookListPage extends WatchingWidget {
-  final WorkbookListViewModel viewModel;
-  const WorkbookListPage(this.viewModel, {super.key});
+  const WorkbookListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    callOnce((context) => di<WorkbookManager>().fetchWorkbooks());
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
 
     //Session session = watchValue((SessionManager x) => x.credentials);
