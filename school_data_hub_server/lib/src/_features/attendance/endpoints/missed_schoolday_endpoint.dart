@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -70,6 +71,7 @@ class MissedSchooldayEndpoint extends Endpoint {
     final result = await _upsertMissedSchoolday(session, missedClass);
 
     session.messages.postMessage('hub_events_stream', result.record);
+    HubUpdatesTracker.instance.touch(HubObjectType.missedSchoolday);
 
     return result.record;
   }
@@ -125,6 +127,7 @@ class MissedSchooldayEndpoint extends Endpoint {
         );
 
         session.messages.postMessage('hub_events_stream', withRelation!);
+        HubUpdatesTracker.instance.touch(HubObjectType.missedSchoolday);
         processed.add(withRelation);
       }
 
@@ -185,6 +188,7 @@ class MissedSchooldayEndpoint extends Endpoint {
     );
 
     session.messages.postMessage('hub_events_stream', missedSchooldayWithRelation!);
+    HubUpdatesTracker.instance.touch(HubObjectType.missedSchoolday);
 
     return missedSchooldayWithRelation;
   }

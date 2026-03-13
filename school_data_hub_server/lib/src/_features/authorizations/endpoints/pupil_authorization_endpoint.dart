@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:serverpod/serverpod.dart';
@@ -28,6 +29,7 @@ class PupilAuthorizationEndpoint extends Endpoint {
     );
     if (fullAuth != null) {
       session.messages.postMessage('hub_events_stream', fullAuth);
+      HubUpdatesTracker.instance.touch(HubObjectType.authorization);
     }
     return authWithInclude!;
   }
@@ -80,6 +82,7 @@ class PupilAuthorizationEndpoint extends Endpoint {
       );
       if (fullAuth != null) {
         session.messages.postMessage('hub_events_stream', fullAuth);
+        HubUpdatesTracker.instance.touch(HubObjectType.authorization);
       }
       return result;
     });
@@ -127,6 +130,7 @@ class PupilAuthorizationEndpoint extends Endpoint {
     );
     if (fullAuth != null) {
       session.messages.postMessage('hub_events_stream', fullAuth);
+      HubUpdatesTracker.instance.touch(HubObjectType.authorization);
     }
     return authWithInclude!;
   }

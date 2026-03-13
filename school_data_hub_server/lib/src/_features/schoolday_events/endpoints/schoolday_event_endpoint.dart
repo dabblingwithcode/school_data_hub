@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/_features/schoolday_events/helpers/schoolday_event_notification_helper.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
@@ -60,6 +61,7 @@ class SchooldayEventEndpoint extends Endpoint {
       ),
     );
     session.messages.postMessage('hub_events_stream', eventWithSchoolday);
+    HubUpdatesTracker.instance.touch(HubObjectType.schooldayEvent);
     return eventWithSchoolday;
   }
 
@@ -117,6 +119,7 @@ class SchooldayEventEndpoint extends Endpoint {
     }
     session.messages
         .postMessage('hub_events_stream', updatedSchooldayEventInDatabase!);
+        HubUpdatesTracker.instance.touch(HubObjectType.schooldayEvent);
     return updatedSchooldayEventInDatabase;
   }
 
@@ -273,6 +276,7 @@ class SchooldayEventEndpoint extends Endpoint {
 
     session.log('Updated event : ${updatedEvent!.toJson()}', level: LogLevel.debug);
     session.messages.postMessage('hub_events_stream', updatedEvent);
+    HubUpdatesTracker.instance.touch(HubObjectType.schooldayEvent);
     return updatedEvent;
   }
 
@@ -338,6 +342,7 @@ class SchooldayEventEndpoint extends Endpoint {
       throw Exception('Schoolday event not found');
     }
     session.messages.postMessage('hub_events_stream', updatedSchooldayEvent);
+    HubUpdatesTracker.instance.touch(HubObjectType.schooldayEvent);
     return updatedSchooldayEvent;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -66,6 +67,7 @@ class SchoolListEndpoint extends Endpoint {
       include: SchoolList.include(pupilEntries: PupilListEntry.includeList()),
     );
     session.messages.postMessage('hub_events_stream', schoolListWithPupilEntries!);
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolList);
     return schoolListWithPupilEntries;
   }
 
@@ -140,6 +142,7 @@ class SchoolListEndpoint extends Endpoint {
         throw Exception('Failed to update SchoolList');
       }
       session.messages.postMessage('hub_events_stream', updatedSchoolList);
+      HubUpdatesTracker.instance.touch(HubObjectType.schoolList);
       return updatedSchoolList;
     });
   }
@@ -168,6 +171,7 @@ class SchoolListEndpoint extends Endpoint {
     );
     if (schoolList != null) {
       session.messages.postMessage('hub_events_stream', schoolList);
+      HubUpdatesTracker.instance.touch(HubObjectType.schoolList);
     }
     return updatedEntry;
   }

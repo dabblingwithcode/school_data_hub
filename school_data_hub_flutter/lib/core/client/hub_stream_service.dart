@@ -28,6 +28,28 @@ sealed class HubLocalEvent {}
 /// Emitted after a successful reconnect; subscribers should refetch their data.
 final class HubReconnected extends HubLocalEvent {}
 
+/// Emitted when only specific object types changed during disconnect.
+final class HubSelectiveReconnect extends HubLocalEvent {
+  final Set<HubObjectType> changedTypes;
+  HubSelectiveReconnect(this.changedTypes);
+}
+
+/// Given a list of per-type last-change timestamps from the server and
+/// the moment this client disconnected, returns the set of [HubObjectType]s
+/// that were modified while the client was offline.
+///
+/// Extracted as a top-level function so it can be unit-tested without
+/// standing up [HubStreamService].
+Set<HubObjectType> computeChangedTypes(
+  List<HubTypeLastUpdate> changeTimes,
+  DateTime disconnectedAt,
+) {
+  return changeTimes
+      .where((ct) => ct.changedAt.isAfter(disconnectedAt))
+      .map((ct) => ct.objectType)
+      .toSet();
+}
+
 /// Backoff cap in milliseconds.
 const _maxReconnectDelayMs = 30000;
 const _initialReconnectDelayMs = 1000;
@@ -48,6 +70,7 @@ class HubStreamService with WidgetsBindingObserver {
   final _random = Random();
   VoidCallback? _connectivityListener;
   String? _currentDeviceId;
+  DateTime? _disconnectedAt;
 
   final _events = StreamController<Object>.broadcast();
 
@@ -133,10 +156,24 @@ class HubStreamService with WidgetsBindingObserver {
   }
 
   void _cleanupSubscription() {
+    if (_state.value == HubConnectionState.connected) {
+      _disconnectedAt = DateTime.now().toUtc();
+    }
     _hasReceivedFirstEvent = false;
     final sub = _subscription;
     _subscription = null;
     sub?.cancel();
+  }
+
+  Future<Set<HubObjectType>?> _getChangedTypesSinceDisconnect() async {
+    if (_disconnectedAt == null) return null;
+    try {
+      final changeTimes = await di<Client>().hub.getLastChangeTimes();
+      return computeChangedTypes(changeTimes, _disconnectedAt!);
+    } catch (e) {
+      _log.warning('[HUB] Could not fetch change times: $e');
+      return null;
+    }
   }
 
   void _scheduleReconnect({
@@ -181,15 +218,25 @@ class HubStreamService with WidgetsBindingObserver {
     if (isReconnect) {
       _reconnectTimer = Timer(
         const Duration(milliseconds: _dnsGraceDelayMs),
-        () {
+        () async {
           _reconnectTimer = null;
           if (!_appInForeground || _disposed) {
             _connecting = false;
             return;
           }
-          if (!_disposed) {
+
+          final changedTypes = await _getChangedTypesSinceDisconnect();
+          if (changedTypes == null) {
             _events.add(HubReconnected());
+          } else if (changedTypes.isNotEmpty) {
+            _log.info(
+              '[HUB] Selective reconnect: ${changedTypes.length} types changed',
+            );
+            _events.add(HubSelectiveReconnect(changedTypes));
+          } else {
+            _log.info('[HUB] No events missed — skipping refetch');
           }
+
           _doSubscribe();
         },
       );

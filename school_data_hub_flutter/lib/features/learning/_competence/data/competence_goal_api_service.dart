@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
+import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -34,8 +34,7 @@ class CompetenceGoalApiService {
     int pupilId,
   ) async {
     return ClientHelper.apiCall(
-      call: () =>
-          _client.competenceGoal.fetchCompetenceGoalsForPupil(pupilId),
+      call: () => _client.competenceGoal.fetchCompetenceGoalsForPupil(pupilId),
       errorMessage: 'Fehler beim Laden der Lernziele',
     );
   }

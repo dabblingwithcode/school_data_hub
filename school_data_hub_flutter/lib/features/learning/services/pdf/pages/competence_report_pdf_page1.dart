@@ -3,8 +3,8 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/pdf_helpers.dart'
     as common_pdf;
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_generator.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pdf_widgets/competence_report_criteria_table.dart';
+import 'package:school_data_hub_flutter/features/learning/services/pdf/competence_report_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/learning/services/pdf/pdf_widgets/competence_report_criteria_table.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 /// Page 1: School header, Zeugnis title, pupil block, missed hours, first section blocks.

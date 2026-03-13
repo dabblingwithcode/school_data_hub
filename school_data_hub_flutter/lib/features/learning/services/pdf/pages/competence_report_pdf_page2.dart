@@ -1,8 +1,8 @@
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_generator.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_helpers.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/pdf_widgets/competence_report_criteria_table.dart';
+import 'package:school_data_hub_flutter/features/learning/services/pdf/competence_report_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/learning/services/pdf/competence_report_pdf_helpers.dart';
+import 'package:school_data_hub_flutter/features/learning/services/pdf/pdf_widgets/competence_report_criteria_table.dart';
 
 /// Page 2: Header and continued section blocks.
 class CompetenceReportPdfPage2 {

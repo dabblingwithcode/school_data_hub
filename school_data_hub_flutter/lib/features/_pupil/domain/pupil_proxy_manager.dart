@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/data/pupil_data_api_service.dart';
@@ -54,6 +54,10 @@ class PupilProxyManager extends ChangeNotifier {
       upsertFromStream(event);
     } else if (event is HubReconnected) {
       fetchAllPupils();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.pupilData)) {
+        fetchAllPupils();
+      }
     }
   }
 
@@ -324,10 +328,7 @@ class PupilProxyManager extends ChangeNotifier {
   //- Fetch pupils with the given internal ids
 
   Future<void> fetchPupilsByInternalId(List<int> pupilInternalIds) async {
-    _notificationService.showSnackBar(
-      NotificationType.info,
-      'Lade Schülerdaten vom Server. Bitte warten...',
-    );
+    _log.info('Fetching ${pupilInternalIds.length} pupils by internal ids');
 
     // fetch the pupils from the backend
     final fetchedPupils = await _pupilDataApiService.fetchListOfPupils(

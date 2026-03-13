@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/data/competence_report_item_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_helper.dart';
@@ -39,6 +39,10 @@ class CompetenceReportItemManager {
       deleteItemFromStream(event.id);
     } else if (event is HubReconnected) {
       fetchItems();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.competenceReportItem)) {
+        fetchItems();
+      }
     }
   }
 

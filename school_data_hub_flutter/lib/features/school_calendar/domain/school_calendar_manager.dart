@@ -188,10 +188,7 @@ class SchoolCalendarManager {
         .getSchooldays();
 
     if (responseSchooldays.isNotEmpty) {
-      _notificationService.showSnackBar(
-        NotificationType.success,
-        'Schultage geladen',
-      );
+      _log.info('${responseSchooldays.length} schooldays fetched');
       _schooldays.value = responseSchooldays;
 
       // if the schooldays flag is not set, we set it to true
@@ -291,12 +288,7 @@ class SchoolCalendarManager {
     final List<SchoolSemester> responseSchoolSemesters = await _apiService
         .getSchoolSemesters();
 
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      '${responseSchoolSemesters.length} Schulhalbjahre geladen!',
-    );
-
-    _log.info('Schulhalbjahre geladen: ${responseSchoolSemesters.length}');
+    _log.info('${responseSchoolSemesters.length} school semesters fetched');
     _schoolSemesters.value = responseSchoolSemesters;
     if (_currentSemester.value == null) {
       _currentSemester.value = getCurrentSchoolSemester();

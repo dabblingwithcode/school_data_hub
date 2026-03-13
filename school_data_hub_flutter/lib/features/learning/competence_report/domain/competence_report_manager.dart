@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/data/competence_report_api_service.dart';
@@ -14,8 +14,7 @@ class CompetenceReportManager {
   final _checkApiService = CompetenceReportCheckApiService();
   final _notificationService = di<NotificationService>();
 
-  final _reportsByPupil =
-      ValueNotifier<Map<int, List<CompetenceReport>>>({});
+  final _reportsByPupil = ValueNotifier<Map<int, List<CompetenceReport>>>({});
   ValueListenable<Map<int, List<CompetenceReport>>> get reportsByPupil =>
       _reportsByPupil;
 
@@ -49,15 +48,24 @@ class CompetenceReportManager {
       for (final pupilId in _reportsByPupil.value.keys.toList()) {
         fetchReportsForPupil(pupilId);
       }
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.competenceReport) ||
+          event.changedTypes.contains(HubObjectType.competenceReportCheck)) {
+        for (final pupilId in _reportsByPupil.value.keys.toList()) {
+          fetchReportsForPupil(pupilId);
+        }
+      }
     }
   }
 
   void upsertReportFromStream(CompetenceReport report) {
     final map = Map<int, List<CompetenceReport>>.from(_reportsByPupil.value);
     final list = List<CompetenceReport>.from(map[report.pupilId] ?? []);
-    final index = list.indexWhere((r) =>
-        r.id == report.id ||
-        (r.reportId == report.reportId && report.reportId.isNotEmpty));
+    final index = list.indexWhere(
+      (r) =>
+          r.id == report.id ||
+          (r.reportId == report.reportId && report.reportId.isNotEmpty),
+    );
     if (index >= 0) {
       list[index] = report;
     } else {
@@ -74,7 +82,9 @@ class CompetenceReportManager {
       fetchReportsForPupil(check.pupilId);
       return;
     }
-    final reportIndex = list.indexWhere((r) => r.id == check.competenceReportId);
+    final reportIndex = list.indexWhere(
+      (r) => r.id == check.competenceReportId,
+    );
     if (reportIndex == -1) {
       fetchReportsForPupil(check.pupilId);
       return;
@@ -83,9 +93,11 @@ class CompetenceReportManager {
     final checks = List<CompetenceReportCheck>.from(
       report.competenceReportChecks ?? [],
     );
-    final checkIndex = checks.indexWhere((c) =>
-        c.id == check.id ||
-        (c.publicId == check.publicId && check.publicId.isNotEmpty));
+    final checkIndex = checks.indexWhere(
+      (c) =>
+          c.id == check.id ||
+          (c.publicId == check.publicId && check.publicId.isNotEmpty),
+    );
     if (checkIndex >= 0) {
       checks[checkIndex] = check;
     } else {
@@ -261,8 +273,9 @@ class CompetenceReportManager {
     required int pupilId,
     required String publicId,
   }) async {
-    final success =
-        await _checkApiService.deleteCompetenceReportCheck(publicId);
+    final success = await _checkApiService.deleteCompetenceReportCheck(
+      publicId,
+    );
     if (success) {
       _notificationService.showSnackBar(
         NotificationType.success,

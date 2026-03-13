@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -68,6 +69,7 @@ class CompetenceReportEndpoint extends Endpoint {
     });
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.competenceReport);
     return result;
   }
 
@@ -115,6 +117,7 @@ class CompetenceReportEndpoint extends Endpoint {
 
     final updated = await CompetenceReport.db.updateRow(session, report);
     session.messages.postMessage('hub_events_stream', updated);
+    HubUpdatesTracker.instance.touch(HubObjectType.competenceReport);
     return updated;
   }
 

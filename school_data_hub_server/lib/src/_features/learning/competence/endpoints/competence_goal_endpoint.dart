@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:serverpod/serverpod.dart';
@@ -98,6 +99,7 @@ class CompetenceGoalEndpoint extends Endpoint {
     });
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.competenceGoal);
     return true;
   }
 
@@ -140,6 +142,7 @@ class CompetenceGoalEndpoint extends Endpoint {
     ))!;
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.competenceGoal);
     return true;
   }
 
@@ -243,6 +246,7 @@ class CompetenceGoalEndpoint extends Endpoint {
     });
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.competenceGoal);
     return true;
   }
 
@@ -295,6 +299,7 @@ class CompetenceGoalEndpoint extends Endpoint {
     ))!;
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.competenceGoal);
     return true;
   }
 }

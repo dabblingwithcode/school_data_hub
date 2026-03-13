@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/_features/learning_support/helpers/import_support_categories_from_file_content_json.dart'
     as helper;
 import 'package:school_data_hub_server/src/generated/protocol.dart';
@@ -31,6 +32,7 @@ class SupportCategoryEndpoint extends Endpoint {
     });
     for (final c in categories) {
       session.messages.postMessage('hub_events_stream', c);
+      HubUpdatesTracker.instance.touch(HubObjectType.supportCategory);
     }
     return categories;
   }
@@ -41,6 +43,7 @@ class SupportCategoryEndpoint extends Endpoint {
     final newCategory = category.copyWith(id: null);
     final inserted = await SupportCategory.db.insertRow(session, newCategory);
     session.messages.postMessage('hub_events_stream', inserted);
+    HubUpdatesTracker.instance.touch(HubObjectType.supportCategory);
     return true;
   }
 
@@ -48,6 +51,7 @@ class SupportCategoryEndpoint extends Endpoint {
       Session session, SupportCategory category) async {
     final inserted = await session.db.updateRow(category);
     session.messages.postMessage('hub_events_stream', inserted);
+    HubUpdatesTracker.instance.touch(HubObjectType.supportCategory);
     return true;
   }
 

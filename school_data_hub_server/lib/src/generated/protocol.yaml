@@ -90,6 +90,7 @@ pupilBookLending:
   - removeFileFromPupilBookLending:
 hub:
   - streamHubEvents:
+  - getLastChangeTimes:
 competenceCheck:
   - postCompetenceCheck:
   - updateCompetenceCheck:

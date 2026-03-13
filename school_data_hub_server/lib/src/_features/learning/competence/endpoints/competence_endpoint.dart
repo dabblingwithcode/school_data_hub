@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -28,6 +29,7 @@ class CompetenceEndpoint extends Endpoint {
     );
     final competenceInDatabase = await session.db.insertRow(competence);
     session.messages.postMessage('hub_events_stream', competenceInDatabase);
+    HubUpdatesTracker.instance.touch(HubObjectType.competence);
     return competenceInDatabase;
   }
 
@@ -40,6 +42,7 @@ class CompetenceEndpoint extends Endpoint {
       Session session, Competence competence) async {
     await session.db.updateRow(competence);
     session.messages.postMessage('hub_events_stream', competence);
+    HubUpdatesTracker.instance.touch(HubObjectType.competence);
     return competence;
   }
 

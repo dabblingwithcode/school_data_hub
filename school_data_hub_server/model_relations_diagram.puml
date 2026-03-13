@@ -379,6 +379,14 @@ enum HubObjectType #ece4ff ##[bold] {
 
 }
 
+class HubTypeLastUpdate ##[bold]  {
+<size:14>📁</size> <b><size:12> /_features/hub/models/hub_type_last_update.spy.yaml</size></b>
+--
+  <i>objectType</i>: <b><color:#ff962f>HubObjectType</color></b>
+  <i>changedAt</i>: <b><color:#ff962f>DateTime</color></b>
+
+}
+
 class Competence <<table: <b>competence</b>>> #e2f0fb##[bold] {
 <size:14>📁</size> <b><size:12> /_features/learning/competence/models/competence.spy.yaml</size></b>
 --
@@ -1328,6 +1336,7 @@ LibraryBookQuery - BookTag
 LibraryBookQuery - LibraryBook
 LibraryBookQuery - LibraryBookLocation
 HubDeleteEvent - HubObjectType
+HubTypeLastUpdate - HubObjectType
 CompulsoryRoom - MatrixRoomType
 AfterSchoolCare - AfterSchoolCarePickUpTimes
 AfterSchoolCarePickUpTimes - PickUpInfo

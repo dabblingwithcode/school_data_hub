@@ -6,8 +6,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
-import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -73,8 +73,9 @@ class CompetenceManager {
 
   /// Fetches goals for a single pupil from the server (lazy loading).
   Future<void> fetchGoalsForPupil(int pupilId) async {
-    final goals =
-        await _competenceGoalApiService.fetchCompetenceGoalsForPupil(pupilId);
+    final goals = await _competenceGoalApiService.fetchCompetenceGoalsForPupil(
+      pupilId,
+    );
     if (goals != null) {
       getPupilCompetenceGoalsProxy(pupilId).setCompetenceGoals(goals);
       _loadedPupilIds.add(pupilId);
@@ -146,6 +147,13 @@ class CompetenceManager {
     } else if (event is HubReconnected) {
       fetchCompetences();
       _refetchLoadedGoals();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.competence)) {
+        fetchCompetences();
+      }
+      if (event.changedTypes.contains(HubObjectType.competenceGoal)) {
+        _refetchLoadedGoals();
+      }
     }
   }
 
@@ -521,8 +529,9 @@ class CompetenceManager {
   }
 
   Future<void> deleteCompetenceGoal(String publicId) async {
-    final success =
-        await _competenceGoalApiService.deleteCompetenceGoal(publicId);
+    final success = await _competenceGoalApiService.deleteCompetenceGoal(
+      publicId,
+    );
     if (success != true) return;
 
     _notificationService.showSnackBar(

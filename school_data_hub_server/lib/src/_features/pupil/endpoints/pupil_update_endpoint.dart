@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/_features/pupil/schemas/pupil_schemas.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
@@ -10,6 +11,7 @@ class PupilUpdateEndpoint extends Endpoint {
   Future<PupilData> updatePupil(Session session, PupilData pupil) async {
     final updatedPupil = await PupilData.db.updateRow(session, pupil);
     session.messages.postMessage('hub_events_stream', updatedPupil);
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedPupil;
   }
 
@@ -32,6 +34,7 @@ class PupilUpdateEndpoint extends Endpoint {
     );
     session.messages
         .postMessage('hub_events_stream', updatedPupilWithRelation!);
+        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedPupilWithRelation;
   }
 
@@ -51,6 +54,7 @@ class PupilUpdateEndpoint extends Endpoint {
     );
     session.messages
         .postMessage('hub_events_stream', updatedPupilWithRelation!);
+        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedPupilWithRelation;
   }
 
@@ -70,6 +74,7 @@ class PupilUpdateEndpoint extends Endpoint {
     );
     session.messages
         .postMessage('hub_events_stream', updatedPupilWithRelation!);
+        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedPupilWithRelation;
   }
 
@@ -98,6 +103,7 @@ class PupilUpdateEndpoint extends Endpoint {
     );
     for (final sibling in updatedSiblingsWithRelation) {
       session.messages.postMessage('hub_events_stream', sibling);
+      HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     }
     return updatedSiblingsWithRelation;
   }
@@ -238,6 +244,7 @@ class PupilUpdateEndpoint extends Endpoint {
 
     session.log('Updated pupil : ${updatedPupil!.toJson()}', level: LogLevel.debug);
     session.messages.postMessage('hub_events_stream', updatedPupil);
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedPupil;
   }
 
@@ -268,6 +275,7 @@ class PupilUpdateEndpoint extends Endpoint {
       include: PupilSchemas.allInclude,
     );
     session.messages.postMessage('hub_events_stream', updatedPupil!);
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedPupil;
   }
 
@@ -310,6 +318,7 @@ class PupilUpdateEndpoint extends Endpoint {
         transaction: transaction,
       );
       session.messages.postMessage('hub_events_stream', updatedPupil!);
+      HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
       return updatedPupil;
     });
   }
@@ -347,6 +356,7 @@ class PupilUpdateEndpoint extends Endpoint {
         transaction: transaction,
       );
       session.messages.postMessage('hub_events_stream', updatedPupil!);
+      HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
       return updatedPupil;
     });
   }
@@ -368,6 +378,7 @@ class PupilUpdateEndpoint extends Endpoint {
     );
     session.messages
         .postMessage('hub_events_stream', updatedPupilWithRelation!);
+        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedPupilWithRelation;
   }
 
@@ -395,6 +406,7 @@ class PupilUpdateEndpoint extends Endpoint {
       );
       session.messages
           .postMessage('hub_events_stream', updatedPupilWithRelation!);
+          HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
       return updatedPupilWithRelation;
     });
   }
@@ -416,6 +428,7 @@ class PupilUpdateEndpoint extends Endpoint {
     );
     session.messages
         .postMessage('hub_events_stream', updatedPupilWithRelation!);
+        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedPupilWithRelation;
   }
 
@@ -435,6 +448,7 @@ class PupilUpdateEndpoint extends Endpoint {
     );
     session.messages
         .postMessage('hub_events_stream', updatedPupilWithRelation!);
+        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedPupilWithRelation;
   }
 }

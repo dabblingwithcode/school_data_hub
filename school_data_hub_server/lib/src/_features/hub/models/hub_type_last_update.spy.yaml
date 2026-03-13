@@ -1,0 +1,4 @@
+class: HubTypeLastUpdate
+fields:
+  objectType: HubObjectType
+  changedAt: DateTime

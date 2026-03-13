@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -62,6 +62,10 @@ class AttendanceManager with ChangeNotifier {
       deleteFromStream(event.id);
     } else if (event is HubReconnected) {
       fetchAllPupilMissedSchooldayes();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.missedSchoolday)) {
+        fetchAllPupilMissedSchooldayes();
+      }
     }
   }
 

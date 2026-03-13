@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:school_data_hub_server/src/_features/pupil/schemas/pupil_schemas.dart';
@@ -270,6 +271,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     });
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.supportGoal);
     return true;
   }
 
@@ -300,6 +302,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     ))!;
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.supportGoal);
     return true;
   }
 
@@ -431,6 +434,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     });
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.supportGoal);
     return true;
   }
 
@@ -465,6 +469,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     ))!;
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.supportGoal);
     return true;
   }
 
@@ -522,6 +527,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     ))!;
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.supportGoal);
     return true;
   }
 
@@ -572,6 +578,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     });
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.supportGoal);
     return true;
   }
 
@@ -625,6 +632,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
     ))!;
 
     session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.supportGoal);
     return true;
   }
 }

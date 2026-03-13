@@ -6,7 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
+import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
@@ -40,7 +40,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    callOnce((_) => di<LearningSupportManager>().fetchGoalsForPupil(pupil.pupilId));
+    callOnce(
+      (_) => di<LearningSupportManager>().fetchGoalsForPupil(pupil.pupilId),
+    );
     bool hasActivePlan() {
       if (pupil.learningSupportPlans != null &&
           pupil.learningSupportPlans!.any(

@@ -4,14 +4,17 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/data/authorization_api_service.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+
+final _log = Logger('AuthorizationManager');
 
 class AuthorizationManager with ChangeNotifier {
   final _notificationService = di<NotificationService>();
@@ -45,10 +48,7 @@ class AuthorizationManager with ChangeNotifier {
   }
 
   Future<AuthorizationManager> init() async {
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Einwilligungen werden geladen',
-    );
+    _log.info('Authorizations are being fetched');
     await fetchAuthorizations();
     _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     return this;
@@ -62,6 +62,10 @@ class AuthorizationManager with ChangeNotifier {
       deleteFromStream(event.id);
     } else if (event is HubReconnected) {
       fetchAuthorizations();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.authorization)) {
+        fetchAuthorizations();
+      }
     }
   }
 
@@ -174,11 +178,7 @@ class AuthorizationManager with ChangeNotifier {
       return;
     }
     _updateAuthsInCollections(authorizations);
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      '${authorizations.length} Einwilligungen geladen',
-    );
-
+    _log.info('${authorizations.length} authorizations fetched');
     return;
   }
 

@@ -2254,6 +2254,16 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'hub',
       endpoint: endpoints['hub']!,
       methodConnectors: {
+        'getLastChangeTimes': _i1.MethodConnector(
+          name: 'getLastChangeTimes',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['hub'] as _i17.HubEndpoint)
+                  .getLastChangeTimes(session),
+        ),
         'streamHubEvents': _i1.MethodStreamConnector(
           name: 'streamHubEvents',
           params: {},
@@ -2265,7 +2275,7 @@ class Endpoints extends _i1.EndpointDispatch {
             Map<String, Stream> streamParams,
           ) =>
               (endpoints['hub'] as _i17.HubEndpoint).streamHubEvents(session),
-        )
+        ),
       },
     );
     connectors['competenceCheck'] = _i1.EndpointConnector(

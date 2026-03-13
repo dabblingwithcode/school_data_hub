@@ -1,4 +1,6 @@
 import 'package:serverpod/serverpod.dart';
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
+import 'package:school_data_hub_server/src/generated/protocol.dart';
 
 class HubEndpoint extends Endpoint {
   @override
@@ -9,5 +11,9 @@ class HubEndpoint extends Endpoint {
     await for (final event in stream) {
       yield event;
     }
+  }
+
+  Future<List<HubTypeLastUpdate>> getLastChangeTimes(Session session) async {
+    return HubUpdatesTracker.instance.changeTimes;
   }
 }

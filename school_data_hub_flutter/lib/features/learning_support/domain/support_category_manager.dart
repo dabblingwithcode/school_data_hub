@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/data/file_upload_service.dart';
-import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -55,6 +55,10 @@ class SupportCategoryManager {
       deleteFromStream(event.id);
     } else if (event is HubReconnected) {
       fetchSupportCategories();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.supportCategory)) {
+        fetchSupportCategories();
+      }
     }
   }
 
@@ -146,13 +150,8 @@ class SupportCategoryManager {
     if (supportCategories.isNotEmpty) {
       _setSupportCategories(supportCategories);
       _envManager.setPopulatedEnvServerData(supportCategories: true);
-
-      _notificationService.showSnackBar(
-        NotificationType.success,
-        '${supportCategories.length} Förderkategorien aktualisiert!',
-      );
+      _log.info('${supportCategories.length} support categories fetched');
     }
-    _log.info('Fetched ${supportCategories.length} support categories');
     return;
   }
 

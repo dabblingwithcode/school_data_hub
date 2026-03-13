@@ -16,7 +16,7 @@ import 'package:school_data_hub_flutter/features/learning/_competence/presentati
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar/_pupil_list_learning_search_bar.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/select_competence_page/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/learning_goals_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/learning/services/learning_goals_pdf_generator.dart';
 
 class PupilListLearningPage extends WatchingWidget {
   const PupilListLearningPage({super.key});

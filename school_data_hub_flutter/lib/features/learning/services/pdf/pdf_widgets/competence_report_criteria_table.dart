@@ -1,6 +1,6 @@
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_generator.dart';
+import 'package:school_data_hub_flutter/features/learning/services/pdf/competence_report_pdf_generator.dart';
 
 /// Reusable criteria table: predicate column + 4 achievement checkbox columns.
 /// Used on competence report pages 1–4.

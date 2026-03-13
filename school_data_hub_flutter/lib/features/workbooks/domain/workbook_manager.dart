@@ -3,11 +3,14 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/features/workbooks/data/workbook_api_service.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
+
+final _log = Logger('WorkbookManager');
 
 class WorkbookManager {
   final _workbookApiService = WorkbookApiService();
@@ -63,10 +66,7 @@ class WorkbookManager {
     }
     // sort workbooks by name
     responseWorkbooks.sort((a, b) => a.name.compareTo(b.name));
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Arbeitshefte erfolgreich geladen',
-    );
+    _log.info('Workbooks fetched: ${responseWorkbooks.length}');
 
     _workbooks.value = responseWorkbooks;
 

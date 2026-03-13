@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/books/data/book_api_service.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
+
+final _log = Logger('BookManager');
 
 class BookManager {
   final _bookApiService = BookApiService();
@@ -161,8 +164,7 @@ class BookManager {
     final searchProxy = _searchResults.value.firstWhereOrNull(
       (item) => item.libraryId == libraryId,
     );
-    if (searchProxy != null &&
-        searchProxy != existingProxy) {
+    if (searchProxy != null && searchProxy != existingProxy) {
       searchProxy.updateLibraryBook(libraryBook);
     }
   }
@@ -315,11 +317,7 @@ class BookManager {
       return;
     }
     _refreshLibraryBookProxyCollections(responseBooks);
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Bücher erfolgreich geladen',
-    );
+    _log.info('${responseBooks.length} library books fetched');
   }
 
   Future<void> postLibraryBook({

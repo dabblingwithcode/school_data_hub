@@ -8,7 +8,7 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
-import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/data/schoolday_event_api_service.dart';
@@ -68,6 +68,10 @@ class SchooldayEventManager with ChangeNotifier {
       deleteFromStream(event.id);
     } else if (event is HubReconnected) {
       fetchSchooldayEvents();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.schooldayEvent)) {
+        fetchSchooldayEvents();
+      }
     }
   }
 
