@@ -72,7 +72,7 @@ class PupilAuthorizationFilterManager implements Resettable {
       value: !authorizationFilterStateEqualsInitialValues,
     );
 
-    di<PupilsFilter>().refreshs();
+    di<PupilsFilter>().refresh();
   }
 
   List<PupilAuthorization> applyAuthorizationFiltersToPupilAuthorizations(

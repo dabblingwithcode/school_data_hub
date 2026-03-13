@@ -14,7 +14,6 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main
 import 'package:school_data_hub_flutter/features/_pupil/data/pupil_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 
@@ -143,7 +142,7 @@ class PupilIdentityManager {
             PupilIdentityHelper.decodePupilIdentityFromTextLine(textLine);
 
         //- check if the group filter needs to be updated
-        if (PupilProxy.groupFilters.any(
+        if (di<PupilsFilter>().groupFilters.any(
               (filter) =>
                   (filter as GroupFilter).name == newPupilIdentity.group,
             ) ==

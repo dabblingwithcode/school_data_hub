@@ -81,7 +81,7 @@ class PupilMediaAuthFilterManager implements Resettable {
       filterState: FilterState.pupil,
       value: !filterStateEqualsInitial,
     );
-    _pupilsFilter.refreshs();
+    _pupilsFilter.refresh();
   }
 
   @override

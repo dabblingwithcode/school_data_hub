@@ -5,10 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_selector_filters.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_identity_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -30,42 +27,6 @@ class PupilProxy with ChangeNotifier {
         _pupilIdentity = pupilIdentity {
     _siblingsResolver = siblingsResolver;
   }
-
-  static List<Filter<Object>> groupFilters = di<PupilsFilter>().groupFilters;
-
-  static List<SchoolGradeFilter> schoolGradeFilters = [
-    SchoolGradeFilter(SchoolGrade.E1),
-    SchoolGradeFilter(SchoolGrade.E2),
-    SchoolGradeFilter(SchoolGrade.E3),
-    SchoolGradeFilter(SchoolGrade.K3),
-    SchoolGradeFilter(SchoolGrade.K4),
-  ];
-
-  static List<GenderFilter> genderFilters = [
-    GenderFilter(Gender.male),
-    GenderFilter(Gender.female),
-  ];
-
-  static List<ReligionCourseFilter> religionCourseFilters = [
-    ReligionCourseFilter(ReligionCourse.islam),
-    ReligionCourseFilter(ReligionCourse.catholic),
-    ReligionCourseFilter(ReligionCourse.none),
-  ];
-
-  static List<FamilyLanguageFilter> familyLanguageFilters = [
-    FamilyLanguageFilter(FamilyLanguage.turkish),
-    FamilyLanguageFilter(FamilyLanguage.arabic),
-    FamilyLanguageFilter(FamilyLanguage.albanian),
-    FamilyLanguageFilter(FamilyLanguage.other),
-  ];
-
-  static List<AfterSchoolCareFilter> afterSchoolCareFilters = [
-    AfterSchoolCareFilter(hasAfterSchoolCare: true),
-    AfterSchoolCareFilter(hasAfterSchoolCare: false),
-  ];
-
-  static MigrationSupportFilter migrationSupportFilter =
-      MigrationSupportFilter();
 
   PupilData _pupilData;
   PupilIdentity _pupilIdentity;

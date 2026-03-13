@@ -75,16 +75,16 @@ class LearningSupportFilterManager implements Resettable {
 
     if (supportLevelFilterStateEqualsInitialState) {
       _filtersStateManager.setFilterState(
-        filterState: FilterState.pupilLegacy,
+        filterState: FilterState.learningSupport,
         value: false,
       );
     } else {
       _filtersStateManager.setFilterState(
-        filterState: FilterState.pupilLegacy,
+        filterState: FilterState.learningSupport,
         value: true,
       );
     }
-    _pupilsFilter.refreshs();
+    _pupilsFilter.refresh();
   }
 
   /// We pass a list of [SupportAreaFilterRecord] to this function
@@ -107,17 +107,17 @@ class LearningSupportFilterManager implements Resettable {
 
     if (supportAreaFilterStateEqualsInitialState) {
       _filtersStateManager.setFilterState(
-        filterState: FilterState.pupilLegacy,
+        filterState: FilterState.learningSupport,
         value: false,
       );
     } else {
       _filtersStateManager.setFilterState(
-        filterState: FilterState.pupilLegacy,
+        filterState: FilterState.learningSupport,
         value: true,
       );
     }
 
-    _pupilsFilter.refreshs();
+    _pupilsFilter.refresh();
   }
 
   void setCurrentLearningSupportPlanFilter({
@@ -138,17 +138,17 @@ class LearningSupportFilterManager implements Resettable {
 
     if (currentLearningSupportPlanFilterStateEqualsInitialState) {
       _filtersStateManager.setFilterState(
-        filterState: FilterState.pupilLegacy,
+        filterState: FilterState.learningSupport,
         value: false,
       );
     } else {
       _filtersStateManager.setFilterState(
-        filterState: FilterState.pupilLegacy,
+        filterState: FilterState.learningSupport,
         value: true,
       );
     }
 
-    _pupilsFilter.refreshs();
+    _pupilsFilter.refresh();
   }
 
   @override

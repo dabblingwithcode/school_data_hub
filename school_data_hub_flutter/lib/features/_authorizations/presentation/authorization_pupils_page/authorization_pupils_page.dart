@@ -63,7 +63,7 @@ class AuthorizationPupilsPage extends WatchingWidget {
         ),
         searchType: SearchType.pupil,
         hintText: 'Schüler/in suchen',
-        refreshFunction: pupilsFilter.refreshs,
+        refreshFunction: pupilsFilter.refresh,
         onChanged: (value) => pupilsFilter.textFilter.setFilterText(value),
         searchTextSource: pupilsFilter.textFilter,
         filtersActive: filterStateManager.filtersActive,

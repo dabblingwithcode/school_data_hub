@@ -127,7 +127,7 @@ class SelectPupilsSearchBar extends WatchingWidget {
                   child: GenericSearchTextField(
                     searchType: SearchType.pupil,
                     hintText: 'Schüler/in suchen',
-                    refreshFunction: _pupilsFilter.refreshs,
+                    refreshFunction: _pupilsFilter.refresh,
                     onChanged: (value) =>
                         _pupilsFilter.textFilter.setFilterText(value),
                     searchTextSource: _pupilsFilter.textFilter,

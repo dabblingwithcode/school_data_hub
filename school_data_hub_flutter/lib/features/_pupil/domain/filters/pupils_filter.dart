@@ -63,7 +63,7 @@ abstract class PupilsFilter implements Listenable, Resettable {
 
   // updates the filtered pupils with current filters
   // and sort mode
-  void refreshs();
+  void refresh();
 
   void clearFilteredPupils();
 
@@ -77,6 +77,6 @@ abstract class PupilsFilter implements Listenable, Resettable {
   // void setFilterState();
   void setSortMode(PupilSortMode sortMode);
   void sortPupils();
-  void setTextFilter(String? text, {bool refresh = true});
+  void setTextFilter(String? text, {bool shouldRefresh = true});
   void populateGroupFilters(List<String> groupIds);
 }

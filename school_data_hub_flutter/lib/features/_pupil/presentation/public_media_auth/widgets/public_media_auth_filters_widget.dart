@@ -40,7 +40,7 @@ class PublicMediaAuthFiltersWidget extends WatchingWidget {
                     filter: filter,
                     value: val,
                   );
-                  pupilsFilter.refreshs();
+                  pupilsFilter.refresh();
                 },
               ),
           ],

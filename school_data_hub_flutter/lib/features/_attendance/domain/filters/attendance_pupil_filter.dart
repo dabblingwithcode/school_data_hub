@@ -34,7 +34,7 @@ class AttendancePupilFilterManager implements Resettable {
         false) {
       return;
     }
-    _pupilsFilter.refreshs();
+    _pupilsFilter.refresh();
   }
 
   void dispose() {
@@ -64,7 +64,7 @@ class AttendancePupilFilterManager implements Resettable {
       filterState: FilterState.attendance,
       value: !attendanceFilterStateEqualsInitialState,
     );
-    _pupilsFilter.refreshs();
+    _pupilsFilter.refresh();
   }
 
   @override

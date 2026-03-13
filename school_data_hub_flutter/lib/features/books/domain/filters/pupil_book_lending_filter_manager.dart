@@ -108,7 +108,7 @@ class PupilBookLendingFilterManager implements Resettable {
     final filtered = _applyFilters(allLendings);
     _filteredPupilBookLendings.value = filtered;
 
-    _pupilsFilter.refreshs();
+    _pupilsFilter.refresh();
   }
 
   List<PupilBookLending> _applyFilters(

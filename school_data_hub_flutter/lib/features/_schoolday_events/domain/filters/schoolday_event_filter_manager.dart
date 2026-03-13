@@ -87,9 +87,9 @@ class SchooldayEventFilterManager implements Resettable {
     // Filter the schoolday events and populate the pupil IDs set
     _applyFilterResultToNotifiers();
 
-    // Do not call pupilsFilter.refreshs() here: the event list page uses
+    // Do not call pupilsFilter.refresh() here: the event list page uses
     // combineLatest3(filteredPupils, filterState, pupilIds) and already
-    // filters by pupilIds. Calling refreshs() causes filteredPupils to notify
+    // filters by pupilIds. Calling refresh() causes filteredPupils to notify
     // and triggers an extra list rebuild, which restarts avatar/image futures
     // and makes loading indicators appear stuck.
   }

@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 enum FilterState {
   pupil,
-  pupilLegacy,
+  learningSupport,
   attendance,
   schooldayEvent,
   schoolList,
@@ -16,7 +16,7 @@ enum FilterState {
 
 const Map<FilterState, bool> _initialFilterGlobalValues = {
   FilterState.pupil: false,
-  FilterState.pupilLegacy: false,
+  FilterState.learningSupport: false,
   FilterState.attendance: false,
   FilterState.schooldayEvent: false,
   FilterState.schoolList: false,

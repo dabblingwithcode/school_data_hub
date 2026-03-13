@@ -51,7 +51,7 @@ class PupilListLearningSearchBar extends StatelessWidget {
                   child: GenericSearchTextField(
                     searchType: SearchType.pupil,
                     hintText: 'Schüler/in suchen',
-                    refreshFunction: di<PupilsFilter>().refreshs,
+                    refreshFunction: di<PupilsFilter>().refresh,
                     onChanged: (value) =>
                         di<PupilsFilter>().textFilter.setFilterText(value),
                     searchTextSource: di<PupilsFilter>().textFilter,

@@ -180,7 +180,7 @@ class SchoolListFilterManager implements Resettable {
       value: !entryFilterStateEqualsInitialState,
     );
 
-    di<PupilsFilter>().refreshs();
+    di<PupilsFilter>().refresh();
   }
 
   List<PupilListEntry> addPupilEntryFiltersToFilteredPupils(

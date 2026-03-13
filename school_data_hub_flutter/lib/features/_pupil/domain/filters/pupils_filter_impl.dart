@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
@@ -39,8 +40,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     populateGroupFilters(availableGroups.toList());
     // Wire onToggle callback for all pupil filters
     _wireFilterToggleCallbacks();
-    refreshs();
-    _pupilsManager.addListener(refreshs);
+    refresh();
+    _pupilsManager.addListener(refresh);
   }
 
   /// Wires the onToggle callback on all filters so that toggling a filter
@@ -75,14 +76,14 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
         );
       }
     }
-    refreshs();
+    refresh();
   }
   // guard from trying to call a value when the filter is disposed
   bool _isDisposed = false;
   @override
   void dispose() {
     _isDisposed = true;
-    _pupilsManager.removeListener(refreshs);
+    _pupilsManager.removeListener(refresh);
     _filteredPupils.dispose();
     _filteredPupilIds.dispose();
     _sortMode.dispose();
@@ -160,7 +161,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   // updates the filtered pupils with current filters
   // and sort mode
   @override
-  void refreshs() {
+  void refresh() {
     //if (_isDisposed) return;
     final allPupils = _pupilsManager.allPupils;
 
@@ -385,7 +386,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       return;
     }
     _sortMode.value = sortMode;
-    refreshs();
+    refresh();
     notifyListeners();
   }
 
@@ -466,7 +467,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
   }
 
   @override
-  void setTextFilter(String? text, {bool refresh = true}) {
+  void setTextFilter(String? text, {bool shouldRefresh = true}) {
     if (text != null && text.isNotEmpty) {
       di<FiltersStateManager>().setFilterState(
         filterState: FilterState.pupil,
@@ -476,30 +477,50 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
 
     _textFilter.setFilterText(text ?? '');
     notifyListeners();
-    if (refresh) {
-      refreshs();
+    if (shouldRefresh) {
+      refresh();
     }
   }
 
   @override
-  // List<Filter> get groupFilters => PupilProxy.groupFilters;
-  @override
-  List<Filter> get schoolGradeFilters => PupilProxy.schoolGradeFilters;
+  final List<SchoolGradeFilter> schoolGradeFilters = [
+    SchoolGradeFilter(SchoolGrade.E1),
+    SchoolGradeFilter(SchoolGrade.E2),
+    SchoolGradeFilter(SchoolGrade.E3),
+    SchoolGradeFilter(SchoolGrade.K3),
+    SchoolGradeFilter(SchoolGrade.K4),
+  ];
 
   @override
-  List<Filter> get genderFilters => PupilProxy.genderFilters;
+  final List<GenderFilter> genderFilters = [
+    GenderFilter(Gender.male),
+    GenderFilter(Gender.female),
+  ];
 
   @override
-  List<Filter> get religionCourseFilters => PupilProxy.religionCourseFilters;
+  final List<ReligionCourseFilter> religionCourseFilters = [
+    ReligionCourseFilter(ReligionCourse.islam),
+    ReligionCourseFilter(ReligionCourse.catholic),
+    ReligionCourseFilter(ReligionCourse.none),
+  ];
 
   @override
-  List<Filter> get familyLanguageFilters => PupilProxy.familyLanguageFilters;
+  final List<FamilyLanguageFilter> familyLanguageFilters = [
+    FamilyLanguageFilter(FamilyLanguage.turkish),
+    FamilyLanguageFilter(FamilyLanguage.arabic),
+    FamilyLanguageFilter(FamilyLanguage.albanian),
+    FamilyLanguageFilter(FamilyLanguage.other),
+  ];
 
   @override
-  List<Filter> get afterSchoolCareFilters => PupilProxy.afterSchoolCareFilters;
+  final List<AfterSchoolCareFilter> afterSchoolCareFilters = [
+    AfterSchoolCareFilter(hasAfterSchoolCare: true),
+    AfterSchoolCareFilter(hasAfterSchoolCare: false),
+  ];
 
   @override
-  Filter get migrationSupportFilter => PupilProxy.migrationSupportFilter;
+  final MigrationSupportFilter migrationSupportFilter =
+      MigrationSupportFilter();
 
   @override
   void populateGroupFilters(List<String> groupIds) {
