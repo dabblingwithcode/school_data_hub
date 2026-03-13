@@ -353,7 +353,7 @@ class _NewMatrixUserPageContentState extends State<_NewMatrixUserPageContent> {
                     if (file != null && context.mounted) {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (context) => PdfViewerPage(pdfFile: file),
+                          builder: (context) => PdfViewerPage(pdfGenerator: () async => file),
                         ),
                       );
                     }

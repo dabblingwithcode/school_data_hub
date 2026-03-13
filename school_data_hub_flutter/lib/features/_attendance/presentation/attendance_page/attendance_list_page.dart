@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/attendance_pdf_generator.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
@@ -17,8 +17,8 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_list_card.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_filters.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_list_card.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_search_bar_stats.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_classes_badges_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
@@ -162,29 +162,20 @@ class AttendanceListPage extends WatchingWidget {
             IconButton(
               tooltip: 'PDF drucken',
               icon: const Icon(Icons.print_rounded, size: 30),
-              onPressed: () async {
-                try {
-                  final pdfFile =
-                      await AttendancePdfGenerator.generateAttendancePdf(
-                        date: thisDate,
-                        pupils: pupilsFilter.filteredPupils.value,
-                      );
-                  if (context.mounted) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (context) =>
-                            AttendancePdfViewPage(pdfFile: pdfFile),
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    di<NotificationService>().showInformationDialog(
-                      NotificationType.error,
-                      'Fehler beim Erstellen der PDF: $e',
-                    );
-                  }
-                }
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => PdfViewerPage(
+                      pdfGenerator: () =>
+                          AttendancePdfGenerator.generateAttendancePdf(
+                            date: thisDate,
+                            pupils: pupilsFilter.filteredPupils.value,
+                          ),
+                      title: 'Anwesenheitsliste PDF',
+                      iconData: Icons.list_alt_rounded,
+                    ),
+                  ),
+                );
               },
             ),
         ],

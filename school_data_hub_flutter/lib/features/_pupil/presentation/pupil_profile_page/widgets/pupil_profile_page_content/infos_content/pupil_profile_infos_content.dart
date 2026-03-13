@@ -324,7 +324,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                                   Navigator.of(context).push(
                                     MaterialPageRoute<void>(
                                       builder: (context) =>
-                                          PdfViewerPage(pdfFile: file),
+                                          PdfViewerPage(pdfGenerator: () async => file),
                                     ),
                                   );
                                 }
@@ -437,7 +437,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                                   Navigator.of(context).push(
                                     MaterialPageRoute<void>(
                                       builder: (context) =>
-                                          PdfViewerPage(pdfFile: file),
+                                          PdfViewerPage(pdfGenerator: () async => file),
                                     ),
                                   );
                                 }

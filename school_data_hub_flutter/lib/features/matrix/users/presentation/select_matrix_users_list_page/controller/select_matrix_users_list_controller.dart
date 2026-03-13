@@ -150,7 +150,7 @@ class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
           _log.info('Navigating to BulkPdfViewPage with file: ${pdfFile.path}');
           Navigator.of(context).push(
             MaterialPageRoute<void>(
-              builder: (context) => PdfViewerPage(pdfFile: pdfFile),
+              builder: (context) => PdfViewerPage(pdfGenerator: () async => pdfFile),
             ),
           );
         }

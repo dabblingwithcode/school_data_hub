@@ -11,6 +11,7 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/subject/
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/widgets/timetable_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/widgets/weekday_selector.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot/timetable_slot_list_page/timetable_slot_list_page.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/services/timetable_pdf_generator.dart';
 
 import 'widgets/timetable_grid_widget.dart';
@@ -133,28 +134,18 @@ class TimetablePage extends WatchingWidget {
                 }
                 return;
               }
-              try {
-                final file = await TimetablePdfGenerator.generateTimetablePdf(
-                  timetableManager: manager,
-                );
-                if (context.mounted) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (context) => TimetablePdfViewPage(pdfFile: file),
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'PDF konnte nicht erstellt werden: ${e is StateError ? e.toString().replaceFirst('StateError: ', '') : e}',
-                      ),
-                    ),
-                  );
-                }
-              }
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) => PdfViewerPage(
+                    pdfGenerator: () =>
+                        TimetablePdfGenerator.generateTimetablePdf(
+                          timetableManager: manager,
+                        ),
+                    title: 'Stundenplan PDF',
+                    showZoomButton: true,
+                  ),
+                ),
+              );
             },
           ),
           IconButton(

@@ -213,7 +213,7 @@ class _BatchImportUsersPageState extends State<BatchImportUsersPage> {
     final file = await StaffCredentialsPdfService.generatePdfFile(credentials);
     if (file == null || !mounted) return;
     await Navigator.of(context).push<void>(
-      MaterialPageRoute(builder: (context) => PdfViewerPage(pdfFile: file)),
+      MaterialPageRoute(builder: (context) => PdfViewerPage(pdfGenerator: () async => file)),
     );
   }
 

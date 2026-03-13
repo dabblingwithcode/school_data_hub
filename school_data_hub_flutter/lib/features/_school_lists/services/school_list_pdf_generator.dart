@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
@@ -11,8 +10,6 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_helper_functions.dart';
@@ -574,76 +571,4 @@ class _PupilEntryData {
   final PupilListEntry entry;
 
   _PupilEntryData({required this.pupil, required this.entry});
-}
-
-class SchoolListPdfViewPage extends StatefulWidget {
-  final File pdfFile;
-  const SchoolListPdfViewPage({required this.pdfFile, super.key});
-
-  @override
-  State<SchoolListPdfViewPage> createState() => _SchoolListPdfViewPageState();
-}
-
-class _SchoolListPdfViewPageState extends State<SchoolListPdfViewPage> {
-  @override
-  void dispose() {
-    // Ensure the file is deleted when the widget is disposed
-    // This handles all cases where the page is popped/closed
-    if (widget.pdfFile.existsSync()) {
-      widget.pdfFile.delete();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const GenericAppBar(
-        iconData: Icons.list_alt_rounded,
-        title: 'Schulliste PDF',
-      ),
-      body: PdfPreview(
-        actionBarTheme: PdfActionBarTheme(
-          backgroundColor: AppColors.backgroundColor,
-          iconColor: Colors.white,
-          textStyle: const TextStyle(color: Colors.white),
-        ),
-        allowSharing: true,
-        allowPrinting: true,
-        canChangePageFormat: false,
-        canChangeOrientation: false,
-        canDebug: false,
-        useActions: true,
-        scrollViewDecoration: const BoxDecoration(color: Colors.grey),
-        pdfPreviewPageDecoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-              blurRadius: 4,
-            ),
-          ],
-        ),
-        onPrinted: (context) {
-          // File will be deleted in dispose(), no need to delete here
-          if (context.mounted) {
-            Navigator.of(context).pop();
-          }
-        },
-        build: (format) => widget.pdfFile.readAsBytes(),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              // File will be deleted in dispose(), no need to delete here
-              if (context.mounted) {
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
 }

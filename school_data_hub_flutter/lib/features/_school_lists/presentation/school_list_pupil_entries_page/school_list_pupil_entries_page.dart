@@ -19,6 +19,7 @@ import 'package:school_data_hub_flutter/features/_school_lists/domain/school_lis
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entries_search_bar_stats.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_list_pupil_entries_page/widgets/school_list_pupil_entry_card.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/services/school_list_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_page.dart';
@@ -182,21 +183,21 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
           tooltip: 'Liste als PDF',
           icon: const Icon(Icons.print, size: 30),
           onPressed: () async {
-            final pupils = schoolListManager.getPupilsinSchoolList(
-              schoolList.id!,
-            );
-            final pdfFile = await SchoolListPdfGenerator.generateSchoolListPdf(
-              schoolList: schoolList,
-              pupils: pupils,
-            );
-
-            if (context.mounted) {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => SchoolListPdfViewPage(pdfFile: pdfFile),
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (ctx) => PdfViewerPage(
+                  pdfGenerator: () =>
+                      SchoolListPdfGenerator.generateSchoolListPdf(
+                        schoolList: schoolList,
+                        pupils: schoolListManager.getPupilsinSchoolList(
+                          schoolList.id!,
+                        ),
+                      ),
+                  title: 'Schulliste PDF',
+                  iconData: Icons.list_alt_rounded,
                 ),
-              );
-            }
+              ),
+            );
           },
         ),
       ],

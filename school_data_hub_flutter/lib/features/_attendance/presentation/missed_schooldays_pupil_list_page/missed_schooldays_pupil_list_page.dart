@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/services/attendance_pdf_generator.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
@@ -58,31 +59,19 @@ class MissedSchooldaysPupilListPage extends StatelessWidget {
           IconButton(
             tooltip: 'PDF drucken',
             icon: const Icon(Icons.print_rounded, size: 30),
-            onPressed: () async {
-              try {
-                final pupils = pupilsFilter.filteredPupils.value;
-                final pdfFile =
-                    await MissedSchooldaysPdfGenerator.generateMissedSchooldaysPdf(
-                      pupils: pupils,
-                    );
-                if (context.mounted) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (context) =>
-                          MissedSchooldaysPdfViewPage(pdfFile: pdfFile),
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Fehler beim Erstellen der PDF: $e'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              }
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) => PdfViewerPage(
+                    pdfGenerator: () =>
+                        MissedSchooldaysPdfGenerator.generateMissedSchooldaysPdf(
+                          pupils: pupilsFilter.filteredPupils.value,
+                        ),
+                    title: 'Fehlzeitenliste PDF',
+                    iconData: Icons.calendar_month_rounded,
+                  ),
+                ),
+              );
             },
           ),
       ],

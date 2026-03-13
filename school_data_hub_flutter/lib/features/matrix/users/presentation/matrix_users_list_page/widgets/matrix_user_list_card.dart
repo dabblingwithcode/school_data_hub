@@ -624,7 +624,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                               Navigator.of(context).push(
                                 MaterialPageRoute<void>(
                                   builder: (context) =>
-                                      PdfViewerPage(pdfFile: file),
+                                      PdfViewerPage(pdfGenerator: () async => file),
                                 ),
                               );
                             }

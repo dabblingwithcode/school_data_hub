@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,9 +9,6 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/features/learning_support/services/pdf/learning_support_plan_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_utils.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
@@ -362,82 +358,5 @@ class TimetablePdfGenerator {
       }
     } catch (_) {}
     return null;
-  }
-}
-
-/// Full-screen PDF preview for a generated timetable PDF.
-/// Deletes the file on dispose.
-class TimetablePdfViewPage extends StatefulWidget {
-  const TimetablePdfViewPage({super.key, required this.pdfFile});
-
-  final File pdfFile;
-
-  @override
-  State<TimetablePdfViewPage> createState() => _TimetablePdfViewPageState();
-}
-
-class _TimetablePdfViewPageState extends State<TimetablePdfViewPage> {
-  @override
-  void dispose() {
-    if (widget.pdfFile.existsSync()) {
-      widget.pdfFile.deleteSync();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const GenericAppBar(
-        iconData: Icons.picture_as_pdf,
-        title: 'Stundenplan PDF',
-      ),
-      body: PdfPreview(
-        actionBarTheme: PdfActionBarTheme(
-          backgroundColor: AppColors.backgroundColor,
-          iconColor: Colors.white,
-          textStyle: const TextStyle(color: Colors.white),
-        ),
-        allowSharing: true,
-        allowPrinting: true,
-        canChangePageFormat: false,
-        canChangeOrientation: false,
-        canDebug: false,
-        useActions: true,
-        scrollViewDecoration: const BoxDecoration(color: Colors.grey),
-        pdfPreviewPageDecoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-              blurRadius: 4,
-            ),
-          ],
-        ),
-        onPrinted: (context) {
-          if (context.mounted) Navigator.of(context).pop();
-        },
-        build: (_) => widget.pdfFile.readAsBytes(),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              if (context.mounted) Navigator.of(context).pop();
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.zoom_in),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (context) => PdfZoomableImage(file: widget.pdfFile),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
   }
 }

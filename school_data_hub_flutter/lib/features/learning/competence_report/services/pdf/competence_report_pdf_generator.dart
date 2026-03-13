@@ -1,20 +1,14 @@
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pdfrx/pdfrx.dart';
-import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -125,169 +119,6 @@ List<double> _sectionBlockHeights(
     if (!isLastSection) blocks.add(_afterSectionHeight);
   }
   return blocks;
-}
-
-// =============================================================================
-// PDF View Page
-// =============================================================================
-
-class CompetenceReportPdfViewPage extends StatefulWidget {
-  final CompetenceReport report;
-  final PupilProxy pupil;
-  const CompetenceReportPdfViewPage({
-    required this.report,
-    required this.pupil,
-    super.key,
-  });
-
-  @override
-  State<CompetenceReportPdfViewPage> createState() =>
-      _CompetenceReportPdfViewPageState();
-}
-
-class _CompetenceReportPdfViewPageState
-    extends State<CompetenceReportPdfViewPage> {
-  File? _generatedFile;
-
-  @override
-  void dispose() {
-    if (_generatedFile?.existsSync() ?? false) {
-      _generatedFile!.delete();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<File>(
-      future: CompetenceReportPdfGenerator.generateCompetenceReportPdf(
-        pupil: widget.pupil,
-        report: widget.report,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          _log.severe(
-            'Failed to generate competence report PDF',
-            snapshot.error,
-          );
-          return Scaffold(
-            appBar: const GenericAppBar(
-              iconData: Icons.picture_as_pdf,
-              title: 'Kriterienzeugnis PDF',
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                  const SizedBox(height: 16),
-                  const Text('Fehler beim Erstellen des PDFs'),
-                  const SizedBox(height: 8),
-                  Text(
-                    snapshot.error.toString(),
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Zurück'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-        if (!snapshot.hasData) {
-          return const Scaffold(
-            appBar: GenericAppBar(
-              iconData: Icons.picture_as_pdf,
-              title: 'Kriterienzeugnis PDF',
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('PDF wird erstellt...'),
-                ],
-              ),
-            ),
-          );
-        }
-        final file = snapshot.data!;
-        _generatedFile = file;
-        _log.info('Opening PDF view for file: ${file.path}');
-        return Scaffold(
-          appBar: const GenericAppBar(
-            iconData: Icons.picture_as_pdf,
-            title: 'Kriterienzeugnis PDF',
-          ),
-          body: PdfPreview(
-            actionBarTheme: PdfActionBarTheme(
-              backgroundColor: AppColors.backgroundColor,
-              iconColor: Colors.white,
-              textStyle: const TextStyle(color: Colors.white),
-            ),
-            allowSharing: true,
-            allowPrinting: true,
-            canChangePageFormat: false,
-            canChangeOrientation: false,
-            canDebug: false,
-            useActions: true,
-            scrollViewDecoration: const BoxDecoration(color: Colors.grey),
-            pdfPreviewPageDecoration: const BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  offset: Offset(0, 2),
-                  blurRadius: 4,
-                ),
-              ],
-            ),
-            onPrinted: (context) {
-              if (context.mounted) Navigator.of(context).pop();
-            },
-            build: (format) => file.readAsBytes(),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  if (context.mounted) Navigator.of(context).pop();
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.zoom_in),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (context) => PdfZoomableImage(file: file),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class PdfZoomableImage extends StatelessWidget {
-  final File file;
-  const PdfZoomableImage({required this.file, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const GenericAppBar(title: 'PDF Zoom', iconData: Icons.zoom_in),
-      body: PdfViewer.file(file.path),
-      bottomNavigationBar: const GenericBottomNavBar(),
-    );
-  }
 }
 
 class CompetenceReportPdfGenerator {

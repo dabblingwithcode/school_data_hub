@@ -11,6 +11,7 @@ import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/pdf/competence_report_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
@@ -59,8 +60,16 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (context) =>
-                      CompetenceReportPdfViewPage(pupil: pupil, report: report),
+                  builder: (context) => PdfViewerPage(
+                    pdfGenerator: () =>
+                        CompetenceReportPdfGenerator
+                            .generateCompetenceReportPdf(
+                              pupil: pupil,
+                              report: report,
+                            ),
+                    title: 'Kriterienzeugnis PDF',
+                    showZoomButton: true,
+                  ),
                 ),
               );
             },

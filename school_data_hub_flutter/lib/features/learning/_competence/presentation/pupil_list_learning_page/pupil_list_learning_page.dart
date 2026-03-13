@@ -15,6 +15,7 @@ import 'package:school_data_hub_flutter/features/learning/_competence/presentati
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/learning_list_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar/_pupil_list_learning_search_bar.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/select_competence_page/select_competence_view_model.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/services/learning_goals_pdf_generator.dart';
 
 class PupilListLearningPage extends WatchingWidget {
@@ -77,30 +78,19 @@ class PupilListLearningPage extends WatchingWidget {
             IconButton(
               tooltip: 'PDF drucken',
               icon: const Icon(Icons.print_rounded, size: 30),
-              onPressed: () async {
-                try {
-                  final pdfFile =
-                      await LearningGoalsPdfGenerator.generateLearningGoalsPdf(
-                        pupils: pupilsFilter.filteredPupils.value,
-                      );
-                  if (context.mounted) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (context) =>
-                            LearningGoalsPdfViewPage(pdfFile: pdfFile),
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Fehler beim Erstellen der PDF: $e'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                }
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => PdfViewerPage(
+                      pdfGenerator: () =>
+                          LearningGoalsPdfGenerator.generateLearningGoalsPdf(
+                            pupils: pupilsFilter.filteredPupils.value,
+                          ),
+                      title: 'Lernziele PDF',
+                      iconData: Icons.lightbulb_rounded,
+                    ),
+                  ),
+                );
               },
             ),
           GenericFilterButton(

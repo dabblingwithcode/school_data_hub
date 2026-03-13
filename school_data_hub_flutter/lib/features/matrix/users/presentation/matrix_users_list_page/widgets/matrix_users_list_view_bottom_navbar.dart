@@ -110,7 +110,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                     if (file != null) {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (_) => PdfViewerPage(pdfFile: file),
+                          builder: (_) => PdfViewerPage(pdfGenerator: () async => file),
                         ),
                       );
                     }
