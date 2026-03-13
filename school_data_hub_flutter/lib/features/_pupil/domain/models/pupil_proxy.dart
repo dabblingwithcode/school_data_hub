@@ -14,6 +14,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_iden
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 
 typedef SiblingsResolver = List<PupilProxy> Function(PupilProxy pupil);
@@ -256,7 +257,8 @@ class PupilProxy with ChangeNotifier {
 
   List<CompetenceCheck>? get competenceChecks => _pupilData.competenceChecks;
 
-  List<CompetenceGoal>? get competenceGoals => _pupilData.competenceGoals;
+  List<CompetenceGoal> get competenceGoals =>
+      di<CompetenceManager>().getCompetenceGoals(pupilId);
 
   List<CompetenceReport>? get competenceReports => _pupilData.competenceReports;
 
@@ -305,7 +307,8 @@ class PupilProxy with ChangeNotifier {
         ?.score;
   }
 
-  List<SupportGoal>? get supportGoals => _pupilData.supportGoals;
+  List<SupportGoal> get supportGoals =>
+      di<LearningSupportManager>().getSupportGoals(pupilId);
 
   List<LearningSupportPlan>? get learningSupportPlans =>
       _pupilData.learningSupportPlans;

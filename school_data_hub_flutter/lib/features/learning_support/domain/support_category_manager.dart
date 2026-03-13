@@ -122,7 +122,7 @@ class SupportCategoryManager {
 
     final List<PupilProxy> pupils = di<PupilProxyManager>().allPupils;
     for (PupilProxy pupil in pupils) {
-      for (SupportGoal goal in pupil.supportGoals!) {
+      for (SupportGoal goal in pupil.supportGoals) {
         if (goal.supportCategoryId == categoryId) {
           goals.add(goal);
         }

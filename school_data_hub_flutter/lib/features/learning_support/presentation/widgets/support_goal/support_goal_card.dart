@@ -46,7 +46,7 @@ class SupportGoalCard extends WatchingWidget {
             if (delete == true) {
               await di<LearningSupportManager>().deleteSupportGoal(
                 pupilId: pupil.pupilId,
-                supportGoalId: pupil.supportGoals![goalIndex].id!,
+                supportGoalId: pupil.supportGoals[goalIndex].id!,
               );
               return;
             }
@@ -89,7 +89,7 @@ class _CategoryBadgeRow extends WatchingWidget {
   Widget build(BuildContext context) {
     watch(pupil);
     final learningSupportManager = di<SupportCategoryManager>();
-    final goal = pupil.supportGoals![goalIndex];
+    final goal = pupil.supportGoals[goalIndex];
     final categoryId = goal.supportCategoryId;
 
     return Row(
@@ -219,7 +219,7 @@ class _GoalDescriptionRow extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
-    final goal = pupil.supportGoals![goalIndex];
+    final goal = pupil.supportGoals[goalIndex];
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,7 +265,7 @@ class _CreatedByRow extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
-    final goal = pupil.supportGoals![goalIndex];
+    final goal = pupil.supportGoals[goalIndex];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -299,7 +299,7 @@ class _StrategiesSection extends WatchingWidget {
     watch(pupil);
     final tileController = createOnce(() => CustomExpansionTileController());
     final isExpanded = watch(tileController.isExpanded).value;
-    final strategies = pupil.supportGoals![goalIndex].strategies;
+    final strategies = pupil.supportGoals[goalIndex].strategies;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,7 +357,7 @@ class _GoalChecksSection extends WatchingWidget {
     final tileController = createOnce(() => CustomExpansionTileController());
     final isExpanded = watch(tileController.isExpanded).value;
     final learningSupportManager = di<LearningSupportManager>();
-    final goal = pupil.supportGoals![goalIndex];
+    final goal = pupil.supportGoals[goalIndex];
     final goalChecks = goal.goalChecks ?? [];
 
     return Column(

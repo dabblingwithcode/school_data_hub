@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,10 +8,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
+import 'package:school_data_hub_flutter/common/services/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/models/pupil_support_goals_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
@@ -28,15 +31,96 @@ class LearningSupportManager {
   final _notificationService = di<NotificationService>();
 
   //- OBSERVABLES -//
-  void dispose() {
-    _learningSupportPlans.dispose();
-  }
 
   final _learningSupportPlans =
       ValueNotifier<Map<int, List<LearningSupportPlan>>>({});
 
   ValueListenable<Map<int, List<LearningSupportPlan>>>
   get learningSupportPlans => _learningSupportPlans;
+
+  // -- Support goal state (per-pupil, lazy-loaded) --
+  final Map<int, PupilSupportGoalsProxy> _pupilSupportGoalsMap = {};
+  final Set<int> _loadedPupilIds = {};
+
+  StreamSubscription<dynamic>? _hubSubscription;
+
+  /// Returns the per-pupil proxy, creating it lazily if needed.
+  PupilSupportGoalsProxy getPupilSupportGoalsProxy(int pupilId) {
+    return _pupilSupportGoalsMap.putIfAbsent(
+      pupilId,
+      () => PupilSupportGoalsProxy(),
+    );
+  }
+
+  /// Returns the current list of support goals for a pupil.
+  /// Returns an empty list if not yet loaded.
+  List<SupportGoal> getSupportGoals(int pupilId) {
+    return _pupilSupportGoalsMap[pupilId]?.supportGoals ?? [];
+  }
+
+  /// Fetches goals for a single pupil from the server (lazy loading).
+  Future<void> fetchGoalsForPupil(int pupilId) async {
+    final goals = await _learningSupportApiService.fetchSupportGoalsForPupil(
+      pupilId,
+    );
+    if (goals != null) {
+      getPupilSupportGoalsProxy(pupilId).setSupportGoals(goals);
+      _loadedPupilIds.add(pupilId);
+    }
+  }
+
+  /// Fetches all goals (used on reconnect for already-loaded pupils).
+  Future<void> _refetchLoadedGoals() async {
+    final goals = await _learningSupportApiService.fetchAllSupportGoals();
+    if (goals == null) return;
+
+    // Clear and repopulate only loaded proxies.
+    for (final pupilId in _loadedPupilIds) {
+      final proxy = _pupilSupportGoalsMap[pupilId];
+      if (proxy != null) {
+        proxy.setSupportGoals(
+          goals.where((g) => g.pupilId == pupilId).toList(),
+        );
+      }
+    }
+  }
+
+  void _upsertGoalFromStream(SupportGoal goal) {
+    getPupilSupportGoalsProxy(goal.pupilId).upsertSupportGoal(goal);
+  }
+
+  void _deleteGoalFromStream(int goalId) {
+    for (final proxy in _pupilSupportGoalsMap.values) {
+      if (proxy.supportGoals.any((g) => g.id == goalId)) {
+        proxy.removeSupportGoalById(goalId);
+        return;
+      }
+    }
+  }
+
+  LearningSupportManager() {
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is SupportGoal) {
+      _upsertGoalFromStream(event);
+    } else if (event is HubDeleteEvent) {
+      if (event.objectType == HubObjectType.supportGoal) {
+        _deleteGoalFromStream(event.id);
+      }
+    } else if (event is HubReconnected) {
+      _refetchLoadedGoals();
+    }
+  }
+
+  void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
+    _learningSupportPlans.dispose();
+    _pupilSupportGoalsMap.clear();
+    _loadedPupilIds.clear();
+  }
 
   Future<void> postNewLearningSupportPlan({
     required int pupilId,
@@ -276,31 +360,26 @@ class LearningSupportManager {
     );
   }
 
+  //- SUPPORT GOALS ----------------------------------------------------------
+
   Future<void> postNewSupportCategoryGoal({
     required int goalCategoryId,
     required int pupilId,
     required String description,
     required String strategies,
   }) async {
-    final PupilData? responsePupil = await _learningSupportApiService
-        .postNewCategoryGoal(
-          pupilId: pupilId,
-          supportCategoryId: goalCategoryId,
-          description: description,
-          strategies: strategies,
-          createdBy: _hubSessionManager.userName!,
-        );
-    if (responsePupil == null) {
-      return;
-    }
-    _pupilManager.updatePupilProxyWithPupilData(responsePupil);
+    await _learningSupportApiService.postNewCategoryGoal(
+      pupilId: pupilId,
+      supportCategoryId: goalCategoryId,
+      description: description,
+      strategies: strategies,
+      createdBy: _hubSessionManager.userName!,
+    );
 
     _notificationService.showSnackBar(
       NotificationType.success,
       'Ziel hinzugefügt',
     );
-
-    return;
   }
 
   Future<void> updateSupportGoal({
@@ -310,17 +389,13 @@ class LearningSupportManager {
     String? strategies,
     int? supportCategoryId,
   }) async {
-    final responsePupil = await _learningSupportApiService.updateCategoryGoal(
+    await _learningSupportApiService.updateCategoryGoal(
       pupilId: pupilId,
       supportGoalId: supportGoalId,
       description: description,
       strategies: strategies,
       supportCategoryId: supportCategoryId,
     );
-    if (responsePupil == null) {
-      return;
-    }
-    _pupilManager.updatePupilProxyWithPupilData(responsePupil);
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -328,38 +403,14 @@ class LearningSupportManager {
     );
   }
 
-  // Future postNewSupportCategoryGoal(
-  //     {required int goalCategoryId,
-  //     required int pupilId,
-  //     required String description,
-  //     required String strategies}) async {
-  //   final PupilData responsePupil =
-  //       await _learningSupportApiService.postNewCategoryGoal(
-  //           goalCategoryId: goalCategoryId,
-  //           pupilId: pupilId,
-  //           description: description,
-  //           strategies: strategies);
-
-  //   locator<PupilManager>().updatePupilProxyWithPupilData(responsePupil);
-
-  //   _notificationService.showSnackBar(
-  //       NotificationType.success, 'Ziel hinzugefügt');
-
-  //   return;
-  // }
-
   Future<void> deleteSupportGoal({
     required int pupilId,
     required int supportGoalId,
   }) async {
-    final updatedPupil = await _learningSupportApiService.deleteCategoryGoal(
+    await _learningSupportApiService.deleteCategoryGoal(
       pupilId: pupilId,
       supportGoalId: supportGoalId,
     );
-    if (updatedPupil == null) {
-      return;
-    }
-    _pupilManager.updatePupilProxyWithPupilData(updatedPupil);
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -375,18 +426,12 @@ class LearningSupportManager {
     required int score,
     required String comment,
   }) async {
-    final updatedGoal = await _learningSupportApiService.postSupportGoalCheck(
+    await _learningSupportApiService.postSupportGoalCheck(
       supportGoalId: supportGoalId,
       score: score,
       comment: comment,
       createdBy: _hubSessionManager.userName!,
     );
-
-    if (updatedGoal == null) {
-      return;
-    }
-
-    _updatePupilSupportGoal(pupilId, updatedGoal);
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -399,35 +444,15 @@ class LearningSupportManager {
     required int supportGoalCheckId,
     required int pupilId,
   }) async {
-    final updatedGoal = await _learningSupportApiService.deleteSupportGoalCheck(
+    await _learningSupportApiService.deleteSupportGoalCheck(
       supportGoalId: supportGoalId,
       supportGoalCheckId: supportGoalCheckId,
     );
-
-    if (updatedGoal == null) {
-      return;
-    }
-
-    _updatePupilSupportGoal(pupilId, updatedGoal);
 
     _notificationService.showSnackBar(
       NotificationType.success,
       'Ziel-Check gelöscht',
     );
-  }
-
-  void _updatePupilSupportGoal(int pupilId, SupportGoal updatedGoal) {
-    final pupil = _pupilManager.getPupilByPupilId(pupilId);
-    if (pupil == null) return;
-
-    final goals = pupil.supportGoals;
-    if (goals == null) return;
-
-    final goalIndex = goals.indexWhere((g) => g.id == updatedGoal.id);
-    if (goalIndex != -1) {
-      goals[goalIndex] = updatedGoal;
-      pupil.notifyChanged();
-    }
   }
 
   //- GOAL CHECK DOCUMENTS --------------------------------------------------
@@ -441,20 +466,13 @@ class LearningSupportManager {
   }) async {
     final encryptedFile = await customEncrypter.encryptFile(file);
     final createdBy = _hubSessionManager.userName!;
-    final updatedGoal = await _learningSupportApiService
-        .addFileToSupportGoalCheck(
-          supportGoalId: supportGoalId,
-          supportGoalCheckId: supportGoalCheckId,
-          file: encryptedFile,
-          createdBy: createdBy,
-          fileInfo: fileInfo,
-        );
-
-    if (updatedGoal == null) {
-      return;
-    }
-
-    _updatePupilSupportGoal(pupilId, updatedGoal);
+    await _learningSupportApiService.addFileToSupportGoalCheck(
+      supportGoalId: supportGoalId,
+      supportGoalCheckId: supportGoalCheckId,
+      file: encryptedFile,
+      createdBy: createdBy,
+      fileInfo: fileInfo,
+    );
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -468,18 +486,11 @@ class LearningSupportManager {
     required int pupilId,
     required String documentId,
   }) async {
-    final updatedGoal = await _learningSupportApiService
-        .removeFileFromSupportGoalCheck(
-          supportGoalId: supportGoalId,
-          supportGoalCheckId: supportGoalCheckId,
-          documentId: documentId,
-        );
-
-    if (updatedGoal == null) {
-      return;
-    }
-
-    _updatePupilSupportGoal(pupilId, updatedGoal);
+    await _learningSupportApiService.removeFileFromSupportGoalCheck(
+      supportGoalId: supportGoalId,
+      supportGoalCheckId: supportGoalCheckId,
+      documentId: documentId,
+    );
 
     _notificationService.showSnackBar(
       NotificationType.success,

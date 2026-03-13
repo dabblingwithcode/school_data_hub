@@ -1,14 +1,40 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
-import 'package:school_data_hub_server/src/_features/pupil/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
+
+/// Include for fetching a CompetenceGoal with its documents.
+final _goalInclude = CompetenceGoal.include(
+  documents: HubDocument.includeList(),
+);
 
 class CompetenceGoalEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
+  /// Fetch all competence goals (used for reconnect / bulk loads).
+  Future<List<CompetenceGoal>> fetchAllCompetenceGoals(
+    Session session,
+  ) async {
+    return CompetenceGoal.db.find(
+      session,
+      include: _goalInclude,
+    );
+  }
+
+  /// Fetch competence goals for a single pupil (lazy loading).
+  Future<List<CompetenceGoal>> fetchCompetenceGoalsForPupil(
+    Session session,
+    int pupilId,
+  ) async {
+    return CompetenceGoal.db.find(
+      session,
+      where: (t) => t.pupilId.equals(pupilId),
+      include: _goalInclude,
+    );
+  }
+
   //- create
-  Future<PupilData> postCompetenceGoal(
+  Future<bool> postCompetenceGoal(
     Session session, {
     required int competenceId,
     required int pupilId,
@@ -32,8 +58,8 @@ class CompetenceGoalEndpoint extends Endpoint {
       competenceId: competenceId,
     );
 
-    var transactionResult = await session.db.transaction((transaction) async {
-      final competenceGoalInDatabase = await CompetenceGoal.db.insertRow(
+    final result = await session.db.transaction((transaction) async {
+      final goalInDb = await CompetenceGoal.db.insertRow(
         session,
         competenceGoal,
         transaction: transaction,
@@ -44,32 +70,38 @@ class CompetenceGoalEndpoint extends Endpoint {
         transaction: transaction,
       );
       await PupilData.db.attachRow.competenceGoals(
-          session, pupil!, competenceGoalInDatabase,
-          transaction: transaction);
+        session,
+        pupil!,
+        goalInDb,
+        transaction: transaction,
+      );
 
       final competence = await Competence.db.findById(
         session,
         competenceId,
         transaction: transaction,
       );
-
       await Competence.db.attachRow.competenceGoals(
-          session, competence!, competenceGoalInDatabase,
-          transaction: transaction);
-
-      final pupilResponse = await PupilData.db.findById(
         session,
-        pupilId,
-        include: PupilSchemas.allInclude,
+        competence!,
+        goalInDb,
         transaction: transaction,
       );
-      return pupilResponse!;
+
+      // Re-fetch with includes.
+      return (await CompetenceGoal.db.findById(
+        session,
+        goalInDb.id!,
+        include: _goalInclude,
+        transaction: transaction,
+      ))!;
     });
 
-    return transactionResult;
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 
-  Future<PupilData> updateCompetenceGoal(
+  Future<bool> updateCompetenceGoal(
     Session session,
     String publicId, {
     ({String value})? description,
@@ -100,47 +132,47 @@ class CompetenceGoalEndpoint extends Endpoint {
       competenceGoal.achievedAt = achievedAt.value;
     }
     await CompetenceGoal.db.updateRow(session, competenceGoal);
-    final pupil = await PupilData.db.findById(
+
+    final result = (await CompetenceGoal.db.findById(
       session,
-      competenceGoal.pupilId,
-      include: PupilSchemas.allInclude,
-    );
-    return pupil!;
+      competenceGoal.id!,
+      include: _goalInclude,
+    ))!;
+
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 
-  Future<PupilData> deleteCompetenceGoal(
-      Session session, String publicId) async {
+  Future<bool> deleteCompetenceGoal(
+    Session session,
+    String publicId,
+  ) async {
     final competenceGoal = await CompetenceGoal.db.findFirstRow(
       session,
       where: (t) => t.publicId.equals(publicId),
-      include: CompetenceGoal.include(
-        documents: HubDocument.includeList(),
-      ),
+      include: _goalInclude,
     );
     if (competenceGoal == null) {
       throw Exception('Competence goal with id $publicId not found.');
     }
 
-    final pupilId = competenceGoal.pupilId;
+    final goalId = competenceGoal.id!;
 
     await session.db.transaction((transaction) async {
       // Delete attached documents first
       final documents = competenceGoal.documents;
       if (documents != null && documents.isNotEmpty) {
         for (final document in documents) {
-          // Detach the document from the competence goal
           await CompetenceGoal.db.detachRow.documents(
             session,
             document,
             transaction: transaction,
           );
-          // Delete the document row from the database
           await HubDocument.db.deleteRow(
             session,
             document,
             transaction: transaction,
           );
-          // Delete the file from storage
           if (document.documentPath != null) {
             await session.storage.deleteFile(
               storageId: 'private',
@@ -150,7 +182,6 @@ class CompetenceGoalEndpoint extends Endpoint {
         }
       }
 
-      // Delete the competence goal
       await CompetenceGoal.db.deleteRow(
         session,
         competenceGoal,
@@ -158,15 +189,17 @@ class CompetenceGoalEndpoint extends Endpoint {
       );
     });
 
-    final pupil = await PupilData.db.findById(
-      session,
-      pupilId,
-      include: PupilSchemas.allInclude,
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(
+        id: goalId,
+        objectType: HubObjectType.competenceGoal,
+      ),
     );
-    return pupil!;
+    return true;
   }
 
-  Future<PupilData> addFileToCompetenceGoal(
+  Future<bool> addFileToCompetenceGoal(
     Session session,
     String publicId,
     String filePath,
@@ -175,9 +208,7 @@ class CompetenceGoalEndpoint extends Endpoint {
     final competenceGoal = await CompetenceGoal.db.findFirstRow(
       session,
       where: (t) => t.publicId.equals(publicId),
-      include: CompetenceGoal.include(
-        documents: HubDocument.includeList(),
-      ),
+      include: _goalInclude,
     );
     if (competenceGoal == null) {
       throw Exception('CompetenceGoal with id $publicId not found');
@@ -189,7 +220,7 @@ class CompetenceGoalEndpoint extends Endpoint {
       path: filePath,
     );
 
-    return await session.db.transaction((transaction) async {
+    final result = await session.db.transaction((transaction) async {
       final documentInDatabase = await HubDocument.db.insertRow(
         session,
         document,
@@ -203,17 +234,19 @@ class CompetenceGoalEndpoint extends Endpoint {
         transaction: transaction,
       );
 
-      final pupil = await PupilData.db.findById(
+      return (await CompetenceGoal.db.findById(
         session,
-        competenceGoal.pupilId,
-        include: PupilSchemas.allInclude,
+        competenceGoal.id!,
+        include: _goalInclude,
         transaction: transaction,
-      );
-      return pupil!;
+      ))!;
     });
+
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 
-  Future<PupilData> removeFileFromCompetenceGoal(
+  Future<bool> removeFileFromCompetenceGoal(
     Session session,
     String publicId,
     String documentId,
@@ -221,9 +254,7 @@ class CompetenceGoalEndpoint extends Endpoint {
     final competenceGoal = await CompetenceGoal.db.findFirstRow(
       session,
       where: (t) => t.publicId.equals(publicId),
-      include: CompetenceGoal.include(
-        documents: HubDocument.includeList(),
-      ),
+      include: _goalInclude,
     );
     if (competenceGoal == null) {
       throw Exception('CompetenceGoal with id $publicId not found');
@@ -240,32 +271,30 @@ class CompetenceGoalEndpoint extends Endpoint {
           'Document with id $documentId not found in competence goal');
     }
 
-    // Use a transaction
     await session.db.transaction((transaction) async {
-      // Detach the file from the competence goal
       await CompetenceGoal.db.detachRow.documents(
         session,
         documentToRemove,
         transaction: transaction,
       );
-      // Delete the file from the database
       await HubDocument.db.deleteRow(
         session,
         documentToRemove,
         transaction: transaction,
       );
-      // Delete the file from the storage
       await session.storage.deleteFile(
         storageId: 'private',
         path: documentToRemove.documentPath!,
       );
     });
 
-    final pupilData = await PupilData.db.findById(
+    final result = (await CompetenceGoal.db.findById(
       session,
-      competenceGoal.pupilId,
-      include: PupilSchemas.allInclude,
-    );
-    return pupilData!;
+      competenceGoal.id!,
+      include: _goalInclude,
+    ))!;
+
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 }

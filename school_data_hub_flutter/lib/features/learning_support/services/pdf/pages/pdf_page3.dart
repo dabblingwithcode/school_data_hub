@@ -30,7 +30,7 @@ class PdfPage3 {
       }
     }
 
-    final goals = pupil.supportGoals ?? [];
+    final goals = pupil.supportGoals;
 
     return pw.Page(
       pageFormat: PdfPageFormat.a4.landscape,

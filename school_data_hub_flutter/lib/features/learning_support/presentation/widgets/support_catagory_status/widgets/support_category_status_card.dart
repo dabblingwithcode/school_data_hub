@@ -34,11 +34,9 @@ class SupportCategoryStatusCard extends WatchingWidget {
 
     // Find the indices of goals matching this category
     final goalIndices = <int>[];
-    if (pupil.supportGoals != null) {
-      for (int i = 0; i < pupil.supportGoals!.length; i++) {
-        if (pupil.supportGoals![i].supportCategoryId == supportCategoryId) {
-          goalIndices.add(i);
-        }
+    for (int i = 0; i < pupil.supportGoals.length; i++) {
+      if (pupil.supportGoals[i].supportCategoryId == supportCategoryId) {
+        goalIndices.add(i);
       }
     }
 

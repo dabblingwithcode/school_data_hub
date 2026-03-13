@@ -67,19 +67,19 @@ import 'package:school_data_hub_client/src/protocol/_features/books/models/libra
     as _i30;
 import 'package:school_data_hub_client/src/protocol/_features/books/models/pupil_book_lending.dart'
     as _i31;
-import 'package:school_data_hub_client/src/protocol/_features/learning/competence_report/models/competence_report_check.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning/competence/models/competence_goal.dart'
     as _i32;
-import 'package:school_data_hub_client/src/protocol/_features/learning/competence_report/models/competence_report.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning/competence_report/models/competence_report_check.dart'
     as _i33;
-import 'package:school_data_hub_client/src/protocol/_features/learning/competence_report/models/competence_report_item.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning/competence_report/models/competence_report.dart'
     as _i34;
-import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/learning_support_plan.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning/competence_report/models/competence_report_item.dart'
     as _i35;
-import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_category_status.dart'
-    as _i36;
 import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_goal/support_goal.dart'
+    as _i36;
+import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/learning_support_plan.dart'
     as _i37;
-import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_goal/support_goal_check.dart'
+import 'package:school_data_hub_client/src/protocol/_features/learning_support/models/support_category_status.dart'
     as _i38;
 import 'package:school_data_hub_client/src/protocol/_features/pupil/models/pupil_data/preschool/pre_school_medical.dart'
     as _i39;
@@ -1190,7 +1190,24 @@ class EndpointCompetenceGoal extends _i1.EndpointRef {
   @override
   String get name => 'competenceGoal';
 
-  _i2.Future<_i7.PupilData> postCompetenceGoal({
+  /// Fetch all competence goals (used for reconnect / bulk loads).
+  _i2.Future<List<_i32.CompetenceGoal>> fetchAllCompetenceGoals() =>
+      caller.callServerEndpoint<List<_i32.CompetenceGoal>>(
+        'competenceGoal',
+        'fetchAllCompetenceGoals',
+        {},
+      );
+
+  /// Fetch competence goals for a single pupil (lazy loading).
+  _i2.Future<List<_i32.CompetenceGoal>> fetchCompetenceGoalsForPupil(
+          int pupilId) =>
+      caller.callServerEndpoint<List<_i32.CompetenceGoal>>(
+        'competenceGoal',
+        'fetchCompetenceGoalsForPupil',
+        {'pupilId': pupilId},
+      );
+
+  _i2.Future<bool> postCompetenceGoal({
     required int competenceId,
     required int pupilId,
     required String description,
@@ -1200,7 +1217,7 @@ class EndpointCompetenceGoal extends _i1.EndpointRef {
     int? score,
     DateTime? achievedAt,
   }) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+      caller.callServerEndpoint<bool>(
         'competenceGoal',
         'postCompetenceGoal',
         {
@@ -1215,7 +1232,7 @@ class EndpointCompetenceGoal extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i7.PupilData> updateCompetenceGoal(
+  _i2.Future<bool> updateCompetenceGoal(
     String publicId, {
     ({String value})? description,
     ({List<String>? value})? strategies,
@@ -1223,7 +1240,7 @@ class EndpointCompetenceGoal extends _i1.EndpointRef {
     ({int? value})? score,
     ({DateTime? value})? achievedAt,
   }) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+      caller.callServerEndpoint<bool>(
         'competenceGoal',
         'updateCompetenceGoal',
         {
@@ -1236,19 +1253,19 @@ class EndpointCompetenceGoal extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i7.PupilData> deleteCompetenceGoal(String publicId) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+  _i2.Future<bool> deleteCompetenceGoal(String publicId) =>
+      caller.callServerEndpoint<bool>(
         'competenceGoal',
         'deleteCompetenceGoal',
         {'publicId': publicId},
       );
 
-  _i2.Future<_i7.PupilData> addFileToCompetenceGoal(
+  _i2.Future<bool> addFileToCompetenceGoal(
     String publicId,
     String filePath,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+      caller.callServerEndpoint<bool>(
         'competenceGoal',
         'addFileToCompetenceGoal',
         {
@@ -1258,11 +1275,11 @@ class EndpointCompetenceGoal extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i7.PupilData> removeFileFromCompetenceGoal(
+  _i2.Future<bool> removeFileFromCompetenceGoal(
     String publicId,
     String documentId,
   ) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+      caller.callServerEndpoint<bool>(
         'competenceGoal',
         'removeFileFromCompetenceGoal',
         {
@@ -1279,7 +1296,7 @@ class EndpointCompetenceReportCheck extends _i1.EndpointRef {
   @override
   String get name => 'competenceReportCheck';
 
-  _i2.Future<_i32.CompetenceReportCheck> postCompetenceReportCheck({
+  _i2.Future<_i33.CompetenceReportCheck> postCompetenceReportCheck({
     required int pupilId,
     required int competenceReportItemId,
     required int competenceReportId,
@@ -1288,7 +1305,7 @@ class EndpointCompetenceReportCheck extends _i1.EndpointRef {
     required String createdBy,
     bool? shouldPrint,
   }) =>
-      caller.callServerEndpoint<_i32.CompetenceReportCheck>(
+      caller.callServerEndpoint<_i33.CompetenceReportCheck>(
         'competenceReportCheck',
         'postCompetenceReportCheck',
         {
@@ -1302,13 +1319,13 @@ class EndpointCompetenceReportCheck extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i32.CompetenceReportCheck> updateCompetenceReportCheck(
+  _i2.Future<_i33.CompetenceReportCheck> updateCompetenceReportCheck(
     String publicId, {
     ({int value})? achievement,
     ({String value})? comment,
     ({bool? value})? shouldPrint,
   }) =>
-      caller.callServerEndpoint<_i32.CompetenceReportCheck>(
+      caller.callServerEndpoint<_i33.CompetenceReportCheck>(
         'competenceReportCheck',
         'updateCompetenceReportCheck',
         {
@@ -1334,14 +1351,14 @@ class EndpointCompetenceReport extends _i1.EndpointRef {
   @override
   String get name => 'competenceReport';
 
-  _i2.Future<_i33.CompetenceReport> postCompetenceReport({
+  _i2.Future<_i34.CompetenceReport> postCompetenceReport({
     required int pupilId,
     required int schoolSemesterId,
     required String achievement,
     required DateTime achievedAt,
     required String createdBy,
   }) =>
-      caller.callServerEndpoint<_i33.CompetenceReport>(
+      caller.callServerEndpoint<_i34.CompetenceReport>(
         'competenceReport',
         'postCompetenceReport',
         {
@@ -1353,21 +1370,21 @@ class EndpointCompetenceReport extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i33.CompetenceReport>> fetchCompetenceReports(int pupilId) =>
-      caller.callServerEndpoint<List<_i33.CompetenceReport>>(
+  _i2.Future<List<_i34.CompetenceReport>> fetchCompetenceReports(int pupilId) =>
+      caller.callServerEndpoint<List<_i34.CompetenceReport>>(
         'competenceReport',
         'fetchCompetenceReports',
         {'pupilId': pupilId},
       );
 
-  _i2.Future<_i33.CompetenceReport> updateCompetenceReport(
+  _i2.Future<_i34.CompetenceReport> updateCompetenceReport(
     String reportId, {
     ({String value})? achievement,
     ({DateTime value})? achievedAt,
     ({String value})? modifiedBy,
     ({DateTime? value})? modifiedAt,
   }) =>
-      caller.callServerEndpoint<_i33.CompetenceReport>(
+      caller.callServerEndpoint<_i34.CompetenceReport>(
         'competenceReport',
         'updateCompetenceReport',
         {
@@ -1394,13 +1411,13 @@ class EndpointCompetenceReportItem extends _i1.EndpointRef {
   @override
   String get name => 'competenceReportItem';
 
-  _i2.Future<_i34.CompetenceReportItem> postCompetenceReportItem({
+  _i2.Future<_i35.CompetenceReportItem> postCompetenceReportItem({
     int? parentItem,
     required String name,
     List<String>? level,
     int? order,
   }) =>
-      caller.callServerEndpoint<_i34.CompetenceReportItem>(
+      caller.callServerEndpoint<_i35.CompetenceReportItem>(
         'competenceReportItem',
         'postCompetenceReportItem',
         {
@@ -1411,16 +1428,16 @@ class EndpointCompetenceReportItem extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i34.CompetenceReportItem>> fetchAllCompetenceReportItems() =>
-      caller.callServerEndpoint<List<_i34.CompetenceReportItem>>(
+  _i2.Future<List<_i35.CompetenceReportItem>> fetchAllCompetenceReportItems() =>
+      caller.callServerEndpoint<List<_i35.CompetenceReportItem>>(
         'competenceReportItem',
         'fetchAllCompetenceReportItems',
         {},
       );
 
-  _i2.Future<_i34.CompetenceReportItem> updateCompetenceReportItem(
-          _i34.CompetenceReportItem competenceReportItem) =>
-      caller.callServerEndpoint<_i34.CompetenceReportItem>(
+  _i2.Future<_i35.CompetenceReportItem> updateCompetenceReportItem(
+          _i35.CompetenceReportItem competenceReportItem) =>
+      caller.callServerEndpoint<_i35.CompetenceReportItem>(
         'competenceReportItem',
         'updateCompetenceReportItem',
         {'competenceReportItem': competenceReportItem},
@@ -1441,29 +1458,45 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
   @override
   String get name => 'learningSupportPlan';
 
-  _i2.Future<List<_i35.LearningSupportPlan>> fetchLearningSupportPlans() =>
-      caller.callServerEndpoint<List<_i35.LearningSupportPlan>>(
+  /// Fetch all support goals (used for reconnect / bulk loads).
+  _i2.Future<List<_i36.SupportGoal>> fetchAllSupportGoals() =>
+      caller.callServerEndpoint<List<_i36.SupportGoal>>(
+        'learningSupportPlan',
+        'fetchAllSupportGoals',
+        {},
+      );
+
+  /// Fetch support goals for a single pupil (lazy loading).
+  _i2.Future<List<_i36.SupportGoal>> fetchSupportGoalsForPupil(int pupilId) =>
+      caller.callServerEndpoint<List<_i36.SupportGoal>>(
+        'learningSupportPlan',
+        'fetchSupportGoalsForPupil',
+        {'pupilId': pupilId},
+      );
+
+  _i2.Future<List<_i37.LearningSupportPlan>> fetchLearningSupportPlans() =>
+      caller.callServerEndpoint<List<_i37.LearningSupportPlan>>(
         'learningSupportPlan',
         'fetchLearningSupportPlans',
         {},
       );
 
-  _i2.Future<_i35.LearningSupportPlan> createLearningSupportPlan(
-          _i35.LearningSupportPlan plan) =>
-      caller.callServerEndpoint<_i35.LearningSupportPlan>(
+  _i2.Future<_i37.LearningSupportPlan> createLearningSupportPlan(
+          _i37.LearningSupportPlan plan) =>
+      caller.callServerEndpoint<_i37.LearningSupportPlan>(
         'learningSupportPlan',
         'createLearningSupportPlan',
         {'plan': plan},
       );
 
-  _i2.Future<bool> updateLearningSupportPlan(_i35.LearningSupportPlan plan) =>
+  _i2.Future<bool> updateLearningSupportPlan(_i37.LearningSupportPlan plan) =>
       caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'updateLearningSupportPlan',
         {'plan': plan},
       );
 
-  _i2.Future<bool> deleteLearningSupportPlan(_i35.LearningSupportPlan plan) =>
+  _i2.Future<bool> deleteLearningSupportPlan(_i37.LearningSupportPlan plan) =>
       caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'deleteLearningSupportPlan',
@@ -1491,23 +1524,23 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<List<_i36.SupportCategoryStatus>> fetchSupportCategoryStatus(
+  _i2.Future<List<_i38.SupportCategoryStatus>> fetchSupportCategoryStatus(
           int pupilId) =>
-      caller.callServerEndpoint<List<_i36.SupportCategoryStatus>>(
+      caller.callServerEndpoint<List<_i38.SupportCategoryStatus>>(
         'learningSupportPlan',
         'fetchSupportCategoryStatus',
         {'pupilId': pupilId},
       );
 
-  _i2.Future<List<_i36.SupportCategoryStatus>>
+  _i2.Future<List<_i38.SupportCategoryStatus>>
       fetchSupportCategoryStatusFromPupil(int pupilId) =>
-          caller.callServerEndpoint<List<_i36.SupportCategoryStatus>>(
+          caller.callServerEndpoint<List<_i38.SupportCategoryStatus>>(
             'learningSupportPlan',
             'fetchSupportCategoryStatusFromPupil',
             {'pupilId': pupilId},
           );
 
-  _i2.Future<_i36.SupportCategoryStatus> updateCategoryStatus(
+  _i2.Future<_i38.SupportCategoryStatus> updateCategoryStatus(
     int pupilId,
     int statusId,
     int? status,
@@ -1515,7 +1548,7 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
     String? createdBy,
     DateTime? createdAt,
   ) =>
-      caller.callServerEndpoint<_i36.SupportCategoryStatus>(
+      caller.callServerEndpoint<_i38.SupportCategoryStatus>(
         'learningSupportPlan',
         'updateCategoryStatus',
         {
@@ -1541,14 +1574,14 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i7.PupilData> postCategoryGoal(
+  _i2.Future<bool> postCategoryGoal(
     int pupilId,
     int supportCategoryId,
     String description,
     String strategies,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+      caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'postCategoryGoal',
         {
@@ -1560,14 +1593,14 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i7.PupilData> updateCategoryGoal(
+  _i2.Future<bool> updateCategoryGoal(
     int pupilId,
     int supportGoalId,
     String? description,
     String? strategies,
     int? supportCategoryId,
   ) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+      caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'updateCategoryGoal',
         {
@@ -1579,11 +1612,11 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i7.PupilData> deleteCategoryGoal(
+  _i2.Future<bool> deleteCategoryGoal(
     int pupilId,
     int supportGoalId,
   ) =>
-      caller.callServerEndpoint<_i7.PupilData>(
+      caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'deleteCategoryGoal',
         {
@@ -1592,13 +1625,13 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i37.SupportGoal> postSupportGoalCheck(
+  _i2.Future<bool> postSupportGoalCheck(
     int supportGoalId,
     int score,
     String comment,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i37.SupportGoal>(
+      caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'postSupportGoalCheck',
         {
@@ -1609,14 +1642,14 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i38.SupportGoalCheck> updateSupportGoalCheck(
+  _i2.Future<bool> updateSupportGoalCheck(
     int supportGoalCheckId,
     int? score,
     String? comment,
     String? createdBy,
     DateTime? createdAt,
   ) =>
-      caller.callServerEndpoint<_i38.SupportGoalCheck>(
+      caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'updateSupportGoalCheck',
         {
@@ -1628,11 +1661,11 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i37.SupportGoal> deleteSupportGoalCheck(
+  _i2.Future<bool> deleteSupportGoalCheck(
     int supportGoalId,
     int supportGoalCheckId,
   ) =>
-      caller.callServerEndpoint<_i37.SupportGoal>(
+      caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'deleteSupportGoalCheck',
         {
@@ -1641,13 +1674,13 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i37.SupportGoal> addFileToSupportGoalCheck(
+  _i2.Future<bool> addFileToSupportGoalCheck(
     int supportGoalId,
     int supportGoalCheckId,
     String filePath,
     String createdBy,
   ) =>
-      caller.callServerEndpoint<_i37.SupportGoal>(
+      caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'addFileToSupportGoalCheck',
         {
@@ -1658,12 +1691,12 @@ class EndpointLearningSupportPlan extends _i1.EndpointRef {
         },
       );
 
-  _i2.Future<_i37.SupportGoal> removeFileFromSupportGoalCheck(
+  _i2.Future<bool> removeFileFromSupportGoalCheck(
     int supportGoalId,
     int supportGoalCheckId,
     String documentId,
   ) =>
-      caller.callServerEndpoint<_i37.SupportGoal>(
+      caller.callServerEndpoint<bool>(
         'learningSupportPlan',
         'removeFileFromSupportGoalCheck',
         {

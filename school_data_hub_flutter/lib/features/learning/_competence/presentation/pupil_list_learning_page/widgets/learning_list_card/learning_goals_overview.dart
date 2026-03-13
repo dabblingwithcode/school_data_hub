@@ -46,7 +46,7 @@ class LearningGoalsOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final competenceGoals = pupil.competenceGoals ?? [];
+    final competenceGoals = pupil.competenceGoals;
     final Map<int, int> counts = {};
 
     for (final goal in competenceGoals) {

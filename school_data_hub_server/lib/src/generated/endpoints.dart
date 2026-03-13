@@ -2548,6 +2548,35 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'competenceGoal',
       endpoint: endpoints['competenceGoal']!,
       methodConnectors: {
+        'fetchAllCompetenceGoals': _i1.MethodConnector(
+          name: 'fetchAllCompetenceGoals',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['competenceGoal'] as _i20.CompetenceGoalEndpoint)
+                  .fetchAllCompetenceGoals(session),
+        ),
+        'fetchCompetenceGoalsForPupil': _i1.MethodConnector(
+          name: 'fetchCompetenceGoalsForPupil',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['competenceGoal'] as _i20.CompetenceGoalEndpoint)
+                  .fetchCompetenceGoalsForPupil(
+            session,
+            params['pupilId'],
+          ),
+        ),
         'postCompetenceGoal': _i1.MethodConnector(
           name: 'postCompetenceGoal',
           params: {
@@ -3084,6 +3113,37 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'learningSupportPlan',
       endpoint: endpoints['learningSupportPlan']!,
       methodConnectors: {
+        'fetchAllSupportGoals': _i1.MethodConnector(
+          name: 'fetchAllSupportGoals',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['learningSupportPlan']
+                      as _i24.LearningSupportPlanEndpoint)
+                  .fetchAllSupportGoals(session),
+        ),
+        'fetchSupportGoalsForPupil': _i1.MethodConnector(
+          name: 'fetchSupportGoalsForPupil',
+          params: {
+            'pupilId': _i1.ParameterDescription(
+              name: 'pupilId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            )
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['learningSupportPlan']
+                      as _i24.LearningSupportPlanEndpoint)
+                  .fetchSupportGoalsForPupil(
+            session,
+            params['pupilId'],
+          ),
+        ),
         'fetchLearningSupportPlans': _i1.MethodConnector(
           name: 'fetchLearningSupportPlans',
           params: {},

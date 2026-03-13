@@ -3,9 +3,42 @@ import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:school_data_hub_server/src/_features/pupil/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
 
+/// Include for fetching a SupportGoal with its goal checks and their documents.
+final _supportGoalInclude = SupportGoal.include(
+  goalChecks: SupportGoalCheck.includeList(
+    include: SupportGoalCheck.include(documents: HubDocument.includeList()),
+  ),
+);
+
 class LearningSupportPlanEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
+
+  //- SUPPORT GOALS: FETCH ---------------------------------------------------
+
+  /// Fetch all support goals (used for reconnect / bulk loads).
+  Future<List<SupportGoal>> fetchAllSupportGoals(
+    Session session,
+  ) async {
+    return SupportGoal.db.find(
+      session,
+      include: _supportGoalInclude,
+    );
+  }
+
+  /// Fetch support goals for a single pupil (lazy loading).
+  Future<List<SupportGoal>> fetchSupportGoalsForPupil(
+    Session session,
+    int pupilId,
+  ) async {
+    return SupportGoal.db.find(
+      session,
+      where: (t) => t.pupilId.equals(pupilId),
+      include: _supportGoalInclude,
+    );
+  }
+
+  //- LEARNING SUPPORT PLANS -------------------------------------------------
 
   Future<List<LearningSupportPlan>> fetchLearningSupportPlans(
     Session session,
@@ -42,6 +75,8 @@ class LearningSupportPlanEndpoint extends Endpoint {
     await session.db.deleteRow<LearningSupportPlan>(plan);
     return true;
   }
+
+  //- SUPPORT CATEGORY STATUS ------------------------------------------------
 
   Future<PupilData> postSupportCategoryStatus(
     Session session,
@@ -185,7 +220,9 @@ class LearningSupportPlanEndpoint extends Endpoint {
     });
   }
 
-  Future<PupilData> postCategoryGoal(
+  //- SUPPORT GOALS: CRUD ---------------------------------------------------
+
+  Future<bool> postCategoryGoal(
     Session session,
     int pupilId,
     int supportCategoryId,
@@ -193,11 +230,6 @@ class LearningSupportPlanEndpoint extends Endpoint {
     String strategies,
     String createdBy,
   ) async {
-    final pupil = await PupilData.db.findById(
-      session,
-      pupilId,
-      include: PupilSchemas.allInclude,
-    );
     final goalId = Uuid().v4().toString();
     final newSupportGoal = SupportGoal(
       pupilId: pupilId,
@@ -209,25 +241,39 @@ class LearningSupportPlanEndpoint extends Endpoint {
       createdBy: createdBy,
       createdAt: DateTime.now().toUtc(),
     );
-    return await session.db.transaction((transaction) async {
-      final goalInDataBase = await SupportGoal.db.insertRow(
+
+    final result = await session.db.transaction((transaction) async {
+      final goalInDb = await SupportGoal.db.insertRow(
         session,
         newSupportGoal,
         transaction: transaction,
       );
-      await PupilData.db.attach.supportGoals(session, pupil!, [goalInDataBase],
-          transaction: transaction);
-      final updatedPupil = await PupilData.db.findById(
+      final pupil = await PupilData.db.findById(
         session,
         pupilId,
-        include: PupilSchemas.allInclude,
         transaction: transaction,
       );
-      return updatedPupil!;
+      await PupilData.db.attach.supportGoals(
+        session,
+        pupil!,
+        [goalInDb],
+        transaction: transaction,
+      );
+
+      // Re-fetch with includes.
+      return (await SupportGoal.db.findById(
+        session,
+        goalInDb.id!,
+        include: _supportGoalInclude,
+        transaction: transaction,
+      ))!;
     });
+
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 
-  Future<PupilData> updateCategoryGoal(
+  Future<bool> updateCategoryGoal(
     Session session,
     int pupilId,
     int supportGoalId,
@@ -247,27 +293,21 @@ class LearningSupportPlanEndpoint extends Endpoint {
     );
     await SupportGoal.db.updateRow(session, updatedGoal);
 
-    final updatedPupil = await PupilData.db.findById(
+    final result = (await SupportGoal.db.findById(
       session,
-      pupilId,
-      include: PupilSchemas.allInclude,
-    );
-    return updatedPupil!;
+      supportGoalId,
+      include: _supportGoalInclude,
+    ))!;
+
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 
-  Future<PupilData> deleteCategoryGoal(
+  Future<bool> deleteCategoryGoal(
     Session session,
     int pupilId,
     int supportGoalId,
   ) async {
-    final pupil = await PupilData.db.findById(
-      session,
-      pupilId,
-      include: PupilSchemas.allInclude,
-    );
-    if (pupil == null) {
-      throw Exception('Pupil not found for id: $pupilId');
-    }
     final existingGoal = await SupportGoal.db.findById(
       session,
       supportGoalId,
@@ -277,10 +317,11 @@ class LearningSupportPlanEndpoint extends Endpoint {
       throw Exception('SupportGoal not found for id: $supportGoalId');
     }
 
+    final goalId = existingGoal.id!;
+
     await session.db.transaction((transaction) async {
       // Delete all documents from all goal checks
       for (final check in existingGoal.goalChecks ?? <SupportGoalCheck>[]) {
-        // Re-fetch each check with documents to ensure we have all documents
         final checkWithDocs = await SupportGoalCheck.db.findById(
           session,
           check.id!,
@@ -309,11 +350,10 @@ class LearningSupportPlanEndpoint extends Endpoint {
         }
         // Detach and delete the goal check
         await SupportGoal.db.detach.goalChecks(
-            session,
-            [
-              check,
-            ],
-            transaction: transaction);
+          session,
+          [check],
+          transaction: transaction,
+        );
         await SupportGoalCheck.db.deleteRow(
           session,
           check,
@@ -322,11 +362,10 @@ class LearningSupportPlanEndpoint extends Endpoint {
       }
       // Detach and delete the goal itself
       await PupilData.db.detach.supportGoals(
-          session,
-          [
-            existingGoal,
-          ],
-          transaction: transaction);
+        session,
+        [existingGoal],
+        transaction: transaction,
+      );
       await SupportGoal.db.deleteRow(
         session,
         existingGoal,
@@ -334,24 +373,19 @@ class LearningSupportPlanEndpoint extends Endpoint {
       );
     });
 
-    final updatedPupil = await PupilData.db.findById(
-      session,
-      pupilId,
-      include: PupilSchemas.allInclude,
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(
+        id: goalId,
+        objectType: HubObjectType.supportGoal,
+      ),
     );
-    if (updatedPupil == null) {
-      throw Exception('Pupil not found after deletion');
-    }
-    return updatedPupil;
+    return true;
   }
 
-  static final _supportGoalInclude = SupportGoal.include(
-    goalChecks: SupportGoalCheck.includeList(
-      include: SupportGoalCheck.include(documents: HubDocument.includeList()),
-    ),
-  );
+  //- SUPPORT GOAL CHECKS ---------------------------------------------------
 
-  Future<SupportGoal> postSupportGoalCheck(
+  Future<bool> postSupportGoalCheck(
     Session session,
     int supportGoalId,
     int score,
@@ -375,30 +409,32 @@ class LearningSupportPlanEndpoint extends Endpoint {
       createdBy: createdBy,
       createdAt: DateTime.now().toUtc(),
     );
-    return await session.db.transaction((transaction) async {
+
+    final result = await session.db.transaction((transaction) async {
       final checkInDatabase = await SupportGoalCheck.db.insertRow(
         session,
         newSupportGoalCheck,
         transaction: transaction,
       );
       await SupportGoal.db.attach.goalChecks(
-          session,
-          supportGoal,
-          [
-            checkInDatabase,
-          ],
-          transaction: transaction);
-      final updatedSupportGoal = await SupportGoal.db.findById(
+        session,
+        supportGoal,
+        [checkInDatabase],
+        transaction: transaction,
+      );
+      return (await SupportGoal.db.findById(
         session,
         supportGoalId,
         include: _supportGoalInclude,
         transaction: transaction,
-      );
-      return updatedSupportGoal!;
+      ))!;
     });
+
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 
-  Future<SupportGoalCheck> updateSupportGoalCheck(
+  Future<bool> updateSupportGoalCheck(
     Session session,
     int supportGoalCheckId,
     int? score,
@@ -420,22 +456,23 @@ class LearningSupportPlanEndpoint extends Endpoint {
       createdAt: createdAt ?? existingCheck.createdAt,
     );
     await session.db.updateRow(updatedCheck);
-    return updatedCheck;
+
+    // Post the parent SupportGoal to hub stream.
+    final result = (await SupportGoal.db.findById(
+      session,
+      existingCheck.supportGoalId,
+      include: _supportGoalInclude,
+    ))!;
+
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 
-  Future<SupportGoal> deleteSupportGoalCheck(
+  Future<bool> deleteSupportGoalCheck(
     Session session,
     int supportGoalId,
     int supportGoalCheckId,
   ) async {
-    final supportGoal = await SupportGoal.db.findById(
-      session,
-      supportGoalId,
-      include: _supportGoalInclude,
-    );
-    if (supportGoal == null) {
-      throw Exception('SupportGoal not found for id: $supportGoalId');
-    }
     final existingCheck = await SupportGoalCheck.db.findById(
       session,
       supportGoalCheckId,
@@ -477,20 +514,20 @@ class LearningSupportPlanEndpoint extends Endpoint {
       );
     });
 
-    final updatedSupportGoal = await SupportGoal.db.findById(
+    // Post the updated parent SupportGoal to hub stream.
+    final result = (await SupportGoal.db.findById(
       session,
       supportGoalId,
       include: _supportGoalInclude,
-    );
-    if (updatedSupportGoal == null) {
-      throw Exception('SupportGoal not found after deletion');
-    }
-    return updatedSupportGoal;
+    ))!;
+
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 
   //- GOAL CHECK DOCUMENTS --------------------------------------------------
 
-  Future<SupportGoal> addFileToSupportGoalCheck(
+  Future<bool> addFileToSupportGoalCheck(
     Session session,
     int supportGoalId,
     int supportGoalCheckId,
@@ -512,7 +549,7 @@ class LearningSupportPlanEndpoint extends Endpoint {
       path: filePath,
     );
 
-    return await session.db.transaction((transaction) async {
+    final result = await session.db.transaction((transaction) async {
       final documentInDatabase = await HubDocument.db.insertRow(
         session,
         document,
@@ -526,17 +563,19 @@ class LearningSupportPlanEndpoint extends Endpoint {
         transaction: transaction,
       );
 
-      final updatedSupportGoal = await SupportGoal.db.findById(
+      return (await SupportGoal.db.findById(
         session,
         supportGoalId,
         include: _supportGoalInclude,
         transaction: transaction,
-      );
-      return updatedSupportGoal!;
+      ))!;
     });
+
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 
-  Future<SupportGoal> removeFileFromSupportGoalCheck(
+  Future<bool> removeFileFromSupportGoalCheck(
     Session session,
     int supportGoalId,
     int supportGoalCheckId,
@@ -579,11 +618,13 @@ class LearningSupportPlanEndpoint extends Endpoint {
       );
     });
 
-    final updatedSupportGoal = await SupportGoal.db.findById(
+    final result = (await SupportGoal.db.findById(
       session,
       supportGoalId,
       include: _supportGoalInclude,
-    );
-    return updatedSupportGoal!;
+    ))!;
+
+    session.messages.postMessage('hub_events_stream', result);
+    return true;
   }
 }

@@ -15,19 +15,6 @@ class PupilSchemas {
       preschoolMedicalFiles: HubDocument.includeList(),
     ),
     supportCategoryStatuses: SupportCategoryStatus.includeList(),
-    supportGoals: SupportGoal.includeList(
-      include: SupportGoal.include(
-        goalChecks: SupportGoalCheck.includeList(
-          include: SupportGoalCheck.include(
-            documents: HubDocument.includeList(),
-          ),
-        ),
-      ),
-    ),
-    competenceGoals: CompetenceGoal.includeList(
-        include: CompetenceGoal.include(
-      documents: HubDocument.includeList(),
-    )),
     competenceChecks: CompetenceCheck.includeList(
       include: CompetenceCheck.include(
         documents: HubDocument.includeList(),

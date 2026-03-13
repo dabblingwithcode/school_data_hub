@@ -57,7 +57,7 @@ class LearningGoalsPdfGenerator {
 
     // Filter pupils who have competence goals
     final pupilsWithGoals = sortedPupils
-        .where((p) => (p.competenceGoals ?? []).isNotEmpty)
+        .where((p) => (p.competenceGoals).isNotEmpty)
         .toList();
 
     if (pupilsWithGoals.isEmpty) {
@@ -712,7 +712,7 @@ class LearningGoalsPdfGenerator {
     final List<pw.Widget> widgets = [];
 
     for (var pupil in pupils) {
-      final competenceGoals = pupil.competenceGoals ?? [];
+      final competenceGoals = pupil.competenceGoals;
       if (competenceGoals.isEmpty) continue;
 
       // Sort goals by competence

@@ -74,11 +74,9 @@ class LearningSupportHelper {
     int categoryId,
   ) {
     final goals = <SupportGoal>[];
-    if (pupil.supportGoals != null) {
-      for (final goal in pupil.supportGoals!) {
-        if (goal.supportCategoryId == categoryId) {
-          goals.add(goal);
-        }
+    for (final goal in pupil.supportGoals) {
+      if (goal.supportCategoryId == categoryId) {
+        goals.add(goal);
       }
     }
     return goals;

@@ -13,6 +13,7 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/data/competence_api_service.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/models/pupil_competence_goals_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/data/competence_check_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/data/competence_goal_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
@@ -52,6 +53,63 @@ class CompetenceManager {
 
   StreamSubscription<dynamic>? _hubSubscription;
 
+  // -- Competence goal state (per-pupil, lazy-loaded) --
+  final Map<int, PupilCompetenceGoalsProxy> _pupilCompetenceGoalsMap = {};
+  final Set<int> _loadedPupilIds = {};
+
+  /// Returns the per-pupil proxy, creating it lazily if needed.
+  PupilCompetenceGoalsProxy getPupilCompetenceGoalsProxy(int pupilId) {
+    return _pupilCompetenceGoalsMap.putIfAbsent(
+      pupilId,
+      () => PupilCompetenceGoalsProxy(),
+    );
+  }
+
+  /// Returns the current list of competence goals for a pupil.
+  /// Returns an empty list if not yet loaded.
+  List<CompetenceGoal> getCompetenceGoals(int pupilId) {
+    return _pupilCompetenceGoalsMap[pupilId]?.competenceGoals ?? [];
+  }
+
+  /// Fetches goals for a single pupil from the server (lazy loading).
+  Future<void> fetchGoalsForPupil(int pupilId) async {
+    final goals =
+        await _competenceGoalApiService.fetchCompetenceGoalsForPupil(pupilId);
+    if (goals != null) {
+      getPupilCompetenceGoalsProxy(pupilId).setCompetenceGoals(goals);
+      _loadedPupilIds.add(pupilId);
+    }
+  }
+
+  /// Fetches all goals (used on reconnect for already-loaded pupils).
+  Future<void> _refetchLoadedGoals() async {
+    final goals = await _competenceGoalApiService.fetchAllCompetenceGoals();
+    if (goals == null) return;
+
+    // Clear and repopulate only loaded proxies.
+    for (final pupilId in _loadedPupilIds) {
+      final proxy = _pupilCompetenceGoalsMap[pupilId];
+      if (proxy != null) {
+        proxy.setCompetenceGoals(
+          goals.where((g) => g.pupilId == pupilId).toList(),
+        );
+      }
+    }
+  }
+
+  void _upsertGoalFromStream(CompetenceGoal goal) {
+    getPupilCompetenceGoalsProxy(goal.pupilId).upsertCompetenceGoal(goal);
+  }
+
+  void _deleteGoalFromStream(int goalId) {
+    for (final proxy in _pupilCompetenceGoalsMap.values) {
+      if (proxy.competenceGoals.any((g) => g.id == goalId)) {
+        proxy.removeCompetenceGoalById(goalId);
+        return;
+      }
+    }
+  }
+
   Competence getCompetenceById(int publicId) {
     return _competences.value.firstWhere(
       (element) => element.publicId == publicId,
@@ -64,6 +122,8 @@ class CompetenceManager {
     _hubSubscription = null;
     _competences.dispose();
     _selectedLearningContent.dispose();
+    _pupilCompetenceGoalsMap.clear();
+    _loadedPupilIds.clear();
   }
 
   Future<CompetenceManager> init() async {
@@ -75,11 +135,17 @@ class CompetenceManager {
   void _onHubEvent(dynamic event) {
     if (event is Competence) {
       upsertFromStream(event);
-    } else if (event is HubDeleteEvent &&
-        event.objectType == HubObjectType.competence) {
-      deleteFromStream(event.id);
+    } else if (event is CompetenceGoal) {
+      _upsertGoalFromStream(event);
+    } else if (event is HubDeleteEvent) {
+      if (event.objectType == HubObjectType.competence) {
+        deleteFromStream(event.id);
+      } else if (event.objectType == HubObjectType.competenceGoal) {
+        _deleteGoalFromStream(event.id);
+      }
     } else if (event is HubReconnected) {
       fetchCompetences();
+      _refetchLoadedGoals();
     }
   }
 
@@ -424,23 +490,18 @@ class CompetenceManager {
     required String description,
     required List<String> strategies,
   }) async {
-    final pupilData = await _competenceGoalApiService.postCompetenceGoal(
+    final success = await _competenceGoalApiService.postCompetenceGoal(
       pupilId: pupilId,
       competenceId: competenceId,
       description: description,
       strategies: strategies,
     );
-    if (pupilData == null) {
-      return;
-    }
-    di<PupilProxyManager>().updatePupilProxyWithPupilData(pupilData);
+    if (success != true) return;
 
     _notificationService.showSnackBar(
       NotificationType.success,
       'Lernziel erstellt',
     );
-
-    return;
   }
 
   Future<void> updateCompetenceGoal({
@@ -450,36 +511,24 @@ class CompetenceManager {
     ({String value})? description,
     ({List<String>? value})? strategies,
   }) async {
-    final updatedPupilData = await _competenceGoalApiService
-        .updateCompetenceGoal(
-          publicId: publicId,
-          score: score,
-          achievedAt: achievedAt,
-          description: description,
-          strategies: strategies,
-        );
-    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Lernziel aktualisiert',
+    await _competenceGoalApiService.updateCompetenceGoal(
+      publicId: publicId,
+      score: score,
+      achievedAt: achievedAt,
+      description: description,
+      strategies: strategies,
     );
-
-    return;
   }
 
   Future<void> deleteCompetenceGoal(String publicId) async {
-    final PupilData pupilData = await _competenceGoalApiService
-        .deleteCompetenceGoal(publicId);
-
-    di<PupilProxyManager>().updatePupilProxyWithPupilData(pupilData);
+    final success =
+        await _competenceGoalApiService.deleteCompetenceGoal(publicId);
+    if (success != true) return;
 
     _notificationService.showSnackBar(
       NotificationType.success,
       'Lernziel gelöscht',
     );
-
-    return;
   }
 
   Future<void> addFileToCompetenceGoal({
@@ -489,25 +538,22 @@ class CompetenceManager {
   }) async {
     final encryptedFile = await customEncrypter.encryptFile(file);
     final createdBy = di<HubSessionManager>().userName;
-    final updatedPupilData = await _competenceGoalApiService
-        .addFileToCompetenceGoal(publicId, encryptedFile, createdBy!, fileInfo);
-    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Datei zum Lernziel hinzugefügt',
+    await _competenceGoalApiService.addFileToCompetenceGoal(
+      publicId,
+      encryptedFile,
+      createdBy!,
+      fileInfo,
     );
-
-    return;
   }
 
   Future<void> removeFileFromCompetenceGoal({
     required String publicId,
     required String documentId,
   }) async {
-    final updatedPupilData = await _competenceGoalApiService
-        .removeFileFromCompetenceGoal(publicId, documentId);
-    di<PupilProxyManager>().updatePupilProxyWithPupilData(updatedPupilData);
+    await _competenceGoalApiService.removeFileFromCompetenceGoal(
+      publicId,
+      documentId,
+    );
   }
 
   Future<void> updateCompetenceCheck({

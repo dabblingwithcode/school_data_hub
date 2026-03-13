@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 class SupportGoalBatches extends StatelessWidget {
   final PupilProxy pupil;
@@ -12,7 +12,7 @@ class SupportGoalBatches extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final learningSupportManager = di<SupportCategoryManager>();
-    final supportGoals = pupil.supportGoals ?? [];
+    final supportGoals = pupil.supportGoals;
     List<Widget> widgetList = [];
     Map<int, int> categoryCounts = {};
 

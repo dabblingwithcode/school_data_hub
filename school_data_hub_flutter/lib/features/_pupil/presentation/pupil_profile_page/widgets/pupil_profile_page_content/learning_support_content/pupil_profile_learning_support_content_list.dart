@@ -26,6 +26,7 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/s
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/kindergarden_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
@@ -39,6 +40,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    callOnce((_) => di<LearningSupportManager>().fetchGoalsForPupil(pupil.pupilId));
     bool hasActivePlan() {
       if (pupil.learningSupportPlans != null &&
           pupil.learningSupportPlans!.any(

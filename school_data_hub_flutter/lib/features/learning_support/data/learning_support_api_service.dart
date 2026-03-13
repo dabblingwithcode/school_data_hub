@@ -132,18 +132,35 @@ class LearningSupportApiService {
     return pupil;
   }
 
+  //- SUPPORT GOALS: FETCH ------------------------------------------------
+
+  Future<List<SupportGoal>?> fetchAllSupportGoals() async {
+    return ClientHelper.apiCall(
+      call: () => _client.learningSupportPlan.fetchAllSupportGoals(),
+      errorMessage: 'Fehler beim Laden der Förderziele',
+    );
+  }
+
+  Future<List<SupportGoal>?> fetchSupportGoalsForPupil(int pupilId) async {
+    return ClientHelper.apiCall(
+      call: () =>
+          _client.learningSupportPlan.fetchSupportGoalsForPupil(pupilId),
+      errorMessage: 'Fehler beim Laden der Förderziele',
+    );
+  }
+
   //- GOALS ------------------------------------------------------------
 
   //- post category goal
 
-  Future<PupilData?> postNewCategoryGoal({
+  Future<bool?> postNewCategoryGoal({
     required int supportCategoryId,
     required int pupilId,
     required String description,
     required String strategies,
     required String createdBy,
   }) async {
-    final updatedPupil = await ClientHelper.apiCall(
+    return ClientHelper.apiCall(
       call: () => _client.learningSupportPlan.postCategoryGoal(
         pupilId,
         supportCategoryId,
@@ -152,20 +169,18 @@ class LearningSupportApiService {
         createdBy,
       ),
     );
-
-    return updatedPupil;
   }
 
   //- update category goal
 
-  Future<PupilData?> updateCategoryGoal({
+  Future<bool?> updateCategoryGoal({
     required int pupilId,
     required int supportGoalId,
     String? description,
     String? strategies,
     int? supportCategoryId,
   }) async {
-    final updatedPupil = await ClientHelper.apiCall(
+    return ClientHelper.apiCall(
       call: () => _client.learningSupportPlan.updateCategoryGoal(
         pupilId,
         supportGoalId,
@@ -175,23 +190,21 @@ class LearningSupportApiService {
       ),
       errorMessage: 'Fehler beim Aktualisieren des Ziels',
     );
-    return updatedPupil;
   }
 
   //- delete category goal
 
-  Future<PupilData?> deleteCategoryGoal({
+  Future<bool?> deleteCategoryGoal({
     required int pupilId,
     required int supportGoalId,
   }) async {
-    final updatedPupil = await ClientHelper.apiCall(
+    return ClientHelper.apiCall(
       call: () => _client.learningSupportPlan.deleteCategoryGoal(
         pupilId,
         supportGoalId,
       ),
       errorMessage: 'Fehler beim Löschen des Ziels',
     );
-    return updatedPupil;
   }
 
   //- BULK IMPORT SUPPORT LEVELS ------------------------------------------
@@ -218,13 +231,13 @@ class LearningSupportApiService {
 
   //- GOAL CHECKS ------------------------------------------------------------
 
-  Future<SupportGoal?> postSupportGoalCheck({
+  Future<bool?> postSupportGoalCheck({
     required int supportGoalId,
     required int score,
     required String comment,
     required String createdBy,
   }) async {
-    final response = await ClientHelper.apiCall(
+    return ClientHelper.apiCall(
       call: () => _client.learningSupportPlan.postSupportGoalCheck(
         supportGoalId,
         score,
@@ -233,17 +246,16 @@ class LearningSupportApiService {
       ),
       errorMessage: 'Fehler beim Erstellen des Ziel-Checks',
     );
-    return response;
   }
 
-  Future<SupportGoalCheck?> updateSupportGoalCheck({
+  Future<bool?> updateSupportGoalCheck({
     required int supportGoalCheckId,
     int? score,
     String? comment,
     String? createdBy,
     DateTime? createdAt,
   }) async {
-    final response = await ClientHelper.apiCall(
+    return ClientHelper.apiCall(
       call: () => _client.learningSupportPlan.updateSupportGoalCheck(
         supportGoalCheckId,
         score,
@@ -253,26 +265,24 @@ class LearningSupportApiService {
       ),
       errorMessage: 'Fehler beim Aktualisieren des Ziel-Checks',
     );
-    return response;
   }
 
-  Future<SupportGoal?> deleteSupportGoalCheck({
+  Future<bool?> deleteSupportGoalCheck({
     required int supportGoalId,
     required int supportGoalCheckId,
   }) async {
-    final response = await ClientHelper.apiCall(
+    return ClientHelper.apiCall(
       call: () => _client.learningSupportPlan.deleteSupportGoalCheck(
         supportGoalId,
         supportGoalCheckId,
       ),
       errorMessage: 'Fehler beim Löschen des Ziel-Checks',
     );
-    return response;
   }
 
   //- GOAL CHECK DOCUMENTS ---------------------------------------------------
 
-  Future<SupportGoal?> addFileToSupportGoalCheck({
+  Future<bool?> addFileToSupportGoalCheck({
     required int supportGoalId,
     required int supportGoalCheckId,
     required File file,
@@ -285,7 +295,7 @@ class LearningSupportApiService {
       storageId: StorageId.private,
       folder: ServerStorageFolder.documents,
     );
-    final result = await ClientHelper.apiCall(
+    return ClientHelper.apiCall(
       call: () => _client.learningSupportPlan.addFileToSupportGoalCheck(
         supportGoalId,
         supportGoalCheckId,
@@ -294,15 +304,14 @@ class LearningSupportApiService {
       ),
       errorMessage: 'Fehler beim Hinzufügen der Datei zum Ziel-Check',
     );
-    return result;
   }
 
-  Future<SupportGoal?> removeFileFromSupportGoalCheck({
+  Future<bool?> removeFileFromSupportGoalCheck({
     required int supportGoalId,
     required int supportGoalCheckId,
     required String documentId,
   }) async {
-    final result = await ClientHelper.apiCall(
+    return ClientHelper.apiCall(
       call: () => _client.learningSupportPlan.removeFileFromSupportGoalCheck(
         supportGoalId,
         supportGoalCheckId,
@@ -310,6 +319,5 @@ class LearningSupportApiService {
       ),
       errorMessage: 'Fehler beim Entfernen der Datei vom Ziel-Check',
     );
-    return result;
   }
 }

@@ -10,3 +10,5 @@ values:
   - competenceReport
   - competenceReportCheck
   - competenceReportItem
+  - competenceGoal
+  - supportGoal

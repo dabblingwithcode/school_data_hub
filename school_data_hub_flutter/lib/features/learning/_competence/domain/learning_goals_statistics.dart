@@ -21,8 +21,8 @@ class LearningGoalsStatistics {
 
     for (final pupil in pupils) {
       // Process competence goals
-      if (pupil.competenceGoals != null) {
-        for (final goal in pupil.competenceGoals!) {
+      if (pupil.competenceGoals.isNotEmpty) {
+        for (final goal in pupil.competenceGoals) {
           totalGoals++;
           if (goal.achievedAt == null) {
             totalOpenGoals++;
