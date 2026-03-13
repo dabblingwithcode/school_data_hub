@@ -15,13 +15,6 @@ It implements a privacy-first architecture where sensitive pupil data is stored 
 
 **Shorebird Integration**: The client uses Shorebird for over-the-air (OTA) code push updates, allowing for rapid deployment of bug fixes and feature updates without requiring app store releases.
 
-## Prerequisites
-
-- **Flutter SDK**: >=3.19.0
-- **Dart SDK**: >=3.8.0
-- **Serverpod**: The project uses Serverpod 2.9.1 for backend communication
-- **School Data Hub Client**: A local dependency (`../school_data_hub_client`)
-
 ## Getting Started
 
 ### Installation

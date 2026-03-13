@@ -6,13 +6,11 @@ A comprehensive software tool for managing school information flows between teac
 
 School Data Hub integrates with data exported from the NRW Education ministry software ([SVWS](https://www.svws.nrw.de/)) to build extended models of pupils in the backend without uploading any personal data to the server. The backend models are then used to add and manage additional information collaboratively.
 
-
-
 ## Architecture & Data Protection
 
 ### Privacy-First Approach
 
-School Data Hub implements a unique privacy-first architecture by **decoupling personal information from the database**. Instead of storing personal data on the server, this information is **stored locally on each device and shared through secure data transport between devices**.
+School Data Hub implements a privacy-first architecture by **decoupling personal information from the database**. Instead of storing personal data on the server, this information is **stored locally on each device and shared through secure data transport between devices**.
 
 ### How It Works
 
@@ -22,13 +20,18 @@ School Data Hub implements a unique privacy-first architecture by **decoupling p
 
 3. **Authentication**: After scanning the keys, users can log in with their credentials. However, even after login, no pupil data will be available.
 
-4. **Pupil Data Import**: Users must obtain pupil credentials by transferring them from another device (typically from a desktop version of the app). These credentials are stored in secure storage. API calls require both authenticated access **and** the pupil's internal id.
+4. **Pupil Data Import**: Users must obtain pupil credentials by transferring them from another device (typically from a desktop version of the app), or by importing from an Excel template. These credentials are stored in secure storage. API calls require both authenticated access **and** the pupil's internal id.
+
+### Real-Time Collaboration
+
+Changes made by one user are pushed in real-time to all connected clients via `HubStreamService`, a server-sent event stream built on Serverpod streaming. This ensures that attendance records, schoolday events, authorizations, competence data, and learning support updates are immediately visible to all colleagues.
 
 ### Encrypted Data
 
 The following data is encrypted:
 - All stored files on the server
 - Sensitive information text, like special needs support strings
+- Encryption is gradually being migrated to an updated format; the client handles this transparently
 
 ## Features
 
@@ -44,11 +47,12 @@ Track student attendance with comprehensive details:
 
 ### Schoolday Events
 
-Document and track schoolday events with photo attachments. Events can include:
+Document and track schoolday events with photo and audio attachments. Events can include:
 - Admonitions
 - Accident reports
 - Parent meetings
 - Any other incidents associated with pupils
+- Event type icons for quick visual identification
 
 ### School Lists
 
@@ -70,6 +74,7 @@ Manage a school-specific currency system used as a reward mechanism. Students ca
 - School merchandise (t-shirts, buttons)
 - School supplies (pencils, erasers)
 - Small games and activities (frisbees, etc.)
+- Credit transaction history chart (WIP)
 
 ### Special Information (WIP)
 
@@ -87,6 +92,10 @@ Document and track individual learning support plans for pupils. This feature su
 - **Status Tracking**: Document category statuses as estimated by the responsible teacher
 - **Development Goals**: Document educational learning support goals that are accessible for colleagues teaching the pupil.
 - **Collaborative Progress**: Enable multiple colleagues to share documentation about the goals' progress over time.
+- **Document & Audio Attachments**: Attach documents and audio recordings to support goals and checks
+- **Special Needs Teacher**: Assign a special needs teacher per learning support plan
+- **Configurable Print Options**: Control which support categories appear in printed reports
+- **PDF Generation**: Print learning support plans as PDF documents
 
 ### Workbooks
 
@@ -103,6 +112,9 @@ Track and manage student competencies:
 - Competence-based assessments
 - Progress tracking
 - Semester-based reporting
+- Add, edit, and delete competencies and support categories
+- Attach documents to competence goals
+- Competence report PDF generation
   
 ### Library Books Management
 
@@ -110,9 +122,10 @@ Digital library management system for tracking books:
 - Book catalog with ISBN support
 - Location tracking for library books
 - Book tagging system
-- Lending management
+- Lending management with audio recording support
 - Book search functionality
 - Multiple book instances per ISBN
+- Lending-specific filters
 
 ### Pupil Profile 
 
@@ -120,6 +133,7 @@ Comprehensive pupil profile view consolidating all information about a student, 
 - Parents' language proficiency in German (important for multilingual families)
 - Sibling information with relationship awareness
 - Afterschool care details
+- Kindergarten information
 - All other pupil-related data
 
 ### Timetable Management (WIP)
@@ -131,7 +145,30 @@ Complete timetable management system for scheduling and organizing classes:
 - Classroom/location management
 - Flexible time slot configuration
 - Create, edit, and delete scheduled lessons
+- Drag-and-drop lesson scheduling
+- Multi-teacher support per lesson
 - Filter by weekday and lesson group
+
+### Over-the-Air Updates
+
+The app supports code push updates via [Shorebird](https://shorebird.dev/), allowing patches to be delivered directly to users without requiring a full app store release. The app checks for updates on startup and prompts the user to restart when a patch is available.
+
+### Multi-Instance Support
+
+Use the app with multiple school environments. Users can store several school keys and switch between instances, enabling staff who work across schools to manage all their data from a single device.
+
+### Statistics & Charts
+
+Visual analytics across multiple data domains:
+- Attendance statistics
+- Schoolday event statistics
+- Book lending statistics
+- Credit transaction charts
+- Pupil demographics (enrollment, groups, languages)
+
+### School Data Management
+
+View and edit school-level information such as school name, logo, and other institutional data.
 
 ### School Calendar
 
@@ -145,11 +182,12 @@ Manage school calendar and semesters:
 ### User Management
 
 Administrative interface for managing users:
-- Add new users
+- Add new users (single or batch creation with progress feedback)
 - Update user information
-- Delete users
+- Delete users (with forced logout on deleted devices)
 - Reset passwords
 - Manage user roles and permissions
+- Per-user pupil access authorization
 
 ### Matrix Integration (Matrix Corporal)
 
@@ -158,6 +196,9 @@ If configured with a Synapse server and [Matrix Corporal](https://github.com/dev
 - Room membership
 - Per-user power levels in rooms
 - Sending messages from the admin account to users
+- Compulsory rooms (rooms all users must join)
+- View reported messages from Matrix admin API
+- Account type filtering
 
 ## Utilities
 
@@ -168,6 +209,7 @@ Cross-feature utilities that enhance functionality across the application:
 Generate printable PDF reports for:
 - Attendance lists (daily and summary reports)
 - Individual learning support plans
+- Competence reports
 - School lists
 - Missed classes summaries
 
@@ -175,7 +217,7 @@ Generate printable PDF reports for:
 
 Advanced filtering and sorting capabilities:
 - General filters (class, school year)
-- View-specific filters
+- Feature-specific filters (school lists, book lendings, learning support plans, Matrix accounts)
 - Custom sorting by various criteria
 - Quick search functionality
 
@@ -185,8 +227,20 @@ Email notification system for various events and updates.
 
 ### (admin/dev) Logs
 
-- UI implemented to acces and/or delete client and server side logs.
+- UI implemented to access and/or delete client and server side logs.
 - Copy-to-clipboard buttons to make log sharing easier.
+
+### (admin/dev) Server Model Diagram
+
+In-app viewer for the server's relational data model, useful for development and debugging.
+
+### Audio Recordings
+
+Record and attach audio files across multiple features:
+- Schoolday event documentation
+- Book lending notes
+- Competence goal documentation
+- Support goal and check attachments
 
 ## Technology Stack
 
@@ -194,6 +248,8 @@ Email notification system for various events and updates.
 - **Backend**: Serverpod 2.9.1 (Dart-based server framework)
 - **Programming Language**: Dart (SDK >=3.8.0)
 - **State Management**: watch_it 1.7.0
+- **CI/CD**: GitHub Actions (deploys triggered by commits affecting server packages)
+- **OTA Updates**: Shorebird (Android)
  
 ## Setup
 
