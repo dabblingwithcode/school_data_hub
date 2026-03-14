@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
@@ -211,7 +211,7 @@ class EditBookController extends State<EditBook> {
 
     if (newTagName != null && newTagName.trim().isNotEmpty) {
       await di<BookManager>().postBookTag(newTagName.trim());
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         NotificationType.success,
         'Tag "$newTagName" wurde erfolgreich erstellt',
       );
@@ -302,7 +302,7 @@ class EditBookController extends State<EditBook> {
 
   bool validateRequestDataPayload() {
     if (bookTitleTextFieldController.text.isEmpty) {
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         NotificationType.error,
         'Bitte geben Sie den Buchtitel ein!',
       );
@@ -310,7 +310,7 @@ class EditBookController extends State<EditBook> {
     }
 
     if (selectedLocation == null) {
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         NotificationType.error,
         'Bitte wählen Sie den Ablageort aus!',
       );

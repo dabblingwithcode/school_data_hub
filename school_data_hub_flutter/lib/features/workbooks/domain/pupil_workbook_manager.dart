@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/data/pupil_workbook_api_service.dart';
 
 class PupilWorkbookManager with ChangeNotifier {
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
-  NotificationService get _notificationService => di<NotificationService>();
+  NotificationManager get _notificationService => di<NotificationManager>();
   final Map<int, List<PupilWorkbook>> _pupilWorkbooks = {};
   final _pupilWorkbookApiService = PupilWorkbookApiService();
 

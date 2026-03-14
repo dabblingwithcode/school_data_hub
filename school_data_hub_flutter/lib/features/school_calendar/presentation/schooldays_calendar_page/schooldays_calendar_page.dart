@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_list_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -328,7 +328,7 @@ class SchooldaysCalendarPage extends WatchingWidget {
                         },
                         onDayLongPressed: (selected, focused) async {
                           if (AuthClearanceHelper.isAdmin()) {
-                            di<NotificationService>().showInformationDialog(
+                            di<NotificationManager>().showInformationDialog(
                               NotificationType.error,
                               'Keine Berechtigung für das Löschen von Schultagen.',
                             );

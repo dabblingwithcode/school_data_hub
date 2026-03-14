@@ -6,7 +6,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/import_string_from_txt_file.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
@@ -331,7 +331,7 @@ class SetMatrixEnvironmentPage extends WatchingWidget {
                                     if (success && context.mounted) {
                                       Navigator.pop(context);
                                     } else {
-                                      di<NotificationService>().showSnackBar(
+                                      di<NotificationManager>().showSnackBar(
                                         NotificationType.error,
                                         'Ungültige Matrix-Zugangsdaten',
                                       );

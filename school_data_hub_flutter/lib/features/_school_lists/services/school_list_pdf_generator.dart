@@ -9,8 +9,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
@@ -79,7 +79,7 @@ class SchoolListPdfGenerator {
       final remainingPupils = pupilEntries.length - maxPupilsFirstPage;
       totalPages = 1 + (remainingPupils / maxPupilsPerPage).ceil();
     }
-    di<NotificationService>().setHeavyLoadingValue(true);
+    di<NotificationManager>().setHeavyLoadingValue(true);
     if (totalPages == 0) {
       // If no pupils, still create one page
       pdf.addPage(
@@ -134,7 +134,7 @@ class SchoolListPdfGenerator {
         currentIndex = endIndex;
       }
     }
-    di<NotificationService>().setHeavyLoadingValue(false);
+    di<NotificationManager>().setHeavyLoadingValue(false);
     // Get the proper directory for saving files
     final directory = await getApplicationDocumentsDirectory();
     final fileName =

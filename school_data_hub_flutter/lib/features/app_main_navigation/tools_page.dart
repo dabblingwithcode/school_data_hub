@@ -6,13 +6,13 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/pupil_identity_file_import.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
@@ -157,7 +157,7 @@ class ToolsPage extends WatchingWidget {
                             );
                           }
                           if (channelName == null || channelName.isEmpty) {
-                            di<NotificationService>().showSnackBar(
+                            di<NotificationManager>().showSnackBar(
                               NotificationType.error,
                               'Kein gültiger Verbindungscode.',
                             );
@@ -184,7 +184,7 @@ class ToolsPage extends WatchingWidget {
                                 );
                                 if (channelName == null ||
                                     channelName.isEmpty) {
-                                  di<NotificationService>().showSnackBar(
+                                  di<NotificationManager>().showSnackBar(
                                     NotificationType.error,
                                     'Kein gültiger Verbindungscode.',
                                   );

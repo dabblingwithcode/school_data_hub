@@ -36,41 +36,87 @@ class AvatarImage extends WatchingWidget {
     final avatar = pupil.avatar;
 
     final bool avatarAuth = (pupil.avatarAuth != null);
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Center(
+    return GestureDetector(
+      onLongPressStart: (details) {
+        if (pupil.avatarAuth == null) {
+          informationDialog(
+            context,
+            'Einwilligung nicht vorhanden',
+            'Bitte zuerst die Einwilligung einholen und in der App dokumentieren (im Kindprofil unter "Infos"). ',
+          );
+          return;
+        }
+        final offset = details.globalPosition;
+        final position = RelativeRect.fromLTRB(
+          offset.dx,
+          offset.dy,
+          offset.dx,
+          offset.dy,
+        );
+        showMenu(
+          context: context,
+          position: position,
+          items: [
+            PopupMenuItem<void>(
+              child: pupil.avatar == null
+                  ? const Text('Foto hochladen')
+                  : const Text('Foto ersetzen'),
+              onTap: () => setAvatar(context: context, pupil: pupil),
+            ),
+            if (pupil.avatar != null)
+              PopupMenuItem<void>(
+                child: const Text('Foto löschen'),
+                onTap: () async {
+                  final confirm = await confirmationDialog(
+                    context: context,
+                    title: 'Foto löschen',
+                    message: 'Möchten Sie wirklich das Foto löschen?',
+                  );
+                  if (confirm != true) return;
+                  await PupilMutator().deletePupilDocument(
+                    pupil.pupilId,
+                    pupil.avatar!.documentId,
+                    PupilDocumentType.avatar,
+                  );
+                },
+              ),
+          ],
+        );
+      },
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: Center(
         child: avatar != null
             ? WidgetZoom(
                 heroAnimationTag:
                     heroTag ?? '${avatar.documentId}_${pupil.pupilId}',
-                zoomWidget: FutureBuilder<Widget>(
-                  future: getImageCachedOrDownload(
-                    documentId: avatar.documentId,
-                    decrypt: true,
-                  ),
-                  builder: (context, snapshot) {
-                    Widget child;
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // Display a loading indicator while the future is not complete
-                      child = CircularProgressIndicator(
-                        strokeWidth: 8,
-                        color: AppColors.backgroundColor,
+                zoomWidget: SizedBox(
+                  width: size,
+                  height: size,
+                  child: FutureBuilder<Widget>(
+                    future: getImageCachedOrDownload(
+                      documentId: avatar.documentId,
+                      decrypt: true,
+                    ),
+                    builder: (context, snapshot) {
+                      Widget child;
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        child = CircularProgressIndicator(
+                          strokeWidth: 8,
+                          color: AppColors.backgroundColor,
+                        );
+                      } else if (snapshot.hasError) {
+                        child = Text('Error: ${snapshot.error}');
+                      } else {
+                        child = snapshot.data!;
+                      }
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: ClipOval(child: child),
                       );
-                    } else if (snapshot.hasError) {
-                      // Display an error message if the future encounters an error
-                      child = Text('Error: ${snapshot.error}');
-                    } else {
-                      child = snapshot.data!;
-                    }
-                    return AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(size / 2),
-                        child: child,
-                      ),
-                    );
-                  },
+                    },
+                  ),
                 ),
               )
             : Container(
@@ -97,6 +143,7 @@ class AvatarImage extends WatchingWidget {
                   ),
                 ),
               ),
+        ),
       ),
     );
   }
@@ -104,11 +151,11 @@ class AvatarImage extends WatchingWidget {
 
 /// Container-only badge that shows school grade and admonition state.
 /// Rebuilds when the pupil's schoolday events change.
-class _SchoolGradeBadgeContainer extends WatchingWidget {
+class SchoolGradeBadgeContainer extends WatchingWidget {
   final PupilProxy pupil;
   final double badgeSize;
 
-  const _SchoolGradeBadgeContainer({
+  const SchoolGradeBadgeContainer({
     required this.pupil,
     required this.badgeSize,
   });
@@ -150,11 +197,11 @@ class _SchoolGradeBadgeContainer extends WatchingWidget {
 
 /// Container-only badge that shows group and missed-today state.
 /// Rebuilds when the pupil's missed schooldays change (pupilIsMissedToday).
-class _GroupBadgeContainer extends WatchingWidget {
+class GroupBadgeContainer extends WatchingWidget {
   final PupilProxy pupil;
   final double badgeSize;
 
-  const _GroupBadgeContainer({required this.pupil, required this.badgeSize});
+  const GroupBadgeContainer({required this.pupil, required this.badgeSize});
 
   @override
   Widget build(BuildContext context) {
@@ -208,6 +255,7 @@ class AvatarWithBadges extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('AvatarWithBadges rebuild');
     final badgeMargin = (_badgeSize / 2) + _badgeOffset;
     final containerSize = size + (badgeMargin * 2);
 
@@ -226,60 +274,12 @@ class AvatarWithBadges extends StatelessWidget {
           children: [
             Align(
               alignment: Alignment.center,
-              child: GestureDetector(
-                onLongPressStart: (details) {
-                  if (pupil.avatarAuth == null) {
-                    informationDialog(
-                      context,
-                      'Einwilligung nicht vorhanden',
-                      'Bitte zuerst die Einwilligung einholen und in der App dokumentieren (im Kindprofil unter "Infos"). ',
-                    );
-                    return;
-                  }
-                  final offset = details.globalPosition;
-                  final position = RelativeRect.fromLTRB(
-                    offset.dx,
-                    offset.dy,
-                    offset.dx,
-                    offset.dy,
-                  );
-                  showMenu(
-                    context: context,
-                    position: position,
-                    items: [
-                      PopupMenuItem<void>(
-                        child: pupil.avatar == null
-                            ? const Text('Foto hochladen')
-                            : const Text('Foto ersetzen'),
-                        onTap: () => setAvatar(context: context, pupil: pupil),
-                      ),
-                      if (pupil.avatar != null)
-                        PopupMenuItem<void>(
-                          child: const Text('Foto löschen'),
-                          onTap: () async {
-                            final confirm = await confirmationDialog(
-                              context: context,
-                              title: 'Foto löschen',
-                              message: 'Möchten Sie wirklich das Foto löschen?',
-                            );
-                            if (confirm != true) return;
-                            await PupilMutator().deletePupilDocument(
-                              pupil.pupilId,
-                              pupil.avatar!.documentId,
-                              PupilDocumentType.avatar,
-                            );
-                          },
-                        ),
-                    ],
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(_avatarPadding),
-                  child: AvatarImage(
-                    pupil: pupil,
-                    size: size,
-                    heroTag: heroTag,
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.all(_avatarPadding),
+                child: AvatarImage(
+                  pupil: pupil,
+                  size: size,
+                  heroTag: heroTag,
                 ),
               ),
             ),
@@ -362,7 +362,7 @@ class AvatarWithBadges extends StatelessWidget {
                 child: Center(
                   child: InkWell(
                     onTap: () {
-                      _specialInformationDialog(
+                      specialInformationDialog(
                         context,
                         'Besondere Information',
                         pupil.specialInformation!,
@@ -394,7 +394,7 @@ class AvatarWithBadges extends StatelessWidget {
                     _siblingsDialog(context, pupil.siblings);
                   }
                 },
-                child: _GroupBadgeContainer(
+                child: GroupBadgeContainer(
                   pupil: pupil,
                   badgeSize: _badgeSize,
                 ),
@@ -403,7 +403,7 @@ class AvatarWithBadges extends StatelessWidget {
             Positioned(
               bottom: -_badgeOffset,
               right: -_badgeOffset,
-              child: _SchoolGradeBadgeContainer(
+              child: SchoolGradeBadgeContainer(
                 pupil: pupil,
                 badgeSize: _badgeSize,
               ),
@@ -521,7 +521,7 @@ void _siblingsDialog(BuildContext context, List<PupilProxy> siblings) {
   );
 }
 
-void _specialInformationDialog(
+void specialInformationDialog(
   BuildContext context,
   String title,
   String text,

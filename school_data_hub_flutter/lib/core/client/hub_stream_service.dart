@@ -77,6 +77,20 @@ class HubStreamService with WidgetsBindingObserver {
   /// All hub messages (server payloads + [HubReconnected]). Managers subscribe here.
   Stream<Object> get events => _events.stream;
 
+  final _streamActivity = ValueNotifier<bool>(false);
+  Timer? _streamActivityTimer;
+
+  /// Briefly true whenever the hub stream receives any event.
+  ValueListenable<bool> get streamActivity => _streamActivity;
+
+  void _pingStreamActivity() {
+    _streamActivity.value = true;
+    _streamActivityTimer?.cancel();
+    _streamActivityTimer = Timer(const Duration(milliseconds: 400), () {
+      _streamActivity.value = false;
+    });
+  }
+
   final _state = ValueNotifier<HubConnectionState>(
     HubConnectionState.disconnected,
   );
@@ -227,11 +241,13 @@ class HubStreamService with WidgetsBindingObserver {
 
           final changedTypes = await _getChangedTypesSinceDisconnect();
           if (changedTypes == null) {
+            _pingStreamActivity();
             _events.add(HubReconnected());
           } else if (changedTypes.isNotEmpty) {
             _log.info(
               '[HUB] Selective reconnect: ${changedTypes.length} types changed',
             );
+            _pingStreamActivity();
             _events.add(HubSelectiveReconnect(changedTypes));
           } else {
             _log.info('[HUB] No events missed — skipping refetch');
@@ -278,6 +294,7 @@ class HubStreamService with WidgetsBindingObserver {
             return;
           }
 
+          _pingStreamActivity();
           _events.add(message as Object);
         },
         onError: (Object error) {
@@ -350,6 +367,8 @@ class HubStreamService with WidgetsBindingObserver {
 
   void dispose() {
     _disposed = true;
+    _streamActivityTimer?.cancel();
+    _streamActivity.dispose();
     WidgetsBinding.instance.removeObserver(this);
     final monitor = di<ServerpodConnectivityMonitor>();
     if (_connectivityListener != null) {

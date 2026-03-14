@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -17,7 +17,7 @@ class PupilSchooldayEventsList extends WatchingWidget {
   Widget build(BuildContext context) {
     final schooldayEventFilterManager = di<SchooldayEventFilterManager>();
     final schooldayEventManager = di<SchooldayEventManager>();
-    final notificationService = di<NotificationService>();
+    final notificationService = di<NotificationManager>();
     final pupil = this.pupil;
     final proxy = schooldayEventManager.getPupilSchooldayEventsProxy(
       pupil.pupilId,

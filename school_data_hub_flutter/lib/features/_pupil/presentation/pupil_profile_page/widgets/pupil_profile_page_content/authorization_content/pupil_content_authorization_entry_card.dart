@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
@@ -12,7 +13,6 @@ import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_do
 import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilContentAuthorizationEntryCard extends WatchingWidget {
   final Authorization authorization;
@@ -225,12 +225,11 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                           result.value == pupilAuthorization.comment) {
                         return;
                       }
-                      await di<AuthorizationManager>()
-                          .updatePupilAuthorization(
-                            pupilId: pupil.pupilId,
-                            authorizationId: authorization.id!,
-                            comment: result.value,
-                          );
+                      await di<AuthorizationManager>().updatePupilAuthorization(
+                        pupilId: pupil.pupilId,
+                        authorizationId: authorization.id!,
+                        comment: result.value,
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10),
@@ -241,14 +240,15 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
                           TextSpan(
                             children: [
                               const TextSpan(
-                                text: ' Kommentar: ',
+                                text: 'Kommentar: ',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               TextSpan(
-                                text: (pupilAuthorization.comment == null ||
+                                text:
+                                    (pupilAuthorization.comment == null ||
                                         pupilAuthorization.comment!.isEmpty)
                                     ? 'Kein Kommentar'
                                     : pupilAuthorization.comment!,

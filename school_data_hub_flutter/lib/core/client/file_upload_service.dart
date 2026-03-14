@@ -5,7 +5,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 
 final _log = Logger('FileUploadService');
 
@@ -40,7 +40,8 @@ class ClientFileUpload {
       }
       fileToUpload = File(pickedFile.files.single.path!);
     }
-    final path = customPath ??
+    final path =
+        customPath ??
         p.posix.join(
           folder.name,
           '${fileInfo != null ? '${fileInfo.replaceAll(':', '-')}_${const Uuid().v4()}' : const Uuid().v4()}${p.extension(fileToUpload.path)}',
@@ -61,19 +62,19 @@ class ClientFileUpload {
         final fileStream = fileToUpload.openRead();
 
         final fileLength = await fileToUpload.length();
-        di<NotificationService>().apiRunning(true);
+        di<NotificationManager>().apiRunning(true);
         try {
           await uploader.upload(fileStream, fileLength);
         } catch (e, st) {
-          di<NotificationService>().apiRunning(false);
+          di<NotificationManager>().apiRunning(false);
           _log.severe('Upload transfer failed for $path', e, st);
-          di<NotificationService>().showSnackBar(
+          di<NotificationManager>().showSnackBar(
             NotificationType.error,
             'Upload transfer failed for $path: $e',
           );
           return (path: null, success: false, cancelled: false);
         }
-        di<NotificationService>().apiRunning(false);
+        di<NotificationManager>().apiRunning(false);
 
         // Verify the upload
         try {
@@ -83,7 +84,7 @@ class ClientFileUpload {
           );
           if (!success) {
             _log.severe('Upload verification failed for $path');
-            di<NotificationService>().showSnackBar(
+            di<NotificationManager>().showSnackBar(
               NotificationType.error,
               'Upload verification failed for $path',
             );
@@ -91,7 +92,7 @@ class ClientFileUpload {
           return (path: path, success: success, cancelled: false);
         } catch (e) {
           _log.severe('Upload failed for $path: $e');
-          di<NotificationService>().showSnackBar(
+          di<NotificationManager>().showSnackBar(
             NotificationType.error,
             'Upload failed for $path: $e',
           );
@@ -100,7 +101,7 @@ class ClientFileUpload {
       }
     } catch (e) {
       _log.severe('Failed to get upload description for $path: $e');
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         NotificationType.error,
         'Failed to get upload description for $path: $e',
       );

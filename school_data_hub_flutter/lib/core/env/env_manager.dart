@@ -6,7 +6,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
@@ -17,7 +17,7 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 class EnvManager with ChangeNotifier {
   final _log = Logger('EnvManager');
 
-  final _notificationService = di<NotificationService>();
+  final _notificationService = di<NotificationManager>();
 
   // TODO ADVICE: Decouple encryption key for allowing login
   // - And transfer encryption keys over stream as with the pupil identities

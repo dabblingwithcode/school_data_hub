@@ -9,7 +9,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
 import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/data/schoolday_event_api_service.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/pupil_schoolday_events_proxy.dart';
@@ -19,7 +19,7 @@ class SchooldayEventManager with ChangeNotifier {
 
   final _log = Logger('SchooldayEventManager');
 
-  final _notificationService = di<NotificationService>();
+  final _notificationService = di<NotificationManager>();
 
   final _pupilManager = di<PupilProxyManager>();
 

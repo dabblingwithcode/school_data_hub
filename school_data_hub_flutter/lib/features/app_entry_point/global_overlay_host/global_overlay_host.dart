@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 final _log = Logger('GlobalOverlayHost');
@@ -29,7 +29,7 @@ class GlobalOverlayHost extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     registerHandler(
-      select: (NotificationService x) => x.notification,
+      select: (NotificationManager x) => x.notification,
       handler: (context, value, cancel) {
         if (value.target == NotificationTarget.idle) return;
         _log.info(
@@ -63,9 +63,9 @@ class GlobalOverlayHost extends WatchingWidget {
     );
 
     final loadingNewInstance = watchValue(
-      (NotificationService x) => x.loadingNewInstance,
+      (NotificationManager x) => x.loadingNewInstance,
     );
-    final heavyLoading = watchValue((NotificationService x) => x.heavyLoading);
+    final heavyLoading = watchValue((NotificationManager x) => x.heavyLoading);
     final showInstanceOverlay = loadingNewInstance;
     final showHeavyOverlay = heavyLoading && !loadingNewInstance;
 

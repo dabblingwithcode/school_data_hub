@@ -6,8 +6,8 @@ import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pages/pdf_page1.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/pages/pdf_page2.dart';
@@ -51,7 +51,7 @@ class LearningSupportPlanPdfGenerator {
     final schoolData = di<SchoolDataMainManager>().schoolData.value!;
     final pdf = pw.Document();
 
-    di<NotificationService>().setHeavyLoadingValue(true);
+    di<NotificationManager>().setHeavyLoadingValue(true);
 
     try {
       // Page 1: Pupil info and plan metadata
@@ -103,7 +103,7 @@ class LearningSupportPlanPdfGenerator {
         ),
       );
     } finally {
-      di<NotificationService>().setHeavyLoadingValue(false);
+      di<NotificationManager>().setHeavyLoadingValue(false);
     }
 
     final directory = await getApplicationDocumentsDirectory();

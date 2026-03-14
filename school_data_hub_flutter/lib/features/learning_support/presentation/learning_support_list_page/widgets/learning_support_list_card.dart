@@ -5,16 +5,15 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goal_batches.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goal_batches.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class LearningSupportCard extends WatchingWidget {
@@ -23,7 +22,6 @@ class LearningSupportCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    callOnce((_) => di<LearningSupportManager>().fetchGoalsForPupil(pupil.pupilId));
     final tileController = createOnce(() => CustomExpansionTileController());
 
     return Card(
@@ -86,7 +84,10 @@ class LearningSupportCard extends WatchingWidget {
                 ),
               ),
               const Gap(8),
-              _SupportLevelDisplay(pupil: pupil, tileController: tileController),
+              _SupportLevelDisplay(
+                pupil: pupil,
+                tileController: tileController,
+              ),
               const Gap(15),
             ],
           ),
@@ -112,10 +113,8 @@ class _LearningSupportNameRow extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firstName =
-        watchPropertyValue((m) => m.firstName, target: pupil);
-    final lastName =
-        watchPropertyValue((m) => m.lastName, target: pupil);
+    final firstName = watchPropertyValue((m) => m.firstName, target: pupil);
+    final lastName = watchPropertyValue((m) => m.lastName, target: pupil);
     return Row(
       children: [
         Text(
@@ -155,8 +154,10 @@ class _MigrationSupportEndsRow extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final migrationSupportEnds =
-        watchPropertyValue((m) => m.migrationSupportEnds, target: pupil);
+    final migrationSupportEnds = watchPropertyValue(
+      (m) => m.migrationSupportEnds,
+      target: pupil,
+    );
     if (migrationSupportEnds == null) return const SizedBox.shrink();
     return Wrap(
       children: [
@@ -188,8 +189,10 @@ class _SupportGoalBatchesRow extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final supportCategoryStatuses =
-        watchPropertyValue((m) => m.supportCategoryStatuses, target: pupil);
+    final supportCategoryStatuses = watchPropertyValue(
+      (m) => m.supportCategoryStatuses,
+      target: pupil,
+    );
     if (supportCategoryStatuses == null || supportCategoryStatuses.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -216,43 +219,48 @@ class _SupportLevelDisplay extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final latestSupportLevel =
-        watchPropertyValue((m) => m.latestSupportLevel, target: pupil);
-    final learningSupportPlans =
-        watchPropertyValue((m) => m.learningSupportPlans, target: pupil);
-    final specialNeeds =
-        watchPropertyValue((m) => m.specialNeeds, target: pupil);
-    final currentSemester =
-        watchValue((SchoolCalendarManager x) => x.currentSemester);
+    final latestSupportLevel = watchPropertyValue(
+      (m) => m.latestSupportLevel,
+      target: pupil,
+    );
+    final learningSupportPlans = watchPropertyValue(
+      (m) => m.learningSupportPlans,
+      target: pupil,
+    );
+    final specialNeeds = watchPropertyValue(
+      (m) => m.specialNeeds,
+      target: pupil,
+    );
+    final currentSemester = watchValue(
+      (SchoolCalendarManager x) => x.currentSemester,
+    );
 
     final levelText = latestSupportLevel != null
         ? (latestSupportLevel.level == 4
-            ? '🌈'
-            : latestSupportLevel.level.toString())
+              ? '🌈'
+              : latestSupportLevel.level.toString())
         : '0';
-    final isCurrentSemester = learningSupportPlans != null &&
+    final isCurrentSemester =
+        learningSupportPlans != null &&
         learningSupportPlans.isNotEmpty &&
         learningSupportPlans.last.schoolSemester?.id == currentSemester?.id;
     final levelColor = isCurrentSemester
         ? AppColors.successButtonColor
         : (latestSupportLevel != null && latestSupportLevel.level != 0)
-            ? AppColors.cancelButtonColor
-            : AppColors.backgroundColor;
+        ? AppColors.cancelButtonColor
+        : AppColors.backgroundColor;
     final specialNeedsText = specialNeeds != null && specialNeeds.isNotEmpty
         ? (specialNeeds.length >= 2
-            ? '${specialNeeds.first} ${specialNeeds.last}'
-            : specialNeeds.first.length >= 2
-                ? specialNeeds.first.substring(0, 2)
-                : specialNeeds.first)
+              ? '${specialNeeds.first} ${specialNeeds.last}'
+              : specialNeeds.first.length >= 2
+              ? specialNeeds.first.substring(0, 2)
+              : specialNeeds.first)
         : '';
 
     return InkWell(
       onTap: () => tileController.toggle(),
-      onLongPress: () => supportLevelDialog(
-        context,
-        pupil,
-        latestSupportLevel?.level,
-      ),
+      onLongPress: () =>
+          supportLevelDialog(context, pupil, latestSupportLevel?.level),
       child: Column(
         children: [
           const Gap(20),

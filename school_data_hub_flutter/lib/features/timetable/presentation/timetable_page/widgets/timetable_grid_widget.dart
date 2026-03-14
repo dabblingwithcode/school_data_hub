@@ -24,16 +24,18 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
   static const double _timeColumnWidth = 64;
   static const double _roomHeaderHeight = 48;
   static const double _minSlotHeight = 12;
-  static const double _maxSlotHeight = 12;
+  static const double _maxSlotHeight = 20;
 
-  double _slotHeight = 40;
-  double _slotHeightAtScaleStart = 40;
+  double _slotHeight = 12;
+  double _slotHeightAtScaleStart = 12;
 
   // Separate controllers for header/time vs grid, kept in sync.
   final ScrollController _headerHorizontal = ScrollController();
   final ScrollController _gridHorizontal = ScrollController();
   final ScrollController _timeVertical = ScrollController();
   final ScrollController _gridVertical = ScrollController();
+
+  static const Duration _longPressDuration = Duration(milliseconds: 300);
 
   // Drag overlay state
   OverlayEntry? _dragOverlay;
@@ -228,18 +230,11 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(6),
-                                      child: Center(
-                                        child: Text(
-                                          _conflictMessage!,
-                                          style: const TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.warning_rounded,
+                                        color: Colors.white,
+                                        size: 28,
                                       ),
                                     ),
                                   ),
@@ -287,34 +282,6 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
               ),
             ),
           ),
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.zoom_out),
-                tooltip: 'Zoom out',
-                onPressed: () {
-                  setState(() {
-                    _slotHeight = (_slotHeight * 0.8).clamp(
-                      _minSlotHeight,
-                      _maxSlotHeight,
-                    );
-                  });
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.zoom_in),
-                tooltip: 'Zoom in',
-                onPressed: () {
-                  setState(() {
-                    _slotHeight = (_slotHeight * 1.25).clamp(
-                      _minSlotHeight,
-                      _maxSlotHeight,
-                    );
-                  });
-                },
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -322,29 +289,48 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
 
   /// Sticky time column sharing the vertical scroll controller.
   Widget _buildTimeColumn() {
-    return SizedBox(
-      width: _timeColumnWidth,
-      child: SingleChildScrollView(
-        controller: _timeVertical,
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: List.generate(_slotsPerDay, (index) {
-            final minutes = _dayStartMinutes + index * _slotMinutes;
-            final minuteOfHour = minutes % 60;
-            final showLabel = minuteOfHour % 15 == 0;
-            final hour = minutes ~/ 60;
-            final label =
-                '${hour.toString().padLeft(2, '0')}:'
-                '${minuteOfHour.toString().padLeft(2, '0')}';
-            return Container(
-              height: _slotHeight,
-              alignment: Alignment.topRight,
-              padding: const EdgeInsets.only(right: 4),
-              child: showLabel
-                  ? Text(label, style: const TextStyle(fontSize: 11))
-                  : const SizedBox.shrink(),
-            );
-          }),
+    return Listener(
+      onPointerSignal: _handlePointerSignal,
+      child: GestureDetector(
+        onScaleStart: (_) {
+          _slotHeightAtScaleStart = _slotHeight;
+        },
+        onScaleUpdate: (details) {
+          if (details.scale != 1.0) {
+            setState(() {
+              _slotHeight = (_slotHeightAtScaleStart * details.scale).clamp(
+                _minSlotHeight,
+                _maxSlotHeight,
+              );
+            });
+          }
+        },
+        child: SizedBox(
+          width: _timeColumnWidth,
+          child: SingleChildScrollView(
+            controller: _timeVertical,
+            scrollDirection: Axis.vertical,
+            physics: const NeverScrollableScrollPhysics(),
+            child: Column(
+              children: List.generate(_slotsPerDay, (index) {
+                final minutes = _dayStartMinutes + index * _slotMinutes;
+                final minuteOfHour = minutes % 60;
+                final showLabel = minuteOfHour % 15 == 0;
+                final hour = minutes ~/ 60;
+                final label =
+                    '${hour.toString().padLeft(2, '0')}:'
+                    '${minuteOfHour.toString().padLeft(2, '0')}';
+                return Container(
+                  height: _slotHeight,
+                  alignment: Alignment.topRight,
+                  padding: const EdgeInsets.only(right: 4),
+                  child: showLabel
+                      ? Text(label, style: const TextStyle(fontSize: 11))
+                      : const SizedBox.shrink(),
+                );
+              }),
+            ),
+          ),
         ),
       ),
     );
@@ -381,32 +367,51 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
       width: _roomWidth,
       height: durationSlots * _slotHeight,
       child: ClipRect(
-        child: GestureDetector(
-          onLongPressStart: (details) => _startDrag(
-            lesson,
-            slot,
-            durationSlots,
-            classrooms.length,
-            details,
-          ),
-          onLongPressMoveUpdate: _updateDrag,
-          onLongPressEnd: (details) =>
-              _endDrag(details, classrooms.length, durationSlots),
+        child: RawGestureDetector(
+          gestures: {
+            LongPressGestureRecognizer:
+                GestureRecognizerFactoryWithHandlers<
+                  LongPressGestureRecognizer
+                >(
+                  () =>
+                      LongPressGestureRecognizer(duration: _longPressDuration),
+                  (recognizer) {
+                    recognizer.onLongPressStart = (details) => _startDrag(
+                      lesson,
+                      slot,
+                      durationSlots,
+                      classrooms.length,
+                      details,
+                    );
+                    recognizer.onLongPressMoveUpdate = _updateDrag;
+                    recognizer.onLongPressEnd = (LongPressEndDetails details) {
+                      _endDrag(details, classrooms.length, durationSlots);
+                    };
+                  },
+                ),
+          },
           child: isDragging
-              ? Opacity(
-                  opacity: 0.5,
+              ? AnimatedScale(
+                  scale: 0.92,
+                  duration: const Duration(milliseconds: 200),
+                  child: Opacity(
+                    opacity: 0.4,
+                    child: LessonCell(
+                      lesson: lesson,
+                      slot: slot,
+                      enableReorder: false,
+                      onTap: () {},
+                    ),
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () => _editLesson(lesson),
                   child: LessonCell(
                     lesson: lesson,
                     slot: slot,
                     enableReorder: false,
-                    onTap: () {},
+                    onTap: () => _editLesson(lesson),
                   ),
-                )
-              : LessonCell(
-                  lesson: lesson,
-                  slot: slot,
-                  enableReorder: false,
-                  onTap: () => _editLesson(lesson),
                 ),
         ),
       ),
@@ -474,6 +479,7 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     int roomsCount,
     LongPressStartDetails details,
   ) {
+    HapticFeedback.mediumImpact();
     _snapTimer?.cancel();
     _snapTimer = null;
     _conflictRoomIndex = null;
@@ -542,6 +548,9 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
         final snapStartTime = _dragSnapStartSlotIndex != null
             ? _indexToTime(_dragSnapStartSlotIndex!)
             : null;
+        final snapEndTime = _dragSnapStartSlotIndex != null
+            ? _indexToTime(_dragSnapStartSlotIndex! + _dragDurationSlots)
+            : null;
 
         return Positioned(
           left: overlayTopLeftGlobal.dx,
@@ -571,27 +580,44 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
                     ),
                   ),
                 ),
+                // Start time badge (top-right)
                 if (snapStartTime != null)
                   Positioned(
                     top: -4,
                     right: -4,
-                    child: Material(
-                      elevation: 2,
-                      borderRadius: BorderRadius.circular(6),
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        child: Text(
-                          snapStartTime,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onPrimaryContainer,
+                    child: _timeBadge(context, snapStartTime),
+                  ),
+                // End time badge (bottom-right)
+                if (snapEndTime != null)
+                  Positioned(
+                    bottom: -4,
+                    right: -4,
+                    child: _timeBadge(context, snapEndTime),
+                  ),
+                // Conflict message badge (above the card)
+                if (hasConflict)
+                  Positioned(
+                    bottom: _dragDurationSlots * _slotHeight + 4,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Material(
+                        elevation: 4,
+                        borderRadius: BorderRadius.circular(6),
+                        color: Colors.orange,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          child: Text(
+                            _conflictMessage!,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
@@ -699,12 +725,6 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     _conflictRoomIndex = null;
     _conflictStartSlotIndex = null;
     _conflictMessage = null;
-    _dragSnapStartSlotIndex = null;
-    _snapRoomIndex = null;
-    if (_dragOverlay != null) {
-      _dragOverlay!.remove();
-      _dragOverlay = null;
-    }
 
     final timetableManager = di<TimetableManager>();
     final timetable = timetableManager.timetable.value;
@@ -714,6 +734,9 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
         _gridKey.currentContext == null ||
         _draggingLesson == null) {
       _dragFingerToCardOffset = null;
+      _dragSnapStartSlotIndex = null;
+      _snapRoomIndex = null;
+      _removeOverlayAndClearDrag();
       return;
     }
 
@@ -772,8 +795,7 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     // If nothing actually changed, skip the update but still clear drag state and rebuild.
     if (lesson.roomId == newClassroom.id &&
         lesson.scheduledAtId == newSlot.id) {
-      _draggingLesson = null;
-      if (mounted) setState(() {});
+      _removeOverlayAndClearDrag();
       return;
     }
 
@@ -785,7 +807,16 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     );
 
     await timetableManager.updateScheduledLesson(updatedLesson);
+    _removeOverlayAndClearDrag();
+  }
+
+  void _removeOverlayAndClearDrag() {
+    _dragOverlay?.remove();
+    _dragOverlay = null;
     _draggingLesson = null;
+    _dragSnapStartSlotIndex = null;
+    _snapRoomIndex = null;
+    if (mounted) setState(() {});
   }
 
   void _autoScrollWhileDragging(Offset globalPosition) {
@@ -838,6 +869,25 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
       );
       _gridVertical.jumpTo(target);
     }
+  }
+
+  Widget _timeBadge(BuildContext context, String time) {
+    return Material(
+      elevation: 2,
+      borderRadius: BorderRadius.circular(6),
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        child: Text(
+          time,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+          ),
+        ),
+      ),
+    );
   }
 
   int _timeToIndex(String hhmm) {

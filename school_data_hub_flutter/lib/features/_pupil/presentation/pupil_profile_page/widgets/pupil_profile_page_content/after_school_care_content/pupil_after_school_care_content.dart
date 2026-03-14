@@ -12,14 +12,17 @@ class PupilOgsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: Column(
-        children: [
-          PupilProfileContentSection(
-            icon: Icons.access_time,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            PupilProfileContentSection(
+              icon: Icons.access_time,
             title: 'OGS-Informationen',
             child: AfterSchoolCareDetails(pupil: pupil),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

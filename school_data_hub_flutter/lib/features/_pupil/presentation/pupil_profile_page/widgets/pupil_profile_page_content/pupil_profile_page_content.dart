@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/after_school_care_content/pupil_after_school_care_content.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/attendance_content/pupil_profile_attendance_content.dart';
@@ -13,39 +12,71 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profi
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/pupil_profile_learning_support_content.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/school_list_content/pupil_school_lists_content_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/schoolday_events_content/pupil_profile_schoolday_events_content.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
-class PupilProfilePageContent extends WatchingWidget {
+class PupilProfilePageContent extends WatchingStatefulWidget {
   final PupilProxy pupil;
 
   const PupilProfilePageContent({required this.pupil, super.key});
 
   @override
-  Widget build(BuildContext context) {
-    int navState = watchValue((BottomNavManager x) => x.pupilProfileNavState);
+  State<PupilProfilePageContent> createState() =>
+      _PupilProfilePageContentState();
+}
 
-    final children = [
-      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.info),
-      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.language),
-      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.credit),
-      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.attendance),
-      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.schoolday),
-      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.ogs),
-      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.lists),
-      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.auth),
-      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.learningSup),
-      const _ProfilePageWrapper(childBuilder: _ProfilePageChild.learning),
-    ];
+class _PupilProfilePageContentState extends State<PupilProfilePageContent> {
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    final initialPage = di<BottomNavManager>().pupilProfileNavState.value;
+    _pageController = PageController(initialPage: initialPage);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Sync nav bar tap → PageView
+    registerHandler(
+      select: (BottomNavManager x) => x.pupilProfileNavState,
+      handler: (context, value, cancel) {
+        if (_pageController.hasClients &&
+            _pageController.page?.round() != value) {
+          _pageController.animateToPage(
+            value,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      },
+    );
 
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: Padding(
         padding: const EdgeInsets.only(left: 4, right: 4, bottom: 10),
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          child: KeyedSubtree(
-            key: ValueKey(navState),
-            child: children[navState],
-          ),
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (index) =>
+              di<BottomNavManager>().setPupilProfileNavPage(index),
+          children: const [
+            _ProfilePageWrapper(childBuilder: _ProfilePageChild.info),
+            _ProfilePageWrapper(childBuilder: _ProfilePageChild.language),
+            _ProfilePageWrapper(childBuilder: _ProfilePageChild.credit),
+            _ProfilePageWrapper(childBuilder: _ProfilePageChild.attendance),
+            _ProfilePageWrapper(childBuilder: _ProfilePageChild.schoolday),
+            _ProfilePageWrapper(childBuilder: _ProfilePageChild.ogs),
+            _ProfilePageWrapper(childBuilder: _ProfilePageChild.lists),
+            _ProfilePageWrapper(childBuilder: _ProfilePageChild.auth),
+            _ProfilePageWrapper(childBuilder: _ProfilePageChild.learningSup),
+            _ProfilePageWrapper(childBuilder: _ProfilePageChild.learning),
+          ],
         ),
       ),
     );
@@ -109,18 +140,25 @@ class _ProfilePageWrapper extends StatelessWidget {
         break;
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+    // ScrollConfiguration disables the auto-added Scrollbar on desktop.
+    // Without this, during a PageView swipe both transitioning pages briefly
+    // attach their primary ScrollViews to the same PrimaryScrollController,
+    // causing the Scrollbar to crash: "attached to more than one ScrollPosition".
+    return ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(borderRadius: BorderRadius.circular(16), child: child),
       ),
-      child: ClipRRect(borderRadius: BorderRadius.circular(16), child: child),
     );
   }
 }

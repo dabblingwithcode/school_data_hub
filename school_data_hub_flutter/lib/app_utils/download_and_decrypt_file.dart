@@ -6,10 +6,10 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:path/path.dart' as p;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 
 DefaultCacheManager get _cacheManager => di<DefaultCacheManager>();
-NotificationService get _notificationService => di<NotificationService>();
+NotificationManager get _notificationService => di<NotificationManager>();
 
 Future<File?> downloadAndDecryptFile({
   required String documentId,

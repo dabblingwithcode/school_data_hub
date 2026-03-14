@@ -8,7 +8,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_utils.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
@@ -77,7 +77,7 @@ class TimetablePdfGenerator {
     final slotIdToSlot = {for (final s in timetableSlots) s.id!: s};
     final scheduledLessons = timetableManager.scheduledLessons.value;
 
-    di<NotificationService>().setHeavyLoadingValue(true);
+    di<NotificationManager>().setHeavyLoadingValue(true);
     try {
       for (var pageIndex = 0; pageIndex < weekdays.length; pageIndex++) {
         final weekday = weekdays[pageIndex];
@@ -108,7 +108,7 @@ class TimetablePdfGenerator {
       _log.info('Timetable PDF generated: ${file.path}');
       return file;
     } finally {
-      di<NotificationService>().setHeavyLoadingValue(false);
+      di<NotificationManager>().setHeavyLoadingValue(false);
     }
   }
 

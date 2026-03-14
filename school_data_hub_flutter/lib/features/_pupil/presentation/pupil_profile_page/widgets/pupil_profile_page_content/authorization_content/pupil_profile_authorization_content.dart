@@ -13,10 +13,12 @@ class PupilProfileAuthorizationContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: Column(
-        children: [
-          PupilProfileContentSection(
-            icon: Icons.fact_check_rounded,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            PupilProfileContentSection(
+              icon: Icons.fact_check_rounded,
             title: 'Einwilligungen',
             onTitleTap: () {
               Navigator.of(context).push(
@@ -27,7 +29,8 @@ class PupilProfileAuthorizationContent extends StatelessWidget {
             },
             child: PupilProfileAuthorizationContentList(pupil: pupil),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

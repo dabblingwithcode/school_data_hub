@@ -8,16 +8,16 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
 import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/data/competence_api_service.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/domain/models/pupil_competence_goals_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/data/competence_check_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/data/competence_goal_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/filters/competence_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/models/pupil_competence_goals_proxy.dart';
 
 enum SelectedContent {
   competenceStatuses,
@@ -35,7 +35,7 @@ class CompetenceManager {
 
   final _competenceApiService = CompetenceApiService();
 
-  final _notificationService = di<NotificationService>();
+  final _notificationService = di<NotificationManager>();
 
   final _competenceCheckApiService = CompetenceCheckApiService();
   final _competenceGoalApiService = CompetenceGoalApiService();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 
 /// Action buttons widget for the lesson form
@@ -58,6 +59,7 @@ class ActionButtons extends StatelessWidget {
             ),
           ),
         ],
+        const Gap(20),
       ],
     );
   }

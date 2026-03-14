@@ -328,8 +328,7 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
                 labelText: 'Kommentar eingeben',
                 initialValue: competenceCheck.comment,
               );
-              if (result == null ||
-                  result.value == competenceCheck.comment) {
+              if (result == null || result.value == competenceCheck.comment) {
                 return;
               }
               await di<CompetenceManager>().updateCompetenceCheck(
@@ -346,14 +345,15 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
                   TextSpan(
                     children: [
                       const TextSpan(
-                        text: ' Kommentar: ',
+                        text: 'Kommentar: ',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       TextSpan(
-                        text: (competenceCheck.comment == null ||
+                        text:
+                            (competenceCheck.comment == null ||
                                 competenceCheck.comment!.isEmpty)
                             ? 'Kein Kommentar'
                             : competenceCheck.comment!,

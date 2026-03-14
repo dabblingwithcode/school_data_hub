@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 /// Copied from [FlutterConnectivityMonitor] in the serverpod package
@@ -12,7 +12,7 @@ import 'package:flutter_it/flutter_it.dart';
 class ServerpodConnectivityMonitor extends ConnectivityMonitor {
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   bool _receivedFirstEvent = false;
-  final _notificationService = di<NotificationService>();
+  final _notificationService = di<NotificationManager>();
   // value notifier to observe with watch_it
   final ValueNotifier<bool> _isConnected = ValueNotifier<bool>(false);
   ValueNotifier<bool> get isConnected => _isConnected;

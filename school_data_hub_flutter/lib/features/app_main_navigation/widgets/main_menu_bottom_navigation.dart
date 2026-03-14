@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/learn_resources_menu_page.dart';
@@ -99,7 +99,7 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation>
         // delayed because of race condition
         unawaited(
           Future<void>.delayed(const Duration(milliseconds: 500), () {
-            di<NotificationService>().showInformationDialog(
+            di<NotificationManager>().showInformationDialog(
               NotificationType.error,
               'Es fehlen noch diese Daten im Server:\n\n$missingData',
             );

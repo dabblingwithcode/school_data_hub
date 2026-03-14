@@ -5,7 +5,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 
 Future<Image> getImageCachedOrDownload({
   required String documentId,
@@ -13,7 +13,7 @@ Future<Image> getImageCachedOrDownload({
 }) async {
   // First look for the image in the cache
   final cacheManager = di<DefaultCacheManager>();
-  final notificationService = di<NotificationService>();
+  final notificationService = di<NotificationManager>();
   final fileInfo = await cacheManager.getFileFromCache(documentId);
 
   if (fileInfo != null && await fileInfo.file.exists()) {
@@ -58,7 +58,7 @@ Future<Image> cachedPublicImageOrDownloadPublicImage({
 }) async {
   // First look for the image in the cache
   final cacheManager = di<DefaultCacheManager>();
-  final notificationService = di<NotificationService>();
+  final notificationService = di<NotificationManager>();
   final client = di<Client>();
   final fileInfo = await cacheManager.getFileFromCache(cacheKey);
 

@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
@@ -60,7 +60,7 @@ class PupilLearningContentWorkbooks extends WatchingWidget {
                 if (pupil.pupilWorkbooks!.any(
                   (element) => element.isbn == isbn,
                 )) {
-                  di<NotificationService>().showInformationDialog(
+                  di<NotificationManager>().showInformationDialog(
                     NotificationType.error,
                     'Dieses Arbeitsheft ist schon erfasst!',
                   );
@@ -74,7 +74,7 @@ class PupilLearningContentWorkbooks extends WatchingWidget {
               );
               return;
             }
-            di<NotificationService>().showSnackBar(
+            di<NotificationManager>().showSnackBar(
               NotificationType.error,
               'Fehler beim Scannen',
             );

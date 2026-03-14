@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
@@ -163,8 +163,7 @@ class _UserDevicesSection extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final userManager = di<UserManager>();
-    final usersWithDevices =
-        watchValue((UserManager x) => x.usersWithDevices);
+    final usersWithDevices = watchValue((UserManager x) => x.usersWithDevices);
     final devices = usersWithDevices
         .where((uwd) => uwd.user.userInfoId == userInfoId)
         .expand((uwd) => uwd.userDevices)
@@ -193,52 +192,47 @@ class _UserDevicesSection extends WatchingWidget {
             ),
           ),
         ),
-        ...devices.map(
-          (d) {
-            final isCurrentDevice =
-                currentDeviceId != null && d.deviceId == currentDeviceId;
-            return ListTile(
-              onLongPress: isCurrentDevice
-                  ? null
-                  : () async {
-                      final confirm = await confirmationDialog(
-                        context: context,
-                        title: 'Gerät löschen',
-                        message:
-                            'Gerät und zugehörigen Auth-Key wirklich löschen?',
-                      );
-                      if (confirm == true) {
-                        await userManager.deleteDevice(d);
-                      }
-                    },
-              leading: Icon(
-                isCurrentDevice
-                    ? Icons.smartphone
-                    : d.isActive
-                        ? Icons.devices
-                        : Icons.devices_other,
-                color: isCurrentDevice
-                    ? AppColors.interactiveColor
-                    : d.isActive
-                        ? Colors.green
-                        : Colors.grey,
-              ),
-              title: Text(
-                d.deviceName.isNotEmpty ? d.deviceName : d.deviceId,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              ),
-              subtitle: Text(
-                isCurrentDevice
-                    ? 'Dieses Gerät · ${d.isActive ? "Aktiv" : "Inaktiv"}'
-                    : 'Zuletzt: ${d.lastLogin.formatDateForUser()} · ${d.isActive ? "Aktiv" : "Inaktiv"}',
-                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-              ),
-            );
-          },
-        ),
+        ...devices.map((d) {
+          final isCurrentDevice =
+              currentDeviceId != null && d.deviceId == currentDeviceId;
+          return ListTile(
+            onLongPress: isCurrentDevice
+                ? null
+                : () async {
+                    final confirm = await confirmationDialog(
+                      context: context,
+                      title: 'Gerät löschen',
+                      message:
+                          'Gerät und zugehörigen Auth-Key wirklich löschen?',
+                    );
+                    if (confirm == true) {
+                      await userManager.deleteDevice(d);
+                    }
+                  },
+            leading: Icon(
+              isCurrentDevice
+                  ? Icons.smartphone
+                  : d.isActive
+                  ? Icons.devices
+                  : Icons.devices_other,
+              color: isCurrentDevice
+                  ? AppColors.interactiveColor
+                  : d.isActive
+                  ? Colors.green
+                  : Colors.grey,
+            ),
+            title: Text(
+              d.deviceName.isNotEmpty ? d.deviceName : d.deviceId,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            ),
+            subtitle: Text(
+              isCurrentDevice
+                  ? 'Dieses Gerät · ${d.isActive ? "Aktiv" : "Inaktiv"}'
+                  : 'Zuletzt: ${d.lastLogin.formatDateForUser()} · ${d.isActive ? "Aktiv" : "Inaktiv"}',
+              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+            ),
+          );
+        }),
       ],
     );
   }
@@ -313,7 +307,7 @@ class _UserProfileHeaderState extends State<_UserProfileHeader> {
 
     if (mounted) {
       setState(() => _uploading = false);
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         success ? NotificationType.success : NotificationType.error,
         success
             ? 'Profilbild aktualisiert'

@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -16,7 +16,7 @@ import 'package:school_data_hub_flutter/features/_school_lists/domain/models/pup
 import 'package:school_data_hub_flutter/features/_school_lists/domain/models/school_list_pupil_entries_proxy.dart';
 
 class SchoolListManager with ChangeNotifier {
-  final _notificationService = di<NotificationService>();
+  final _notificationService = di<NotificationManager>();
 
   final _apiSchoolListService = SchoolListApiService();
 

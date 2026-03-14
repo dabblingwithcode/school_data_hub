@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -7,12 +8,16 @@ import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/dialogues/change_credit_dialog.dart';
 
-class CreditTransactions extends StatelessWidget {
+class CreditTransactions extends WatchingWidget {
   final PupilProxy pupil;
   const CreditTransactions({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final creditTransactions = watchPropertyValue(
+      (m) => m.creditTransactions,
+      target: pupil,
+    );
     return Column(
       children: [
         GenericAsyncActionButton(
@@ -58,7 +63,7 @@ class CreditTransactions extends StatelessWidget {
           ],
         ),
         const Gap(10),
-        pupil.creditTransactions == null
+        creditTransactions == null
             ? const Padding(
                 padding: EdgeInsets.only(left: 22),
                 child: Text(
@@ -74,10 +79,10 @@ class CreditTransactions extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 20, top: 5, bottom: 15),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: pupil.creditTransactions!.length,
+                itemCount: creditTransactions.length,
                 itemBuilder: (BuildContext context, int index) {
                   final List<CreditTransaction> pupilCreditHistoryLogs =
-                      List.from(pupil.creditTransactions!);
+                      List.from(creditTransactions);
                   // order by date latest first
                   pupilCreditHistoryLogs.sort(
                     (a, b) => b.dateTime.compareTo(a.dateTime),

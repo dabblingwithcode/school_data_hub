@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 /// Update status with additional context
@@ -125,7 +125,7 @@ class ShorebirdUpdateManager extends ChangeNotifier {
           _log.info('Update available');
           _updateAvailable = true;
           _setStatus(UpdateManagerStatus.updateAvailable);
-          di<NotificationService>().showSnackBar(
+          di<NotificationManager>().showSnackBar(
             NotificationType.info,
             'Ein Update wird heruntergeladen...',
           );
@@ -308,7 +308,7 @@ class ShorebirdUpdateManager extends ChangeNotifier {
   }
 
   void _showRestartRequiredDialog() {
-    di<NotificationService>().showInformationDialog(
+    di<NotificationManager>().showInformationDialog(
       NotificationType.info,
       'Ein Update wurde installiert. Bitte starten Sie die App neu, um die neueste Version der App zu verwenden.',
     );

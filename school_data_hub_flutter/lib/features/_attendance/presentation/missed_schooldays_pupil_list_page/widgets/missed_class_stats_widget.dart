@@ -4,12 +4,14 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_badges.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
-/// Wraps [AttendanceRankingListSearchbar] with a [ValueListenable<List<PupilProxy>>]
-/// so the search bar rebuilds when the list changes.
+/// Displays aggregated attendance stats for a filtered pupil list.
+/// Watches [AttendanceManager.missedSchooldays] so the stats rebuild
+/// when any missed-schoolday entry changes.
 class AttendanceRankingStats extends WatchingWidget {
   const AttendanceRankingStats({required this.pupilsListenable, super.key});
 
@@ -18,6 +20,8 @@ class AttendanceRankingStats extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final pupils = watch(pupilsListenable).value;
+    watchValue((AttendanceManager m) => m.missedSchooldays);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

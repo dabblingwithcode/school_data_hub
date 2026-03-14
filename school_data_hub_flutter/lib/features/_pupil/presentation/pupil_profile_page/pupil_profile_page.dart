@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
@@ -30,9 +29,8 @@ class PupilProfilePage extends StatelessWidget {
               child: Column(
                 children: [
                   Expanded(
-                    child: CustomScrollView(
-                      dragStartBehavior: DragStartBehavior.down,
-                      slivers: [
+                    child: NestedScrollView(
+                      headerSliverBuilder: (context, innerBoxIsScrolled) => [
                         SliverAppBar(
                           systemOverlayStyle: SystemUiOverlayStyle(
                             statusBarColor:
@@ -45,28 +43,22 @@ class PupilProfilePage extends StatelessWidget {
                           leading: null,
                           backgroundColor:
                               AppColors.pupilProfileBackgroundColor,
-                          collapsedHeight: 150,
-                          expandedHeight: 150,
+                          collapsedHeight: 120,
+                          expandedHeight: 120,
                           stretch: false,
                           elevation: 0,
                           flexibleSpace: FlexibleSpaceBar(
                             expandedTitleScale: 1,
                             collapseMode: CollapseMode.none,
-                            background: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              child: PupilProfileHeadingCard(pupil: pupil),
-                            ),
+                            background: PupilProfileHeadingCard(pupil: pupil),
                           ),
                         ),
-                        SliverToBoxAdapter(
-                          child: PupilProfilePageContent(pupil: pupil),
-                        ),
                       ],
+                      body: PupilProfilePageContent(pupil: pupil),
                     ),
                   ),
                   PupilProfileNavigation(
                     boxWidth: MediaQuery.sizeOf(context).width,
-                    //MediaQuery.of(context).size.width / 5,
                   ),
                 ],
               ),

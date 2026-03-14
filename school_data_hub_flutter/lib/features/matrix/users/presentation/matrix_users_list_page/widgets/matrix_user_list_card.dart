@@ -6,7 +6,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
@@ -14,6 +13,7 @@ import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/cus
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
@@ -290,7 +290,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
 
                             if (context.mounted) {
                               Navigator.of(context).pop();
-                              di<NotificationService>().showSnackBar(
+                              di<NotificationManager>().showSnackBar(
                                 NotificationType.success,
                                 'Nachricht an ${matrixUser.displayName} gesendet!',
                               );
@@ -300,7 +300,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                             log('Stack trace: $stackTrace');
 
                             if (context.mounted) {
-                              di<NotificationService>().showSnackBar(
+                              di<NotificationManager>().showSnackBar(
                                 NotificationType.error,
                                 'Fehler beim Senden: $e',
                               );
@@ -460,7 +460,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                   matrixUser,
                                 );
                                 if (pupil == null) {
-                                  di<NotificationService>().showInformationDialog(
+                                  di<NotificationManager>().showInformationDialog(
                                     NotificationType.error,
                                     'Dieser Benutzer ist keinem Schüler zugeordnet.',
                                   );
@@ -587,7 +587,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                             Clipboard.setData(
                               ClipboardData(text: matrixUser.id!),
                             );
-                            di<NotificationService>().showSnackBar(
+                            di<NotificationManager>().showSnackBar(
                               NotificationType.info,
                               'Copied to clipboard',
                             );
@@ -623,8 +623,9 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                               }
                               Navigator.of(context).push(
                                 MaterialPageRoute<void>(
-                                  builder: (context) =>
-                                      PdfViewerPage(pdfGenerator: () async => file),
+                                  builder: (context) => PdfViewerPage(
+                                    pdfGenerator: () async => file,
+                                  ),
                                 ),
                               );
                             }

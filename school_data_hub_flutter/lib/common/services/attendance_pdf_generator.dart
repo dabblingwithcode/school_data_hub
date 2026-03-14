@@ -9,8 +9,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
@@ -43,7 +43,7 @@ class AttendancePdfGenerator {
 
     final pdf = pw.Document();
 
-    di<NotificationService>().setHeavyLoadingValue(true);
+    di<NotificationManager>().setHeavyLoadingValue(true);
 
     // Configuration for pagination
     const int maxPupilsPerPage = 24;
@@ -99,7 +99,7 @@ class AttendancePdfGenerator {
       }
     }
 
-    di<NotificationService>().setHeavyLoadingValue(false);
+    di<NotificationManager>().setHeavyLoadingValue(false);
 
     // Get the proper directory for saving files
     final directory = await getApplicationDocumentsDirectory();
@@ -588,7 +588,7 @@ class MissedSchooldaysPdfGenerator {
 
     final pdf = pw.Document();
 
-    di<NotificationService>().setHeavyLoadingValue(true);
+    di<NotificationManager>().setHeavyLoadingValue(true);
 
     // Sort pupils by missed hours (descending)
     final sortedPupils = List<PupilProxy>.from(pupils);
@@ -672,7 +672,7 @@ class MissedSchooldaysPdfGenerator {
       }
     }
 
-    di<NotificationService>().setHeavyLoadingValue(false);
+    di<NotificationManager>().setHeavyLoadingValue(false);
 
     // Get the proper directory for saving files
     final directory = await getApplicationDocumentsDirectory();

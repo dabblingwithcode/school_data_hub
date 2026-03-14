@@ -6,9 +6,9 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_identity_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
@@ -96,13 +96,13 @@ class PupilIdentityHelper {
         di<PupilIdentityManager>().remoteLastIdentitiesUpdate.value;
     if (lastIdentitiesUpdate != null && remoteLastIdentitiesUpdate != null) {
       if (remoteLastIdentitiesUpdate.isAfter(lastIdentitiesUpdate)) {
-        di<NotificationService>().showInformationDialog(
+        di<NotificationManager>().showInformationDialog(
           NotificationType.info,
           'Die gespeicherten Schüler*innen-Ids vom\n${lastIdentitiesUpdate.formatDateAndTimeForUser()}\n sind veraltet. Die neueste Version ist vom \n ${remoteLastIdentitiesUpdate.formatDateAndTimeForUser()}.\n Schüler*innen-Ids aus einer vertrauenswürdigen Quelle aktualisieren!',
         );
       }
     } else {
-      di<NotificationService>().showInformationDialog(
+      di<NotificationManager>().showInformationDialog(
         NotificationType.info,
         'No last identities update found in the server.',
       );

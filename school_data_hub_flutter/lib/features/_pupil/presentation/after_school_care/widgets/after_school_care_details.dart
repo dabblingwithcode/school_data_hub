@@ -55,18 +55,15 @@ class AfterSchoolCareDetails extends WatchingWidget {
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _EmergencyCareCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
-          const Gap(16),
-          _PickUpTimesCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
-          const Gap(16),
-          _OgsInfoCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _EmergencyCareCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
+        const Gap(10),
+        _PickUpTimesCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
+        const Gap(10),
+        _OgsInfoCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
+      ],
     );
   }
 }

@@ -3,13 +3,13 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
@@ -54,8 +54,7 @@ class PupilProfileInfosContent extends WatchingWidget {
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -70,7 +69,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                 onTap: () async {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
-                    di<NotificationService>().showInformationDialog(
+                    di<NotificationManager>().showInformationDialog(
                       NotificationType.error,
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );
@@ -103,7 +102,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                 onLongPress: () async {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName != pupil.groupTutor) {
-                    di<NotificationService>().showInformationDialog(
+                    di<NotificationManager>().showInformationDialog(
                       NotificationType.error,
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );
@@ -181,8 +180,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                 ),
               ),
             ),
-            const Gap(8),
-            // Basic Information Section
+            const Gap(10),
             // Basic Information Section
             PupilProfileContentSection(
               icon: Icons.person_outline,
@@ -209,8 +207,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                 ],
               ),
             ),
-            const Gap(8),
-            // Contact Information Section
+            const Gap(10),
             // Contact Information Section
             PupilProfileContentSection(
               icon: Icons.contact_phone_outlined,
@@ -251,7 +248,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                         ? IconButton(
                             onPressed: () async {
                               if (_isMatrixAuthorized() == false) {
-                                di<NotificationService>().showInformationDialog(
+                                di<NotificationManager>().showInformationDialog(
                                   NotificationType.error,
                                   'Keine Berechtigung. Admin-Rechte erforderlich.',
                                 );
@@ -289,7 +286,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                         : IconButton(
                             onPressed: () async {
                               if (_isMatrixAuthorized() == false) {
-                                di<NotificationService>().showInformationDialog(
+                                di<NotificationManager>().showInformationDialog(
                                   NotificationType.error,
                                   'Keine Berechtigung. Admin-Rechte erforderlich.',
                                 );
@@ -323,8 +320,9 @@ class PupilProfileInfosContent extends WatchingWidget {
                                 if (file != null && context.mounted) {
                                   Navigator.of(context).push(
                                     MaterialPageRoute<void>(
-                                      builder: (context) =>
-                                          PdfViewerPage(pdfGenerator: () async => file),
+                                      builder: (context) => PdfViewerPage(
+                                        pdfGenerator: () async => file,
+                                      ),
                                     ),
                                   );
                                 }
@@ -436,8 +434,9 @@ class PupilProfileInfosContent extends WatchingWidget {
                                 if (file != null && context.mounted) {
                                   Navigator.of(context).push(
                                     MaterialPageRoute<void>(
-                                      builder: (context) =>
-                                          PdfViewerPage(pdfGenerator: () async => file),
+                                      builder: (context) => PdfViewerPage(
+                                        pdfGenerator: () async => file,
+                                      ),
                                     ),
                                   );
                                 }
@@ -453,8 +452,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                 ],
               ),
             ),
-            const Gap(8),
-            // Authorizations Section
+            const Gap(10),
             // Authorizations Section
             PupilProfileContentSection(
               icon: Icons.verified_user_outlined,
@@ -467,8 +465,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                 ],
               ),
             ),
-            const Gap(8),
-            // Siblings Section
+            const Gap(10),
             // Siblings Section
             PupilProfileContentSection(
               icon: Icons.family_restroom_outlined,
@@ -585,7 +582,7 @@ class PupilProfileInfosContent extends WatchingWidget {
 bool _isMatrixAuthorized() {
   if (!di.isRegistered<MatrixPolicyManager>() ||
       !di<HubSessionManager>().isAdmin) {
-    di<NotificationService>().showInformationDialog(
+    di<NotificationManager>().showInformationDialog(
       NotificationType.error,
       !di<HubSessionManager>().isAdmin
           ? 'Keine Berechtigung. Admin-Rechte erforderlich.'

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 
 class PupilProfileHeadingCard extends WatchingWidget {
@@ -12,24 +12,26 @@ class PupilProfileHeadingCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
+    return Container(
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(top: 5, bottom: 5, left: 2, right: 2),
+      decoration: BoxDecoration(
+        color: AppColors.backgroundColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(children: [AvatarWithBadges(pupil: pupil, size: 100)]),
-          Padding(
-            padding: const EdgeInsets.only(left: 12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const Gap(10),
-                _PupilNameRow(pupil: pupil),
-                _SchoolGradeAndInternalIdRow(pupil: pupil),
-                const Gap(2),
-              ],
-            ),
+          AvatarImage(pupil: pupil, size: 80),
+          const Gap(12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              _PupilNameRow(pupil: pupil),
+              const Gap(8),
+              _BadgesRow(pupil: pupil),
+            ],
           ),
         ],
       ),
@@ -37,88 +39,170 @@ class PupilProfileHeadingCard extends WatchingWidget {
   }
 }
 
-/// Rebuilds only when [pupil.firstName] or [pupil.lastName] changes.
 class _PupilNameRow extends WatchingWidget {
   final PupilProxy pupil;
-
   const _PupilNameRow({required this.pupil});
 
   @override
   Widget build(BuildContext context) {
     final firstName = watchPropertyValue((m) => m.firstName, target: pupil);
     final lastName = watchPropertyValue((m) => m.lastName, target: pupil);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Row(
-          children: [
-            Align(
-              child: Text(
-                firstName,
-                style: const TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ],
+        Text(
+          firstName,
+          style: const TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              '$lastName ',
-              style: const TextStyle(
-                fontSize: 20.0,
-                color: Colors.black,
-              ),
-            ),
-          ],
+        const Gap(6),
+        Text(
+          lastName,
+          style: const TextStyle(fontSize: 20.0, color: Colors.white),
         ),
       ],
     );
   }
 }
 
-/// Rebuilds only when [pupil.schoolGrade], [pupil.specialNeeds], or [pupil.internalId] changes.
-class _SchoolGradeAndInternalIdRow extends WatchingWidget {
-  final PupilProxy pupil;
+class _BadgesRow extends WatchingWidget {
+  static const double _badgeSize = 30.0;
 
-  const _SchoolGradeAndInternalIdRow({required this.pupil});
+  final PupilProxy pupil;
+  const _BadgesRow({required this.pupil});
 
   @override
   Widget build(BuildContext context) {
-    final schoolGrade = watchPropertyValue((m) => m.schoolGrade, target: pupil);
-    final specialNeeds =
-        watchPropertyValue((m) => m.specialNeeds, target: pupil);
-    final internalId =
-        watchPropertyValue((m) => m.internalId, target: pupil);
-    final isAdmin = di<HubSessionManager>().isAdmin == true;
-
+    watch(pupil);
     return Row(
       children: [
-        specialNeeds != null
-            ? Text(
-                schoolGrade.name,
-                textAlign: TextAlign.left,
+        // 1. Learning group
+        GroupBadgeContainer(pupil: pupil, badgeSize: _badgeSize),
+        const Gap(6),
+        // 2. School grade
+        SchoolGradeBadgeContainer(pupil: pupil, badgeSize: _badgeSize),
+        // 3. After school care
+        if (pupil.afterSchoolCare != null) ...[
+          const Gap(6),
+          Container(
+            width: _badgeSize,
+            height: _badgeSize,
+            decoration: BoxDecoration(
+              color: AppColors.ogsColor,
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Text(
+                'OGS',
                 style: TextStyle(
-                  color: AppColors.schoolyearColor,
+                  color: Colors.white,
+                  fontSize: 13,
                   fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
                 ),
-              )
-            : const SizedBox.shrink(),
-        const Gap(15),
-        if (isAdmin) ...[
-          const Gap(10),
-          Text(
-            '$internalId',
-            textAlign: TextAlign.left,
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18.0,
+              ),
+            ),
+          ),
+        ],
+        // 4. Migration support
+        if (pupil.migrationSupportEnds != null) ...[
+          const Gap(6),
+          Container(
+            width: _badgeSize,
+            height: _badgeSize,
+            decoration: BoxDecoration(
+              color:
+                  PupilProxyHelper.hasLanguageSupport(
+                    pupil.migrationSupportEnds,
+                  )
+                  ? Colors.green
+                  : Colors.grey,
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.language_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+          ),
+        ],
+        // 5. Support level
+        if (pupil.latestSupportLevel != null) ...[
+          const Gap(6),
+          Container(
+            width: _badgeSize,
+            height: _badgeSize,
+            decoration: BoxDecoration(
+              color: AppColors.accentColor,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                'FE\n${pupil.latestSupportLevel!.level}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  height: 1.1,
+                ),
+              ),
+            ),
+          ),
+        ],
+        // 6. Special needs (one badge per entry)
+        if (pupil.specialNeeds != null && pupil.specialNeeds!.isNotEmpty)
+          ...pupil.specialNeeds!.map(
+            (need) => Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Gap(6),
+                Container(
+                  width: _badgeSize,
+                  height: _badgeSize,
+                  decoration: BoxDecoration(
+                    color: AppColors.groupColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      need.replaceAll('ESE', 'ES'),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        // 7. Special information
+        if (pupil.specialInformation != null) ...[
+          const Gap(6),
+          InkWell(
+            onTap: () => specialInformationDialog(
+              context,
+              'Besondere Information',
+              pupil.specialInformation!,
+            ),
+            child: Container(
+              width: _badgeSize,
+              height: _badgeSize,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.info_rounded,
+                size: _badgeSize,
+                color: Color.fromARGB(255, 6, 92, 163),
+              ),
             ),
           ),
         ],

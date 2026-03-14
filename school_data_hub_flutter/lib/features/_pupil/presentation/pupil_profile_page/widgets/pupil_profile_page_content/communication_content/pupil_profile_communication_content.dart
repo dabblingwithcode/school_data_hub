@@ -29,10 +29,11 @@ class PupilProfileCommunicationContent extends WatchingWidget {
 
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Language Information Section
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           // Language Information Section
           PupilProfileContentSection(
             icon: Icons.translate_rounded,
@@ -75,8 +76,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
               ],
             ),
           ),
-          const Gap(8),
-          // German Language Competence Section
+          const Gap(10),
           // German Language Competence Section
           PupilProfileContentSection(
             icon: Icons.record_voice_over_outlined,
@@ -220,8 +220,8 @@ class PupilProfileCommunicationContent extends WatchingWidget {
               ],
             ),
           ),
-          const Gap(20), // Extra spacing at the bottom
-        ],
+          ],
+        ),
       ),
     );
   }

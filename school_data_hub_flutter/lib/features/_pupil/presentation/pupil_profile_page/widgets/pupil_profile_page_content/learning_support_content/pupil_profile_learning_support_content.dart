@@ -13,10 +13,12 @@ class PupilProfileLearningSupportContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: Column(
-        children: [
-          PupilProfileContentSection(
-            icon: Icons.support_rounded,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            PupilProfileContentSection(
+              icon: Icons.support_rounded,
             title: 'Förderung',
             onTitleTap: () {
               Navigator.of(context).push(
@@ -27,7 +29,8 @@ class PupilProfileLearningSupportContent extends StatelessWidget {
             },
             child: PupilProfileLearningSupportContentList(pupil: pupil),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

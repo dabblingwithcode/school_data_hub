@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -12,6 +11,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_documents_section.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
@@ -224,7 +224,7 @@ class CompetenceCheckCard extends StatelessWidget {
                                               valueFactor: (value: valueFactor),
                                             );
                                       } else {
-                                        di<NotificationService>().showSnackBar(
+                                        di<NotificationManager>().showSnackBar(
                                           NotificationType.error,
                                           'Ungültiger Wertfaktor. Bitte geben Sie eine positive Zahl ein.',
                                         );
@@ -381,14 +381,15 @@ class CompetenceCheckCard extends StatelessWidget {
                       TextSpan(
                         children: [
                           const TextSpan(
-                            text: ' Kommentar: ',
+                            text: 'Kommentar: ',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           TextSpan(
-                            text: (competenceCheck.comment == null ||
+                            text:
+                                (competenceCheck.comment == null ||
                                     competenceCheck.comment!.isEmpty)
                                 ? 'Kein Kommentar'
                                 : competenceCheck.comment!,

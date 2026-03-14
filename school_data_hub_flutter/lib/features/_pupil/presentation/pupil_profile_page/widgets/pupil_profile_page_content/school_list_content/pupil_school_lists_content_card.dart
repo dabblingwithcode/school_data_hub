@@ -13,10 +13,12 @@ class PupilSchoolListsContentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: Column(
-        children: [
-          PupilProfileContentSection(
-            icon: Icons.rule,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            PupilProfileContentSection(
+              icon: Icons.rule,
             title: 'Listen',
             onTitleTap: () {
               Navigator.of(context).push(
@@ -27,7 +29,8 @@ class PupilSchoolListsContentCard extends StatelessWidget {
             },
             child: PupilSchoolListContentList(pupil: pupil),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

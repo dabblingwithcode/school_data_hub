@@ -225,14 +225,15 @@ class AuthorizationPupilCard extends WatchingWidget {
                     TextSpan(
                       children: [
                         const TextSpan(
-                          text: ' Kommentar: ',
+                          text: 'Kommentar: ',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         TextSpan(
-                          text: (pupilAuthorization.comment == null ||
+                          text:
+                              (pupilAuthorization.comment == null ||
                                   pupilAuthorization.comment!.isEmpty)
                               ? 'Kein Kommentar'
                               : pupilAuthorization.comment!,

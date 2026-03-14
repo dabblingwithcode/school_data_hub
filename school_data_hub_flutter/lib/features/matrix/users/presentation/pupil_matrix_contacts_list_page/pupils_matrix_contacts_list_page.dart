@@ -5,7 +5,6 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -16,6 +15,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
@@ -165,7 +165,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                                 MatrixPolicyManager
                                                               >()) {
                                                             di<
-                                                                  NotificationService
+                                                                  NotificationManager
                                                                 >()
                                                                 .showInformationDialog(
                                                                   NotificationType
@@ -279,7 +279,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                     text: pupil.contact!,
                                                   ),
                                                 );
-                                                di<NotificationService>()
+                                                di<NotificationManager>()
                                                     .showSnackBar(
                                                       NotificationType.success,
                                                       'In die Zwischenablage kopiert',
@@ -318,7 +318,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                                 MatrixPolicyManager
                                                               >()) {
                                                             di<
-                                                                  NotificationService
+                                                                  NotificationManager
                                                                 >()
                                                                 .showInformationDialog(
                                                                   NotificationType
@@ -487,7 +487,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                         'Kein Elternkontakt vorhanden!',
                                                   ),
                                                 );
-                                                di<NotificationService>()
+                                                di<NotificationManager>()
                                                     .showSnackBar(
                                                       NotificationType.success,
                                                       'In die Zwischenablage kopiert',

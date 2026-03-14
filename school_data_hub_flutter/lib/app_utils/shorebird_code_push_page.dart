@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
@@ -126,14 +126,14 @@ class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
   }
 
   void _showRestartBanner() {
-    di<NotificationService>().showInformationDialog(
+    di<NotificationManager>().showInformationDialog(
       NotificationType.info,
       'Ein neuer Patch ist verfügbar! Bitte starte die App neu.',
     );
   }
 
   void _showErrorBanner(Object error) {
-    di<NotificationService>().showInformationDialog(
+    di<NotificationManager>().showInformationDialog(
       NotificationType.error,
       'Fehler beim Herunterladen des Updates: $error.',
     );
@@ -214,7 +214,7 @@ class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
                           );
                     } else {
                       if (!context.mounted) return;
-                      di<NotificationService>().showInformationDialog(
+                      di<NotificationManager>().showInformationDialog(
                         NotificationType.info,
                         'Bitte schließen Sie die App manuell und starten Sie sie erneut.',
                       );

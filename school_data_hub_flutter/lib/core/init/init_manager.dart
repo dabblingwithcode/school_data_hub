@@ -4,7 +4,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/secure_storage.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_on_active_env.dart';
 import 'package:school_data_hub_flutter/core/init/init_on_user_auth.dart';
@@ -39,7 +39,7 @@ class InitManager {
 
     di.registerSingleton<DefaultCacheManager>(DefaultCacheManager());
 
-    di.registerSingleton<NotificationService>(NotificationService());
+    di.registerSingleton<NotificationManager>(NotificationManager());
 
     di.registerSingleton<ServerpodConnectivityMonitor>(
       ServerpodConnectivityMonitor(),
@@ -243,7 +243,7 @@ class InitManager {
     final manager = await di.getAsync<MatrixPolicyManager>();
     _log.info('MatrixPolicyManager retrieved from matrix scope');
 
-    di<NotificationService>().showSnackBar(
+    di<NotificationManager>().showSnackBar(
       NotificationType.success,
       'Matrix-Räumeverwaltung initialisiert',
     );

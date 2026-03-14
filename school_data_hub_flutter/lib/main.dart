@@ -12,6 +12,8 @@ import 'package:school_data_hub_flutter/app_utils/logger/domain/log_record_forma
 import 'package:school_data_hub_flutter/app_utils/logger/domain/log_service.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/model/app_log.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/core/client/hub_state_indicators.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
@@ -117,6 +119,20 @@ class MyApp extends WatchingWidget {
 
     return MaterialApp(
       navigatorKey: navigatorKey,
+      builder: (context, child) {
+        return Stack(
+          children: [
+            child!,
+            if (userIsAuthenticated && envIsReady)
+              Positioned(
+                top: MediaQuery.of(context).padding.top,
+                right: 10,
+                height: kToolbarHeight,
+                child: const _HubStateIndicators(),
+              ),
+          ],
+        );
+      },
       localizationsDelegates: const <LocalizationsDelegate<Object>>[
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -177,6 +193,49 @@ class MyApp extends WatchingWidget {
               phase: AppPhase.unlogged,
               child: EntryPoint(),
             ),
+    );
+  }
+}
+
+/// Shows the hub connection/API indicators once [HubStreamService] is ready.
+///
+/// Why a StatefulWidget with a `late final` future?
+///
+/// [HubStreamService] is registered as a `registerSingletonAsync` in the auth
+/// scope, so it may still be initialising when [MyApp] first renders the
+/// overlay (auth becomes true → MyApp rebuilds → builder runs, all before
+/// `di.allReady()` resolves). A plain `di.isReadySync` check fixes the crash
+/// but never re-renders once the service becomes ready, so the indicators
+/// never appear.
+///
+/// Using a [StatefulWidget] stores the [di.isReady] future exactly once in
+/// [State]. [FutureBuilder] on that stable future renders nothing while the
+/// service initialises, then triggers its own rebuild the moment init
+/// completes — without depending on any external rebuild of [MyApp].
+///
+/// The indicators can't live in [GlobalOverlayHost] because that widget sits
+/// below pushed routes in the navigator stack and would be obscured on any
+/// page navigation.
+class _HubStateIndicators extends StatefulWidget {
+  const _HubStateIndicators();
+
+  @override
+  State<_HubStateIndicators> createState() => _HubStateIndicatorsState();
+}
+
+class _HubStateIndicatorsState extends State<_HubStateIndicators> {
+  late final Future<void> _ready = di.isReady<HubStreamService>();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _ready,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const SizedBox.shrink();
+        }
+        return const HubStateIndicator();
+      },
     );
   }
 }

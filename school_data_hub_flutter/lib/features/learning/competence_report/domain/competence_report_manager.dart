@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/data/competence_report_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/data/competence_report_check_api_service.dart';
@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/features/learning/competence_report/data
 class CompetenceReportManager {
   final _reportApiService = CompetenceReportApiService();
   final _checkApiService = CompetenceReportCheckApiService();
-  final _notificationService = di<NotificationService>();
+  final _notificationService = di<NotificationManager>();
 
   final _reportsByPupil = ValueNotifier<Map<int, List<CompetenceReport>>>({});
   ValueListenable<Map<int, List<CompetenceReport>>> get reportsByPupil =>

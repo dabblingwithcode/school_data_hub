@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
-import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/core/client/client_helper.dart';
+import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 
 class AuthorizationApiService {
   Client get _client => di<Client>();

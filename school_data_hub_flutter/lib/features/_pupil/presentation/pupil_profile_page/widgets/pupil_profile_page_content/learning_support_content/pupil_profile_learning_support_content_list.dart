@@ -6,14 +6,14 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
+import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
@@ -21,12 +21,12 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manag
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/widgets/learning_support_plans_section.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/set_bulk_support_categoies_status_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/kindergarden_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/support_category_statuses_list.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
@@ -131,7 +131,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                         },
                         onLongPress: () async {
                           if (!isAdmin) {
-                            di<NotificationService>().showSnackBar(
+                            di<NotificationManager>().showSnackBar(
                               NotificationType.error,
                               'Nur Dokumenteninhaber können Dokumente löschen',
                             );
@@ -160,7 +160,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                     InkWell(
                       onTap: () async {
                         if (!isAdmin) {
-                          di<NotificationService>().showSnackBar(
+                          di<NotificationManager>().showSnackBar(
                             NotificationType.error,
                             'Nur Admins können Dokumente hochladen',
                           );
@@ -245,7 +245,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         PupilProfileContentRow(
           icon: Icons.accessibility_new,
           label: 'Förderschwerpunkt(e)',
-          value: pupil.specialNeeds != null && pupil.specialNeeds!.isEmpty
+          value: pupil.specialNeeds == null || pupil.specialNeeds!.isEmpty
               ? 'keins'
               : pupil.specialNeeds!.join(', '),
         ),
@@ -350,7 +350,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
   ) async {
     try {
       final client = di<Client>();
-      final notificationService = di<NotificationService>();
+      final notificationService = di<NotificationManager>();
       final hubSessionManager = di<HubSessionManager>();
       final pupilManager = di<PupilProxyManager>();
 
@@ -425,7 +425,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         );
       }
     } catch (e) {
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         NotificationType.error,
         'Fehler beim Hochladen der Datei: $e',
       );
@@ -439,7 +439,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
   ) async {
     try {
       final client = di<Client>();
-      final notificationService = di<NotificationService>();
+      final notificationService = di<NotificationManager>();
       final pupilManager = di<PupilProxyManager>();
 
       if (pupil.preSchoolMedical == null) {
@@ -470,7 +470,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         );
       }
     } catch (e) {
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         NotificationType.error,
         'Fehler beim Löschen der Datei: $e',
       );

@@ -8,8 +8,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
@@ -193,7 +193,7 @@ class CompetenceReportPdfGenerator {
     );
 
     final pdf = pw.Document();
-    di<NotificationService>().setHeavyLoadingValue(true);
+    di<NotificationManager>().setHeavyLoadingValue(true);
 
     try {
       final halfYearLabel = semester.isFirst ? '1. Halbjahr' : '2. Halbjahr';
@@ -303,7 +303,7 @@ class CompetenceReportPdfGenerator {
         ),
       );
     } finally {
-      di<NotificationService>().setHeavyLoadingValue(false);
+      di<NotificationManager>().setHeavyLoadingValue(false);
     }
 
     final directory = await getApplicationDocumentsDirectory();

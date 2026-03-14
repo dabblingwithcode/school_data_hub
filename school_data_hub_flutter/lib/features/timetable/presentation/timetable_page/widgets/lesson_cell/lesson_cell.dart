@@ -175,37 +175,47 @@ class LessonCell extends WatchingWidget {
                     width: 1,
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Text(
-                      subjectName,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
+                child: Center(
+                  child: Text(
+                    subjectName,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      height: 1.0,
                     ),
-                  ],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ),
             const Gap(1),
+            Text(
+              groupName,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey.shade800,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const Gap(1),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Icon(
+                  Icons.meeting_room_outlined,
+                  size: 13,
+                  color: Colors.grey.shade600,
+                ),
+                const Gap(2),
                 Text(
-                  groupName,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey.shade800,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  roomCode,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
                 ),
                 const Spacer(),
                 Icon(Icons.people, size: 10, color: Colors.grey.shade600),
@@ -219,14 +229,6 @@ class LessonCell extends WatchingWidget {
                   ),
                 ),
               ],
-            ),
-            const Gap(1),
-            Text(
-              '$roomCode (${lesson!.room?.roomName ?? 'Unbekannter Raum'})',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
             ),
           ],
         ),

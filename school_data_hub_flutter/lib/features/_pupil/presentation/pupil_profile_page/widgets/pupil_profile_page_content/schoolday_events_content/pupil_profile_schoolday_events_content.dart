@@ -13,10 +13,12 @@ class PupilProfileSchooldayEventsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: Column(
-        children: [
-          PupilProfileContentSection(
-            icon: Icons.warning_amber_rounded,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            PupilProfileContentSection(
+              icon: Icons.warning_amber_rounded,
             title: 'Ereignisse',
             onTitleTap: () {
               Navigator.of(context).push(
@@ -27,7 +29,8 @@ class PupilProfileSchooldayEventsContent extends StatelessWidget {
             },
             child: PupilSchooldayEventsList(pupil: pupil),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

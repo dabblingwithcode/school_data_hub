@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/widgets/pupil_book_card.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 class PupilLearningContentBooks extends WatchingWidget {
   final PupilProxy pupil;
@@ -42,7 +42,7 @@ class PupilLearningContentBooks extends WatchingWidget {
                 overlayText: 'Buch-ID scannen',
               );
               if (!(scannedBookId != null)) {
-                di<NotificationService>().showSnackBar(
+                di<NotificationManager>().showSnackBar(
                   NotificationType.error,
                   'Buch-ID konnte nicht gescannt werden',
                 );

@@ -21,7 +21,6 @@ import 'package:school_data_hub_flutter/features/learning/_competence/presentati
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_reports.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_statuses.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_workbooks.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/pupil_competence_report_page/pupil_competence_report_page.dart';
 
 class LearningListCard extends WatchingWidget {
@@ -34,9 +33,9 @@ class LearningListCard extends WatchingWidget {
       () => CustomExpansionTileController(),
     );
 
-    callOnce(
-      (_) => di<CompetenceReportManager>().fetchReportsForPupil(pupil.pupilId),
-    );
+    // callOnce(
+    //   (_) => di<CompetenceReportManager>().fetchReportsForPupil(pupil.pupilId),
+    // );
 
     return Card(
       color: Colors.white,
@@ -142,18 +141,11 @@ class _LearningListContent extends WatchingWidget {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.book,
-                    size: 30,
-                    color: AppColors.interactiveColor,
-                  ),
+                  Icon(Icons.book, size: 30, color: AppColors.interactiveColor),
                   const Gap(5),
                   const Text(
                     'Gelesen: ',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -169,9 +161,7 @@ class _LearningListContent extends WatchingWidget {
                   includeSwitch: true,
                   switchColor: AppColors.interactiveColor,
                   customExpansionTileController: expansionTileController,
-                  expansionSwitchWidget: CompetenceChecksBadges(
-                    pupil: pupil,
-                  ),
+                  expansionSwitchWidget: CompetenceChecksBadges(pupil: pupil),
                 ),
                 _CompetenceStatsRow(pupil: pupil),
               ],
@@ -180,17 +170,13 @@ class _LearningListContent extends WatchingWidget {
                   includeSwitch: true,
                   switchColor: AppColors.interactiveColor,
                   customExpansionTileController: expansionTileController,
-                  expansionSwitchWidget: LearningGoalsOverview(
-                    pupil: pupil,
-                  ),
+                  expansionSwitchWidget: LearningGoalsOverview(pupil: pupil),
                 ),
               ],
               SelectedContent.workbooks => [
                 CustomExpansionTileSwitch(
                   customExpansionTileController: expansionTileController,
-                  expansionSwitchWidget: WorkbooksOverview(
-                    pupil: pupil,
-                  ),
+                  expansionSwitchWidget: WorkbooksOverview(pupil: pupil),
                   includeSwitch: true,
                   switchColor: AppColors.interactiveColor,
                 ),
@@ -212,10 +198,7 @@ class _LearningListContent extends WatchingWidget {
                               color: Colors.green,
                             ),
                           ),
-                          const Text(
-                            'gesamt',
-                            style: TextStyle(fontSize: 10),
-                          ),
+                          const Text('gesamt', style: TextStyle(fontSize: 10)),
                         ],
                       ),
                       const Gap(10),
@@ -229,10 +212,7 @@ class _LearningListContent extends WatchingWidget {
                               color: Colors.orange,
                             ),
                           ),
-                          const Text(
-                            'aktiv',
-                            style: TextStyle(fontSize: 10),
-                          ),
+                          const Text('aktiv', style: TextStyle(fontSize: 10)),
                         ],
                       ),
                       const Gap(15),
@@ -252,9 +232,8 @@ class _LearningListContent extends WatchingWidget {
                       onPressed: () {
                         Navigator.of(context).push<void>(
                           MaterialPageRoute<void>(
-                            builder: (ctx) => PupilCompetenceReportPage(
-                              pupil: pupil,
-                            ),
+                            builder: (ctx) =>
+                                PupilCompetenceReportPage(pupil: pupil),
                           ),
                         );
                       },
@@ -310,9 +289,7 @@ class _LearningListExpansionContent extends WatchingWidget {
             SelectedContent.workbooks => [
               PupilLearningContentWorkbooks(pupil: pupil),
             ],
-            SelectedContent.books => [
-              PupilLearningContentBooks(pupil: pupil),
-            ],
+            SelectedContent.books => [PupilLearningContentBooks(pupil: pupil)],
             SelectedContent.competenceReports => [
               PupilLearningContentCompetenceReports(pupil: pupil),
             ],

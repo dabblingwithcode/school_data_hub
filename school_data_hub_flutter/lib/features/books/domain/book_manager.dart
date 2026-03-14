@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/books/data/book_api_service.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 
@@ -14,7 +14,7 @@ final _log = Logger('BookManager');
 class BookManager {
   final _bookApiService = BookApiService();
 
-  final _notificationService = di<NotificationService>();
+  final _notificationService = di<NotificationManager>();
 
   final _libraryBookProxies = ValueNotifier<List<LibraryBookProxy>>([]);
   ValueListenable<List<LibraryBookProxy>> get libraryBookProxies =>

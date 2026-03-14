@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
@@ -8,7 +9,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_di
 import 'package:school_data_hub_flutter/features/_school_lists/domain/models/pupil_list_entry_proxy.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_list_pupil_entries_page/school_list_pupil_entries_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
   final PupilListEntryProxy pupilListEntryProxy;
@@ -174,7 +174,7 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                       TextSpan(
                         children: [
                           const TextSpan(
-                            text: ' Kommentar: ',
+                            text: 'Kommentar: ',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,

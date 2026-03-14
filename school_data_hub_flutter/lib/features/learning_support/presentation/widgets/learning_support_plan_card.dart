@@ -3,17 +3,17 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/services/pdf/learning_support_plan_pdf_generator.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 /// A display-only card for a learning support plan.
 ///
@@ -118,19 +118,18 @@ class _PlanMetadataAndActions extends StatelessWidget {
           MaterialPageRoute<void>(
             builder: (ctx) => PdfViewerPage(
               pdfGenerator: () =>
-                  LearningSupportPlanPdfGenerator
-                      .generateLearningSupportPlanPdf(
-                        plan: plan,
-                        pupil: pupil,
-                        supportCategories: supportCategories,
-                      ),
+                  LearningSupportPlanPdfGenerator.generateLearningSupportPlanPdf(
+                    plan: plan,
+                    pupil: pupil,
+                    supportCategories: supportCategories,
+                  ),
               title: 'Förderplan PDF',
             ),
           ),
         );
       }
     } catch (e) {
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         NotificationType.error,
         'Fehler beim Erstellen des PDFs: $e',
       );

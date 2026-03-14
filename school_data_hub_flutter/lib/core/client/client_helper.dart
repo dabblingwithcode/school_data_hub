@@ -1,6 +1,6 @@
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 
 /// Status codes that indicate a server restart or transient gateway issue.
@@ -19,12 +19,12 @@ class ClientHelper {
     String? errorMessage,
   }) async {
     try {
-      di<NotificationService>().apiRunning(true);
+      di<NotificationManager>().apiRunning(true);
       final result = await call();
-      di<NotificationService>().apiRunning(false);
+      di<NotificationManager>().apiRunning(false);
       return result;
     } on ServerpodClientException catch (e) {
-      di<NotificationService>().apiRunning(false);
+      di<NotificationManager>().apiRunning(false);
 
       // Suppress transient gateway/restart errors silently.
       if (_transientStatusCodes.contains(e.statusCode)) {
@@ -41,14 +41,14 @@ class ClientHelper {
         return null;
       }
 
-      di<NotificationService>().showInformationDialog(
+      di<NotificationManager>().showInformationDialog(
         NotificationType.error,
         'API Fehler: ${errorMessage ?? "Unbekannt"}: $e',
       );
       return null;
     } catch (e) {
-      di<NotificationService>().apiRunning(false);
-      di<NotificationService>().showInformationDialog(
+      di<NotificationManager>().apiRunning(false);
+      di<NotificationManager>().showInformationDialog(
         NotificationType.error,
         'API Fehler:\n $errorMessage: $e',
       );

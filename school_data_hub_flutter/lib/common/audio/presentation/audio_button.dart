@@ -4,7 +4,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/audio/data/audio_player_service.dart';
 import 'package:school_data_hub_flutter/common/audio/presentation/widgets/audio_player_overlay.dart';
 import 'package:school_data_hub_flutter/common/audio/presentation/widgets/audio_thumbnail.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 
@@ -55,7 +55,7 @@ class _AudioButtonState extends State<AudioButton> {
       } else {
         await service.dispose();
         if (mounted) {
-          di<NotificationService>().showSnackBar(
+          di<NotificationManager>().showSnackBar(
             NotificationType.error,
             'Audio konnte nicht geladen werden',
           );
@@ -70,7 +70,7 @@ class _AudioButtonState extends State<AudioButton> {
 
   Future<void> _handleLongPress() async {
     if (!AuthClearanceHelper.isCreatorOrAdmin(widget.file.createdBy)) {
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         NotificationType.error,
         'Nur Dokumenteninhaber können Dokumente löschen',
       );

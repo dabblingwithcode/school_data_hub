@@ -16,7 +16,10 @@ class CreditListCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tileController = createOnce(() => CustomExpansionTileController());
+    final tileController = createOnce(
+      () => CustomExpansionTileController(),
+      dispose: (tileController) => tileController.dispose(),
+    );
 
     return Card(
       color: Colors.white,

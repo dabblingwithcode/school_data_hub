@@ -36,8 +36,10 @@ class PupilLearningContent extends WatchingWidget {
     watch(pupil);
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: Column(
-        children: [
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          children: [
           PupilProfileContentSection(
             icon: Icons.lightbulb,
             title: 'Lernen',
@@ -168,7 +170,8 @@ class PupilLearningContent extends WatchingWidget {
               ],
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

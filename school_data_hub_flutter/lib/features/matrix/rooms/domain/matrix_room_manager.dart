@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/data/matrix_api_service.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matr
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class MatrixRoomManager {
-  final _notificationService = di<NotificationService>();
+  final _notificationService = di<NotificationManager>();
 
   final MatrixApiService _matrixApiService;
 

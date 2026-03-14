@@ -1,7 +1,7 @@
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
@@ -16,9 +16,7 @@ class SessionHelper {
     return;
   }
 
-  static Future<void> logoutAndDeleteAllInstanceData({
-    String? reason,
-  }) async {
+  static Future<void> logoutAndDeleteAllInstanceData({String? reason}) async {
     _log.info('Deleting all instance data...');
     await PupilIdentityHelper.deletePupilIdentitiesForEnv(
       di<EnvManager>().storageKeyForPupilIdentities,
@@ -33,12 +31,12 @@ class SessionHelper {
     await cacheManager.emptyCache();
 
     if (reason != null) {
-      di<NotificationService>().showInformationDialog(
+      di<NotificationManager>().showInformationDialog(
         NotificationType.warning,
         reason,
       );
     } else {
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         NotificationType.success,
         'Alle Daten gelöscht!',
       );

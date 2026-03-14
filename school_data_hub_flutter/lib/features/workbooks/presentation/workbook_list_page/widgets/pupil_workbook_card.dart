@@ -324,14 +324,15 @@ class PupilWorkbookCard extends WatchingWidget {
                         TextSpan(
                           children: [
                             const TextSpan(
-                              text: ' Kommentar: ',
+                              text: 'Kommentar: ',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             TextSpan(
-                              text: (thisPupilWorkbook.comment == null ||
+                              text:
+                                  (thisPupilWorkbook.comment == null ||
                                       thisPupilWorkbook.comment!.isEmpty)
                                   ? 'Kein Kommentar'
                                   : thisPupilWorkbook.comment!,

@@ -6,12 +6,12 @@ import 'package:gap/gap.dart';
 import 'package:isbn/isbn.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_infos_page/book_infos_page.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form/book_search_form_page.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_page/book_tag_management_controller.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_page/new_book_controller.dart';
@@ -292,7 +292,9 @@ Future<void> _showBookInfosDialog(
     final bookId = scannedLibraryId.replaceFirst('Buch ID: ', '').trim();
     if (context.mounted) {
       Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (ctx) => BookInfosPage(libraryId: bookId)),
+        MaterialPageRoute<void>(
+          builder: (ctx) => BookInfosPage(libraryId: bookId),
+        ),
       );
     }
   }
@@ -327,7 +329,7 @@ Future<void> _showNewBookDialog(
     );
     if (scannedIsbn == null) return;
     if (!Isbn().isIsbn13(scannedIsbn)) {
-      di<NotificationService>().showSnackBar(
+      di<NotificationManager>().showSnackBar(
         NotificationType.error,
         'Die gescannte ISBN ist ungültig: $scannedIsbn',
       );

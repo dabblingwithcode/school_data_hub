@@ -21,7 +21,7 @@ import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_m
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_filters.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_list_card.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/widgets/attendance_search_bar_stats.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_classes_badges_info_dialog.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_schoolday_badges_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
@@ -48,51 +48,29 @@ class AttendanceListPage extends WatchingWidget {
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: InkWell(
-          onTap: () async => AttendanceHelper.setThisDate(context, thisDate),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 5),
-                child: HubConnectionStateIndicator(),
+      appBar: GenericAppBar(
+        onTitleTap: () async => AttendanceHelper.setThisDate(context, thisDate),
+        titleWidget: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.today_rounded,
+              color: AttendanceHelper.schooldayIsToday(thisDate)
+                  ? const Color.fromARGB(255, 83, 196, 55)
+                  : Colors.white,
+              size: 30,
+            ),
+            const Gap(10),
+            Text(
+              '${thisDate.asWeekdayName(context)}, ${thisDate.formatDateForUser()}',
+              style: const TextStyle(
+                fontSize: 25,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
-              const HubApiRunningStateIndicator(),
-              Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.today_rounded,
-                          color: AttendanceHelper.schooldayIsToday(thisDate)
-                              ? const Color.fromARGB(255, 83, 196, 55)
-                              : Colors.white,
-                          size: 30,
-                        ),
-                        const Gap(10),
-                        Text(
-                          '${thisDate.asWeekdayName(context)}, ${thisDate.formatDateForUser()}',
-                          style: const TextStyle(
-                            fontSize: 25,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       body: RefreshIndicator(

@@ -4,11 +4,11 @@ import 'dart:math' as math;
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-final _notificationService = di<NotificationService>();
+final _notificationService = di<NotificationManager>();
 
 class EnvUtils {
   static Future<void> generateNewEnvKeys({

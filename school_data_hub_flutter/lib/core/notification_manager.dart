@@ -21,9 +21,9 @@ class NotificationData {
   });
 }
 
-final _log = Logger('NotificationService');
+final _log = Logger('NotificationManager');
 
-class NotificationService {
+class NotificationManager {
   final _notification = ValueNotifier<NotificationData>(
     const NotificationData(
       target: NotificationTarget.idle,
@@ -42,7 +42,7 @@ class NotificationService {
   ValueListenable<bool> get heavyLoading => _heavyLoading;
   int _heavyLoadingCounter = 0;
 
-  NotificationService();
+  NotificationManager();
 
   void showSnackBar(NotificationType type, String message) {
     switch (type) {

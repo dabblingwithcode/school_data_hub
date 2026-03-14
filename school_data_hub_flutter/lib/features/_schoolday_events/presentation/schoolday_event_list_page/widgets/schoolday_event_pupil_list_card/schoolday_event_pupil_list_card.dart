@@ -70,12 +70,17 @@ class SchooldayEventPupilListCard extends WatchingWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        CustomExpansionTileSwitch(
-                          includeSwitch: true,
-                          switchColor: AppColors.interactiveColor,
-                          customExpansionTileController: tileController,
-                          expansionSwitchWidget: SchooldayEventPupilStats(
-                            pupil: pupil,
+                        Flexible(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: CustomExpansionTileSwitch(
+                              includeSwitch: true,
+                              switchColor: AppColors.interactiveColor,
+                              customExpansionTileController: tileController,
+                              expansionSwitchWidget: SchooldayEventPupilStats(
+                                pupil: pupil,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -160,11 +165,14 @@ class _LastEventRow extends WatchingWidget {
         Text(schooldayEvents.isNotEmpty ? 'zuletzt:' : 'keine Ereignisse'),
         const Gap(10),
         if (schooldayEvents.isNotEmpty)
-          Text(
-            SchoolDayEventHelper.getLastSchoolEventDate(
-              schooldayEvents,
-            ).formatDateForUser(),
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          Flexible(
+            child: Text(
+              SchoolDayEventHelper.getLastSchoolEventDate(
+                schooldayEvents,
+              ).formatDateForUser(),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
       ],
     );

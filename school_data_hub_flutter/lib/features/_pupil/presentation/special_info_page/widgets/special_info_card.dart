@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
@@ -169,7 +169,7 @@ class _SpecialInfoContent extends WatchingWidget {
                 onTap: () async {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
-                    di<NotificationService>().showInformationDialog(
+                    di<NotificationManager>().showInformationDialog(
                       NotificationType.error,
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );
@@ -226,7 +226,7 @@ class _SpecialInfoContent extends WatchingWidget {
                 onTap: () async {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
-                    di<NotificationService>().showInformationDialog(
+                    di<NotificationManager>().showInformationDialog(
                       NotificationType.error,
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );
@@ -262,7 +262,7 @@ class _SpecialInfoContent extends WatchingWidget {
                 onTap: () async {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
-                    di<NotificationService>().showInformationDialog(
+                    di<NotificationManager>().showInformationDialog(
                       NotificationType.error,
                       'Nur Klassenleitungen und Admins können diese Informationen bearbeiten!',
                     );

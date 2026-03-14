@@ -12,9 +12,9 @@ import 'package:gap/gap.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:school_data_hub_flutter/common/services/notification_service.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
 
-final _notificationService = di<NotificationService>();
+final _notificationService = di<NotificationManager>();
 
 Future<void> showQrCode(String qr, BuildContext context) async {
   final qrImageKey = GlobalKey();
