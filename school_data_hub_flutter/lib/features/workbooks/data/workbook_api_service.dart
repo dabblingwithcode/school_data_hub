@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
@@ -50,9 +51,10 @@ class WorkbookApiService {
     if (result.cancelled || !result.success || result.path == null) {
       return null;
     }
+    debugPrint('updateWorkbookImage: isbn=$isbn path=${result.path}');
     return await ClientHelper.apiCall(
       call: () => _client.workbooks.updateWorkbookImage(isbn, result.path!),
-      errorMessage: 'Das Bild konnte nicht aktualisiert werden',
+      errorMessage: 'Das Bild konnte nicht aktualisiert werden (isbn=$isbn)',
     );
   }
 

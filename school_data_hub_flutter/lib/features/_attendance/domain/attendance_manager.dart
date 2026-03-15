@@ -130,7 +130,7 @@ class AttendanceManager with ChangeNotifier {
       fetchAllPupilMissedSchooldayes();
       return;
     }
-    final date = responseMissedSchoolday.schoolday!.schoolday;
+
     final pupilId = responseMissedSchoolday.pupilId;
 
     if (!_pupilMissedSchooldaysMap.containsKey(pupilId)) {

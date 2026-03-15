@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
@@ -124,14 +125,23 @@ class ToolsPage extends WatchingWidget {
         iconData: Icons.build_rounded,
         title: 'Tools',
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Wrap(
-              alignment: WrapAlignment.center,
-              children: [
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = Platform.isWindows
+              ? 700.0
+              : math.min(600.0, constraints.maxWidth);
+          final height = Platform.isWindows
+              ? 600.0
+              : constraints.maxHeight * 0.9;
+          return Center(
+            child: SizedBox(
+              width: width,
+              height: height,
+              child: SingleChildScrollView(
+                physics: const ScrollPhysics(),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
                 // --- Schüler-Ids ---
                 MainMenuButton(
                   onTap: () => _showSectionOverlay(
@@ -505,6 +515,8 @@ class ToolsPage extends WatchingWidget {
             ),
           ),
         ),
+      );
+        },
       ),
     );
   }

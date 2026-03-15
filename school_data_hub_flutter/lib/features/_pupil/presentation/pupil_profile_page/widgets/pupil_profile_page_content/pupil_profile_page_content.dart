@@ -59,25 +59,22 @@ class _PupilProfilePageContentState extends State<PupilProfilePageContent> {
 
     return Container(
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 4, right: 4, bottom: 10),
-        child: PageView(
-          controller: _pageController,
-          onPageChanged: (index) =>
-              di<BottomNavManager>().setPupilProfileNavPage(index),
-          children: const [
-            _ProfilePageWrapper(childBuilder: _ProfilePageChild.info),
-            _ProfilePageWrapper(childBuilder: _ProfilePageChild.language),
-            _ProfilePageWrapper(childBuilder: _ProfilePageChild.credit),
-            _ProfilePageWrapper(childBuilder: _ProfilePageChild.attendance),
-            _ProfilePageWrapper(childBuilder: _ProfilePageChild.schoolday),
-            _ProfilePageWrapper(childBuilder: _ProfilePageChild.ogs),
-            _ProfilePageWrapper(childBuilder: _ProfilePageChild.lists),
-            _ProfilePageWrapper(childBuilder: _ProfilePageChild.auth),
-            _ProfilePageWrapper(childBuilder: _ProfilePageChild.learningSup),
-            _ProfilePageWrapper(childBuilder: _ProfilePageChild.learning),
-          ],
-        ),
+      child: PageView(
+        controller: _pageController,
+        onPageChanged: (index) =>
+            di<BottomNavManager>().setPupilProfileNavPage(index),
+        children: const [
+          _ProfilePageWrapper(childBuilder: _ProfilePageChild.info),
+          _ProfilePageWrapper(childBuilder: _ProfilePageChild.language),
+          _ProfilePageWrapper(childBuilder: _ProfilePageChild.credit),
+          _ProfilePageWrapper(childBuilder: _ProfilePageChild.attendance),
+          _ProfilePageWrapper(childBuilder: _ProfilePageChild.schoolday),
+          _ProfilePageWrapper(childBuilder: _ProfilePageChild.ogs),
+          _ProfilePageWrapper(childBuilder: _ProfilePageChild.lists),
+          _ProfilePageWrapper(childBuilder: _ProfilePageChild.auth),
+          _ProfilePageWrapper(childBuilder: _ProfilePageChild.learningSup),
+          _ProfilePageWrapper(childBuilder: _ProfilePageChild.learning),
+        ],
       ),
     );
   }

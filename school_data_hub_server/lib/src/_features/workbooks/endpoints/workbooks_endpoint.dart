@@ -59,16 +59,27 @@ class WorkbooksEndpoint extends Endpoint {
     int isbn,
     String imageUrl,
   ) async {
-    final workbook = await Workbook.db.findFirstRow(
-      session,
-      where: (t) => t.isbn.equals(isbn),
-    );
-    if (workbook == null) {
-      throw Exception('Workbook with isbn $isbn does not exist.');
+    session.log('updateWorkbookImage: isbn=$isbn imageUrl=$imageUrl');
+    try {
+      final workbook = await Workbook.db.findFirstRow(
+        session,
+        where: (t) => t.isbn.equals(isbn),
+      );
+      if (workbook == null) {
+        session.log('updateWorkbookImage: workbook not found for isbn=$isbn',
+            level: LogLevel.error);
+        throw Exception('Workbook with isbn $isbn does not exist.');
+      }
+      session.log('updateWorkbookImage: found workbook id=${workbook.id}');
+      workbook.imageUrl = imageUrl;
+      final updatedWorkbook = await Workbook.db.updateRow(session, workbook);
+      session.log('updateWorkbookImage: updated successfully');
+      return updatedWorkbook;
+    } catch (e, st) {
+      session.log('updateWorkbookImage: FAILED $e\n$st',
+          level: LogLevel.error);
+      rethrow;
     }
-    workbook.imageUrl = imageUrl;
-    final updatedWorkbook = await Workbook.db.updateRow(session, workbook);
-    return updatedWorkbook;
   }
 
   Future<Workbook> deleteWorkbookImage(

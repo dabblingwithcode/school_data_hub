@@ -30,19 +30,13 @@ class PupilWorkbookCard extends WatchingWidget {
   final PupilWorkbook pupilWorkbook;
   final int pupilId;
 
-  void onChangedGrowthDropdown(int value) {
-    di<PupilWorkbookManager>().updatePupilWorkbook(
-      pupilWorkbook: pupilWorkbook,
-      score: value,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final Workbook workbook = pupilWorkbook.workbook!;
+    final manager = di<PupilWorkbookManager>();
     final pupilWorkbooks = watchPropertyValue(
-      (value) => di<PupilWorkbookManager>().getPupilWorkbooks(pupilId),
-      target: PupilWorkbookManager(),
+      (value) => manager.getPupilWorkbooks(pupilId),
+      target: manager,
     );
     final PupilWorkbook thisPupilWorkbook = pupilWorkbooks.firstWhere(
       (pupilWorkbook) => pupilWorkbook.id == this.pupilWorkbook.id,
@@ -282,8 +276,12 @@ class PupilWorkbookCard extends WatchingWidget {
                                           () {}, // Absorb tap to prevent parent InkWell activation
                                       child: GrowthDropdown(
                                         dropdownValue: thisPupilWorkbook.score,
-                                        onChangedFunction:
-                                            onChangedGrowthDropdown,
+                                        onChangedFunction: (value) {
+                                          manager.updatePupilWorkbook(
+                                            pupilWorkbook: thisPupilWorkbook,
+                                            score: value,
+                                          );
+                                        },
                                       ),
                                     ),
                                   ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
@@ -11,9 +12,25 @@ import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/features/learning/services/pdf/competence_report_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
+
+/// Returns the checks for [pupilId] in the current semester from [reportsByPupil].
+/// Returns null if no report exists for the current semester.
+({CompetenceReport report, List<CompetenceReportCheck> checks})?
+_currentReportAndChecks(
+  Map<int, List<CompetenceReport>> reportsByPupil,
+  int pupilId,
+) {
+  final currentSchoolSemester =
+      di<SchoolCalendarManager>().currentSemester.value;
+  final reports = reportsByPupil[pupilId] ?? [];
+  final report = reports.firstWhereOrNull(
+    (r) => r.schoolSemesterId == currentSchoolSemester!.id,
+  );
+  if (report == null) return null;
+  return (report: report, checks: report.competenceReportChecks ?? []);
+}
 
 class PupilLearningContentCompetenceReports extends WatchingWidget {
   final PupilProxy pupil;
@@ -22,24 +39,18 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final reportManager = di<CompetenceReportManager>();
-    final currentSchoolSemester =
-        di<SchoolCalendarManager>().currentSemester.value;
 
-    // Ensure reports are fetched when this tab is shown (parent card may have
-    // triggered fetch earlier but it's async; calling here guarantees we
-    // request and then rebuild when reportsByPupil updates).
     callOnce((_) => reportManager.fetchReportsForPupil(pupil.pupilId));
 
     final reportsByPupil = watchValue(
       (CompetenceReportManager m) => m.reportsByPupil,
     );
-    final reports = reportsByPupil[pupil.pupilId] ?? [];
-    final report = reports.firstWhereOrNull(
-      (report) => report.schoolSemesterId == currentSchoolSemester!.id,
-    );
-    if (report == null) {
+
+    final result = _currentReportAndChecks(reportsByPupil, pupil.pupilId);
+    if (result == null) {
       return const Text('Kein Zeugnis für das aktuelle Semester vorhanden');
     }
+    final report = result.report;
     final reportItems = CompetenceReportItemHelper.getReportItemsForReport(
       report,
     );
@@ -48,8 +59,6 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
         'Keine Zeugniskompetenzen für das aktuelle Semester vorhanden',
       );
     }
-
-    final checks = report.competenceReportChecks ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,10 +89,8 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
           items: reportItems,
           parentId: null,
           isFirstLevel: true,
-          checks: checks,
           pupilId: pupil.pupilId,
           reportId: report.id!,
-          reportManager: reportManager,
         ),
       ],
     );
@@ -94,19 +101,15 @@ class _ReportCheckTree extends StatelessWidget {
   final List<CompetenceReportItem> items;
   final int? parentId;
   final bool isFirstLevel;
-  final List<CompetenceReportCheck> checks;
   final int pupilId;
   final int reportId;
-  final CompetenceReportManager reportManager;
 
   const _ReportCheckTree({
     required this.items,
     required this.parentId,
     this.isFirstLevel = false,
-    required this.checks,
     required this.pupilId,
     required this.reportId,
-    required this.reportManager,
   });
 
   @override
@@ -129,19 +132,15 @@ class _ReportCheckTree extends StatelessWidget {
             _FirstLevelBranchNode(
               item: item,
               items: items,
-              checks: checks,
               pupilId: pupilId,
               reportId: reportId,
-              reportManager: reportManager,
             )
           else
             _ReportCheckNode(
               item: item,
               allItems: items,
-              checks: checks,
               pupilId: pupilId,
               reportId: reportId,
-              reportManager: reportManager,
             ),
         ],
       ],
@@ -171,24 +170,28 @@ int _countChecksUnderBranch(
 class _FirstLevelBranchNode extends WatchingWidget {
   final CompetenceReportItem item;
   final List<CompetenceReportItem> items;
-  final List<CompetenceReportCheck> checks;
   final int pupilId;
   final int reportId;
-  final CompetenceReportManager reportManager;
 
   const _FirstLevelBranchNode({
     required this.item,
     required this.items,
-    required this.checks,
     required this.pupilId,
     required this.reportId,
-    required this.reportManager,
   });
 
   @override
   Widget build(BuildContext context) {
     final tileController = createOnce(() => CustomExpansionTileController());
     final color = AppColors.interactiveColor;
+
+    // Watch reportsByPupil directly so this widget reacts to stream updates.
+    final reportsByPupil = watchValue(
+      (CompetenceReportManager m) => m.reportsByPupil,
+    );
+    final result = _currentReportAndChecks(reportsByPupil, pupilId);
+    final checks = result?.checks ?? [];
+
     final totalChecks = _countChecksUnderBranch(item.publicId, items, checks);
     final initial = item.name.isNotEmpty ? item.name[0].toUpperCase() : '';
 
@@ -267,10 +270,8 @@ class _FirstLevelBranchNode extends WatchingWidget {
                   items: items,
                   parentId: item.publicId,
                   isFirstLevel: false,
-                  checks: checks,
                   pupilId: pupilId,
                   reportId: reportId,
-                  reportManager: reportManager,
                 ),
               ),
             ],
@@ -281,25 +282,27 @@ class _FirstLevelBranchNode extends WatchingWidget {
   }
 }
 
-class _ReportCheckNode extends StatelessWidget {
+class _ReportCheckNode extends WatchingWidget {
   final CompetenceReportItem item;
   final List<CompetenceReportItem> allItems;
-  final List<CompetenceReportCheck> checks;
   final int pupilId;
   final int reportId;
-  final CompetenceReportManager reportManager;
 
   const _ReportCheckNode({
     required this.item,
     required this.allItems,
-    required this.checks,
     required this.pupilId,
     required this.reportId,
-    required this.reportManager,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Watch MUST be called unconditionally (before any early return)
+    // so that WatchingWidget always registers the listener.
+    final reportsByPupil = watchValue(
+      (CompetenceReportManager m) => m.reportsByPupil,
+    );
+
     final hasChildren = allItems.any((i) => i.parentItem == item.publicId);
 
     if (hasChildren) {
@@ -318,16 +321,18 @@ class _ReportCheckNode extends StatelessWidget {
                 items: allItems,
                 parentId: item.publicId,
                 isFirstLevel: false,
-                checks: checks,
                 pupilId: pupilId,
                 reportId: reportId,
-                reportManager: reportManager,
               ),
             ),
           ],
         ),
       );
     }
+
+    final result = _currentReportAndChecks(reportsByPupil, pupilId);
+    final checks = result?.checks ?? [];
+    final reportManager = di<CompetenceReportManager>();
 
     final check = checks.firstWhereOrNull(
       (c) => c.competenceId == item.publicId,

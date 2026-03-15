@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/data/competence_report_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/data/competence_report_check_api_service.dart';
+
+final _log = Logger('CompetenceReportManager');
 
 class CompetenceReportManager {
   final _reportApiService = CompetenceReportApiService();
@@ -35,8 +38,15 @@ class CompetenceReportManager {
 
   void _onHubEvent(dynamic event) {
     if (event is CompetenceReport) {
+      _log.info('Stream: CompetenceReport pupilId=${event.pupilId}');
       upsertReportFromStream(event);
     } else if (event is CompetenceReportCheck) {
+      _log.info(
+        'Stream: CompetenceReportCheck pupilId=${event.pupilId} '
+        'reportId=${event.competenceReportId} '
+        'competenceId=${event.competenceId} '
+        'achievement=${event.achievement}',
+      );
       upsertCheckFromStream(event);
     } else if (event is HubDeleteEvent) {
       if (event.objectType == HubObjectType.competenceReport) {
@@ -76,19 +86,42 @@ class CompetenceReportManager {
   }
 
   void upsertCheckFromStream(CompetenceReportCheck check) {
-    final map = _reportsByPupil.value;
-    final list = map[check.pupilId];
-    if (list == null || list.isEmpty) {
+    final map = Map<int, List<CompetenceReport>>.from(_reportsByPupil.value);
+
+    // Find the report by competenceReportId across ALL loaded pupils.
+    // check.pupilId may differ from the report's pupilId (the report owns
+    // the canonical pupil association).
+    int? ownerPupilId;
+    List<CompetenceReport>? list;
+    int reportIndex = -1;
+    for (final entry in map.entries) {
+      final idx = entry.value.indexWhere(
+        (r) => r.id == check.competenceReportId,
+      );
+      if (idx != -1) {
+        ownerPupilId = entry.key;
+        list = entry.value;
+        reportIndex = idx;
+        break;
+      }
+    }
+
+    if (list == null || reportIndex == -1) {
+      _log.warning(
+        'upsertCheck: report id=${check.competenceReportId} not found '
+        'in any loaded pupil (check.pupilId=${check.pupilId}, '
+        'loaded pupils: ${map.keys.toList()}) — fetching',
+      );
+      // Fall back to fetching by the report's pupil — try check.pupilId as
+      // best guess, but it may be wrong.
       fetchReportsForPupil(check.pupilId);
       return;
     }
-    final reportIndex = list.indexWhere(
-      (r) => r.id == check.competenceReportId,
+
+    _log.info(
+      'upsertCheck: found report id=${check.competenceReportId} '
+      'under pupilId=$ownerPupilId',
     );
-    if (reportIndex == -1) {
-      fetchReportsForPupil(check.pupilId);
-      return;
-    }
     final report = list[reportIndex];
     final checks = List<CompetenceReportCheck>.from(
       report.competenceReportChecks ?? [],
@@ -107,7 +140,11 @@ class CompetenceReportManager {
     final newList = List<CompetenceReport>.from(list);
     newList[reportIndex] = updatedReport;
     final newMap = Map<int, List<CompetenceReport>>.from(map);
-    newMap[check.pupilId] = newList;
+    newMap[ownerPupilId!] = newList;
+    _log.info(
+      'upsertCheck: applied check competenceId=${check.competenceId} '
+      'achievement=${check.achievement} — notifying listeners',
+    );
     _reportsByPupil.value = newMap;
   }
 
@@ -158,11 +195,22 @@ class CompetenceReportManager {
   }
 
   Future<void> fetchReportsForPupil(int pupilId) async {
+    _log.info('fetchReportsForPupil: pupilId=$pupilId');
     final reports = await _reportApiService.fetchCompetenceReports(pupilId);
     if (reports != null) {
+      final totalChecks = reports.fold<int>(
+        0,
+        (sum, r) => sum + (r.competenceReportChecks?.length ?? 0),
+      );
+      _log.info(
+        'fetchReportsForPupil: got ${reports.length} reports, '
+        '$totalChecks checks — notifying',
+      );
       final map = Map<int, List<CompetenceReport>>.from(_reportsByPupil.value);
       map[pupilId] = reports;
       _reportsByPupil.value = map;
+    } else {
+      _log.warning('fetchReportsForPupil: API returned null for pupilId=$pupilId');
     }
   }
 
