@@ -30,28 +30,28 @@ class PupilProfilePage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: NestedScrollView(
+                      physics: const BouncingScrollPhysics(
+                        decelerationRate: ScrollDecelerationRate.fast,
+                      ),
                       headerSliverBuilder: (context, innerBoxIsScrolled) => [
                         SliverAppBar(
                           systemOverlayStyle: SystemUiOverlayStyle(
                             statusBarColor:
                                 AppColors.pupilProfileBackgroundColor,
                           ),
-                          pinned: false,
+                          pinned: true,
                           floating: true,
+                          snap: true,
                           scrolledUnderElevation: null,
                           automaticallyImplyLeading: false,
                           leading: null,
                           backgroundColor:
                               AppColors.pupilProfileBackgroundColor,
-                          collapsedHeight: 120,
+                          toolbarHeight: 60,
                           expandedHeight: 120,
                           stretch: false,
                           elevation: 0,
-                          flexibleSpace: FlexibleSpaceBar(
-                            expandedTitleScale: 1,
-                            collapseMode: CollapseMode.none,
-                            background: PupilProfileHeadingCard(pupil: pupil),
-                          ),
+                          flexibleSpace: PupilProfileHeadingCard(pupil: pupil),
                         ),
                       ],
                       body: PupilProfilePageContent(pupil: pupil),

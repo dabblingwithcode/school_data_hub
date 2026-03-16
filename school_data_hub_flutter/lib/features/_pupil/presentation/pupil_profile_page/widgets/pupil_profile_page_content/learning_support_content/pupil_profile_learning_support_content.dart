@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/pupil_profile_learning_support_content_list.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/learning_support_list_page.dart';
 
 class PupilProfileLearningSupportContent extends StatelessWidget {
   final PupilProxy pupil;
@@ -11,27 +10,17 @@ class PupilProfileLearningSupportContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            PupilProfileContentSection(
-              icon: Icons.support_rounded,
-            title: 'Förderung',
-            onTitleTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => const LearningSupportListPage(),
-                ),
-              );
-            },
-            child: PupilProfileLearningSupportContentList(pupil: pupil),
+    return PupilProfileContentCard(
+      icon: Icons.support_rounded,
+      title: 'Förderung',
+      onTitleTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (ctx) => const LearningSupportListPage(),
           ),
-          ],
-        ),
-      ),
+        );
+      },
+      child: PupilProfileLearningSupportContentList(pupil: pupil),
     );
   }
 }

@@ -27,203 +27,190 @@ class PupilProfileCommunicationContent extends WatchingWidget {
     );
     final tutorInfo = watchPropertyValue((m) => m.tutorInfo, target: pupil);
 
-    return Container(
-      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(5),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Language Information Section
-            PupilProfileContentSection(
-              icon: Icons.translate_rounded,
-              title: 'Sprachinformationen',
-              child: Column(
-                children: [
-                  PupilProfileContentRow(
-                    icon: Icons.home_outlined,
-                    label: 'Familiensprache',
-                    value: pupil.language,
+    return PupilProfileContentCard(
+      icon: Icons.translate_rounded,
+      title: 'Sprache & Kommunikation',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Language Information
+          PupilProfileContentRow(
+            icon: Icons.home_outlined,
+            label: 'Familiensprache',
+            value: pupil.language,
+          ),
+          const Gap(8),
+          PupilProfileContentRow(
+            icon: Icons.person_outline,
+            label: 'Migrationshintergrund',
+            value: pupil.migrationBackground ? 'Ja' : 'Nein',
+          ),
+          const Gap(8),
+          PupilProfileContentRow(
+            icon: Icons.person_outline,
+            label: 'Staatsangehörigkeit',
+            value: pupil.nationality ?? 'Kein Eintrag',
+          ),
+          const Gap(8),
+          PupilProfileContentRow(
+            icon: Icons.support_outlined,
+            label: 'Erstförderung',
+            value: pupil.migrationSupportEnds != null
+                ? 'bis : ${pupil.migrationSupportEnds!.formatDateForUser()}'
+                : 'keine',
+          ),
+          const Gap(8),
+          PupilProfileContentRow(
+            icon: Icons.support_outlined,
+            label: 'HKU',
+            value: pupil.familyLanguageLessonsSince != null
+                ? 'seit ${pupil.familyLanguageLessonsSince!.formatDateForUser()}'
+                : 'nein',
+          ),
+          const Gap(16),
+          // German Language Competence
+          PupilProfileContentHeader(
+            icon: Icons.record_voice_over_outlined,
+            title: 'Sprachkompetenz',
+          ),
+          const Gap(8),
+          PupilProfileContentRow(
+            icon: Icons.person_outline,
+            label: 'Kind',
+            valueWidget: communicationPupil == null
+                ? Text(
+                    'kein Eintrag - tippen zum Hinzufügen',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      color: AppColors.interactiveColor,
+                    ),
+                  )
+                : CommunicationValues(
+                    communicationSkills: communicationPupil,
                   ),
-                  const Gap(8),
-                  PupilProfileContentRow(
-                    icon: Icons.person_outline,
-                    label: 'Migrationshintergrund',
-                    value: pupil.migrationBackground ? 'Ja' : 'Nein',
-                  ),
-                  const Gap(8),
-                  PupilProfileContentRow(
-                    icon: Icons.person_outline,
-                    label: 'Staatsangehörigkeit',
-                    value: pupil.nationality ?? 'Kein Eintrag',
-                  ),
-                  const Gap(8),
-                  PupilProfileContentRow(
-                    icon: Icons.support_outlined,
-                    label: 'Erstförderung',
-                    value: pupil.migrationSupportEnds != null
-                        ? 'bis : ${pupil.migrationSupportEnds!.formatDateForUser()}'
-                        : 'keine',
-                  ),
-                  const Gap(8),
-                  PupilProfileContentRow(
-                    icon: Icons.support_outlined,
-                    label: 'HKU',
-                    value: pupil.familyLanguageLessonsSince != null
-                        ? 'seit ${pupil.familyLanguageLessonsSince!.formatDateForUser()}'
-                        : 'nein',
-                  ),
-                ],
-              ),
+            onTap: () => languageDialog(
+              context,
+              pupil,
+              CommunicationSubject.pupil,
             ),
-            const Gap(10),
-            // German Language Competence Section
-            PupilProfileContentSection(
-              icon: Icons.record_voice_over_outlined,
-              title: 'Deutsch - Sprachkompetenz',
-              child: Column(
-                children: [
-                  PupilProfileContentRow(
-                    icon: Icons.person_outline,
-                    label: 'Kind',
-                    valueWidget: communicationPupil == null
-                        ? Text(
-                            'kein Eintrag - tippen zum Hinzufügen',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontStyle: FontStyle.italic,
-                              color: AppColors.interactiveColor,
-                            ),
-                          )
-                        : CommunicationValues(
-                            communicationSkills: communicationPupil,
-                          ),
-                    onTap: () => languageDialog(
-                      context,
-                      pupil,
-                      CommunicationSubject.pupil,
+            onLongPress: () async {
+              if (hubSessionManager.isAdmin == false) {
+                informationDialog(
+                  context,
+                  'Keine Berechtigung',
+                  'Diese Aktion ist nur für Admins verfügbar.',
+                );
+                return;
+              }
+              final confirm = await confirmationDialog(
+                context: context,
+                title: 'Eintrag zurücksetzen',
+                message: 'Eintrag zurücksetzen?',
+              );
+              if (confirm == true) {
+                PupilMutator().updatePupilCommunicationSkills(
+                  pupilId: pupil.pupilId,
+                  communicationSkills: null,
+                );
+              }
+            },
+          ),
+          const Gap(10),
+          PupilProfileContentRow(
+            icon: Icons.person_outline,
+            label: 'Mutter / TutorIn 1',
+            valueWidget: tutorInfo?.communicationTutor1 == null
+                ? Text(
+                    'kein Eintrag - tippen zum Hinzufügen',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      color: AppColors.interactiveColor,
                     ),
-                    onLongPress: () async {
-                      if (hubSessionManager.isAdmin == false) {
-                        informationDialog(
-                          context,
-                          'Keine Berechtigung',
-                          'Diese Aktion ist nur für Admins verfügbar.',
-                        );
-                        return;
-                      }
-                      final confirm = await confirmationDialog(
-                        context: context,
-                        title: 'Eintrag zurücksetzen',
-                        message: 'Eintrag zurücksetzen?',
-                      );
-                      if (confirm == true) {
-                        PupilMutator().updatePupilCommunicationSkills(
-                          pupilId: pupil.pupilId,
-                          communicationSkills: null,
-                        );
-                      }
-                    },
+                  )
+                : CommunicationValues(
+                    communicationSkills: tutorInfo!.communicationTutor1,
                   ),
-                  const Gap(10),
-                  PupilProfileContentRow(
-                    icon: Icons.person_outline,
-                    label: 'Mutter / TutorIn 1',
-                    valueWidget: tutorInfo?.communicationTutor1 == null
-                        ? Text(
-                            'kein Eintrag - tippen zum Hinzufügen',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontStyle: FontStyle.italic,
-                              color: AppColors.interactiveColor,
-                            ),
-                          )
-                        : CommunicationValues(
-                            communicationSkills: tutorInfo!.communicationTutor1,
-                          ),
-                    onTap: () => languageDialog(
-                      context,
-                      pupil,
-                      CommunicationSubject.tutor1,
-                    ),
-                    onLongPress: () async {
-                      final isAdmin = hubSessionManager.isAdmin;
-                      if (!isAdmin) {
-                        informationDialog(
-                          context,
-                          'Keine Berechtigung',
-                          'Diese Aktion ist nur für Admins verfügbar.',
-                        );
-                        return;
-                      }
-                      final success = await confirmationDialog(
-                        context: context,
-                        title: 'Eintrag zurücksetzen',
-                        message: 'Eintrag zurücksetzen?',
-                      );
-                      if (success == true) {
-                        PupilMutator().updateTutorInfo(
-                          pupilId: pupil.pupilId,
-                          tutorInfo: tutorInfo?.copyWith(
-                            communicationTutor1: null,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  const Gap(10),
-                  PupilProfileContentRow(
-                    icon: Icons.person_outline,
-                    label: 'Vater / TutorIn 2',
-                    valueWidget: tutorInfo?.communicationTutor2 == null
-                        ? Text(
-                            'kein Eintrag - tippen zum Hinzufügen',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontStyle: FontStyle.italic,
-                              color: AppColors.interactiveColor,
-                            ),
-                          )
-                        : CommunicationValues(
-                            communicationSkills: tutorInfo!.communicationTutor2,
-                          ),
-                    onTap: () => languageDialog(
-                      context,
-                      pupil,
-                      CommunicationSubject.tutor2,
-                    ),
-                    onLongPress: () async {
-                      final isAdmin = hubSessionManager.isAdmin;
-                      if (!isAdmin) {
-                        informationDialog(
-                          context,
-                          'Keine Berechtigung',
-                          'Diese Aktion ist nur für Admins verfügbar.',
-                        );
-                        return;
-                      }
-                      final success = await confirmationDialog(
-                        context: context,
-                        title: 'Eintrag zurücksetzen',
-                        message: 'Eintrag zurücksetzen?',
-                      );
-                      if (success == true) {
-                        PupilMutator().updateTutorInfo(
-                          pupilId: pupil.pupilId,
-                          tutorInfo: tutorInfo != null
-                              ? tutorInfo.copyWith(communicationTutor2: null)
-                              : TutorInfo(
-                                  createdBy: hubSessionManager.userName!,
-                                ),
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
+            onTap: () => languageDialog(
+              context,
+              pupil,
+              CommunicationSubject.tutor1,
             ),
-          ],
-        ),
+            onLongPress: () async {
+              final isAdmin = hubSessionManager.isAdmin;
+              if (!isAdmin) {
+                informationDialog(
+                  context,
+                  'Keine Berechtigung',
+                  'Diese Aktion ist nur für Admins verfügbar.',
+                );
+                return;
+              }
+              final success = await confirmationDialog(
+                context: context,
+                title: 'Eintrag zurücksetzen',
+                message: 'Eintrag zurücksetzen?',
+              );
+              if (success == true) {
+                PupilMutator().updateTutorInfo(
+                  pupilId: pupil.pupilId,
+                  tutorInfo: tutorInfo?.copyWith(
+                    communicationTutor1: null,
+                  ),
+                );
+              }
+            },
+          ),
+          const Gap(10),
+          PupilProfileContentRow(
+            icon: Icons.person_outline,
+            label: 'Vater / TutorIn 2',
+            valueWidget: tutorInfo?.communicationTutor2 == null
+                ? Text(
+                    'kein Eintrag - tippen zum Hinzufügen',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      color: AppColors.interactiveColor,
+                    ),
+                  )
+                : CommunicationValues(
+                    communicationSkills: tutorInfo!.communicationTutor2,
+                  ),
+            onTap: () => languageDialog(
+              context,
+              pupil,
+              CommunicationSubject.tutor2,
+            ),
+            onLongPress: () async {
+              final isAdmin = hubSessionManager.isAdmin;
+              if (!isAdmin) {
+                informationDialog(
+                  context,
+                  'Keine Berechtigung',
+                  'Diese Aktion ist nur für Admins verfügbar.',
+                );
+                return;
+              }
+              final success = await confirmationDialog(
+                context: context,
+                title: 'Eintrag zurücksetzen',
+                message: 'Eintrag zurücksetzen?',
+              );
+              if (success == true) {
+                PupilMutator().updateTutorInfo(
+                  pupilId: pupil.pupilId,
+                  tutorInfo: tutorInfo != null
+                      ? tutorInfo.copyWith(communicationTutor2: null)
+                      : TutorInfo(
+                          createdBy: hubSessionManager.userName!,
+                        ),
+                );
+              }
+            },
+          ),
+        ],
       ),
     );
   }

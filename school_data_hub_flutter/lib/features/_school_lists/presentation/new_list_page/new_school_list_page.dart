@@ -245,7 +245,7 @@ class NewSchoolListPage extends WatchingWidget {
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: AppColors
-                                                          .schoolyearColor,
+                                                          .schoolGradeColor,
                                                       fontSize: 18,
                                                     ),
                                                   ),

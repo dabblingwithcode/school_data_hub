@@ -521,9 +521,9 @@ class AppColors {
   }
 
   //- text colors
-  static Color get ogsColor => palette.ogsColor;
+  static Color get afterSchoolCardeColor => palette.ogsColor;
   static Color get groupColor => palette.groupColor;
-  static Color get schoolyearColor => palette.schoolyearColor;
+  static Color get schoolGradeColor => palette.schoolyearColor;
 
   //- snackbars
 

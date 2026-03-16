@@ -59,6 +59,7 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
         );
       },
       child: Card(
+        color: AppColors.cardInCardColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -181,7 +182,8 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                             ),
                           ),
                           TextSpan(
-                            text: (pupilListEntry.comment == null ||
+                            text:
+                                (pupilListEntry.comment == null ||
                                     pupilListEntry.comment!.isEmpty)
                                 ? 'Kein Kommentar'
                                 : pupilListEntry.comment!,

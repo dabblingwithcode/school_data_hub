@@ -87,62 +87,63 @@ class AvatarImage extends WatchingWidget {
         width: size,
         height: size,
         child: Center(
-        child: avatar != null
-            ? WidgetZoom(
-                heroAnimationTag:
-                    heroTag ?? '${avatar.documentId}_${pupil.pupilId}',
-                zoomWidget: SizedBox(
-                  width: size,
-                  height: size,
-                  child: FutureBuilder<Widget>(
-                    future: getImageCachedOrDownload(
-                      documentId: avatar.documentId,
-                      decrypt: true,
-                    ),
-                    builder: (context, snapshot) {
-                      Widget child;
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        child = CircularProgressIndicator(
-                          strokeWidth: 8,
-                          color: AppColors.backgroundColor,
-                        );
-                      } else if (snapshot.hasError) {
-                        child = Text('Error: ${snapshot.error}');
-                      } else {
-                        child = snapshot.data!;
-                      }
-                      return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: ClipOval(child: child),
-                      );
-                    },
-                  ),
-                ),
-              )
-            : Container(
-                width: size,
-                height: size,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(size / 2),
-                  // border: Border.all(
-                  //   color: avatarAuth
-                  //       ? const Color.fromARGB(255, 29, 221, 35)
-                  //       : const Color.fromARGB(255, 255, 228, 20),
-                  //   width: 3,
-                  // ),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(size / 2),
-                  child: Image.asset(
-                    avatarAuth
-                        ? 'assets/dummy-profile-pic-auth.png'
-                        : 'assets/dummy-profile-pic-unauth.png',
+          child: avatar != null
+              ? WidgetZoom(
+                  heroAnimationTag:
+                      heroTag ?? '${avatar.documentId}_${pupil.pupilId}',
+                  zoomWidget: SizedBox(
                     width: size,
                     height: size,
-                    fit: BoxFit.cover,
+                    child: FutureBuilder<Widget>(
+                      future: getImageCachedOrDownload(
+                        documentId: avatar.documentId,
+                        decrypt: true,
+                      ),
+                      builder: (context, snapshot) {
+                        Widget child;
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          child = CircularProgressIndicator(
+                            strokeWidth: 8,
+                            color: AppColors.backgroundColor,
+                          );
+                        } else if (snapshot.hasError) {
+                          child = Text('Error: ${snapshot.error}');
+                        } else {
+                          child = snapshot.data!;
+                        }
+                        return AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: ClipOval(child: child),
+                        );
+                      },
+                    ),
+                  ),
+                )
+              : Container(
+                  width: size,
+                  height: size,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(size / 2),
+                    // border: Border.all(
+                    //   color: avatarAuth
+                    //       ? const Color.fromARGB(255, 29, 221, 35)
+                    //       : const Color.fromARGB(255, 255, 228, 20),
+                    //   width: 3,
+                    // ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(size / 2),
+                    child: Image.asset(
+                      avatarAuth
+                          ? 'assets/dummy-profile-pic-auth.png'
+                          : 'assets/dummy-profile-pic-unauth.png',
+                      width: size,
+                      height: size,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
         ),
       ),
     );
@@ -156,6 +157,7 @@ class SchoolGradeBadgeContainer extends WatchingWidget {
   final double badgeSize;
 
   const SchoolGradeBadgeContainer({
+    super.key,
     required this.pupil,
     required this.badgeSize,
   });
@@ -170,15 +172,15 @@ class SchoolGradeBadgeContainer extends WatchingWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        border: pupil.schoolyearHeldBackAt != null
-            ? Border.all(
-                color: const Color.fromARGB(255, 250, 197, 98),
-                width: 3,
-              )
-            : null,
+        border: Border.all(
+          color: pupil.schoolyearHeldBackAt != null
+              ? const Color.fromARGB(255, 250, 197, 98)
+              : AppColors.schoolGradeColor,
+          width: 3,
+        ),
         color: SchoolDayEventHelper.pupilIsAdmonishedToday(pupil)
             ? Colors.red
-            : AppColors.schoolyearColor,
+            : AppColors.schoolGradeColor,
         shape: BoxShape.circle,
       ),
       child: Center(
@@ -201,7 +203,11 @@ class GroupBadgeContainer extends WatchingWidget {
   final PupilProxy pupil;
   final double badgeSize;
 
-  const GroupBadgeContainer({required this.pupil, required this.badgeSize});
+  const GroupBadgeContainer({
+    super.key,
+    required this.pupil,
+    required this.badgeSize,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -213,12 +219,12 @@ class GroupBadgeContainer extends WatchingWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        border: pupil.siblingIds.isNotEmpty
-            ? Border.all(
-                color: const Color.fromARGB(255, 120, 127, 216),
-                width: 3,
-              )
-            : null,
+        border: Border.all(
+          color: pupil.siblingIds.isNotEmpty
+              ? const Color.fromARGB(255, 120, 127, 216)
+              : AppColors.groupColor,
+          width: 3,
+        ),
         color: AttendanceHelper.pupilIsMissedToday(pupil)
             ? AppColors.warningButtonColor
             : AppColors.groupColor,
@@ -276,11 +282,7 @@ class AvatarWithBadges extends StatelessWidget {
               alignment: Alignment.center,
               child: Padding(
                 padding: const EdgeInsets.all(_avatarPadding),
-                child: AvatarImage(
-                  pupil: pupil,
-                  size: size,
-                  heroTag: heroTag,
-                ),
+                child: AvatarImage(pupil: pupil, size: size, heroTag: heroTag),
               ),
             ),
             if (pupil.isBirthdayToday)
@@ -394,10 +396,7 @@ class AvatarWithBadges extends StatelessWidget {
                     _siblingsDialog(context, pupil.siblings);
                   }
                 },
-                child: GroupBadgeContainer(
-                  pupil: pupil,
-                  badgeSize: _badgeSize,
-                ),
+                child: GroupBadgeContainer(pupil: pupil, badgeSize: _badgeSize),
               ),
             ),
             Positioned(
@@ -416,7 +415,7 @@ class AvatarWithBadges extends StatelessWidget {
                   width: _badgeSize,
                   height: _badgeSize,
                   decoration: BoxDecoration(
-                    color: AppColors.ogsColor,
+                    color: AppColors.afterSchoolCardeColor,
                     shape: BoxShape.circle,
                   ),
                   child: const Center(
@@ -521,11 +520,7 @@ void _siblingsDialog(BuildContext context, List<PupilProxy> siblings) {
   );
 }
 
-void specialInformationDialog(
-  BuildContext context,
-  String title,
-  String text,
-) {
+void specialInformationDialog(BuildContext context, String title, String text) {
   final parts = text.split('|');
   final info = parts.isNotEmpty ? parts[0] : text;
   final createdBy = parts.length > 1 ? parts[1] : null;

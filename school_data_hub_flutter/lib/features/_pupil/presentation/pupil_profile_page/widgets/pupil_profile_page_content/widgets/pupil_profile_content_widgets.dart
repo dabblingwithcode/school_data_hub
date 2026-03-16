@@ -14,42 +14,32 @@ class PupilProfileContentHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppColors.canvasColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.backgroundColor.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: AppColors.groupColor, size: 28),
-          const Gap(12),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: AppColors.backgroundColor,
-            ),
+    return Row(
+      children: [
+        const Gap(5),
+        Icon(icon, color: AppColors.groupColor, size: 28),
+        const Gap(5),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.backgroundColor,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class PupilProfileContentSection extends StatelessWidget {
+class PupilProfileContentCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final Widget child;
   final VoidCallback? onTitleTap;
   final Widget? headerTrailing;
 
-  const PupilProfileContentSection({
+  const PupilProfileContentCard({
     required this.icon,
     required this.title,
     required this.child,
@@ -61,7 +51,7 @@ class PupilProfileContentSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
@@ -73,6 +63,7 @@ class PupilProfileContentSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Gap(5),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -92,7 +83,7 @@ class PupilProfileContentSection extends StatelessWidget {
                       Text(
                         title,
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: AppColors.backgroundColor,
                         ),
@@ -140,69 +131,74 @@ class PupilProfileContentRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 5.0, right: 5, bottom: 5),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         decoration: BoxDecoration(
-          color: AppColors.pupilProfileCardColor.withValues(alpha: 0.5),
+          color: AppColors.cardInCardColor,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: AppColors.backgroundColor.withValues(alpha: 0.1),
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.cardInCardBorderColor, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Icon(
-                  icon,
-                  color: AppColors.backgroundColor.withValues(alpha: 0.7),
-                  size: 18,
-                ),
-                const Gap(8),
-                Text(
-                  '$label:',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.backgroundColor,
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Row(
+                children: [
+                  Icon(
+                    icon,
+                    color: AppColors.backgroundColor.withValues(alpha: 0.7),
+                    size: 18,
                   ),
-                ),
-                if (actionButton != null) ...[const Spacer(), actionButton!],
-              ],
-            ),
-            const Gap(6),
-            InkWell(
-              onTap: onTap,
-              onLongPress: onLongPress,
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                  horizontal: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: onTap != null
-                      ? AppColors.interactiveColor.withValues(alpha: 0.1)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child:
-                    valueWidget ??
-                    Text(
-                      value!,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: onTap != null
-                            ? AppColors.interactiveColor
-                            : Colors.black87,
+                  const Gap(8),
+                  Text(
+                    '$label:',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.backgroundColor,
+                    ),
+                  ),
+
+                  const Gap(6),
+                  Expanded(
+                    child: InkWell(
+                      onTap: onTap,
+                      onLongPress: onLongPress,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: onTap != null
+                              ? Colors.white
+                              : Colors.transparent,
+                          border: Border.all(
+                            color: AppColors.cardInCardBorderColor,
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child:
+                            valueWidget ??
+                            Text(
+                              value!,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: onTap != null
+                                    ? AppColors.interactiveColor
+                                    : Colors.black87,
+                              ),
+                            ),
                       ),
                     ),
+                  ),
+                  if (actionButton != null) actionButton!,
+                ],
               ),
             ),
-            const Gap(10),
           ],
         ),
       ),

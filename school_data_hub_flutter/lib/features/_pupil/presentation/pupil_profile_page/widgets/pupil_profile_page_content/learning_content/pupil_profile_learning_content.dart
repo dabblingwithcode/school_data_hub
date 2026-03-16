@@ -34,144 +34,128 @@ class PupilLearningContent extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
-    return Container(
-      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-          PupilProfileContentSection(
-            icon: Icons.lightbulb,
-            title: 'Lernen',
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return PupilProfileContentCard(
+      icon: Icons.lightbulb,
+      title: 'Lernen',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Gap(5),
+              const Text('3 Jahre Eingangsphase?'),
+              const Gap(5),
+              InkWell(
+                onTap: () async {
+                  final date = await showCalendarDatePicker2Dialog(
+                    context: context,
+                    config: CalendarDatePicker2WithActionButtonsConfig(
+                      calendarType: CalendarDatePicker2Type.single,
+                    ),
+                    dialogSize: const Size(325, 400),
+                    value: [],
+                    borderRadius: BorderRadius.circular(15),
+                  );
+
+                  if (date != null && date.isNotEmpty) {
+                    di<PupilProxyManager>().updateSchoolyearHeldBackDate(
+                      pupilId: pupil.pupilId,
+                      date: (value: date.first!.toUtc()),
+                    );
+                  }
+                },
+                onLongPress: () async {
+                  if (pupil.schoolyearHeldBackAt == null) return;
+                  final confirmation = await confirmationDialog(
+                    context: context,
+                    title: 'Eintrag löschen',
+                    message: 'Eintrag wirklich löschen?',
+                  );
+                  if (confirmation != true) return;
+                  di<PupilProxyManager>().updateSchoolyearHeldBackDate(
+                    pupilId: pupil.internalId,
+                    date: (value: null),
+                  );
+                },
+                child: Text(
+                  pupil.schoolyearHeldBackAt != null
+                      ? 'Entscheidung vom ${pupil.schoolyearHeldBackAt!.formatDateForUser()}'
+                      : 'nein',
+                  style: TextStyle(
+                    color: AppColors.interactiveColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const Gap(5),
+          Row(
+            children: [
+              const Gap(5),
+              const Text('Klassenleitung:'),
+              const Gap(5),
+              Text(
+                pupil.groupTutor != null
+                    ? UserHelper.getUserByUserName(pupil.groupTutor!)
+                            ?.userInfo
+                            ?.fullName ??
+                        pupil.groupTutor!
+                    : 'Kein Eintrag',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+
+          if (pupil.familyLanguageLessonsSince != null) ...[
+            const Gap(5),
+            Row(
               children: [
-                Row(
-                  children: [
-                    const Gap(5),
-                    const Text('3 Jahre Eingangsphase?'),
-                    const Gap(5),
-                    InkWell(
-                      onTap: () async {
-                        final date = await showCalendarDatePicker2Dialog(
-                          context: context,
-                          config: CalendarDatePicker2WithActionButtonsConfig(
-                            // selectableDayPredicate: (day) =>
-                            //     !schooldayDates.any((element) => element.isSameDate(day)),
-                            calendarType: CalendarDatePicker2Type.single,
-                          ),
-                          dialogSize: const Size(325, 400),
-                          value: [], //schooldayDates,
-                          borderRadius: BorderRadius.circular(15),
-                        );
-
-                        if (date != null && date.isNotEmpty) {
-                          di<PupilProxyManager>().updateSchoolyearHeldBackDate(
-                            pupilId: pupil.pupilId,
-                            date: (value: date.first!.toUtc()),
-                          );
-                        }
-                      },
-                      onLongPress: () async {
-                        if (pupil.schoolyearHeldBackAt == null) return;
-                        final confirmation = await confirmationDialog(
-                          context: context,
-                          title: 'Eintrag löschen',
-                          message: 'Eintrag wirklich löschen?',
-                        );
-                        if (confirmation != true) return;
-                        di<PupilProxyManager>().updateSchoolyearHeldBackDate(
-                          pupilId: pupil.internalId,
-                          date: (value: null),
-                        );
-                      },
-                      child: Text(
-                        pupil.schoolyearHeldBackAt != null
-                            ? 'Entscheidung vom ${pupil.schoolyearHeldBackAt!.formatDateForUser()}'
-                            : 'nein',
-                        style: TextStyle(
-                          color: AppColors.interactiveColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
                 const Gap(5),
-                Row(
-                  children: [
-                    const Gap(5),
-                    const Text('Klassenleitung:'),
-                    const Gap(5),
-                    Text(
-                      pupil.groupTutor != null
-                          ? UserHelper.getUserByUserName(
-                                  pupil.groupTutor!,
-                                )?.userInfo?.fullName ??
-                                pupil.groupTutor!
-                          : 'Kein Eintrag',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                const Text('HSU seit:'),
+                const Gap(5),
+                Text(
+                  pupil.familyLanguageLessonsSince?.formatDateForUser() ??
+                      'Kein Eintrag',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-
-                if (pupil.familyLanguageLessonsSince != null) ...[
-                  const Gap(5),
-                  Row(
-                    children: [
-                      const Gap(5),
-                      const Text('HSU seit:'),
-                      const Gap(5),
-                      Text(
-                        pupil.familyLanguageLessonsSince?.formatDateForUser() ??
-                            'Kein Eintrag',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(pupil.language),
-                    ],
-                  ),
-                ],
-                if (pupil.religionLessonsSince != null) ...[
-                  const Gap(5),
-                  Row(
-                    children: [
-                      const Gap(5),
-                      const Text('Religionsunterricht seit:'),
-                      const Gap(5),
-                      Text(
-                        pupil.religionLessonsSince?.formatDateForUser() ??
-                            'Kein Eintrag',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const Gap(5),
-                      Text(pupil.religion ?? 'Kein Eintrag'),
-                    ],
-                  ),
-                ],
-                const Gap(10),
-                Row(
-                  children: [
-                    const Gap(5),
-                    const Text('Schulformempfehlung:'),
-                    const Gap(5),
-                    Text(
-                      pupil.schoolTransitionRecommendation ?? 'Kein Eintrag',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                const Gap(10),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [CompetenceChecksBadges(pupil: pupil)],
-                // ),
-                PupilLearningContentExpansionTileNavBar(pupil: pupil),
+                Text(pupil.language),
               ],
             ),
-          ),
           ],
-        ),
+          if (pupil.religionLessonsSince != null) ...[
+            const Gap(5),
+            Row(
+              children: [
+                const Gap(5),
+                const Text('Religionsunterricht seit:'),
+                const Gap(5),
+                Text(
+                  pupil.religionLessonsSince?.formatDateForUser() ??
+                      'Kein Eintrag',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const Gap(5),
+                Text(pupil.religion ?? 'Kein Eintrag'),
+              ],
+            ),
+          ],
+          const Gap(10),
+          Row(
+            children: [
+              const Gap(5),
+              const Text('Schulformempfehlung:'),
+              const Gap(5),
+              Text(
+                pupil.schoolTransitionRecommendation ?? 'Kein Eintrag',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const Gap(10),
+          PupilLearningContentExpansionTileNavBar(pupil: pupil),
+        ],
       ),
     );
   }

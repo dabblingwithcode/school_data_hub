@@ -1,118 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 
-class PupilProfileHeadingCard extends WatchingWidget {
+class PupilMiniCard extends StatelessWidget {
   final PupilProxy pupil;
-  const PupilProfileHeadingCard({required this.pupil, super.key});
+  const PupilMiniCard({required this.pupil, super.key});
+
+  static const double _avatarSize = 60.0;
+  static const double _fontSize = 20.0;
+  static const double _badgeSize = 30.0;
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final settings = context
-            .dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
-        final double expandedHeight = settings?.maxExtent ?? 130;
-        final double collapsedHeight = settings?.minExtent ?? 70;
-        final double currentHeight = settings?.currentExtent ?? expandedHeight;
-        final double t =
-            ((currentHeight - collapsedHeight) /
-                    (expandedHeight - collapsedHeight))
-                .clamp(0.0, 1.0);
-
-        final double avatarSize = 40 + (40 * t); // 40 collapsed, 80 expanded
-        final double fontSize = 16 + (4 * t); // 16 collapsed, 20 expanded
-
-        return Container(
-          padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 5),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+    return Container(
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 5),
+      decoration: BoxDecoration(
+        color: AppColors.cardInCardColor,
+        border: Border.all(color: AppColors.cardInCardBorderColor, width: 1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          AvatarImage(pupil: pupil, size: _avatarSize),
+          const Gap(12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [_buildNameRow(), const Gap(8), _buildBadgesRow()],
+            ),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AvatarImage(pupil: pupil, size: avatarSize),
-              const Gap(12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _PupilNameRow(pupil: pupil, fontSize: fontSize, t: t),
-                    if (t > 0.3) ...[
-                      const Gap(8),
-                      Opacity(
-                        opacity: ((t - 0.3) / 0.7).clamp(0.0, 1.0),
-                        child: _BadgesRow(pupil: pupil),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+        ],
+      ),
     );
   }
-}
 
-class _PupilNameRow extends WatchingWidget {
-  final PupilProxy pupil;
-  final double fontSize;
-  final double t;
-  const _PupilNameRow({
-    required this.pupil,
-    required this.fontSize,
-    required this.t,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final firstName = watchPropertyValue((m) => m.firstName, target: pupil);
-    final lastName = watchPropertyValue((m) => m.lastName, target: pupil);
+  Widget _buildNameRow() {
     return Row(
       children: [
         Text(
-          firstName,
-          style: TextStyle(
-            fontSize: fontSize,
+          pupil.firstName,
+          style: const TextStyle(
+            fontSize: _fontSize,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
         ),
         const Gap(6),
         Text(
-          lastName,
-          style: TextStyle(fontSize: fontSize, color: Colors.black),
+          pupil.lastName,
+          style: const TextStyle(fontSize: _fontSize, color: Colors.black),
         ),
-        if (t < 0.3) ...[
-          const Gap(8),
-          GroupBadgeContainer(pupil: pupil, badgeSize: 24),
-          const Gap(4),
-          SchoolGradeBadgeContainer(pupil: pupil, badgeSize: 24),
-        ],
       ],
     );
   }
-}
 
-class _BadgesRow extends WatchingWidget {
-  static const double _badgeSize = 30.0;
-
-  final PupilProxy pupil;
-  const _BadgesRow({required this.pupil});
-
-  @override
-  Widget build(BuildContext context) {
-    watch(pupil);
+  Widget _buildBadgesRow() {
     return Row(
       children: [
         // 1. Learning group
@@ -124,8 +73,8 @@ class _BadgesRow extends WatchingWidget {
         if (pupil.afterSchoolCare != null) ...[
           const Gap(6),
           Container(
-            width: _badgeSize,
-            height: _badgeSize,
+            width: _badgeSize + 4,
+            height: _badgeSize + 4,
             decoration: BoxDecoration(
               color: AppColors.afterSchoolCardeColor,
               shape: BoxShape.circle,
@@ -146,8 +95,8 @@ class _BadgesRow extends WatchingWidget {
         if (pupil.migrationSupportEnds != null) ...[
           const Gap(6),
           Container(
-            width: _badgeSize,
-            height: _badgeSize,
+            width: _badgeSize + 4,
+            height: _badgeSize + 4,
             decoration: BoxDecoration(
               color:
                   PupilProxyHelper.hasLanguageSupport(
@@ -161,7 +110,7 @@ class _BadgesRow extends WatchingWidget {
               child: Icon(
                 Icons.language_rounded,
                 color: Colors.white,
-                size: 18,
+                size: _badgeSize + 4,
               ),
             ),
           ),
@@ -170,8 +119,8 @@ class _BadgesRow extends WatchingWidget {
         if (pupil.latestSupportLevel != null) ...[
           const Gap(6),
           Container(
-            width: _badgeSize,
-            height: _badgeSize,
+            width: _badgeSize + 4,
+            height: _badgeSize + 4,
             decoration: BoxDecoration(
               color: AppColors.accentColor,
               shape: BoxShape.circle,
@@ -198,8 +147,8 @@ class _BadgesRow extends WatchingWidget {
               children: [
                 const Gap(6),
                 Container(
-                  width: _badgeSize,
-                  height: _badgeSize,
+                  width: _badgeSize + 4,
+                  height: _badgeSize + 4,
                   decoration: BoxDecoration(
                     color: AppColors.groupColor,
                     shape: BoxShape.circle,
@@ -222,16 +171,18 @@ class _BadgesRow extends WatchingWidget {
         // 7. Special information
         if (pupil.specialInformation != null) ...[
           const Gap(6),
-          InkWell(
-            onTap: () => specialInformationDialog(
-              context,
-              'Besondere Information',
-              pupil.specialInformation!,
-            ),
-            child: const Icon(
-              Icons.info_rounded,
-              size: _badgeSize + 4,
-              color: Color.fromARGB(255, 6, 92, 163),
+          Builder(
+            builder: (context) => InkWell(
+              onTap: () => specialInformationDialog(
+                context,
+                'Besondere Information',
+                pupil.specialInformation!,
+              ),
+              child: const Icon(
+                Icons.info_rounded,
+                size: _badgeSize,
+                color: Color.fromARGB(255, 6, 92, 163),
+              ),
             ),
           ),
         ],

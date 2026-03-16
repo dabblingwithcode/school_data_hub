@@ -40,12 +40,9 @@ class PublicMediaAuthValues extends WatchingWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardInCardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AppColors.backgroundColor.withValues(alpha: 0.2),
-            width: 1,
-          ),
+          border: Border.all(color: AppColors.cardInCardBorderColor, width: 1),
           boxShadow: [
             BoxShadow(
               color: AppColors.backgroundColor.withValues(alpha: 0.08),
@@ -114,7 +111,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: AppColors.backgroundColor.withValues(alpha: 0.05),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: AppColors.backgroundColor.withValues(alpha: 0.1),
@@ -153,10 +150,10 @@ class PublicMediaAuthValues extends WatchingWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.backgroundColor.withValues(alpha: 0.03),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: AppColors.backgroundColor.withValues(alpha: 0.1),
+                  color: AppColors.cardInCardBorderColor,
                   width: 1,
                 ),
               ),

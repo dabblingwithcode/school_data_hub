@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/school_list_content/widgets/pupil_school_lists_content_list.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
@@ -11,27 +10,17 @@ class PupilSchoolListsContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            PupilProfileContentSection(
-              icon: Icons.rule,
-            title: 'Listen',
-            onTitleTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => const SchoolListsPage(),
-                ),
-              );
-            },
-            child: PupilSchoolListContentList(pupil: pupil),
+    return PupilProfileContentCard(
+      icon: Icons.rule,
+      title: 'Listen',
+      onTitleTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (ctx) => const SchoolListsPage(),
           ),
-          ],
-        ),
-      ),
+        );
+      },
+      child: PupilSchoolListContentList(pupil: pupil),
     );
   }
 }

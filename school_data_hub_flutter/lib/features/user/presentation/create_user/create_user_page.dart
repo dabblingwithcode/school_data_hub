@@ -484,7 +484,7 @@ class CreateOrEditUserPage extends WatchingWidget {
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: AppColors
-                                                        .schoolyearColor,
+                                                        .schoolGradeColor,
                                                     fontSize: 18,
                                                   ),
                                                 ),

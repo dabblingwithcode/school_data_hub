@@ -85,8 +85,7 @@ class _EmergencyCareCard extends StatelessWidget {
     final isNotSet = emergencyCare == null;
 
     return Card(
-      elevation: 2,
-      shadowColor: Colors.black26,
+      color: AppColors.cardInCardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () => afterSchoolCareEditEmergencyCareDialog(context, pupil),
@@ -167,8 +166,8 @@ class _PickUpTimesCard extends StatelessWidget {
     final pickUpTimes = afterSchoolCare.pickUpTimes;
 
     return Card(
-      elevation: 2,
-      shadowColor: Colors.black26,
+      color: AppColors.cardInCardColor,
+
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -533,8 +532,7 @@ class _OgsInfoCard extends StatelessWidget {
         afterSchoolCare.afterSchoolCareInfo!.isNotEmpty;
 
     return Card(
-      elevation: 2,
-      shadowColor: Colors.black26,
+      color: AppColors.cardInCardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () => _editInfo(context),

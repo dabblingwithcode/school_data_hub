@@ -14,11 +14,11 @@ import 'package:school_data_hub_flutter/features/_authorizations/domain/authoriz
 import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
-class PupilContentAuthorizationEntryCard extends WatchingWidget {
+class PupilProfileAuthorizationCard extends WatchingWidget {
   final Authorization authorization;
   final PupilAuthorization pupilAuthorization;
   final PupilProxy pupil;
-  const PupilContentAuthorizationEntryCard({
+  const PupilProfileAuthorizationCard({
     required this.authorization,
     required this.pupilAuthorization,
     required this.pupil,
@@ -36,6 +36,7 @@ class PupilContentAuthorizationEntryCard extends WatchingWidget {
         .authorizedPupils!
         .firstWhere((element) => element.pupilId == pupil.pupilId);
     return Card(
+      color: AppColors.cardInCardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       child: Padding(
         padding: const EdgeInsets.all(10.0),

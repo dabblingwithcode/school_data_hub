@@ -88,7 +88,7 @@ class PupilLabelPdfService {
     }
 
     return pw.Padding(
-      padding: pw.EdgeInsets.only(top: _topMargin, left: _leftMargin),
+      padding: const pw.EdgeInsets.only(top: _topMargin, left: _leftMargin),
       child: pw.Table(children: rows),
     );
   }

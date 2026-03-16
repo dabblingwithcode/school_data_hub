@@ -21,186 +21,165 @@ class PupilProfileCreditContent extends WatchingWidget {
       (x) => x.creditTransactions,
       target: pupil,
     );
-    return Container(
-      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            PupilProfileContentSection(
-              icon: Icons.attach_money_rounded,
-              title: 'Guthaben',
-              onTitleTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => const CreditListPage(),
-                  ),
-                );
-              },
-              headerTrailing: Row(
-                children: [
-                  Text(
-                    credit.toString(),
-                    style: TextStyle(
-                      color: AppColors.groupColor,
-                      fontSize: 60,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Gap(20),
-                ],
+    return PupilProfileContentCard(
+      icon: Icons.attach_money_rounded,
+      title: 'Guthaben',
+      onTitleTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(builder: (ctx) => const CreditListPage()),
+        );
+      },
+      headerTrailing: Row(
+        children: [
+          Text(
+            credit.toString(),
+            style: TextStyle(
+              color: AppColors.groupColor,
+              fontSize: 60,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Gap(20),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              width: double.infinity,
+              child: ElevatedButton(
+                style: AppStyles.successButtonStyle,
+                onPressed: () async {
+                  changeCreditDialog(context, pupil);
+                },
+                child: const Text(
+                  "GUTHABEN ÄNDERN",
+                  style: AppStyles.buttonTextStyle,
+                ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      //margin: const EdgeInsets.only(bottom: 16),
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: AppStyles.successButtonStyle,
-                        onPressed: () async {
-                          changeCreditDialog(context, pupil);
-                        },
-                        child: const Text(
-                          "GUTHABEN ÄNDERN",
-                          style: AppStyles.buttonTextStyle,
-                        ),
-                      ),
+            ),
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Insgesamt verdient:',
+                style: TextStyle(fontSize: 18.0),
+                textAlign: TextAlign.left,
+              ),
+              const Gap(5),
+              Text(
+                pupil.creditEarned.toString(),
+                style: const TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const Gap(10),
+          const Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 22),
+                child: Text(
+                  'Verlauf',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Gap(10),
+          if (creditTransactions != null)
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: creditTransactions.length,
+              itemBuilder: (BuildContext context, int index) {
+                final List<CreditTransaction> pupilCreditHistoryLogs =
+                    List.from(pupil.creditTransactions!);
+                final CreditTransaction tx = pupilCreditHistoryLogs[index];
+                final bool isPositive = tx.amount >= 0;
+                final Color amountColor = isPositive
+                    ? Colors.green.shade700
+                    : Colors.red;
+
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: AppColors.cardInCardColor),
+                  ),
+                  color: AppColors.cardInCardColor,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
                     ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Insgesamt verdient:',
-                        style: TextStyle(fontSize: 18.0),
-                        textAlign: TextAlign.left,
-                      ),
-                      const Gap(5),
-                      Text(
-                        pupil.creditEarned.toString(),
-                        style: const TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: amountColor.withValues(alpha: 0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            isPositive
+                                ? Icons.arrow_downward_rounded
+                                : Icons.arrow_upward_rounded,
+                            color: amountColor,
+                            size: 20,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const Gap(10),
-                  const Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 22),
-                        child: Text(
-                          'Verlauf',
+                        const Gap(12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                DateFormat('dd.MM.yyyy').format(tx.dateTime),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              const Gap(2),
+                              Text(
+                                tx.sender,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          '${isPositive ? '+' : ''}${tx.amount}',
                           style: TextStyle(
-                            color: Colors.black,
+                            color: amountColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const Gap(10),
-                  if (creditTransactions != null)
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: creditTransactions.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final List<CreditTransaction> pupilCreditHistoryLogs =
-                            List.from(pupil.creditTransactions!);
-                        final CreditTransaction tx =
-                            pupilCreditHistoryLogs[index];
-                        final bool isPositive = tx.amount >= 0;
-                        final Color amountColor = isPositive
-                            ? Colors.green.shade700
-                            : Colors.red;
-
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
-                              color: AppColors.backgroundColor.withValues(
-                                alpha: 0.1,
-                              ),
-                            ),
-                          ),
-                          color: AppColors.pupilProfileCardColor,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 12,
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: amountColor.withValues(alpha: 0.12),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    isPositive
-                                        ? Icons.arrow_downward_rounded
-                                        : Icons.arrow_upward_rounded,
-                                    color: amountColor,
-                                    size: 20,
-                                  ),
-                                ),
-                                const Gap(12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        DateFormat(
-                                          'dd.MM.yyyy',
-                                        ).format(tx.dateTime),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      const Gap(2),
-                                      Text(
-                                        tx.sender,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.grey.shade600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Text(
-                                  '${isPositive ? '+' : ''}${tx.amount}',
-                                  style: TextStyle(
-                                    color: amountColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+                      ],
                     ),
-                ],
-              ),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

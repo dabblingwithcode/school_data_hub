@@ -219,7 +219,7 @@ class NewAuthorizationPageState extends State<NewAuthorizationPage> {
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: AppColors
-                                                          .schoolyearColor,
+                                                          .schoolGradeColor,
                                                       fontSize: 18,
                                                     ),
                                                   ),

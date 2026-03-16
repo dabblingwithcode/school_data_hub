@@ -44,6 +44,7 @@ class PupilWorkbookCard extends WatchingWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Card(
+        color: AppColors.cardInCardColor,
         child: InkWell(
           focusColor: Colors.transparent,
           hoverColor: Colors.transparent,

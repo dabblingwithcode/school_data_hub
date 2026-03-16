@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/after_school_care_content/pupil_after_school_care_content.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/after_school_care_content/pupil_profile_after_school_care_content.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/attendance_content/pupil_profile_attendance_content.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/authorization_content/pupil_profile_authorization_content.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/pupil_profile_communication_content.dart';
@@ -121,7 +121,7 @@ class _ProfilePageWrapper extends StatelessWidget {
         child = PupilProfileSchooldayEventsContent(pupil: pupil);
         break;
       case _ProfilePageChild.ogs:
-        child = PupilOgsContent(pupil: pupil);
+        child = PupilProfileAfterSchoolCareContent(pupil: pupil);
         break;
       case _ProfilePageChild.lists:
         child = PupilSchoolListsContentCard(pupil: pupil);
@@ -143,18 +143,31 @@ class _ProfilePageWrapper extends StatelessWidget {
     // causing the Scrollbar to crash: "attached to more than one ScrollPosition".
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColors.pupilProfileBackgroundColor,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: ClipRRect(borderRadius: BorderRadius.circular(16), child: child),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight - 5,
+                ),
+                child: child,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

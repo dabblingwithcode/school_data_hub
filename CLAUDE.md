@@ -55,7 +55,7 @@ Personal pupil data (`PupilIdentity`) is **never stored on the server**. It is s
 
 ### Flutter Client Architecture
 
-**Dependency Injection** uses `get_it` (accessed via the `di` global from `watch_it`/`flutter_it`). Managers are registered in three ordered scopes:
+**Dependency Injection** uses `get_it` (accessed via the `di` global from `flutter_it`). Managers are registered in three ordered scopes:
 
 1. **Core scope** (always registered, `InitManager.registerCoreManagers()`): `EnvManager`, `NotificationService`, `ServerpodConnectivityMonitor`, `ShorebirdUpdateManager`
 2. **Active-env scope** (`InitScope.onActiveEnvScope`): registered in `InitOnActiveEnv` after an environment (school key) is set
