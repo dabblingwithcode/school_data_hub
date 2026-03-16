@@ -5,7 +5,10 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_prox
 enum Clearance { none, developer, admin, tester }
 
 class AuthClearanceHelper {
-  static bool isAuthorized(Clearance clearanceLevel, {String? createdBy}) {
+  static bool isAuthorizedForItem(
+    Clearance clearanceLevel, {
+    String? createdBy,
+  }) {
     final currentUser = di<HubSessionManager>().user!;
 
     switch (clearanceLevel) {

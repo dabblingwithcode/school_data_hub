@@ -199,10 +199,6 @@ class HubSessionManager with ChangeNotifier {
       );
 
       if (authResponse.response.success) {
-        _notificationService.showSnackBar(
-          NotificationType.success,
-          'Erfolgreich eingeloggt!',
-        );
         await di<HubSessionManager>().registerSignedInUser(
           authResponse.response.userInfo!,
           authResponse.response.keyId!,

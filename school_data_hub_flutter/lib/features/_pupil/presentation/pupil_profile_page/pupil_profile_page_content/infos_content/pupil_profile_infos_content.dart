@@ -14,9 +14,9 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/widgets/avatar_auth_values.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/infos_content/widgets/pupil_media_auth_values.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page_content/infos_content/widgets/avatar_auth_values.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page_content/infos_content/widgets/pupil_media_auth_values.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_mini_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
@@ -200,7 +200,7 @@ class PupilProfileInfosContent extends WatchingWidget {
             title: 'Kontaktinformationen',
           ),
           const Gap(8),
-          PupilProfileContentRow(
+          PupilProfileContentTwoRows(
             icon: Icons.person_outline,
             label: 'Schüler/in Kontakt',
             value: pupil.contact?.isNotEmpty == true
@@ -315,7 +315,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                   ),
           ),
           const Gap(10),
-          PupilProfileContentRow(
+          PupilProfileContentTwoRows(
             icon: Icons.family_restroom_outlined,
             label: 'Familie Kontakt',
             value: pupil.tutorInfo?.parentsContact ?? 'keine Angabe',

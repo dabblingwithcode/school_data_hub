@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/dialogues/change_credit_dialog.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_content_widgets.dart';
 
 class PupilProfileCreditContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -42,26 +42,10 @@ class PupilProfileCreditContent extends WatchingWidget {
           const Gap(20),
         ],
       ),
+
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              width: double.infinity,
-              child: ElevatedButton(
-                style: AppStyles.successButtonStyle,
-                onPressed: () async {
-                  changeCreditDialog(context, pupil);
-                },
-                child: const Text(
-                  "GUTHABEN ÄNDERN",
-                  style: AppStyles.buttonTextStyle,
-                ),
-              ),
-            ),
-          ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -81,6 +65,24 @@ class PupilProfileCreditContent extends WatchingWidget {
               ),
             ],
           ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              width: double.infinity,
+              child: ElevatedButton(
+                style: AppStyles.successButtonStyle,
+                onPressed: () async {
+                  changeCreditDialog(context, pupil);
+                },
+                child: const Text(
+                  "GUTHABEN ÄNDERN",
+                  style: AppStyles.buttonTextStyle,
+                ),
+              ),
+            ),
+          ),
+
           const Gap(10),
           const Row(
             children: [
@@ -100,6 +102,7 @@ class PupilProfileCreditContent extends WatchingWidget {
           const Gap(10),
           if (creditTransactions != null)
             ListView.builder(
+              padding: EdgeInsets.zero,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: creditTransactions.length,

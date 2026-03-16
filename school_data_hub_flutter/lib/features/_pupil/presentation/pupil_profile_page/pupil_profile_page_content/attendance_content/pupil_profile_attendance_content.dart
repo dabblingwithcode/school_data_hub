@@ -8,7 +8,7 @@ import 'package:school_data_hub_flutter/features/_attendance/presentation/missed
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_stats_pupil.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_schoolday_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_content_widgets.dart';
 
 class PupilAttendanceContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -45,10 +45,7 @@ class PupilAttendanceContent extends WatchingWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Text(
-                'Fehlstunden:',
-                style: TextStyle(fontSize: 14),
-              ),
+              const Text('Fehlstunden:', style: TextStyle(fontSize: 14)),
               Text(
                 ' ${missedHoursForActualReport.missed.toString()}',
                 style: const TextStyle(
@@ -58,10 +55,7 @@ class PupilAttendanceContent extends WatchingWidget {
                 ),
               ),
               const Gap(5),
-              const Text(
-                'davon unent:',
-                style: TextStyle(fontSize: 14),
-              ),
+              const Text('davon unent:', style: TextStyle(fontSize: 14)),
               Text(
                 ' ${missedHoursForActualReport.unexcused.toString()}',
                 style: const TextStyle(

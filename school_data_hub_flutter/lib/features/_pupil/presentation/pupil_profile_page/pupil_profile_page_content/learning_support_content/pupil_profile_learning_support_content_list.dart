@@ -11,6 +11,7 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
+import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
@@ -18,9 +19,9 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/widgets/learning_support_plans_section.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page_content/learning_support_content/support_level_history_expansion_tile.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page_content/learning_support_content/widgets/learning_support_plans_section.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/set_bulk_support_categoies_status_page.dart';
@@ -78,7 +79,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        PupilProfileContentRow(
+        PupilProfileContentTwoRows(
           icon: Icons.medical_services_outlined,
           label: 'Eingangsuntersuchung',
           valueWidget: Column(
@@ -191,9 +192,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
             ],
           ),
         ),
-        if (isAdmin) ...[
+        if (AuthClearanceHelper.isTutorOrAdmin(pupil)) ...[
           const Gap(8),
-          PupilProfileContentRow(
+          PupilProfileContentTwoRows(
             icon: Icons.child_care,
             label: 'Kindergartenbesuch',
             onTap: () =>

@@ -10,9 +10,9 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/communication_values.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/communication_content/dialogs/language_dialog.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page_content/communication_content/communication_values.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page_content/communication_content/dialogs/language_dialog.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_content_widgets.dart';
 
 class PupilProfileCommunicationContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -74,7 +74,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
             title: 'Sprachkompetenz',
           ),
           const Gap(8),
-          PupilProfileContentRow(
+          PupilProfileContentTwoRows(
             icon: Icons.person_outline,
             label: 'Kind',
             valueWidget: communicationPupil == null
@@ -112,7 +112,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
             },
           ),
           const Gap(10),
-          PupilProfileContentRow(
+          PupilProfileContentTwoRows(
             icon: Icons.person_outline,
             label: 'Mutter / TutorIn 1',
             valueWidget: tutorInfo?.communicationTutor1 == null
@@ -153,7 +153,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
             },
           ),
           const Gap(10),
-          PupilProfileContentRow(
+          PupilProfileContentTwoRows(
             icon: Icons.person_outline,
             label: 'Vater / TutorIn 2',
             valueWidget: tutorInfo?.communicationTutor2 == null

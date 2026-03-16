@@ -7,8 +7,8 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_content/pupil_learning_content_expansion_tile_nav_bar.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page_content/learning_content/pupil_learning_content_expansion_tile_nav_bar.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_helper.dart';
 
 enum SchoolTransitionRecommendation {
@@ -98,10 +98,10 @@ class PupilLearningContent extends WatchingWidget {
               const Gap(5),
               Text(
                 pupil.groupTutor != null
-                    ? UserHelper.getUserByUserName(pupil.groupTutor!)
-                            ?.userInfo
-                            ?.fullName ??
-                        pupil.groupTutor!
+                    ? UserHelper.getUserByUserName(
+                            pupil.groupTutor!,
+                          )?.userInfo?.fullName ??
+                          pupil.groupTutor!
                     : 'Kein Eintrag',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),

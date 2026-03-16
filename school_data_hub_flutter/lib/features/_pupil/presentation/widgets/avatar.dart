@@ -17,7 +17,7 @@ import 'package:school_data_hub_flutter/features/_schoolday_events/domain/school
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 
-class AvatarImage extends WatchingWidget {
+class AvatarImage extends WatchingStatefulWidget {
   final PupilProxy pupil;
   final double size;
   final String? heroTag;
@@ -30,15 +30,34 @@ class AvatarImage extends WatchingWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    watchPropertyValue((m) => m.avatarId, target: pupil);
-    watchPropertyValue((m) => m.avatarAuth, target: pupil);
-    final avatar = pupil.avatar;
+  State<AvatarImage> createState() => _AvatarImageState();
+}
 
-    final bool avatarAuth = (pupil.avatarAuth != null);
+class _AvatarImageState extends State<AvatarImage> {
+  Future<Widget>? _imageFuture;
+  String? _cachedDocumentId;
+
+  void _updateImageFuture() {
+    final avatar = widget.pupil.avatar;
+    final docId = avatar?.documentId;
+    if (docId != _cachedDocumentId) {
+      _cachedDocumentId = docId;
+      _imageFuture = docId != null
+          ? getImageCachedOrDownload(documentId: docId, decrypt: true)
+          : null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    watchPropertyValue((m) => m.avatarId, target: widget.pupil);
+    watchPropertyValue((m) => m.avatarAuth, target: widget.pupil);
+    _updateImageFuture();
+    final avatar = widget.pupil.avatar;
+    final bool avatarAuth = (widget.pupil.avatarAuth != null);
     return GestureDetector(
       onLongPressStart: (details) {
-        if (pupil.avatarAuth == null) {
+        if (widget.pupil.avatarAuth == null) {
           informationDialog(
             context,
             'Einwilligung nicht vorhanden',
@@ -58,12 +77,13 @@ class AvatarImage extends WatchingWidget {
           position: position,
           items: [
             PopupMenuItem<void>(
-              child: pupil.avatar == null
+              child: widget.pupil.avatar == null
                   ? const Text('Foto hochladen')
                   : const Text('Foto ersetzen'),
-              onTap: () => setAvatar(context: context, pupil: pupil),
+              onTap: () =>
+                  setAvatar(context: context, pupil: widget.pupil),
             ),
-            if (pupil.avatar != null)
+            if (widget.pupil.avatar != null)
               PopupMenuItem<void>(
                 child: const Text('Foto löschen'),
                 onTap: () async {
@@ -74,8 +94,8 @@ class AvatarImage extends WatchingWidget {
                   );
                   if (confirm != true) return;
                   await PupilMutator().deletePupilDocument(
-                    pupil.pupilId,
-                    pupil.avatar!.documentId,
+                    widget.pupil.pupilId,
+                    widget.pupil.avatar!.documentId,
                     PupilDocumentType.avatar,
                   );
                 },
@@ -84,21 +104,18 @@ class AvatarImage extends WatchingWidget {
         );
       },
       child: SizedBox(
-        width: size,
-        height: size,
+        width: widget.size,
+        height: widget.size,
         child: Center(
           child: avatar != null
               ? WidgetZoom(
-                  heroAnimationTag:
-                      heroTag ?? '${avatar.documentId}_${pupil.pupilId}',
+                  heroAnimationTag: widget.heroTag ??
+                      '${avatar.documentId}_${widget.pupil.pupilId}',
                   zoomWidget: SizedBox(
-                    width: size,
-                    height: size,
+                    width: widget.size,
+                    height: widget.size,
                     child: FutureBuilder<Widget>(
-                      future: getImageCachedOrDownload(
-                        documentId: avatar.documentId,
-                        decrypt: true,
-                      ),
+                      future: _imageFuture,
                       builder: (context, snapshot) {
                         Widget child;
                         if (snapshot.connectionState ==
@@ -121,25 +138,21 @@ class AvatarImage extends WatchingWidget {
                   ),
                 )
               : Container(
-                  width: size,
-                  height: size,
+                  width: widget.size,
+                  height: widget.size,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(size / 2),
-                    // border: Border.all(
-                    //   color: avatarAuth
-                    //       ? const Color.fromARGB(255, 29, 221, 35)
-                    //       : const Color.fromARGB(255, 255, 228, 20),
-                    //   width: 3,
-                    // ),
+                    borderRadius:
+                        BorderRadius.circular(widget.size / 2),
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(size / 2),
+                    borderRadius:
+                        BorderRadius.circular(widget.size / 2),
                     child: Image.asset(
                       avatarAuth
                           ? 'assets/dummy-profile-pic-auth.png'
                           : 'assets/dummy-profile-pic-unauth.png',
-                      width: size,
-                      height: size,
+                      width: widget.size,
+                      height: widget.size,
                       fit: BoxFit.cover,
                     ),
                   ),

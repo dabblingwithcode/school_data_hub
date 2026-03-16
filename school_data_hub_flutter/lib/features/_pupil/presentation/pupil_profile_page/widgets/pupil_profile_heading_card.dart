@@ -16,7 +16,7 @@ class PupilProfileHeadingCard extends WatchingWidget {
       builder: (context, constraints) {
         final settings = context
             .dependOnInheritedWidgetOfExactType<FlexibleSpaceBarSettings>();
-        final double expandedHeight = settings?.maxExtent ?? 130;
+        final double expandedHeight = settings?.maxExtent ?? 140;
         final double collapsedHeight = settings?.minExtent ?? 70;
         final double currentHeight = settings?.currentExtent ?? expandedHeight;
         final double t =
@@ -31,32 +31,36 @@ class PupilProfileHeadingCard extends WatchingWidget {
           padding: const EdgeInsets.all(10),
           margin: const EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 5),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.backgroundColor,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AvatarImage(pupil: pupil, size: avatarSize),
-              const Gap(12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _PupilNameRow(pupil: pupil, fontSize: fontSize, t: t),
-                    if (t > 0.3) ...[
-                      const Gap(8),
-                      Opacity(
-                        opacity: ((t - 0.3) / 0.7).clamp(0.0, 1.0),
-                        child: _BadgesRow(pupil: pupil),
-                      ),
-                    ],
-                  ],
+          child: SafeArea(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AvatarImage(pupil: pupil, size: avatarSize),
+                const Gap(12),
+                Expanded(
+                  child: ClipRect(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _PupilNameRow(pupil: pupil, fontSize: fontSize, t: t),
+                        if (t > 0.3) ...[
+                          const Gap(8),
+                          Opacity(
+                            opacity: ((t - 0.3) / 0.7).clamp(0.0, 1.0),
+                            child: _BadgesRow(pupil: pupil),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -85,20 +89,26 @@ class _PupilNameRow extends WatchingWidget {
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
         const Gap(6),
         Text(
           lastName,
-          style: TextStyle(fontSize: fontSize, color: Colors.black),
+          style: TextStyle(fontSize: fontSize, color: Colors.white),
         ),
-        if (t < 0.3) ...[
-          const Gap(8),
-          GroupBadgeContainer(pupil: pupil, badgeSize: 24),
-          const Gap(4),
-          SchoolGradeBadgeContainer(pupil: pupil, badgeSize: 24),
-        ],
+        Opacity(
+          opacity: ((0.3 - t) / 0.3).clamp(0.0, 1.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Gap(8),
+              GroupBadgeContainer(pupil: pupil, badgeSize: 24),
+              const Gap(4),
+              SchoolGradeBadgeContainer(pupil: pupil, badgeSize: 24),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -228,10 +238,16 @@ class _BadgesRow extends WatchingWidget {
               'Besondere Information',
               pupil.specialInformation!,
             ),
-            child: const Icon(
-              Icons.info_rounded,
-              size: _badgeSize + 4,
-              color: Color.fromARGB(255, 6, 92, 163),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.info_rounded,
+                size: _badgeSize + 4,
+                color: Color.fromARGB(255, 6, 92, 163),
+              ),
             ),
           ),
         ],

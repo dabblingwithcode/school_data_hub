@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/school_list_content/widgets/pupil_profile_school_list_pupil_entry_card.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page_content/school_list_content/widgets/pupil_profile_school_list_pupil_entry_card.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class PupilSchoolListContentList extends WatchingWidget {
   final PupilProxy pupil;
