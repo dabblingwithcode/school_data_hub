@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/date_extension.dart';
 import 'package:serverpod/serverpod.dart';
@@ -33,6 +34,8 @@ class AdminSchoolDayEndpoint extends Endpoint {
     );
 
     await session.db.insertRow(schoolSemester);
+    session.messages.postMessage('hub_events_stream', schoolSemester);
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolSemester);
     return schoolSemester;
   }
 
@@ -44,6 +47,10 @@ class AdminSchoolDayEndpoint extends Endpoint {
       session,
       where: (t) => t.id.equals(schoolSemester.id!),
     );
+    if (updatedSchoolSemester != null) {
+      session.messages.postMessage('hub_events_stream', updatedSchoolSemester);
+      HubUpdatesTracker.instance.touch(HubObjectType.schoolSemester);
+    }
     return updatedSchoolSemester;
   }
 
@@ -81,6 +88,11 @@ class AdminSchoolDayEndpoint extends Endpoint {
       );
     });
 
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.schoolSemester, id: semester.id!),
+    );
+
     return true;
   }
 
@@ -102,6 +114,8 @@ class AdminSchoolDayEndpoint extends Endpoint {
     );
 
     await session.db.insertRow(schoolday);
+    session.messages.postMessage('hub_events_stream', schoolday);
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolday);
     return schoolday;
   }
 
@@ -131,6 +145,11 @@ class AdminSchoolDayEndpoint extends Endpoint {
 
     final newSchooldays = await session.db.insert(schooldays);
 
+    for (final sd in newSchooldays) {
+      session.messages.postMessage('hub_events_stream', sd);
+    }
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolday);
+
     return newSchooldays;
   }
 
@@ -141,7 +160,10 @@ class AdminSchoolDayEndpoint extends Endpoint {
     final updatedSchoolday = await Schoolday.db
         .findFirstRow(session, where: (t) => t.id.equals(schoolday.id!));
 
-    return updatedSchoolday!;
+    session.messages.postMessage('hub_events_stream', updatedSchoolday!);
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolday);
+
+    return updatedSchoolday;
   }
 
   Future<bool> deleteSchoolday(Session session, DateTime date) async {
@@ -154,7 +176,14 @@ class AdminSchoolDayEndpoint extends Endpoint {
       return false;
     }
 
+    final schooldayId = schoolday.id!;
     await session.db.deleteRow<Schoolday>(schoolday);
+
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.schoolday, id: schooldayId),
+    );
+
     return true;
   }
 }

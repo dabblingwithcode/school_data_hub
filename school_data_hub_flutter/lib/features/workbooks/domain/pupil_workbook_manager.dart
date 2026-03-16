@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/data/pupil_workbook_api_service.dart';
@@ -9,6 +13,8 @@ import 'package:school_data_hub_flutter/features/workbooks/data/pupil_workbook_a
 class PupilWorkbookManager with ChangeNotifier {
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
   NotificationManager get _notificationService => di<NotificationManager>();
+  final _log = Logger('PupilWorkbookManager');
+  StreamSubscription<dynamic>? _hubSubscription;
   final Map<int, List<PupilWorkbook>> _pupilWorkbooks = {};
   final _pupilWorkbookApiService = PupilWorkbookApiService();
 
@@ -21,6 +27,8 @@ class PupilWorkbookManager with ChangeNotifier {
     for (var pupilWorkbook in pupilWorkbooks) {
       addPupilWorkbook(pupilWorkbook.pupilId, pupilWorkbook);
     }
+
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
 
     return this;
   }
@@ -190,5 +198,74 @@ class PupilWorkbookManager with ChangeNotifier {
     );
 
     return;
+  }
+
+  //- Hub stream handlers
+
+  void _onHubEvent(dynamic event) {
+    if (event is PupilWorkbook) {
+      _upsertFromStream(event);
+    } else if (event is HubDeleteEvent &&
+        event.objectType == HubObjectType.pupilWorkbook) {
+      _deleteFromStream(event.id);
+    } else if (event is HubReconnected) {
+      _refetchAll();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.pupilWorkbook)) {
+        _refetchAll();
+      }
+    }
+  }
+
+  void _upsertFromStream(PupilWorkbook workbook) {
+    _log.fine('[STREAM] upsert pupilWorkbook ${workbook.id}');
+    final pupilId = workbook.pupilId;
+    if (_pupilWorkbooks.containsKey(pupilId)) {
+      final index = _pupilWorkbooks[pupilId]!.indexWhere(
+        (wb) => wb.id == workbook.id,
+      );
+      if (index != -1) {
+        _pupilWorkbooks[pupilId]![index] = workbook;
+      } else {
+        _pupilWorkbooks[pupilId]!.add(workbook);
+      }
+    } else {
+      _pupilWorkbooks[pupilId] = [workbook];
+    }
+    notifyListeners();
+  }
+
+  void _deleteFromStream(int id) {
+    _log.fine('[STREAM] delete pupilWorkbook $id');
+    for (final pupilId in _pupilWorkbooks.keys.toList()) {
+      _pupilWorkbooks[pupilId]!.removeWhere((wb) => wb.id == id);
+      if (_pupilWorkbooks[pupilId]!.isEmpty) {
+        _pupilWorkbooks.remove(pupilId);
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> _refetchAll() async {
+    _pupilWorkbooks.clear();
+    final pupilWorkbooks =
+        await _pupilWorkbookApiService.fetchAllPupilWorkbooks();
+    if (pupilWorkbooks == null) return;
+    for (var pupilWorkbook in pupilWorkbooks) {
+      if (_pupilWorkbooks.containsKey(pupilWorkbook.pupilId)) {
+        _pupilWorkbooks[pupilWorkbook.pupilId]!.add(pupilWorkbook);
+      } else {
+        _pupilWorkbooks[pupilWorkbook.pupilId] = [pupilWorkbook];
+      }
+    }
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
+    _pupilWorkbooks.clear();
+    super.dispose();
   }
 }

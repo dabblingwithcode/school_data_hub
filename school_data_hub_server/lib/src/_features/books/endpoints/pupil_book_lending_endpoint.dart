@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:school_data_hub_server/src/_features/pupil/schemas/pupil_schemas.dart';
@@ -55,7 +56,9 @@ class PupilBookLendingEndpoint extends Endpoint {
       return createdLending;
     });
 
-    return result!;
+    session.messages.postMessage('hub_events_stream', result!);
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilBookLending);
+    return result;
   }
 
   //- read
@@ -82,7 +85,7 @@ class PupilBookLendingEndpoint extends Endpoint {
   //-update
   Future<PupilBookLending> updatePupilBookLending(
       Session session, PupilBookLending pupilBookLending) async {
-    return await session.db.transaction((transaction) async {
+    final result = await session.db.transaction((transaction) async {
       final updatedPupilBookLending = await PupilBookLending.db
           .updateRow(session, pupilBookLending, transaction: transaction);
 
@@ -102,6 +105,9 @@ class PupilBookLendingEndpoint extends Endpoint {
           transaction: transaction);
       return lending!;
     });
+    session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilBookLending);
+    return result;
   }
 
   //- delete
@@ -132,6 +138,11 @@ class PupilBookLendingEndpoint extends Endpoint {
           .deleteRow(session, pupilBookLending, transaction: transaction);
     });
 
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(
+          objectType: HubObjectType.pupilBookLending, id: pupilBookLending.id!),
+    );
     return true;
   }
 
@@ -160,7 +171,7 @@ class PupilBookLendingEndpoint extends Endpoint {
       path: filePath,
     );
 
-    return await session.db.transaction((transaction) async {
+    final result = await session.db.transaction((transaction) async {
       final createdDocument = await HubDocument.db.insertRow(
         session,
         hubDocument,
@@ -183,6 +194,9 @@ class PupilBookLendingEndpoint extends Endpoint {
       );
       return lending!;
     });
+    session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilBookLending);
+    return result;
   }
 
   /// Remove a file from a PupilBookLending record
@@ -227,6 +241,13 @@ class PupilBookLendingEndpoint extends Endpoint {
           .deleteRow(session, document, transaction: transaction);
     });
 
+    final updatedLending = await PupilBookLending.db.findFirstRow(
+      session,
+      where: (t) => t.lendingId.equals(lendingId),
+      include: PupilBookLendingSchemas.allInclude,
+    );
+    session.messages.postMessage('hub_events_stream', updatedLending!);
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilBookLending);
     return true;
   }
 }

@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/books/data/pupil_book_lending_api_service.dart';
@@ -12,6 +15,8 @@ import 'package:school_data_hub_flutter/features/books/data/pupil_book_lending_a
 class PupilBookLendingManager with ChangeNotifier {
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
   NotificationManager get _notificationService => di<NotificationManager>();
+  final _log = Logger('PupilBookLendingManager');
+  StreamSubscription<dynamic>? _hubSubscription;
 
   final Map<int, List<PupilBookLending>> _pupilBookLendings = {};
   final Map<String, PupilBookLending> _lendingIdMap = {};
@@ -27,6 +32,8 @@ class PupilBookLendingManager with ChangeNotifier {
     for (var lending in allLendings) {
       _addPupilBookLendingToCollections(lending);
     }
+
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
 
     return this;
   }
@@ -343,8 +350,65 @@ class PupilBookLendingManager with ChangeNotifier {
     );
   }
 
+  //- Hub stream handlers
+
+  void _onHubEvent(dynamic event) {
+    if (event is PupilBookLending) {
+      _upsertFromStream(event);
+    } else if (event is HubDeleteEvent &&
+        event.objectType == HubObjectType.pupilBookLending) {
+      _deleteFromStream(event.id);
+    } else if (event is HubReconnected) {
+      _refetchAll();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.pupilBookLending)) {
+        _refetchAll();
+      }
+    }
+  }
+
+  void _upsertFromStream(PupilBookLending lending) {
+    _log.fine('[STREAM] upsert pupilBookLending ${lending.id}');
+    _updatePupilBookLendingInCollections(lending);
+    notifyListeners();
+  }
+
+  void _deleteFromStream(int id) {
+    _log.fine('[STREAM] delete pupilBookLending $id');
+    // Find the lending by id across all collections
+    PupilBookLending? found;
+    for (final lendings in _pupilBookLendings.values) {
+      for (final lending in lendings) {
+        if (lending.id == id) {
+          found = lending;
+          break;
+        }
+      }
+      if (found != null) break;
+    }
+    if (found != null) {
+      _removePupilBookLendingFromCollections(found);
+      notifyListeners();
+    }
+  }
+
+  Future<void> _refetchAll() async {
+    _pupilBookLendings.clear();
+    _lendingIdMap.clear();
+    _isbnPupilBookLendingsMap.clear();
+    final allLendings =
+        await _pupilBookLendingApiService.fetchAllPupilBookLendings();
+    if (allLendings == null) return;
+    for (var lending in allLendings) {
+      _addPupilBookLendingToCollections(lending);
+    }
+    notifyListeners();
+  }
+
   @override
   void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
     _pupilBookLendings.clear();
     _lendingIdMap.clear();
     super.dispose();

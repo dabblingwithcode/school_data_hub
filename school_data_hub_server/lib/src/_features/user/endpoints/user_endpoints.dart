@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/_features/user/helpers/get_user_devices.dart';
 import 'package:school_data_hub_server/src/_features/user/helpers/increase_staff_credit.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
@@ -78,6 +79,7 @@ class UserEndpoint extends Endpoint {
 
   Future<bool> increaseStaffCredit(Session session) async {
     await increaseAllStaffCredit(session);
+    HubUpdatesTracker.instance.touch(HubObjectType.user);
     return true;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 import 'package:serverpod_auth_server/module.dart';
@@ -29,7 +30,7 @@ class AdminUserEndpoint extends Endpoint {
     Set<int>? pupilsAuth,
   }) async {
     session.log('Creating user: $userName, $email');
-    return _createOneUser(
+    final user = await _createOneUser(
       session,
       userName: userName,
       fullName: fullName,
@@ -44,6 +45,9 @@ class AdminUserEndpoint extends Endpoint {
       credit: credit,
       pupilsAuth: pupilsAuth,
     );
+    session.messages.postMessage('hub_events_stream', user);
+    HubUpdatesTracker.instance.touch(HubObjectType.user);
+    return user;
   }
 
   /// Creates a single user (auth + UserInfo + scopes + User).
@@ -249,7 +253,7 @@ class AdminUserEndpoint extends Endpoint {
           continue;
         }
         try {
-          await _createOneUser(
+          final user = await _createOneUser(
             session,
             userName: userName,
             fullName: req.fullName,
@@ -264,6 +268,8 @@ class AdminUserEndpoint extends Endpoint {
             credit: req.credit,
             pupilsAuth: req.pupilsAuth,
           );
+          session.messages.postMessage('hub_events_stream', user);
+          HubUpdatesTracker.instance.touch(HubObjectType.user);
           yield BatchCreateUserEvent(
             credential: CreatedUserCredential(
               userName: userName,
@@ -327,7 +333,7 @@ class AdminUserEndpoint extends Endpoint {
         .findFirstRow(session, where: (t) => t.id.equals(userId));
     if (userInfo == null) throw Exception('UserInfo not found');
 
-    return await session.db.transaction((transaction) async {
+    final updatedUser = await session.db.transaction((transaction) async {
       userInfo.userName = userName;
       userInfo.fullName = fullName;
       userInfo.email = email;
@@ -345,6 +351,9 @@ class AdminUserEndpoint extends Endpoint {
       await User.db.updateRow(session, user, transaction: transaction);
       return user;
     });
+    session.messages.postMessage('hub_events_stream', updatedUser);
+    HubUpdatesTracker.instance.touch(HubObjectType.user);
+    return updatedUser;
   }
 
   Future<bool> resetPassword(
@@ -391,6 +400,7 @@ class AdminUserEndpoint extends Endpoint {
     );
 
     await auth.AuthKey.db.deleteRow(session, authKey);
+    HubUpdatesTracker.instance.touch(HubObjectType.user);
     final user = await User.db.findFirstRow(session,
         where: (t) => t.userInfoId.equals(device.userInfoId));
     if (user == null) throw Exception('User not found');
@@ -514,6 +524,11 @@ class AdminUserEndpoint extends Endpoint {
         transaction: transaction,
       );
     });
+
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.user, id: userId),
+    );
   }
 
   Future<void> promoteUserScope(

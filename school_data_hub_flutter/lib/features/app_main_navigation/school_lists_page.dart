@@ -7,8 +7,8 @@ import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorizations_list_page/authorizations_list_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_label_pdf_service.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/services/pupil_label_pdf_service.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_lists_page/school_lists_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
@@ -64,8 +64,8 @@ class SchoolListsMenuPage extends StatelessWidget {
                       destinationPage: PdfViewerPage(
                         pdfGenerator: () =>
                             PupilLabelPdfService.generateLabelsPdf(
-                          di<PupilProxyManager>().allPupils,
-                        ),
+                              di<PupilProxyManager>().allPupils,
+                            ),
                         title: 'Etiketten',
                         iconData: Icons.label_outline,
                         showZoomButton: true,

@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:serverpod/serverpod.dart';
@@ -13,6 +14,8 @@ class AdminSchoolDataEndpoint extends Endpoint {
     SchoolData schoolData,
   ) async {
     final schooldataInDb = await session.db.insertRow(schoolData);
+    session.messages.postMessage('hub_events_stream', schooldataInDb);
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolData);
     return schooldataInDb;
   }
 
@@ -31,7 +34,7 @@ class AdminSchoolDataEndpoint extends Endpoint {
     );
 
     // Return with includes
-    return await SchoolData.db.findById(
+    final result = await SchoolData.db.findById(
           session,
           schoolData.id!,
           include: SchoolData.include(
@@ -40,6 +43,9 @@ class AdminSchoolDataEndpoint extends Endpoint {
           ),
         ) ??
         updatedSchoolData;
+    session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolData);
+    return result;
   }
 
   /// Upload a logo image and link it to the SchoolData record
@@ -106,7 +112,9 @@ class AdminSchoolDataEndpoint extends Endpoint {
         transaction: transaction,
       );
     });
-    return result!;
+    session.messages.postMessage('hub_events_stream', result!);
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolData);
+    return result;
   }
 
   /// Upload an official seal image and link it to the SchoolData record
@@ -173,7 +181,9 @@ class AdminSchoolDataEndpoint extends Endpoint {
         transaction: transaction,
       );
     });
-    return result!;
+    session.messages.postMessage('hub_events_stream', result!);
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolData);
+    return result;
   }
 
   /// Delete the logo from SchoolData
@@ -226,7 +236,9 @@ class AdminSchoolDataEndpoint extends Endpoint {
         transaction: transaction,
       );
     });
-    return result!;
+    session.messages.postMessage('hub_events_stream', result!);
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolData);
+    return result;
   }
 
   /// Delete the official seal from SchoolData
@@ -279,6 +291,8 @@ class AdminSchoolDataEndpoint extends Endpoint {
         transaction: transaction,
       );
     });
-    return result!;
+    session.messages.postMessage('hub_events_stream', result!);
+    HubUpdatesTracker.instance.touch(HubObjectType.schoolData);
+    return result;
   }
 }

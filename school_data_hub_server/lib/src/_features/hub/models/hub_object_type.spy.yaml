@@ -12,3 +12,9 @@ values:
   - competenceReportItem
   - competenceGoal
   - supportGoal
+  - pupilWorkbook
+  - pupilBookLending
+  - schoolday
+  - schoolSemester
+  - schoolData
+  - user

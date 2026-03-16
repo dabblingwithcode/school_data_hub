@@ -6,6 +6,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/get_non_holiday_weekdays.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
@@ -14,6 +15,7 @@ import 'package:school_data_hub_flutter/features/school_calendar/data/school_cal
 final _log = Logger('SchooldayManager');
 
 class SchoolCalendarManager {
+  StreamSubscription<dynamic>? _hubSubscription;
   final _apiService = SchoolCalendarApiService();
   EnvManager get _envManager => di<EnvManager>();
   final _notificationService = di<NotificationManager>();
@@ -38,10 +40,13 @@ class SchoolCalendarManager {
     // }
     await fetchSchooldays();
     await fetchSchoolSemesters();
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     return this;
   }
 
   void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
     _schooldays.dispose();
     _availableDates.dispose();
     _schoolSemesters.dispose();
@@ -49,6 +54,70 @@ class SchoolCalendarManager {
     _thisDate.dispose();
     return;
   }
+  void _onHubEvent(dynamic event) {
+    if (event is Schoolday) {
+      _upsertSchooldayFromStream(event);
+    } else if (event is SchoolSemester) {
+      _upsertSchoolSemesterFromStream(event);
+    } else if (event is HubDeleteEvent) {
+      if (event.objectType == HubObjectType.schoolday) {
+        _deleteSchooldayFromStream(event.id);
+      } else if (event.objectType == HubObjectType.schoolSemester) {
+        _deleteSchoolSemesterFromStream(event.id);
+      }
+    } else if (event is HubReconnected) {
+      fetchSchooldays();
+      fetchSchoolSemesters();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.schoolday)) {
+        fetchSchooldays();
+      }
+      if (event.changedTypes.contains(HubObjectType.schoolSemester)) {
+        fetchSchoolSemesters();
+      }
+    }
+  }
+
+  void _upsertSchooldayFromStream(Schoolday schoolday) {
+    _log.fine('[STREAM] upsert schoolday ${schoolday.id}');
+    final list = List<Schoolday>.from(_schooldays.value);
+    final index = list.indexWhere((s) => s.id == schoolday.id);
+    if (index != -1) {
+      list[index] = schoolday;
+    } else {
+      list.add(schoolday);
+    }
+    _schooldays.value = list;
+    setAvailableDates();
+  }
+
+  void _deleteSchooldayFromStream(int id) {
+    _log.fine('[STREAM] delete schoolday $id');
+    _schooldays.value = _schooldays.value.where((s) => s.id != id).toList();
+    setAvailableDates();
+  }
+
+  void _upsertSchoolSemesterFromStream(SchoolSemester semester) {
+    _log.fine('[STREAM] upsert schoolSemester ${semester.id}');
+    final list = List<SchoolSemester>.from(_schoolSemesters.value);
+    final index = list.indexWhere((s) => s.id == semester.id);
+    if (index != -1) {
+      list[index] = semester;
+    } else {
+      list.add(semester);
+    }
+    _schoolSemesters.value = list;
+    _currentSemester.value = getCurrentSchoolSemester();
+  }
+
+  void _deleteSchoolSemesterFromStream(int id) {
+    _log.fine('[STREAM] delete schoolSemester $id');
+    _schoolSemesters.value = _schoolSemesters.value.where((s) => s.id != id).toList();
+    if (_currentSemester.value?.id == id) {
+      _currentSemester.value = getCurrentSchoolSemester();
+    }
+  }
+
   //- DOMAIN FUNCTIONS
 
   void clearData() {

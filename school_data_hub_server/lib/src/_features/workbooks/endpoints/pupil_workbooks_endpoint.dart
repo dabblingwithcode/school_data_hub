@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/utils/isbn_api.dart';
 import 'package:serverpod/serverpod.dart';
@@ -58,6 +59,8 @@ class PupilWorkbooksEndpoint extends Endpoint {
       return pupilWorkbookWithWorkbook;
     });
 
+    session.messages.postMessage('hub_events_stream', result!);
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilWorkbook);
     return result;
   }
 
@@ -88,7 +91,14 @@ class PupilWorkbooksEndpoint extends Endpoint {
     // Update an existing pupil workbook
     final updatedPupilWorkbook =
         await PupilWorkbook.db.updateRow(session, pupilWorkbook);
-    return updatedPupilWorkbook;
+    final withInclude = await PupilWorkbook.db.findFirstRow(
+      session,
+      where: (t) => t.id.equals(updatedPupilWorkbook.id!),
+      include: PupilWorkbook.include(workbook: Workbook.include()),
+    );
+    session.messages.postMessage('hub_events_stream', withInclude!);
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilWorkbook);
+    return withInclude;
   }
 
   //- delete
@@ -112,6 +122,10 @@ class PupilWorkbooksEndpoint extends Endpoint {
       throw Exception(
           'Failed to delete pupil workbook with id $pupilWorkbookId.');
     }
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.pupilWorkbook, id: pupilWorkbookId),
+    );
     return result;
   }
 }

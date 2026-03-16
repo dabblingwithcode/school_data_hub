@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/school/data/school_data_api_service.dart';
 import 'package:school_data_hub_flutter/features/school/domain/managers/school_data_manager.dart'
@@ -17,6 +19,8 @@ final _log = Logger('SchoolDataMainManager');
 /// Main school data manager that orchestrates all sub-managers
 /// This follows the established pattern from the timetable feature
 class SchoolDataMainManager {
+  StreamSubscription<dynamic>? _hubSubscription;
+
   // Sub-managers
   final data_manager.SchoolDataManager _dataManager;
   final _apiService = SchoolDataApiService();
@@ -46,14 +50,30 @@ class SchoolDataMainManager {
     await _dataManager.init();
     await _uiManager.init();
     await refreshData();
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
 
     return this;
   }
 
   void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
     _dataManager.dispose();
 
     _uiManager.dispose();
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is SchoolData) {
+      _log.fine('[STREAM] upsert schoolData ${event.id}');
+      _dataManager.setSchoolData(event);
+    } else if (event is HubReconnected) {
+      refreshData();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.schoolData)) {
+        refreshData();
+      }
+    }
   }
 
   /// Refresh all data from API

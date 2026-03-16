@@ -106,7 +106,7 @@ class HubStreamService with WidgetsBindingObserver {
     _connectivityListener = () {
       if (_disposed) return;
       if (!monitor.isConnected.value) {
-        _log.info('[HUB] connectivity_lost — setting disconnected');
+        _log.info('connectivity_lost — setting disconnected');
         _connecting = false;
         _cancelReconnectTimer();
         _cleanupSubscription();
@@ -117,7 +117,7 @@ class HubStreamService with WidgetsBindingObserver {
       final s = _state.value;
       if (s == HubConnectionState.waitingRetry ||
           s == HubConnectionState.disconnected) {
-        _log.info('[HUB] connectivity_restored — attempting reconnect');
+        _log.info('connectivity_restored — attempting reconnect');
         _attemptConnect(isReconnect: true);
       }
     };
@@ -135,15 +135,15 @@ class HubStreamService with WidgetsBindingObserver {
         _setState(HubConnectionState.background);
         _cancelReconnectTimer();
         _cleanupSubscription();
-        _log.info('[HUB] App backgrounded — stream disconnected');
+        _log.info('App backgrounded — stream disconnected');
         break;
       case AppLifecycleState.resumed:
         _appInForeground = true;
         if (isConnected) {
-          _log.info('[HUB] App resumed — already connected, skipping');
+          _log.info('App resumed — already connected, skipping');
           break;
         }
-        _log.info('[HUB] App resumed — scheduling reconnect');
+        _log.info('App resumed — scheduling reconnect');
         _scheduleReconnect(
           isReconnect: true,
           delayMs: _dnsGraceDelayMs,
@@ -185,7 +185,7 @@ class HubStreamService with WidgetsBindingObserver {
       final changeTimes = await di<Client>().hub.getLastChangeTimes();
       return computeChangedTypes(changeTimes, _disconnectedAt!);
     } catch (e) {
-      _log.warning('[HUB] Could not fetch change times: $e');
+      _log.warning('Could not fetch change times: $e');
       return null;
     }
   }
@@ -199,9 +199,7 @@ class HubStreamService with WidgetsBindingObserver {
     if (_connecting) return;
     if (_reconnectTimer != null) return;
     final delayWithJitter = _withJitter(delayMs);
-    _log.info(
-      '[HUB] reconnect_scheduled reason=$reason delayMs=$delayWithJitter',
-    );
+    _log.info('reconnect_scheduled reason=$reason delayMs=$delayWithJitter');
     _reconnectTimer = Timer(Duration(milliseconds: delayWithJitter), () {
       _reconnectTimer = null;
       _attemptConnect(isReconnect: isReconnect);
@@ -214,7 +212,7 @@ class HubStreamService with WidgetsBindingObserver {
     final hasConnectivity =
         di<ServerpodConnectivityMonitor>().isConnected.value;
     if (!hasConnectivity) {
-      _log.info('[HUB] No connectivity — waiting for connectivity listener');
+      _log.info('No connectivity — waiting for connectivity listener');
       return;
     }
 
@@ -224,7 +222,7 @@ class HubStreamService with WidgetsBindingObserver {
     final serverUrl = di<EnvManager>().activeEnv?.serverUrl ?? 'unknown';
     final host = Uri.tryParse(serverUrl)?.host ?? serverUrl;
     _log.info(
-      '[HUB] connect_attempt host=$host backoffMs=$_reconnectDelayMs '
+      'connect_attempt host=$host backoffMs=$_reconnectDelayMs '
       'reconnect=$isReconnect',
     );
     _setState(HubConnectionState.connecting);
@@ -245,12 +243,12 @@ class HubStreamService with WidgetsBindingObserver {
             _events.add(HubReconnected());
           } else if (changedTypes.isNotEmpty) {
             _log.info(
-              '[HUB] Selective reconnect: ${changedTypes.length} types changed',
+              'Selective reconnect: ${changedTypes.length} types changed',
             );
             _pingStreamActivity();
             _events.add(HubSelectiveReconnect(changedTypes));
           } else {
-            _log.info('[HUB] No events missed — skipping refetch');
+            _log.info('No events missed — skipping refetch');
           }
 
           _doSubscribe();
@@ -267,7 +265,7 @@ class HubStreamService with WidgetsBindingObserver {
       return;
     }
 
-    _log.info('[HUB] Subscribing to hub_events_stream');
+    _log.info('Subscribing to hub_events_stream');
     final client = di<Client>();
     try {
       _subscription = client.hub.streamHubEvents().listen(
