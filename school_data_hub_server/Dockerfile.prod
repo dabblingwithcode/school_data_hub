@@ -19,6 +19,10 @@ RUN if [ -n "$GITHUB_PAT" ] && [ -n "$GITHUB_USER" ]; then \
     echo "No GitHub token provided. Skipping Git configuration..."; \
     fi
 
+# Remove workspace resolution since the Docker build only has this package,
+# not the full monorepo workspace
+RUN sed -i '/^resolution: workspace$/d' pubspec.yaml
+
 RUN dart pub get
 RUN dart compile exe bin/main.dart -o bin/server
 
