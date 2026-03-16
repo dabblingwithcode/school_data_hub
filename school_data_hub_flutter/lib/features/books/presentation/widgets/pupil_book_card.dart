@@ -49,6 +49,9 @@ class PupilBookLendingCard extends StatelessWidget {
       child: Card(
         color: AppColors.cardInCardColor,
         child: InkWell(
+          mouseCursor: SystemMouseCursors.click,
+          focusColor: AppColors.cardInCardColor,
+          hoverColor: AppColors.cardInCardColor.withValues(alpha: 0.5),
           onLongPress: () async {
             final isAuthorized =
                 di<HubSessionManager>().isAdmin ||

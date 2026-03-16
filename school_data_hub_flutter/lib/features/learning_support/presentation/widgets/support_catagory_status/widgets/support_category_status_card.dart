@@ -25,6 +25,7 @@ class SupportCategoryStatusCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    watch(pupil);
     final expansionController = createOnce(
       () => CustomExpansionTileController(),
     );
@@ -41,6 +42,7 @@ class SupportCategoryStatusCard extends WatchingWidget {
     }
 
     return Card(
+      color: AppColors.cardInCardColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       child: Column(
         children: [

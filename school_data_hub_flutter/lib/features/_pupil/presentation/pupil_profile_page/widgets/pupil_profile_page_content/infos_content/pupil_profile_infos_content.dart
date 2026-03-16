@@ -56,7 +56,7 @@ class PupilProfileInfosContent extends WatchingWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Special Information
-          PupilProfileContentHeader(
+          const PupilProfileContentHeader(
             icon: Icons.priority_high_rounded,
             title: 'Besondere Infos',
           ),
@@ -171,7 +171,7 @@ class PupilProfileInfosContent extends WatchingWidget {
           ),
           const Gap(16),
           // Basic Information
-          PupilProfileContentHeader(
+          const PupilProfileContentHeader(
             icon: Icons.person_outline,
             title: 'Grunddaten',
           ),
@@ -195,7 +195,7 @@ class PupilProfileInfosContent extends WatchingWidget {
           ),
           const Gap(16),
           // Contact Information
-          PupilProfileContentHeader(
+          const PupilProfileContentHeader(
             icon: Icons.contact_phone_outlined,
             title: 'Kontaktinformationen',
           ),
@@ -423,7 +423,7 @@ class PupilProfileInfosContent extends WatchingWidget {
           ),
           const Gap(16),
           // Authorizations
-          PupilProfileContentHeader(
+          const PupilProfileContentHeader(
             icon: Icons.verified_user_outlined,
             title: 'Einwilligungen',
           ),
@@ -433,7 +433,7 @@ class PupilProfileInfosContent extends WatchingWidget {
           PublicMediaAuthValues(pupil: pupil),
           const Gap(16),
           // Siblings
-          PupilProfileContentHeader(
+          const PupilProfileContentHeader(
             icon: Icons.family_restroom_outlined,
             title: 'Geschwister',
           ),

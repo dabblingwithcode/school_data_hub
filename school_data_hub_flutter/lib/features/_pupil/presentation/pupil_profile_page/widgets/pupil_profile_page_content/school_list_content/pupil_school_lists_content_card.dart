@@ -4,9 +4,9 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profi
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_lists_page/school_lists_page.dart';
 
-class PupilSchoolListsContentCard extends StatelessWidget {
+class PupilProfileSchoolListsContentCard extends StatelessWidget {
   final PupilProxy pupil;
-  const PupilSchoolListsContentCard({required this.pupil, super.key});
+  const PupilProfileSchoolListsContentCard({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +15,7 @@ class PupilSchoolListsContentCard extends StatelessWidget {
       title: 'Listen',
       onTitleTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (ctx) => const SchoolListsPage(),
-          ),
+          MaterialPageRoute<void>(builder: (ctx) => const SchoolListsPage()),
         );
       },
       child: PupilSchoolListContentList(pupil: pupil),

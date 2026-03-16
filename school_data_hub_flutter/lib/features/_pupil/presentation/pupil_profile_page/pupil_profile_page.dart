@@ -20,48 +20,41 @@ class PupilProfilePage extends StatelessWidget {
     final pupilManager = di<PupilProxyManager>();
     return Scaffold(
       backgroundColor: AppColors.pupilProfileBackgroundColor,
-      body: RefreshIndicator(
-        onRefresh: () async => pupilManager.updatePupilData(pupil.pupilId),
-        child: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: NestedScrollView(
-                      physics: const BouncingScrollPhysics(
-                        decelerationRate: ScrollDecelerationRate.fast,
-                      ),
-                      headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                        SliverAppBar(
-                          systemOverlayStyle: SystemUiOverlayStyle(
-                            statusBarColor:
-                                AppColors.pupilProfileBackgroundColor,
-                          ),
-                          pinned: true,
-                          floating: true,
-                          snap: true,
-                          scrolledUnderElevation: null,
-                          automaticallyImplyLeading: false,
-                          leading: null,
-                          backgroundColor:
-                              AppColors.pupilProfileBackgroundColor,
-                          toolbarHeight: 60,
-                          expandedHeight: 120,
-                          stretch: false,
-                          elevation: 0,
-                          flexibleSpace: PupilProfileHeadingCard(pupil: pupil),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Column(
+              children: [
+                Expanded(
+                  child: NestedScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                      SliverAppBar(
+                        systemOverlayStyle: SystemUiOverlayStyle(
+                          statusBarColor: AppColors.pupilProfileBackgroundColor,
                         ),
-                      ],
-                      body: PupilProfilePageContent(pupil: pupil),
-                    ),
+                        pinned: true,
+                        floating: true,
+                        snap: true,
+                        scrolledUnderElevation: null,
+                        automaticallyImplyLeading: false,
+                        leading: null,
+                        backgroundColor: AppColors.pupilProfileBackgroundColor,
+                        toolbarHeight: 60,
+                        expandedHeight: 120,
+                        stretch: false,
+                        elevation: 0,
+                        flexibleSpace: PupilProfileHeadingCard(pupil: pupil),
+                      ),
+                    ],
+                    body: PupilProfilePageContent(pupil: pupil),
                   ),
-                  PupilProfileNavigation(
-                    boxWidth: MediaQuery.sizeOf(context).width,
-                  ),
-                ],
-              ),
+                ),
+                PupilProfileNavigation(
+                  boxWidth: MediaQuery.sizeOf(context).width,
+                ),
+              ],
             ),
           ),
         ),

@@ -32,6 +32,25 @@ class PupilProfileContentHeader extends StatelessWidget {
   }
 }
 
+class ProfilePageConstraints extends InheritedWidget {
+  final double minHeight;
+
+  const ProfilePageConstraints({
+    required this.minHeight,
+    required super.child,
+    super.key,
+  });
+
+  static ProfilePageConstraints? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ProfilePageConstraints>();
+  }
+
+  @override
+  bool updateShouldNotify(ProfilePageConstraints oldWidget) {
+    return minHeight != oldWidget.minHeight;
+  }
+}
+
 class PupilProfileContentCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -50,54 +69,61 @@ class PupilProfileContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.backgroundColor.withValues(alpha: 0.2),
-          width: 1.5,
+    final pageConstraints = ProfilePageConstraints.of(context);
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: pageConstraints?.minHeight ?? 0),
+      child: Container(
+        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.backgroundColor.withValues(alpha: 0.2),
+            width: 1.5,
+          ),
+          color: Colors.white,
         ),
-        color: Colors.white,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Gap(5),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: onTitleTap,
-                borderRadius: BorderRadius.circular(8),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 4.0,
-                    horizontal: 4.0,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(icon, color: AppColors.backgroundColor, size: 25),
-                      const Gap(10),
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.backgroundColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Gap(5),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: onTitleTap,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 4.0,
+                      horizontal: 4.0,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(icon, color: AppColors.backgroundColor, size: 25),
+                        const Gap(10),
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.backgroundColor,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              if (headerTrailing != null) ...[const Spacer(), headerTrailing!],
-            ],
-          ),
-          const Gap(12),
-          child,
-        ],
+                if (headerTrailing != null) ...[
+                  const Spacer(),
+                  headerTrailing!,
+                ],
+              ],
+            ),
+            const Gap(12),
+            child,
+          ],
+        ),
       ),
     );
   }
@@ -135,7 +161,7 @@ class PupilProfileContentRow extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardInCardColor,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.cardInCardBorderColor, width: 1),
+          // border: Border.all(color: AppColors.cardInCardBorderColor, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

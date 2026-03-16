@@ -4,4 +4,7 @@ insights/
 legal/
 .cursor/
 .claude/
+.dart_tool/
+.dart_skills/
+.vscode/
 docs/

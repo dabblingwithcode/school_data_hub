@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/after_school_care_content/pupil_profile_after_school_care_content.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/attendance_content/pupil_profile_attendance_content.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/authorization_content/pupil_profile_authorization_content.dart';
@@ -12,6 +13,7 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profi
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/learning_support_content/pupil_profile_learning_support_content.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/school_list_content/pupil_school_lists_content_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/schoolday_events_content/pupil_profile_schoolday_events_content.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_page_content/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
 class PupilProfilePageContent extends WatchingStatefulWidget {
@@ -93,9 +95,16 @@ enum _ProfilePageChild {
   learning,
 }
 
-class _ProfilePageWrapper extends StatelessWidget {
+class _ProfilePageWrapper extends StatefulWidget {
   final _ProfilePageChild childBuilder;
   const _ProfilePageWrapper({required this.childBuilder});
+
+  @override
+  State<_ProfilePageWrapper> createState() => _ProfilePageWrapperState();
+}
+
+class _ProfilePageWrapperState extends State<_ProfilePageWrapper> {
+  double? _initialMinHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +113,7 @@ class _ProfilePageWrapper extends StatelessWidget {
         .pupil;
 
     Widget child;
-    switch (childBuilder) {
+    switch (widget.childBuilder) {
       case _ProfilePageChild.info:
         child = PupilProfileInfosContent(pupil: pupil);
         break;
@@ -124,7 +133,7 @@ class _ProfilePageWrapper extends StatelessWidget {
         child = PupilProfileAfterSchoolCareContent(pupil: pupil);
         break;
       case _ProfilePageChild.lists:
-        child = PupilSchoolListsContentCard(pupil: pupil);
+        child = PupilProfileSchoolListsContentCard(pupil: pupil);
         break;
       case _ProfilePageChild.auth:
         child = PupilProfileAuthorizationContent(pupil: pupil);
@@ -145,6 +154,7 @@ class _ProfilePageWrapper extends StatelessWidget {
       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
       child: LayoutBuilder(
         builder: (context, constraints) {
+          _initialMinHeight ??= constraints.maxHeight - 5;
           return Container(
             decoration: BoxDecoration(
               color: AppColors.pupilProfileBackgroundColor,
@@ -157,13 +167,15 @@ class _ProfilePageWrapper extends StatelessWidget {
                 ),
               ],
             ),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight - 5,
+            child: RefreshIndicator(
+              onRefresh: () async =>
+                  di<PupilProxyManager>().updatePupilData(pupil.pupilId),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
+                child: ProfilePageConstraints(
+                  minHeight: _initialMinHeight!,
+                  child: child,
                 ),
-                child: child,
               ),
             ),
           );

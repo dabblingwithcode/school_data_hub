@@ -49,6 +49,7 @@ class LearningSupportPlansSection extends StatelessWidget {
         // Title row with expansion switch
         Row(
           children: [
+            const Gap(5),
             Text(
               'Förderpläne',
               style: TextStyle(

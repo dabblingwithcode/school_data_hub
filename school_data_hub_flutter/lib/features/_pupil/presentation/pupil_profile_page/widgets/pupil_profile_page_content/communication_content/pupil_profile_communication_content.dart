@@ -69,7 +69,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
           ),
           const Gap(16),
           // German Language Competence
-          PupilProfileContentHeader(
+          const PupilProfileContentHeader(
             icon: Icons.record_voice_over_outlined,
             title: 'Sprachkompetenz',
           ),
@@ -86,14 +86,9 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                       color: AppColors.interactiveColor,
                     ),
                   )
-                : CommunicationValues(
-                    communicationSkills: communicationPupil,
-                  ),
-            onTap: () => languageDialog(
-              context,
-              pupil,
-              CommunicationSubject.pupil,
-            ),
+                : CommunicationValues(communicationSkills: communicationPupil),
+            onTap: () =>
+                languageDialog(context, pupil, CommunicationSubject.pupil),
             onLongPress: () async {
               if (hubSessionManager.isAdmin == false) {
                 informationDialog(
@@ -132,11 +127,8 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                 : CommunicationValues(
                     communicationSkills: tutorInfo!.communicationTutor1,
                   ),
-            onTap: () => languageDialog(
-              context,
-              pupil,
-              CommunicationSubject.tutor1,
-            ),
+            onTap: () =>
+                languageDialog(context, pupil, CommunicationSubject.tutor1),
             onLongPress: () async {
               final isAdmin = hubSessionManager.isAdmin;
               if (!isAdmin) {
@@ -155,9 +147,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
               if (success == true) {
                 PupilMutator().updateTutorInfo(
                   pupilId: pupil.pupilId,
-                  tutorInfo: tutorInfo?.copyWith(
-                    communicationTutor1: null,
-                  ),
+                  tutorInfo: tutorInfo?.copyWith(communicationTutor1: null),
                 );
               }
             },
@@ -178,11 +168,8 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                 : CommunicationValues(
                     communicationSkills: tutorInfo!.communicationTutor2,
                   ),
-            onTap: () => languageDialog(
-              context,
-              pupil,
-              CommunicationSubject.tutor2,
-            ),
+            onTap: () =>
+                languageDialog(context, pupil, CommunicationSubject.tutor2),
             onLongPress: () async {
               final isAdmin = hubSessionManager.isAdmin;
               if (!isAdmin) {
@@ -203,9 +190,7 @@ class PupilProfileCommunicationContent extends WatchingWidget {
                   pupilId: pupil.pupilId,
                   tutorInfo: tutorInfo != null
                       ? tutorInfo.copyWith(communicationTutor2: null)
-                      : TutorInfo(
-                          createdBy: hubSessionManager.userName!,
-                        ),
+                      : TutorInfo(createdBy: hubSessionManager.userName!),
                 );
               }
             },

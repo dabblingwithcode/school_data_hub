@@ -375,8 +375,9 @@ class PupilMutator {
     final afterSchoolCarePupilValue =
         di<PupilProxyManager>().getPupilByPupilId(pupilId)!.afterSchoolCare ??
         AfterSchoolCare();
-    AfterSchoolCarePickUpTimes? pickUpTimes =
-        afterSchoolCarePupilValue.pickUpTimes ?? AfterSchoolCarePickUpTimes();
+    AfterSchoolCarePickUpTimes pickUpTimes =
+        afterSchoolCarePupilValue.pickUpTimes?.copyWith() ??
+        AfterSchoolCarePickUpTimes();
 
     if (weekday != null) {
       switch (weekday.value!) {

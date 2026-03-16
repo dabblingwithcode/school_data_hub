@@ -23,9 +23,38 @@ class GrowthDropdown extends StatelessWidget {
             ),
             // dropdownColor: Colors.transparent,
             // elevation: 0,
-            // focusColor: Colors.transparent,
+            borderRadius: BorderRadius.circular(50),
+            focusColor: AppColors.cardInCardBorderColor,
             value: dropdownValue,
             items: competenceCheckDropdownItems,
+            selectedItemBuilder: (context) => [
+              const Center(
+                child: Icon(
+                  Icons.question_mark_rounded,
+                  color: Colors.black,
+                  size: 50,
+                ),
+              ),
+              for (final entry in [
+                (AppColors.growthIconColor1, 'growth_1-4.png'),
+                (AppColors.growthIconColor2, 'growth_2-4.png'),
+                (AppColors.growthIconColor3, 'growth_3-4.png'),
+                (AppColors.growthIconColor4, 'growth_4-4.png'),
+              ])
+                Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: entry.$1,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Image.asset(
+                      'assets/images/growth_icons/${entry.$2}',
+                      width: 50,
+                      height: 50,
+                    ),
+                  ),
+                ),
+            ],
             onChanged: (value) {
               if (value != dropdownValue) {
                 onChangedFunction(value!);

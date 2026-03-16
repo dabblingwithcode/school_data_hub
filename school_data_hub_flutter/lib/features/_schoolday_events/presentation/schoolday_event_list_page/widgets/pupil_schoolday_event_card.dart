@@ -644,28 +644,25 @@ class PupilSchooldayEventCard extends StatelessWidget {
                     );
                   }
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text.rich(
-                      textAlign: TextAlign.left,
-                      TextSpan(
-                        children: [
-                          const TextSpan(
-                            text: 'Kommentar: ',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(
+                    textAlign: TextAlign.left,
+                    TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: 'Kommentar: ',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                          TextSpan(
-                            text: schooldayEvent.comment ?? 'Kein Kommentar',
-                          ),
-                        ],
-                      ),
-                      softWrap: true,
+                        ),
+                        TextSpan(
+                          text: schooldayEvent.comment ?? 'Kein Kommentar',
+                        ),
+                      ],
                     ),
+                    softWrap: true,
                   ),
                 ),
               ),
