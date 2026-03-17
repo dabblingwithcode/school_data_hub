@@ -74,10 +74,6 @@ Future<Image> cachedPublicImageOrDownloadPublicImage({
   notificationService.apiRunning(false);
 
   if (byteData == null) {
-    notificationService.showSnackBar(
-      NotificationType.error,
-      'Fehler beim Laden des Bildes',
-    );
     return Image.asset('assets/dummy-profile-pic.png');
   }
   Uint8List imageBytes = byteData.buffer.asUint8List();

@@ -9,6 +9,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/widgets/dialogs/after_school_care_edit_emergency_care_dialog.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_content_widgets.dart';
 
 class AfterSchoolCareDetails extends WatchingWidget {
   final PupilProxy pupil;
@@ -84,72 +85,13 @@ class _EmergencyCareCard extends StatelessWidget {
     final isEmergency = emergencyCare == true;
     final isNotSet = emergencyCare == null;
 
-    return Card(
-      color: AppColors.cardInCardColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: () => afterSchoolCareEditEmergencyCareDialog(context, pupil),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: isEmergency
-                      ? Colors.orange.withValues(alpha: 0.1)
-                      : (isNotSet
-                            ? Colors.grey.withValues(alpha: 0.1)
-                            : Colors.green.withValues(alpha: 0.1)),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  isEmergency
-                      ? Icons.warning_amber_rounded
-                      : (isNotSet
-                            ? Icons.help_outline
-                            : Icons.check_circle_outline),
-                  size: 28,
-                  color: isEmergency
-                      ? Colors.orange
-                      : (isNotSet ? Colors.grey : Colors.green),
-                ),
-              ),
-              const Gap(16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Notbetreuung',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black54,
-                      ),
-                    ),
-                    const Gap(4),
-                    Text(
-                      isNotSet
-                          ? 'Nicht gesetzt'
-                          : (isEmergency ? 'Ja' : 'Nein'),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isEmergency
-                            ? Colors.orange
-                            : (isNotSet ? Colors.grey : Colors.black87),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(Icons.edit, size: 20, color: AppColors.backgroundColor),
-            ],
-          ),
-        ),
-      ),
+    return PupilProfileContentRow(
+      icon: isEmergency
+          ? Icons.warning_amber_rounded
+          : (isNotSet ? Icons.help_outline : Icons.check_circle_outline),
+      label: 'Notbetreuung',
+      onTap: () => afterSchoolCareEditEmergencyCareDialog(context, pupil),
+      value: isNotSet ? 'Nicht gesetzt' : (isEmergency ? 'Ja' : 'Nein'),
     );
   }
 }

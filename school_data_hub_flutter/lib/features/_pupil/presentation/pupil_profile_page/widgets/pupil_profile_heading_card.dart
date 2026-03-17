@@ -29,7 +29,7 @@ class PupilProfileHeadingCard extends WatchingWidget {
 
         return Container(
           padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 5),
+          margin: const EdgeInsets.only(bottom: 5),
           decoration: BoxDecoration(
             color: AppColors.backgroundColor,
             borderRadius: BorderRadius.circular(10),

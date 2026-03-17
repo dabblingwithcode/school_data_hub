@@ -36,7 +36,7 @@ class LearningSupportPlanCard extends WatchingWidget {
     final tileController = createOnce(() => CustomExpansionTileController());
 
     return Card(
-      color: Colors.white,
+      color: AppColors.cardInCardColor,
       margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 4.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),

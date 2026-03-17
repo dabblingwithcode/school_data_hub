@@ -140,6 +140,10 @@ class AppColorPalette {
   final Color growthIconColor3;
   final Color growthIconColor4;
 
+  /// Computed secondary button color: a subtle tint of the primary button color.
+  Color get secondaryButtonColor =>
+      Color.lerp(const Color(0xFFF4F4F5), appStyleButtonColor, 0.12)!;
+
   AppColorPalette copyWith({
     AppColorSchemeKey? key,
     String? displayName,
@@ -450,6 +454,7 @@ class AppColors {
   //button colors
 
   static Color get appStyleButtonColor => palette.appStyleButtonColor;
+  static Color get secondaryButtonColor => palette.secondaryButtonColor;
   static Color get successButtonColor => palette.successButtonColor;
   static Color get warningButtonColor => palette.warningButtonColor;
   static Color get dangerButtonColor => palette.dangerButtonColor;

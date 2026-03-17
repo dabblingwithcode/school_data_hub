@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/picker.dart';
 
 class LanguageDialogDropdown extends StatelessWidget {
   final int value;
@@ -15,6 +15,19 @@ class LanguageDialogDropdown extends StatelessWidget {
     required this.label,
     required this.icon,
   });
+
+  static const _items = [0, 1, 2, 3, 4];
+
+  static String _labelFor(int value) {
+    return switch (value) {
+      0 => 'nicht',
+      1 => 'einfache Anliegen',
+      2 => 'komplexere Informationen',
+      3 => 'ohne Probleme',
+      4 => 'unbekannt',
+      _ => 'unbekannt',
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,85 +52,12 @@ class LanguageDialogDropdown extends StatelessWidget {
           ),
           Row(
             children: [
-              DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
-                  onTap: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  },
+              Expanded(
+                child: Picker<int>(
+                  items: _items,
                   value: value,
-                  items: [
-                    DropdownMenuItem(
-                      value: 0,
-                      child: Center(
-                        child: Text(
-                          "nicht",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.interactiveColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: 1,
-                      child: Center(
-                        child: Text(
-                          "einfache Anliegen",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.interactiveColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: 2,
-                      child: Center(
-                        child: Text(
-                          "komplexere Informationen",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.interactiveColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: 3,
-                      child: Center(
-                        child: Text(
-                          "ohne Probleme",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.interactiveColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                    DropdownMenuItem(
-                      value: 4,
-                      child: Center(
-                        child: Text(
-                          "unbekannt",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.interactiveColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                  onChanged: onChanged,
+                  onChanged: (newValue) => onChanged(newValue),
+                  itemLabel: _labelFor,
                 ),
               ),
             ],

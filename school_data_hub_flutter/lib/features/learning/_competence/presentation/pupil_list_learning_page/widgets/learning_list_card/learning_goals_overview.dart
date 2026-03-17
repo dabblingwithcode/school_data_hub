@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:flutter_it/flutter_it.dart';
 
-class LearningGoalsOverview extends StatelessWidget {
+class LearningGoalsOverview extends WatchingWidget {
   final PupilProxy pupil;
   const LearningGoalsOverview({super.key, required this.pupil});
 
@@ -46,7 +46,15 @@ class LearningGoalsOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final competenceGoals = pupil.competenceGoals;
+    final competenceManager = di<CompetenceManager>();
+    callOnce(
+      (_) => competenceManager.fetchGoalsForPupil(pupil.pupilId),
+    );
+    final goalsProxy = competenceManager.getPupilCompetenceGoalsProxy(
+      pupil.pupilId,
+    );
+    watch(goalsProxy);
+    final competenceGoals = goalsProxy.competenceGoals;
     final Map<int, int> counts = {};
 
     for (final goal in competenceGoals) {

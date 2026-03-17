@@ -12,6 +12,7 @@ class PupilProfileSchoolListsContentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return PupilProfileContentCard(
       icon: Icons.rule,
+      iconColor: const Color.fromARGB(255, 0, 67, 108),
       title: 'Listen',
       onTitleTap: () {
         Navigator.of(context).push(

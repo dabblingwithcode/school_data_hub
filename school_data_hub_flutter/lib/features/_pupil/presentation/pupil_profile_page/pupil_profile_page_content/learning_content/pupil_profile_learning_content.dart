@@ -2,8 +2,6 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -36,123 +34,65 @@ class PupilLearningContent extends WatchingWidget {
     watch(pupil);
     return PupilProfileContentCard(
       icon: Icons.lightbulb,
+      iconColor: const Color.fromARGB(255, 241, 149, 27),
       title: 'Lernen',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Gap(5),
-              const Text('3 Jahre Eingangsphase?'),
-              const Gap(5),
-              InkWell(
-                onTap: () async {
-                  final date = await showCalendarDatePicker2Dialog(
-                    context: context,
-                    config: CalendarDatePicker2WithActionButtonsConfig(
-                      calendarType: CalendarDatePicker2Type.single,
-                    ),
-                    dialogSize: const Size(325, 400),
-                    value: [],
-                    borderRadius: BorderRadius.circular(15),
-                  );
-
-                  if (date != null && date.isNotEmpty) {
-                    di<PupilProxyManager>().updateSchoolyearHeldBackDate(
-                      pupilId: pupil.pupilId,
-                      date: (value: date.first!.toUtc()),
-                    );
-                  }
-                },
-                onLongPress: () async {
-                  if (pupil.schoolyearHeldBackAt == null) return;
-                  final confirmation = await confirmationDialog(
-                    context: context,
-                    title: 'Eintrag löschen',
-                    message: 'Eintrag wirklich löschen?',
-                  );
-                  if (confirmation != true) return;
-                  di<PupilProxyManager>().updateSchoolyearHeldBackDate(
-                    pupilId: pupil.internalId,
-                    date: (value: null),
-                  );
-                },
-                child: Text(
-                  pupil.schoolyearHeldBackAt != null
-                      ? 'Entscheidung vom ${pupil.schoolyearHeldBackAt!.formatDateForUser()}'
-                      : 'nein',
-                  style: TextStyle(
-                    color: AppColors.interactiveColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
+          PupilProfileContentSectionStart(
+            label: 'Klassenleitung:',
+            value: pupil.groupTutor != null
+                ? UserHelper.getUserByUserName(
+                        pupil.groupTutor!,
+                      )?.userInfo?.fullName ??
+                      pupil.groupTutor!
+                : 'Kein Eintrag',
           ),
-
-          const Gap(5),
-          Row(
-            children: [
-              const Gap(5),
-              const Text('Klassenleitung:'),
-              const Gap(5),
-              Text(
-                pupil.groupTutor != null
-                    ? UserHelper.getUserByUserName(
-                            pupil.groupTutor!,
-                          )?.userInfo?.fullName ??
-                          pupil.groupTutor!
-                    : 'Kein Eintrag',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-
-          if (pupil.familyLanguageLessonsSince != null) ...[
-            const Gap(5),
-            Row(
-              children: [
-                const Gap(5),
-                const Text('HSU seit:'),
-                const Gap(5),
-                Text(
-                  pupil.familyLanguageLessonsSince?.formatDateForUser() ??
-                      'Kein Eintrag',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+          PupilProfileContentSectionInside(
+            icon: Icons.abc,
+            label: '3 Jahre Eingangsphase?',
+            value: pupil.schoolyearHeldBackAt != null ? 'Ja' : 'Nein',
+            onTap: () async {
+              final date = await showCalendarDatePicker2Dialog(
+                context: context,
+                config: CalendarDatePicker2WithActionButtonsConfig(
+                  calendarType: CalendarDatePicker2Type.single,
                 ),
-                Text(pupil.language),
-              ],
+                dialogSize: const Size(325, 400),
+                value: [],
+                borderRadius: BorderRadius.circular(15),
+              );
+
+              if (date != null && date.isNotEmpty) {
+                di<PupilProxyManager>().updateSchoolyearHeldBackDate(
+                  pupilId: pupil.pupilId,
+                  date: (value: date.first!.toUtc()),
+                );
+              }
+            },
+          ),
+          if (pupil.familyLanguageLessonsSince != null)
+            PupilProfileContentSectionInside(
+              icon: Icons.language,
+              label: 'HSU seit:',
+              value: pupil.familyLanguageLessonsSince != null
+                  ? '${pupil.familyLanguageLessonsSince!.formatDateForUser()} (${pupil.language})'
+                  : 'Kein Eintrag',
             ),
-          ],
-          if (pupil.religionLessonsSince != null) ...[
-            const Gap(5),
-            Row(
-              children: [
-                const Gap(5),
-                const Text('Religionsunterricht seit:'),
-                const Gap(5),
-                Text(
-                  pupil.religionLessonsSince?.formatDateForUser() ??
-                      'Kein Eintrag',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const Gap(5),
-                Text(pupil.religion ?? 'Kein Eintrag'),
-              ],
+          if (pupil.religionLessonsSince != null)
+            PupilProfileContentSectionInside(
+              icon: Icons.menu_book,
+              label: 'Religionsunterricht seit:',
+              value: pupil.religionLessonsSince != null
+                  ? '${pupil.religionLessonsSince!.formatDateForUser()} (${pupil.religion})'
+                  : 'Kein Eintrag',
             ),
-          ],
-          const Gap(10),
-          Row(
-            children: [
-              const Gap(5),
-              const Text('Schulformempfehlung:'),
-              const Gap(5),
-              Text(
-                pupil.schoolTransitionRecommendation ?? 'Kein Eintrag',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
+          PupilProfileContentSectionEnd(
+            icon: Icons.school,
+            label: 'Schulformempfehlung:',
+            value: pupil.schoolTransitionRecommendation ?? 'Kein Eintrag',
           ),
+
           const Gap(10),
           PupilLearningContentExpansionTileNavBar(pupil: pupil),
         ],

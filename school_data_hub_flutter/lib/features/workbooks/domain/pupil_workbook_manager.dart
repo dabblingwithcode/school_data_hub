@@ -248,8 +248,8 @@ class PupilWorkbookManager with ChangeNotifier {
 
   Future<void> _refetchAll() async {
     _pupilWorkbooks.clear();
-    final pupilWorkbooks =
-        await _pupilWorkbookApiService.fetchAllPupilWorkbooks();
+    final pupilWorkbooks = await _pupilWorkbookApiService
+        .fetchAllPupilWorkbooks();
     if (pupilWorkbooks == null) return;
     for (var pupilWorkbook in pupilWorkbooks) {
       if (_pupilWorkbooks.containsKey(pupilWorkbook.pupilId)) {

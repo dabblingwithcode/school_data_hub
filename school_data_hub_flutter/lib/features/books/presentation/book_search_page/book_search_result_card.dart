@@ -122,6 +122,7 @@ class _BookSearchResultContent extends WatchingWidget {
                 child: UnencryptedImageInCard(
                   cacheKey: bookProxy.isbn.toString(),
                   path: bookProxy.imagePath,
+                  type: UnencryptedImageType.book,
                   size: 100,
                 ),
               ),

@@ -4,7 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/dialogues/change_credit_dialog.dart';
@@ -23,6 +24,7 @@ class PupilProfileCreditContent extends WatchingWidget {
     );
     return PupilProfileContentCard(
       icon: Icons.attach_money_rounded,
+      iconColor: const Color.fromARGB(255, 231, 227, 24),
       title: 'Guthaben',
       onTitleTap: () {
         Navigator.of(context).push(
@@ -67,38 +69,21 @@ class PupilProfileCreditContent extends WatchingWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              width: double.infinity,
-              child: ElevatedButton(
-                style: AppStyles.successButtonStyle,
-                onPressed: () async {
-                  changeCreditDialog(context, pupil);
-                },
-                child: const Text(
-                  "GUTHABEN ÄNDERN",
-                  style: AppStyles.buttonTextStyle,
-                ),
-              ),
+            child: Button(
+              variant: ButtonVariant.primary,
+              onPressed: () async {
+                changeCreditDialog(context, pupil);
+              },
+              label: 'GUTHABEN ÄNDERN',
             ),
           ),
 
           const Gap(10),
-          const Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(left: 22),
-                child: Text(
-                  'Verlauf',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ],
+          const PupilProfileContentSectionHeader(
+            icon: Icons.history_rounded,
+            title: 'Verlauf',
           ),
+
           const Gap(10),
           if (creditTransactions != null)
             ListView.builder(
@@ -115,15 +100,9 @@ class PupilProfileCreditContent extends WatchingWidget {
                     ? Colors.green.shade700
                     : Colors.red;
 
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(color: AppColors.cardInCardColor),
-                  ),
-                  color: AppColors.cardInCardColor,
-                  child: Padding(
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: CardBox(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 12,

@@ -51,6 +51,7 @@ class BookHeader extends WatchingWidget {
                 UnencryptedImageInCard(
                   cacheKey: bookProxy.isbn.toString(),
                   path: bookProxy.imagePath,
+                  type: UnencryptedImageType.book,
                   size: 120,
                 ),
                 const Gap(15),

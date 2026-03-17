@@ -36,10 +36,7 @@ class _PupilProfilePageContentState extends State<PupilProfilePageContent> {
     di.pushNewScope(
       scopeName: _scopeName,
       init: (getIt) {
-        getIt.registerSingleton<ProfileMinHeight>(
-          ProfileMinHeight(),
-          dispose: (n) => n.dispose(),
-        );
+        getIt.registerSingleton<ProfileMinHeight>(ProfileMinHeight());
       },
     );
     final initialPage = di<BottomNavManager>().pupilProfileNavState.value;
@@ -74,10 +71,10 @@ class _PupilProfilePageContentState extends State<PupilProfilePageContent> {
       decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
       child: LayoutBuilder(
         builder: (context, constraints) {
+          // Set once so short pages fill the viewport.
           final profileMinHeight = di<ProfileMinHeight>();
-          final minHeight = constraints.maxHeight - 5;
-          if (profileMinHeight.value != minHeight) {
-            profileMinHeight.value = minHeight;
+          if (profileMinHeight.value == 0) {
+            profileMinHeight.value = constraints.maxHeight - 5;
           }
           return PageView(
             controller: _pageController,
@@ -170,26 +167,34 @@ class _ProfilePageWrapperState extends State<_ProfilePageWrapper> {
     // causing the Scrollbar to crash: "attached to more than one ScrollPosition".
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.pupilProfileBackgroundColor,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+      child: Builder(
+        builder: (context) {
+          return RefreshIndicator(
+            onRefresh: () async =>
+                di<PupilProxyManager>().updatePupilData(pupil.pupilId),
+            child: CustomScrollView(
+              key: PageStorageKey(widget.childBuilder.index),
+              slivers: [
+                SliverOverlapInjector(
+                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                    context,
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
+                  sliver: SliverToBoxAdapter(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: di<ProfileMinHeight>().value,
+                      ),
+                      child: child,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: RefreshIndicator(
-          onRefresh: () async =>
-              di<PupilProxyManager>().updatePupilData(pupil.pupilId),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
-            child: child,
-          ),
-        ),
+          );
+        },
       ),
     );
   }

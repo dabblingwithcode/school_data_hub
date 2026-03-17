@@ -29,6 +29,7 @@ class PupilAttendanceContent extends WatchingWidget {
     );
     return PupilProfileContentCard(
       icon: Icons.calendar_month_rounded,
+      iconColor: const Color.fromARGB(255, 61, 61, 61),
       title: 'Fehlzeiten',
       onTitleTap: () {
         Navigator.of(context).push(
@@ -39,11 +40,13 @@ class PupilAttendanceContent extends WatchingWidget {
       },
       child: Column(
         children: [
-          const Gap(15),
-          Row(children: [const Gap(5), AttendanceStatsPupil(pupil)]),
-          const Gap(10),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [const Gap(5), AttendanceStatsPupil(pupil)],
+          ),
+          const Gap(5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text('Fehlstunden:', style: TextStyle(fontSize: 14)),
               Text(

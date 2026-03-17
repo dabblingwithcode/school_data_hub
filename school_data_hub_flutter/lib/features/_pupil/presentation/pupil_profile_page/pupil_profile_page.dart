@@ -26,22 +26,27 @@ class PupilProfilePage extends StatelessWidget {
                 child: NestedScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                    SliverAppBar(
-                      systemOverlayStyle: SystemUiOverlayStyle(
-                        statusBarColor: AppColors.pupilProfileBackgroundColor,
+                    SliverOverlapAbsorber(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context,
                       ),
-                      pinned: true,
-                      floating: false,
-                      snap: false,
-                      scrolledUnderElevation: null,
-                      automaticallyImplyLeading: false,
-                      leading: null,
-                      backgroundColor: AppColors.pupilProfileBackgroundColor,
-                      toolbarHeight: 60,
-                      expandedHeight: 110,
-                      stretch: false,
-                      elevation: 0,
-                      flexibleSpace: PupilProfileHeadingCard(pupil: pupil),
+                      sliver: SliverAppBar(
+                        systemOverlayStyle: const SystemUiOverlayStyle(
+                          statusBarColor: Color(0x00000000),
+                        ),
+                        pinned: true,
+                        floating: false,
+                        snap: false,
+                        scrolledUnderElevation: null,
+                        automaticallyImplyLeading: false,
+                        leading: null,
+                        backgroundColor: Colors.transparent,
+                        toolbarHeight: 60,
+                        expandedHeight: 105,
+                        stretch: false,
+                        elevation: 0,
+                        flexibleSpace: PupilProfileHeadingCard(pupil: pupil),
+                      ),
                     ),
                   ],
                   body: PupilProfilePageContent(pupil: pupil),

@@ -114,6 +114,7 @@ class PupilBookLendingCard extends StatelessWidget {
                         UnencryptedImageInCard(
                           cacheKey: book.isbn.toString(),
                           path: book.imagePath,
+                          type: UnencryptedImageType.book,
                           size: 80,
                         ),
                       ],

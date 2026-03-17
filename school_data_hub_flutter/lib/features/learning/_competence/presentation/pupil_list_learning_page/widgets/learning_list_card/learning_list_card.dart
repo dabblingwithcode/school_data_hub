@@ -133,7 +133,7 @@ class _LearningListContent extends WatchingWidget {
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         if (selectedContent == SelectedContent.books)
           Column(

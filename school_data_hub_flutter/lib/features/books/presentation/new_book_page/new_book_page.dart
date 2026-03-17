@@ -55,6 +55,7 @@ class NewBookPage extends StatelessWidget {
                                   child: UnencryptedImageInCard(
                                     path: controller.imagePath!,
                                     cacheKey: controller.widget.isbn.toString(),
+                                    type: UnencryptedImageType.book,
                                     size: 220,
                                   ),
                                 ),

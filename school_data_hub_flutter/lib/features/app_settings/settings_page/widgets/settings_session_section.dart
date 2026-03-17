@@ -156,17 +156,10 @@ class SettingsSessionSection extends WatchingWidget {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => openColorSchemePicker(),
               ),
-              if (hubSessionManager.isAdmin)
-                ListTile(
-                  leading: const Icon(Icons.http),
-                  title: const Text('URL:'),
-                  subtitle: Text(serverName.serverUrl),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => changeEnvironmentDialog(context: context),
-                ),
+
               ListTile(
                 leading: const Icon(Icons.perm_identity_rounded),
-                title: const Text('Lokale Daten vom:'),
+                title: const Text('Id-Datensatz vom:'),
                 subtitle: Text(
                   '${di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatDateAndTimeForUser() ?? 'Keine Daten'} ',
                   style: TextStyle(

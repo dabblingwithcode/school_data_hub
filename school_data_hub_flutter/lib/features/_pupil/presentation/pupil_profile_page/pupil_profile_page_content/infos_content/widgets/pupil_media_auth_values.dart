@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dar
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/multi_choice.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -42,15 +43,6 @@ class PublicMediaAuthValues extends WatchingWidget {
         decoration: BoxDecoration(
           color: AppColors.cardInCardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.cardInCardBorderColor, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.backgroundColor.withValues(alpha: 0.08),
-              blurRadius: 6,
-              spreadRadius: 1,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,20 +247,15 @@ class PublicMediaAuthValues extends WatchingWidget {
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Transform.scale(
-                    scale: 0.8,
-                    child: Checkbox(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: !isAllowed,
-                      activeColor: Colors.red,
-                      onChanged: hasDocument
-                          ? (newValue) async {
-                              if (newValue == true) {
-                                await onChanged(false);
-                              }
+                  child: MultiChoice(
+                    value: !isAllowed,
+                    onChanged: hasDocument
+                        ? (newValue) async {
+                            if (newValue == true) {
+                              await onChanged(false);
                             }
-                          : null,
-                    ),
+                          }
+                        : null,
                   ),
                 ),
                 Icon(
@@ -285,20 +272,15 @@ class PublicMediaAuthValues extends WatchingWidget {
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Transform.scale(
-                    scale: 0.8,
-                    child: Checkbox(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      value: isAllowed,
-                      activeColor: Colors.green,
-                      onChanged: hasDocument
-                          ? (newValue) async {
-                              if (newValue == true && !isAllowed) {
-                                await onChanged(true);
-                              }
+                  child: MultiChoice(
+                    value: isAllowed,
+                    onChanged: hasDocument
+                        ? (newValue) async {
+                            if (newValue == true && !isAllowed) {
+                              await onChanged(true);
                             }
-                          : null,
-                    ),
+                          }
+                        : null,
                   ),
                 ),
                 Icon(

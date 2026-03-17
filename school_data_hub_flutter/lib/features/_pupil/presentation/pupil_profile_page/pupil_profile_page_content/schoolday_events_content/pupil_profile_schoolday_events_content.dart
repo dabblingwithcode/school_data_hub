@@ -12,6 +12,7 @@ class PupilProfileSchooldayEventsContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return PupilProfileContentCard(
       icon: Icons.warning_amber_rounded,
+      iconColor: const Color.fromARGB(255, 224, 177, 23),
       title: 'Ereignisse',
       onTitleTap: () {
         Navigator.of(context).push(

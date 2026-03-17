@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -18,7 +15,6 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/widgets/competence_grades_widget.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart';
-import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_page/new_workbook_page.dart';
 
 class PupilWorkbookCard extends WatchingWidget {
@@ -85,33 +81,11 @@ class PupilWorkbookCard extends WatchingWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        InkWell(
-                          onTap: () async {
-                            final File? file = await createAndCropImageFile(
-                              context,
-                            );
-                            if (file == null) return;
-                            await di<WorkbookManager>().postWorkbookFile(
-                              file,
-                              workbook.isbn,
-                            );
-                          },
-                          onLongPress: () async {
-                            final bool? result = await confirmationDialog(
-                              context: context,
-                              title: 'Bild löschen',
-                              message: 'Bild löschen?',
-                            );
-                            if (result != true) return;
-                            await di<WorkbookManager>().deleteWorkbookFile(
-                              workbook.isbn,
-                            );
-                          },
-                          child: UnencryptedImageInCard(
-                            cacheKey: pupilWorkbook.isbn.toString(),
-                            path: thisPupilWorkbook.workbook!.imageUrl,
-                            size: 100,
-                          ),
+                        UnencryptedImageInCard(
+                          cacheKey: pupilWorkbook.isbn.toString(),
+                          path: thisPupilWorkbook.workbook!.imageUrl,
+                          type: UnencryptedImageType.workbook,
+                          size: 100,
                         ),
 
                         const Gap(10),

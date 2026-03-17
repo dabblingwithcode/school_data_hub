@@ -301,8 +301,11 @@ class EnvManager with ChangeNotifier {
     _log.info(
       'Switching environment from [${_activeEnv?.serverName}] to [$envName]',
     );
-    // Mark environment as not ready during switch
+    // Mark environment as not ready and reset auth state before dropping scopes.
+    // This prevents widgets (e.g. _HubStateIndicators) from trying to access
+    // auth-scoped services like HubStreamService after scopes are dropped.
     _envIsReady.value = false;
+    _isAuthenticated.value = false;
     notifyListeners();
     // Reset environment-dependent managers
     // This will automatically drop all child scopes including loggedInUserScope

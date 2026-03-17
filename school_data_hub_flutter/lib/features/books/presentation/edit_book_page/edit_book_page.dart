@@ -49,6 +49,7 @@ class EditBookPage extends StatelessWidget {
                                   path: controller.imagePath!,
                                   cacheKey: controller.libraryBook.isbn
                                       .toString(),
+                                  type: UnencryptedImageType.book,
                                   size: 220,
                                 ),
                               ),

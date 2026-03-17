@@ -12,6 +12,7 @@ class PupilProfileAuthorizationContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return PupilProfileContentCard(
       icon: Icons.fact_check_rounded,
+      iconColor: const Color.fromARGB(255, 109, 109, 109),
       title: 'Einwilligungen',
       onTitleTap: () {
         Navigator.of(context).push(

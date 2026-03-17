@@ -3,10 +3,10 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -109,8 +109,8 @@ class LearningSupportPlansSection extends StatelessWidget {
             if (AuthClearanceHelper.isTutorOrAdmin(pupil))
               Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: ElevatedButton(
-                  style: AppStyles.actionButtonStyle,
+                child: Button(
+                  variant: ButtonVariant.primary,
                   onPressed: () {
                     if (pupil.supportLevelHistory == null ||
                         pupil.supportLevelHistory!.isEmpty) {
@@ -126,10 +126,7 @@ class LearningSupportPlansSection extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Text(
-                    "NEUER FÖRDERPLAN",
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  label: 'NEUER FÖRDERPLAN',
                 ),
               ),
           ],

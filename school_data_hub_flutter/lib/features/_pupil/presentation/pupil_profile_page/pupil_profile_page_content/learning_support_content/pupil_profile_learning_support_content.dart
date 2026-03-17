@@ -12,6 +12,7 @@ class PupilProfileLearningSupportContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return PupilProfileContentCard(
       icon: Icons.support_rounded,
+      iconColor: const Color.fromARGB(255, 241, 70, 27),
       title: 'Förderung',
       onTitleTap: () {
         Navigator.of(context).push(

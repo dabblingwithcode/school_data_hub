@@ -7,6 +7,8 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
@@ -50,13 +52,14 @@ class PupilProfileInfosContent extends WatchingWidget {
         : null;
 
     return PupilProfileContentCard(
-      icon: Icons.info_outline,
+      icon: Icons.info_rounded,
+      iconColor: const Color.fromRGBO(74, 76, 161, 1),
       title: 'Informationen',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Special Information
-          const PupilProfileContentHeader(
+          const PupilProfileContentSectionHeader(
             icon: Icons.priority_high_rounded,
             title: 'Besondere Infos',
           ),
@@ -125,12 +128,6 @@ class PupilProfileInfosContent extends WatchingWidget {
                 decoration: BoxDecoration(
                   color: AppColors.cardInCardColor,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: pupil.specialInformation != null
-                        ? AppColors.backgroundColor.withValues(alpha: 0.2)
-                        : AppColors.interactiveColor.withValues(alpha: 0.2),
-                    width: 1,
-                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,14 +151,19 @@ class PupilProfileInfosContent extends WatchingWidget {
                     if (specialInfoCreatedBy != null &&
                         specialInfoCreatedAt != null) ...[
                       const Gap(8),
-                      Text(
-                        'Erstellt von $specialInfoCreatedBy am $specialInfoCreatedAt',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.backgroundColor.withValues(
-                            alpha: 0.6,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Erstellt von $specialInfoCreatedBy am $specialInfoCreatedAt',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.backgroundColor.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   ],
@@ -171,31 +173,31 @@ class PupilProfileInfosContent extends WatchingWidget {
           ),
           const Gap(16),
           // Basic Information
-          const PupilProfileContentHeader(
+          const PupilProfileContentSectionHeader(
             icon: Icons.person_outline,
             title: 'Grunddaten',
           ),
           const Gap(8),
-          PupilProfileContentRow(
+          PupilProfileContentSectionStart(
             icon: Icons.wc,
             label: 'Geschlecht',
             value: pupil.gender == 'm' ? 'männlich' : 'weiblich',
           ),
-          const Gap(8),
-          PupilProfileContentRow(
+
+          PupilProfileContentSectionInside(
             icon: Icons.cake_outlined,
             label: 'Geburtsdatum',
             value: pupil.birthday.formatDateForUser(),
           ),
-          const Gap(8),
-          PupilProfileContentRow(
+
+          PupilProfileContentSectionEnd(
             icon: Icons.school_outlined,
             label: 'Aufnahmedatum',
             value: pupil.pupilSince.formatDateForUser(),
           ),
           const Gap(16),
           // Contact Information
-          const PupilProfileContentHeader(
+          const PupilProfileContentSectionHeader(
             icon: Icons.contact_phone_outlined,
             title: 'Kontaktinformationen',
           ),
@@ -227,7 +229,7 @@ class PupilProfileInfosContent extends WatchingWidget {
               );
             },
             actionButton: pupil.contact == null || pupil.contact!.isEmpty
-                ? IconButton(
+                ? TappableIcon(
                     onPressed: () async {
                       if (_isMatrixAuthorized() == false) {
                         di<NotificationManager>().showInformationDialog(
@@ -264,7 +266,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                       color: AppColors.interactiveColor,
                     ),
                   )
-                : IconButton(
+                : TappableIcon(
                     onPressed: () async {
                       if (_isMatrixAuthorized() == false) {
                         di<NotificationManager>().showInformationDialog(
@@ -348,7 +350,7 @@ class PupilProfileInfosContent extends WatchingWidget {
               );
             },
             actionButton: pupil.tutorInfo?.parentsContact == null
-                ? IconButton(
+                ? TappableIcon(
                     onPressed: () {
                       String? pupilSiblingsGroups;
                       if (pupil.family != null) {
@@ -378,7 +380,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                       color: AppColors.interactiveColor,
                     ),
                   )
-                : IconButton(
+                : TappableIcon(
                     onPressed: () async {
                       if (_isMatrixAuthorized() == false) return;
                       final confirmation = await confirmationDialog(
@@ -423,7 +425,7 @@ class PupilProfileInfosContent extends WatchingWidget {
           ),
           const Gap(16),
           // Authorizations
-          const PupilProfileContentHeader(
+          const PupilProfileContentSectionHeader(
             icon: Icons.verified_user_outlined,
             title: 'Einwilligungen',
           ),
@@ -433,7 +435,7 @@ class PupilProfileInfosContent extends WatchingWidget {
           PublicMediaAuthValues(pupil: pupil),
           const Gap(16),
           // Siblings
-          const PupilProfileContentHeader(
+          const PupilProfileContentSectionHeader(
             icon: Icons.family_restroom_outlined,
             title: 'Geschwister',
           ),
@@ -449,27 +451,25 @@ class PupilProfileInfosContent extends WatchingWidget {
               },
             )
           else
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      color: Colors.grey.withValues(alpha: 0.6),
-                      size: 24,
+            CardBox(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: Colors.grey.withValues(alpha: 0.6),
+                    size: 24,
+                  ),
+                  const Gap(12),
+                  Text(
+                    'Keine Geschwister erfasst',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey.withValues(alpha: 0.7),
+                      fontStyle: FontStyle.italic,
                     ),
-                    const Gap(12),
-                    Text(
-                      'Keine Geschwister erfasst',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey.withValues(alpha: 0.7),
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
         ],

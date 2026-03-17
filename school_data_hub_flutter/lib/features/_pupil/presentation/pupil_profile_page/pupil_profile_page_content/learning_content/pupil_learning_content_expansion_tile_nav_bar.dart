@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_books.dart';
@@ -33,9 +34,9 @@ class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
               PupilLearningContentCompetenceStatuses(pupil: pupil),
             SelectedContent.competenceGoals =>
               PupilLearningContentCompetenceGoals(pupil: pupil),
-            SelectedContent.competenceReports => ElevatedButton.icon(
+            SelectedContent.competenceReports => Button(
               icon: const Icon(Icons.assignment),
-              label: const Text('Zeugnisse öffnen'),
+              label: 'Zeugnisse öffnen',
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(

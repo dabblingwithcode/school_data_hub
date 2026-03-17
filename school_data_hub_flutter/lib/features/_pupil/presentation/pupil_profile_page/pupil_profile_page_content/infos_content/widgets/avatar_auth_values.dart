@@ -34,15 +34,6 @@ class AvatarAuthValues extends WatchingWidget {
         decoration: BoxDecoration(
           color: AppColors.cardInCardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.cardInCardBorderColor, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.backgroundColor.withValues(alpha: 0.08),
-              blurRadius: 6,
-              spreadRadius: 1,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Row(
           children: [

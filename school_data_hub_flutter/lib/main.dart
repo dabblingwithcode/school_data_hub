@@ -12,6 +12,7 @@ import 'package:school_data_hub_flutter/app_utils/logger/domain/log_record_forma
 import 'package:school_data_hub_flutter/app_utils/logger/domain/log_service.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/model/app_log.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/client/hub_state_indicators.dart';
 import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
@@ -117,82 +118,85 @@ class MyApp extends WatchingWidget {
       (ServerpodConnectivityMonitor x) => x.isConnected,
     );
 
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      builder: (context, child) {
-        return Stack(
-          children: [
-            child!,
-            if (userIsAuthenticated && envIsReady)
-              Positioned(
-                top: MediaQuery.of(context).padding.top,
-                right: 10,
-                height: kToolbarHeight,
-                child: const _HubStateIndicators(),
-              ),
-          ],
-        );
-      },
-      localizationsDelegates: const <LocalizationsDelegate<Object>>[
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('de', 'DE'), // Set the default locale
-        // Locale('en', 'EN'),
-        //Locale('es', 'ES'),
-      ],
-      debugShowCheckedModeBanner: false,
-      title: 'Schuldaten Hub',
-      home: !isConnected
-          ? const GlobalOverlayHost(
-              phase: AppPhase.unlogged,
-              child: NoConnectionPage(),
-            )
-          : envIsReady
-          ? FutureBuilder(
-              future: di.allReady(timeout: const Duration(seconds: 30)),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  _log.shout(
-                    'Dependency Injection Error: ${snapshot.error}',
-                    snapshot.stackTrace,
-                  );
-                  return GlobalOverlayHost(
-                    phase: AppPhase.unlogged,
-                    child: ErrorPage(error: snapshot.error.toString()),
-                  );
-                }
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (userIsAuthenticated) {
-                    return const GlobalOverlayHost(
-                      phase: AppPhase.loggedIn,
-                      child: MainMenuBottomNavigation(),
+    return Style(
+      brightness: Brightness.light,
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        builder: (context, child) {
+          return Stack(
+            children: [
+              child!,
+              if (userIsAuthenticated && envIsReady)
+                Positioned(
+                  top: MediaQuery.of(context).padding.top,
+                  right: 10,
+                  height: kToolbarHeight,
+                  child: const _HubStateIndicators(),
+                ),
+            ],
+          );
+        },
+        localizationsDelegates: const <LocalizationsDelegate<Object>>[
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('de', 'DE'), // Set the default locale
+          // Locale('en', 'EN'),
+          //Locale('es', 'ES'),
+        ],
+        debugShowCheckedModeBanner: false,
+        title: 'Schuldaten Hub',
+        home: !isConnected
+            ? const GlobalOverlayHost(
+                phase: AppPhase.unlogged,
+                child: NoConnectionPage(),
+              )
+            : envIsReady
+            ? FutureBuilder(
+                future: di.allReady(timeout: const Duration(seconds: 30)),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    _log.shout(
+                      'Dependency Injection Error: ${snapshot.error}',
+                      snapshot.stackTrace,
                     );
-                  } else {
-                    return const GlobalOverlayHost(
+                    return GlobalOverlayHost(
                       phase: AppPhase.unlogged,
-                      child: Login(),
+                      child: ErrorPage(error: snapshot.error.toString()),
                     );
                   }
-                }
-                return const GlobalOverlayHost(
-                  phase: AppPhase.loading,
-                  child: LoadingPage(),
-                );
-              },
-            )
-          : di<EnvManager>().activeEnv != null
-          ? const GlobalOverlayHost(
-              phase: AppPhase.loading,
-              child: LoadingPage(),
-            )
-          : const GlobalOverlayHost(
-              phase: AppPhase.unlogged,
-              child: EntryPoint(),
-            ),
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (userIsAuthenticated) {
+                      return const GlobalOverlayHost(
+                        phase: AppPhase.loggedIn,
+                        child: MainMenuBottomNavigation(),
+                      );
+                    } else {
+                      return const GlobalOverlayHost(
+                        phase: AppPhase.unlogged,
+                        child: Login(),
+                      );
+                    }
+                  }
+                  return const GlobalOverlayHost(
+                    phase: AppPhase.loading,
+                    child: LoadingPage(),
+                  );
+                },
+              )
+            : di<EnvManager>().activeEnv != null
+            ? const GlobalOverlayHost(
+                phase: AppPhase.loading,
+                child: LoadingPage(),
+              )
+            : const GlobalOverlayHost(
+                phase: AppPhase.unlogged,
+                child: EntryPoint(),
+              ),
+      ),
     );
   }
 }
@@ -224,7 +228,14 @@ class _HubStateIndicators extends StatefulWidget {
 }
 
 class _HubStateIndicatorsState extends State<_HubStateIndicators> {
-  late final Future<void> _ready = di.isReady<HubStreamService>();
+  late final Future<void> _ready = _safeIsReady();
+
+  /// Guards against [HubStreamService] not being registered yet (e.g. during
+  /// an environment switch where auth scope was dropped).
+  Future<void> _safeIsReady() async {
+    if (!di.isRegistered<HubStreamService>()) return;
+    await di.isReady<HubStreamService>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -232,6 +243,9 @@ class _HubStateIndicatorsState extends State<_HubStateIndicators> {
       future: _ready,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
+          return const SizedBox.shrink();
+        }
+        if (!di.isRegistered<HubStreamService>()) {
           return const SizedBox.shrink();
         }
         return const HubStateIndicator();

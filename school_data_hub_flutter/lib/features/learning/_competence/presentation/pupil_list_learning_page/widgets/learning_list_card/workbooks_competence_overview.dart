@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart'
     as workbook_enum;
 
-class WorkbooksOverview extends StatelessWidget {
+class WorkbooksOverview extends WatchingWidget {
   final PupilProxy pupil;
   const WorkbooksOverview({super.key, required this.pupil});
 
@@ -19,22 +21,22 @@ class WorkbooksOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pupilWorkbooks = pupil.pupilWorkbooks ?? [];
-    final Map<workbook_enum.SubjectEnum, int> counts = {};
+    watch(di<PupilWorkbookManager>());
+    final pupilWorkbooks = di<PupilWorkbookManager>().getPupilWorkbooks(
+      pupil.pupilId,
+    );
+    final Map<workbook_enum.SubjectEnum?, int> counts = {};
 
     for (final pw in pupilWorkbooks) {
       final subjectName = pw.workbook?.subject;
-      if (subjectName == null) continue;
-
-      final workbookSubject = _resolveSubject(subjectName);
-      if (workbookSubject != null) {
-        counts[workbookSubject] = (counts[workbookSubject] ?? 0) + 1;
-      }
+      final workbookSubject =
+          subjectName != null ? _resolveSubject(subjectName) : null;
+      counts[workbookSubject] = (counts[workbookSubject] ?? 0) + 1;
     }
 
     final List<Widget> widgetList = [];
     counts.forEach((subject, count) {
-      final imagePath = subject.imagePath;
+      final imagePath = subject?.imagePath;
       widgetList.add(
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -76,9 +78,9 @@ class WorkbooksOverview extends StatelessWidget {
       );
     }
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(children: widgetList),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: widgetList,
     );
   }
 }

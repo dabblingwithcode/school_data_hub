@@ -11,6 +11,7 @@ class PupilProfileAfterSchoolCareContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return PupilProfileContentCard(
       icon: Icons.access_time,
+      iconColor: const Color.fromARGB(255, 41, 56, 218),
       title: 'OGS-Informationen',
       child: AfterSchoolCareDetails(pupil: pupil),
     );

@@ -18,7 +18,7 @@ class PupilProfileBottomNavBar extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: SizedBox(
-            height: Platform.isWindows ? 10 : 30,
+            height: Platform.isWindows ? 10 : 35,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

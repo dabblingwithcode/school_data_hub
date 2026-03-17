@@ -43,25 +43,21 @@ class BottomNavBarProfileLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: Platform.isWindows
-          ? const EdgeInsets.only(left: 0, right: 0, bottom: 10)
-          : const EdgeInsets.only(left: 0, right: 0),
-      child: SizedBox(
-        height: Platform.isWindows
-            ? kBottomNavigationBarHeight + 20
-            : kBottomNavigationBarHeight + 30,
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10),
-              ),
-              child: Theme(
-                data: ThemeData(canvasColor: AppColors.backgroundColor),
-                child: bottomNavBar,
-              ),
+          ? const EdgeInsets.only(bottom: 10)
+          : EdgeInsets.zero,
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        heightFactor: 1,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(10),
+              bottomRight: Radius.circular(10),
+            ),
+            child: Theme(
+              data: ThemeData(canvasColor: AppColors.backgroundColor),
+              child: bottomNavBar,
             ),
           ),
         ),

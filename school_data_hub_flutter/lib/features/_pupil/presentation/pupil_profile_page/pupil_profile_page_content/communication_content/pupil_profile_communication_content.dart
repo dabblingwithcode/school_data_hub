@@ -29,49 +29,54 @@ class PupilProfileCommunicationContent extends WatchingWidget {
 
     return PupilProfileContentCard(
       icon: Icons.translate_rounded,
+      iconColor: const Color.fromARGB(255, 13, 193, 154),
       title: 'Sprache & Kommunikation',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const PupilProfileContentSectionHeader(
+            icon: Icons.language_rounded,
+            title: 'Herkunftssprache',
+          ),
+          const Gap(8),
           // Language Information
-          PupilProfileContentRow(
+          PupilProfileContentSectionStart(
             icon: Icons.home_outlined,
             label: 'Familiensprache',
             value: pupil.language,
           ),
-          const Gap(8),
-          PupilProfileContentRow(
+          PupilProfileContentSectionInside(
+            icon: Icons.support_outlined,
+            label: 'Herkunftssprachlicher Unterricht',
+            value: pupil.familyLanguageLessonsSince != null
+                ? 'seit ${pupil.familyLanguageLessonsSince!.formatDateForUser()}'
+                : 'nein',
+          ),
+          PupilProfileContentSectionInside(
             icon: Icons.person_outline,
             label: 'Migrationshintergrund',
             value: pupil.migrationBackground ? 'Ja' : 'Nein',
           ),
-          const Gap(8),
-          PupilProfileContentRow(
+
+          PupilProfileContentSectionInside(
             icon: Icons.person_outline,
             label: 'Staatsangehörigkeit',
             value: pupil.nationality ?? 'Kein Eintrag',
           ),
-          const Gap(8),
-          PupilProfileContentRow(
+
+          PupilProfileContentSectionEnd(
             icon: Icons.support_outlined,
             label: 'Erstförderung',
             value: pupil.migrationSupportEnds != null
                 ? 'bis : ${pupil.migrationSupportEnds!.formatDateForUser()}'
                 : 'keine',
           ),
-          const Gap(8),
-          PupilProfileContentRow(
-            icon: Icons.support_outlined,
-            label: 'HKU',
-            value: pupil.familyLanguageLessonsSince != null
-                ? 'seit ${pupil.familyLanguageLessonsSince!.formatDateForUser()}'
-                : 'nein',
-          ),
+
           const Gap(16),
           // German Language Competence
-          const PupilProfileContentHeader(
+          const PupilProfileContentSectionHeader(
             icon: Icons.record_voice_over_outlined,
-            title: 'Sprachkompetenz',
+            title: 'Kommunikation',
           ),
           const Gap(8),
           PupilProfileContentTwoRows(

@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
-import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
 
 class WorkbookApiService {
   Client get _client => di<Client>();
@@ -42,11 +42,13 @@ class WorkbookApiService {
     required int isbn,
     required File file,
   }) async {
+    final randomPart = UniqueKey().toString();
+    final shortRandomPart = randomPart.substring(1, 6);
     final result = await ClientFileUpload.uploadFile(
       file: file,
       storageId: StorageId.public,
-      folder: ServerStorageFolder.events,
-      customPath: 'workbook_$isbn.jpg',
+      folder: ServerStorageFolder.workbooks,
+      customPath: '${shortRandomPart}_workbook_$isbn.jpg',
     );
     if (result.cancelled || !result.success || result.path == null) {
       return null;

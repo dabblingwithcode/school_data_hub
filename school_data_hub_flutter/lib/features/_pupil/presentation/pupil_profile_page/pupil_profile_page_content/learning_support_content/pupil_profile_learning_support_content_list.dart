@@ -7,10 +7,10 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
@@ -85,23 +85,28 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
           valueWidget: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              InkWell(
-                onTap: () => preschoolRevisionDialog(
-                  context,
-                  pupil,
-                  pupil.preSchoolMedical?.preschoolMedicalStatus,
-                ),
-                borderRadius: BorderRadius.circular(8),
-                child: Text(
-                  PupilProxyHelper.preschoolRevisionPredicate(
-                    pupil.preSchoolMedical,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () => preschoolRevisionDialog(
+                      context,
+                      pupil,
+                      pupil.preSchoolMedical?.preschoolMedicalStatus,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Text(
+                      PupilProxyHelper.preschoolRevisionPredicate(
+                        pupil.preSchoolMedical,
+                      ),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.interactiveColor,
+                      ),
+                    ),
                   ),
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.interactiveColor,
-                  ),
-                ),
+                ],
               ),
               const Gap(8),
               Wrap(
@@ -304,8 +309,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         if (hasActivePlan())
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: ElevatedButton(
-              style: AppStyles.actionButtonStyle,
+            child: Button(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -318,10 +322,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                   ),
                 );
               },
-              child: const Text(
-                "NEUER FÖRDERBEREICH",
-                style: AppStyles.buttonTextStyle,
-              ),
+              label: 'NEUER FÖRDERBEREICH',
             ),
           ),
         const Gap(5),
