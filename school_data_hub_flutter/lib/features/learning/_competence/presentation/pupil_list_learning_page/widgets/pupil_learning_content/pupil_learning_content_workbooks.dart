@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_proxy_workbooks_ext.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/pupil_workbook_card.dart';
 

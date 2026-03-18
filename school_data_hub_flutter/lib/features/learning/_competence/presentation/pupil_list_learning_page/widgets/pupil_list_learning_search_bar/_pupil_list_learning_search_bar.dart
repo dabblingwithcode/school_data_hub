@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/presentation/learning_content_selection.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_list_learning_content_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar/learning_goals_infos.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar/pupil_book_lendings_infos.dart';
@@ -87,7 +87,7 @@ class PupilListLearningSearchBarInfos extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final selectedContent = watchValue(
-      (CompetenceManager m) => m.selectedLearningContent,
+      (LearningContentSelection s) => s.selectedContent,
     );
     final pupils = watchValue((PupilsFilter m) => m.filteredPupils);
 

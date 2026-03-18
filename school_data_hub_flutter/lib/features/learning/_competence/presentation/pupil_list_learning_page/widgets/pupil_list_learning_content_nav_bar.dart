@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/presentation/learning_content_selection.dart';
 
 class PupilListLearningContentNavBar extends WatchingWidget {
   const PupilListLearningContentNavBar({super.key});
@@ -12,7 +12,7 @@ class PupilListLearningContentNavBar extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final selectedContent = watchValue(
-      (CompetenceManager m) => m.selectedLearningContent,
+      (LearningContentSelection s) => s.selectedContent,
     );
 
     return Column(
@@ -38,7 +38,7 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                     onPressed: () {
                       if (selectedContent !=
                           SelectedContent.competenceStatuses) {
-                        di<CompetenceManager>().setSelectedContent(
+                        di<LearningContentSelection>().setSelectedContent(
                           SelectedContent.competenceStatuses,
                         );
 
@@ -75,7 +75,7 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                     ),
                     onPressed: () {
                       if (selectedContent != SelectedContent.competenceGoals) {
-                        di<CompetenceManager>().setSelectedContent(
+                        di<LearningContentSelection>().setSelectedContent(
                           SelectedContent.competenceGoals,
                         );
 
@@ -110,7 +110,7 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                     ),
                     onPressed: () {
                       if (selectedContent != SelectedContent.workbooks) {
-                        di<CompetenceManager>().setSelectedContent(
+                        di<LearningContentSelection>().setSelectedContent(
                           SelectedContent.workbooks,
                         );
 
@@ -138,7 +138,7 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                   selectedIcon: Icon(Icons.book, color: AppColors.accentColor),
                   onPressed: () {
                     if (selectedContent != SelectedContent.books) {
-                      di<CompetenceManager>().setSelectedContent(
+                      di<LearningContentSelection>().setSelectedContent(
                         SelectedContent.books,
                       );
 
@@ -173,7 +173,7 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                   ),
                   onPressed: () {
                     if (selectedContent != SelectedContent.competenceReports) {
-                      di<CompetenceManager>().setSelectedContent(
+                      di<LearningContentSelection>().setSelectedContent(
                         SelectedContent.competenceReports,
                       );
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/data/workbook_api_service.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
@@ -14,6 +16,7 @@ final _log = Logger('WorkbookManager');
 
 class WorkbookManager {
   final _workbookApiService = WorkbookApiService();
+  StreamSubscription<dynamic>? _hubSubscription;
 
   final _notificationService = di<NotificationManager>();
 
@@ -24,14 +27,33 @@ class WorkbookManager {
   WorkbookManager();
 
   void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
     _workbooks.dispose();
-    return;
   }
 
   Future<WorkbookManager> init() async {
     await fetchWorkbooks();
-
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     return this;
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is Workbook) {
+      _log.fine('[STREAM] upsert workbook ${event.isbn}');
+      _updateWorkbookInCollection(event);
+    } else if (event is HubDeleteEvent) {
+      if (event.objectType == HubObjectType.workbook) {
+        _log.fine('[STREAM] delete workbook ${event.id}');
+        _removeWorkbookFromCollectionById(event.id);
+      }
+    } else if (event is HubReconnected) {
+      fetchWorkbooks();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.workbook)) {
+        fetchWorkbooks();
+      }
+    }
   }
 
   void clearData() {
@@ -52,6 +74,15 @@ class WorkbookManager {
   void _removeWorkbookFromCollection(int isbn) {
     List<Workbook> workbooks = List.from(_workbooks.value);
     int index = workbooks.indexWhere((wb) => wb.isbn == isbn);
+    if (index != -1) {
+      workbooks.removeAt(index);
+    }
+    _workbooks.value = workbooks;
+  }
+
+  void _removeWorkbookFromCollectionById(int id) {
+    List<Workbook> workbooks = List.from(_workbooks.value);
+    int index = workbooks.indexWhere((wb) => wb.id == id);
     if (index != -1) {
       workbooks.removeAt(index);
     }

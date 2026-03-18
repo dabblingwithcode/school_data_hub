@@ -1,1 +1,0 @@
-all pupil_schoolday_event_card rebuilding when updating a property of an event

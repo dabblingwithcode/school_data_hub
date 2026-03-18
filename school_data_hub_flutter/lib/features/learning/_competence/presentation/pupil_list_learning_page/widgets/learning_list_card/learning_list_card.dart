@@ -12,7 +12,7 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/ava
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/presentation/learning_content_selection.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/learning_list_card/learning_goals_overview.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/learning_list_card/workbooks_competence_overview.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_competence_checks/competence_checks_badges.dart';
@@ -106,7 +106,7 @@ class LearningListCard extends WatchingWidget {
   }
 }
 
-/// Rebuilds only when [CompetenceManager.selectedLearningContent] changes.
+/// Rebuilds only when [LearningContentSelection.selectedContent] changes.
 class _LearningListContent extends WatchingWidget {
   final PupilProxy pupil;
   final CustomExpansionTileController expansionTileController;
@@ -119,7 +119,7 @@ class _LearningListContent extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final selectedContent = watchValue(
-      (CompetenceManager m) => m.selectedLearningContent,
+      (LearningContentSelection s) => s.selectedContent,
     );
 
     final pupilBookLendingManager = di<PupilBookLendingManager>();
@@ -257,7 +257,7 @@ class _LearningListContent extends WatchingWidget {
   }
 }
 
-/// Rebuilds only when [CompetenceManager.selectedLearningContent] changes.
+/// Rebuilds only when [LearningContentSelection.selectedContent] changes.
 class _LearningListExpansionContent extends WatchingWidget {
   final PupilProxy pupil;
   final CustomExpansionTileController expansionTileController;
@@ -270,7 +270,7 @@ class _LearningListExpansionContent extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final selectedContent = watchValue(
-      (CompetenceManager m) => m.selectedLearningContent,
+      (LearningContentSelection s) => s.selectedContent,
     );
 
     return Padding(

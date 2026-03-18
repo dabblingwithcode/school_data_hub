@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -9,6 +10,8 @@ class SubjectEndpoint extends Endpoint {
 
   Future<Subject> createSubject(Session session, Subject subject) async {
     final subjectInDatabase = await Subject.db.insertRow(session, subject);
+    session.messages.postMessage('hub_events_stream', subjectInDatabase);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return subjectInDatabase;
   }
 
@@ -80,6 +83,8 @@ class SubjectEndpoint extends Endpoint {
 
   Future<Subject> updateSubject(Session session, Subject subject) async {
     final updatedSubject = await Subject.db.updateRow(session, subject);
+    session.messages.postMessage('hub_events_stream', updatedSubject);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return updatedSubject;
   }
 
@@ -114,6 +119,11 @@ class SubjectEndpoint extends Endpoint {
     }
 
     await Subject.db.deleteRow(session, subject);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.timetableData, id: id),
+    );
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return true;
   }
 }

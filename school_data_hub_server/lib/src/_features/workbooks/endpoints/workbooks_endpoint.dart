@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/utils/isbn_api.dart';
 import 'package:serverpod/serverpod.dart';
@@ -18,6 +19,8 @@ class WorkbooksEndpoint extends Endpoint {
       return workbookId;
     });
 
+    session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.workbook);
     return result;
   }
 
@@ -42,6 +45,8 @@ class WorkbooksEndpoint extends Endpoint {
       );
 
       final bookInDatabase = await Workbook.db.insertRow(session, workbook);
+      session.messages.postMessage('hub_events_stream', bookInDatabase);
+      HubUpdatesTracker.instance.touch(HubObjectType.workbook);
       return bookInDatabase;
     }
     return book;
@@ -74,6 +79,8 @@ class WorkbooksEndpoint extends Endpoint {
       workbook.imageUrl = imageUrl;
       final updatedWorkbook = await Workbook.db.updateRow(session, workbook);
       session.log('updateWorkbookImage: updated successfully');
+      session.messages.postMessage('hub_events_stream', updatedWorkbook);
+      HubUpdatesTracker.instance.touch(HubObjectType.workbook);
       return updatedWorkbook;
     } catch (e, st) {
       session.log('updateWorkbookImage: FAILED $e\n$st',
@@ -102,6 +109,8 @@ class WorkbooksEndpoint extends Endpoint {
     }
     workbook.imageUrl = '';
     final updatedWorkbook = await Workbook.db.updateRow(session, workbook);
+    session.messages.postMessage('hub_events_stream', updatedWorkbook);
+    HubUpdatesTracker.instance.touch(HubObjectType.workbook);
     return updatedWorkbook;
   }
 
@@ -115,6 +124,8 @@ class WorkbooksEndpoint extends Endpoint {
       return workbookId;
     });
 
+    session.messages.postMessage('hub_events_stream', result);
+    HubUpdatesTracker.instance.touch(HubObjectType.workbook);
     return result;
   }
 
@@ -130,6 +141,11 @@ class WorkbooksEndpoint extends Endpoint {
       throw Exception('Workbook with id $id does not exist.');
     }
     await Workbook.db.deleteRow(session, workbook);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.workbook, id: id),
+    );
+    HubUpdatesTracker.instance.touch(HubObjectType.workbook);
     return true;
   }
 }

@@ -19,15 +19,6 @@ import 'package:school_data_hub_flutter/features/learning/_competence/domain/com
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/models/pupil_competence_goals_proxy.dart';
 
-enum SelectedContent {
-  competenceStatuses,
-  competenceGoals,
-  competenceReports,
-  workbooks,
-  books,
-  none,
-}
-
 final _log = Logger('CompetenceManager');
 
 class CompetenceManager {
@@ -41,13 +32,6 @@ class CompetenceManager {
   final _competenceGoalApiService = CompetenceGoalApiService();
   final _competences = ValueNotifier<List<Competence>>([]);
   ValueListenable<List<Competence>> get competences => _competences;
-  ValueListenable<SelectedContent> get selectedLearningContent =>
-      _selectedLearningContent;
-  // Learning content selection state
-  final _selectedLearningContent = ValueNotifier<SelectedContent>(
-    SelectedContent.books,
-  );
-
   Map<int, int> _rootCompetencesMap = {};
   Map<int, int> get rootCompetencesMap => _rootCompetencesMap;
 
@@ -122,7 +106,6 @@ class CompetenceManager {
     _hubSubscription?.cancel();
     _hubSubscription = null;
     _competences.dispose();
-    _selectedLearningContent.dispose();
     _pupilCompetenceGoalsMap.clear();
     _loadedPupilIds.clear();
   }
@@ -197,9 +180,6 @@ class CompetenceManager {
     _competences.value = [];
   }
 
-  void setSelectedContent(SelectedContent selectedContent) {
-    _selectedLearningContent.value = selectedContent;
-  }
 
   //-TODO: Workaround to avoid registration error
   //- when inclduing the CompetenceFilterManager because
@@ -671,6 +651,36 @@ class CompetenceManager {
 
   Competence findRootCompetenceById(int competenceId) {
     return findCompetenceById(_rootCompetencesMap[competenceId]!);
+  }
+
+  /// Computes badge counts per root competence from the given checks.
+  Map<int, int> computeBadgeCounts(List<CompetenceCheck> checks) {
+    final Map<int, int> counts = {};
+    final Set<int> countedIds = {};
+
+    // Initialize counts for all root competences
+    for (final competenceId in _rootCompetencesMap.keys) {
+      if (_rootCompetencesMap[competenceId] == competenceId) {
+        counts[competenceId] = 0;
+      }
+    }
+
+    // Count checks per root competence
+    for (final check in checks) {
+      if (countedIds.contains(check.competenceId)) continue;
+      countedIds.add(check.competenceId);
+
+      final rootCompetence = findRootCompetenceById(check.competenceId);
+      final int rootId = rootCompetence.publicId;
+
+      if (counts.containsKey(rootId)) {
+        counts[rootId] = counts[rootId]! + 1;
+      } else {
+        counts[rootId] = 1;
+      }
+    }
+
+    return counts;
   }
 
   bool isCompetenceWithChildren(Competence competence) {

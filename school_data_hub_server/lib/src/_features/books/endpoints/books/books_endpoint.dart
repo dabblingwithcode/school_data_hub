@@ -1,4 +1,5 @@
 import 'package:school_data_hub_server/src/_features/books/endpoints/books/book_tagging_helper.dart';
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/utils/isbn_api.dart';
 import 'package:serverpod/serverpod.dart';
@@ -11,6 +12,8 @@ class BooksEndpoint extends Endpoint {
 
   Future<Book> postBook(Session session, Book book) async {
     final bookInDatabase = await Book.db.insertRow(session, book);
+    session.messages.postMessage('hub_events_stream', bookInDatabase);
+    HubUpdatesTracker.instance.touch(HubObjectType.libraryBook);
     return bookInDatabase;
   }
 
@@ -90,6 +93,8 @@ class BooksEndpoint extends Endpoint {
 
     book.imagePath = imagePath;
     final updatedBook = await Book.db.updateRow(session, book);
+    session.messages.postMessage('hub_events_stream', updatedBook);
+    HubUpdatesTracker.instance.touch(HubObjectType.libraryBook);
     return updatedBook;
   }
 
@@ -102,15 +107,18 @@ class BooksEndpoint extends Endpoint {
     if (book == null) {
       throw Exception('Book with isbn $isbn does not exist.');
     }
-    return await session.db.transaction((transaction) async {
+    final updatedBook = await session.db.transaction((transaction) async {
       if (tags != null) {
         await BookTaggingHelper.updateBookWithTags(session, book, tags,
             transaction: transaction);
       }
-      final updatedBook =
+      final result =
           await Book.db.updateRow(session, book, transaction: transaction);
-      return updatedBook;
+      return result;
     });
+    session.messages.postMessage('hub_events_stream', updatedBook);
+    HubUpdatesTracker.instance.touch(HubObjectType.libraryBook);
+    return updatedBook;
   }
 
   //- delete
@@ -125,8 +133,11 @@ class BooksEndpoint extends Endpoint {
       throw Exception('Book with id $id does not exist.');
     }
     await Book.db.deleteRow(session, book);
-    // QUESTION: Is this the right way to check if the book was deleted?
-
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.libraryBook, id: id),
+    );
+    HubUpdatesTracker.instance.touch(HubObjectType.libraryBook);
     return true;
   }
 }

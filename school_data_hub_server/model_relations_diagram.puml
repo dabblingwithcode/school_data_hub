@@ -375,7 +375,7 @@ class HubDeleteEvent ##[bold]  {
 enum HubObjectType #ece4ff ##[bold] {
 <size:14>📁</size> <b><size:12> /_features/hub/models/hub_object_type.spy.yaml</size></b>
 --
-  values: pupilData, missedSchoolday, schooldayEvent, schoolList, authorization, supportCategory, competence, competenceReport, competenceReportCheck, competenceReportItem, competenceGoal, supportGoal, pupilWorkbook, pupilBookLending, schoolday, schoolSemester, schoolData, user
+  values: pupilData, missedSchoolday, schooldayEvent, schoolList, authorization, supportCategory, competence, competenceReport, competenceReportCheck, competenceReportItem, competenceGoal, supportGoal, pupilWorkbook, pupilBookLending, schoolday, schoolSemester, schoolData, user, libraryBook, workbook, timetableData
 
 }
 

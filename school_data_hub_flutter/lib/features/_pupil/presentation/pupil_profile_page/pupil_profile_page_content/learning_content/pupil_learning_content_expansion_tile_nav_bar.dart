@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/presentation/learning_content_selection.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_books.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_goals.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_learning_content/pupil_learning_content_competence_statuses.dart';
@@ -21,7 +21,7 @@ class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final selectedContent = watchValue(
-      (CompetenceManager m) => m.selectedLearningContent,
+      (LearningContentSelection s) => s.selectedContent,
     );
 
     return Column(

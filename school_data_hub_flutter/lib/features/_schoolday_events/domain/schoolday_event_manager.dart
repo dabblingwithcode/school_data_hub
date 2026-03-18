@@ -173,9 +173,9 @@ class SchooldayEventManager with ChangeNotifier {
     required String reason,
     required String eventTime,
   }) async {
-    final SchooldayEvent
-    schooldayEvent = await _schooldayEventApiService.postSchooldayEvent(
-      '${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.firstName} (${di<PupilProxyManager>().getPupilByPupilId(pupilId)!.group})',
+    final pupil = di<PupilProxyManager>().getPupilByPupilId(pupilId)!;
+    final schooldayEvent = await _schooldayEventApiService.postSchooldayEvent(
+      '${pupil.firstName} (${pupil.group})',
       pupilId,
       schooldayId,
       dateTime,
@@ -183,22 +183,16 @@ class SchooldayEventManager with ChangeNotifier {
       reason,
       eventTime,
     );
+    if (schooldayEvent == null) return;
 
     _updateSchooldayEventCollections(schooldayEvent);
   }
 
   Future<void> fetchSchooldayEvents() async {
-    try {
-      final List<SchooldayEvent> events = await _schooldayEventApiService
-          .fetchSchooldayEvents();
+    final events = await _schooldayEventApiService.fetchSchooldayEvents();
+    if (events == null) return;
 
-      updateSchooldayEventsBatchInCollections(events);
-    } catch (e) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler beim Laden der Einträge: $e',
-      );
-    }
+    updateSchooldayEventsBatchInCollections(events);
   }
 
   Future<void> updateSchooldayEvent({
@@ -217,19 +211,19 @@ class SchooldayEventManager with ChangeNotifier {
     if (processed == false && eventToUpdate.processedDocumentId != null) {
       cacheKey = eventToUpdate.processedDocument!.documentId;
     }
-    final SchooldayEvent schooldayEvent = await _schooldayEventApiService
-        .updateSchooldayEvent(
-          schooldayEvent: eventToUpdate,
-          createdBy: createdBy,
-          reason: reason,
-          processed: processed,
-          processedBy: processedBy,
-          processedAt: processedAt,
-          schooldayId: schooldayId,
-          type: schoolEventType,
-          comment: comment,
-          eventTime: eventTime,
-        );
+    final schooldayEvent = await _schooldayEventApiService.updateSchooldayEvent(
+      schooldayEvent: eventToUpdate,
+      createdBy: createdBy,
+      reason: reason,
+      processed: processed,
+      processedBy: processedBy,
+      processedAt: processedAt,
+      schooldayId: schooldayId,
+      type: schoolEventType,
+      comment: comment,
+      eventTime: eventTime,
+    );
+    if (schooldayEvent == null) return;
 
     _updateSchooldayEventCollections(schooldayEvent);
     if (cacheKey != null) {
@@ -251,10 +245,6 @@ class SchooldayEventManager with ChangeNotifier {
           isProcessed: isProcessed,
         );
     if (responseEvent == null) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Datei konnte nicht hochgeladen werden!',
-      );
       return;
     }
     _updateSchooldayEventCollections(responseEvent);
@@ -270,8 +260,10 @@ class SchooldayEventManager with ChangeNotifier {
     String cacheKey,
     bool isProcessed,
   ) async {
-    final SchooldayEvent schooldayEvent = await _schooldayEventApiService
+    final schooldayEvent = await _schooldayEventApiService
         .deleteSchooldayEventFile(schooldayEventId, isProcessed);
+    if (schooldayEvent == null) return;
+
     await _cacheManager.removeFile(cacheKey);
     _updateSchooldayEventCollections(schooldayEvent);
 
@@ -282,23 +274,14 @@ class SchooldayEventManager with ChangeNotifier {
   }
 
   Future<void> deleteSchooldayEvent(int schooldayEventId) async {
-    try {
-      _notificationService.apiRunning(true);
+    final success = await _schooldayEventApiService.deleteSchooldayEvent(
+      schooldayEventId,
+    );
+    if (success == null) return;
 
-      await _schooldayEventApiService.deleteSchooldayEvent(schooldayEventId);
-
-      _notificationService.apiRunning(false);
-
-      final eventToDelete = _schooldayEventsMap[schooldayEventId];
-      if (eventToDelete != null) {
-        removeSchooldayEventFromCollections(eventToDelete);
-      }
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler beim Löschen des Eintrags: $e',
-      );
+    final eventToDelete = _schooldayEventsMap[schooldayEventId];
+    if (eventToDelete != null) {
+      removeSchooldayEventFromCollections(eventToDelete);
     }
   }
 }

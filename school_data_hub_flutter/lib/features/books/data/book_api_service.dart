@@ -2,13 +2,12 @@ import 'dart:io';
 
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/models/enums.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
-import 'package:school_data_hub_flutter/core/notification_manager.dart';
 
 class BookApiService {
   final _client = di<Client>();
-  final _notificationService = di<NotificationManager>();
 
   // - BOOK TAGS - //
 
@@ -114,18 +113,10 @@ class BookApiService {
     if (result.cancelled || !result.success || result.path == null) {
       return null;
     }
-    try {
-      return await ClientHelper.apiCall(
-        call: () => _client.books.updateBookImage(isbn, result.path!),
-        errorMessage: 'Das Dokument konnte nicht aktualisiert werden',
-      );
-    } catch (e) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Das Dokument konnte nicht aktualisiert werden: ${e.toString()}',
-      );
-      rethrow;
-    }
+    return await ClientHelper.apiCall(
+      call: () => _client.books.updateBookImage(isbn, result.path!),
+      errorMessage: 'Das Dokument konnte nicht aktualisiert werden',
+    );
   }
 
   // - LIBRARY BOOKS - //

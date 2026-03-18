@@ -25,6 +25,7 @@ import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart'
 import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/presentation/learning_content_selection.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
@@ -94,8 +95,8 @@ class InitOnUserAuth {
       dispose: (m) => m.dispose(),
     );
 
-    di.registerSingletonWithDependencies<LearningSupportManager>(
-      () => LearningSupportManager(),
+    di.registerSingletonAsync<LearningSupportManager>(
+      () => LearningSupportManager().init(),
       dependsOn: [
         PupilProxyManager,
         SchoolCalendarManager,
@@ -130,6 +131,11 @@ class InitOnUserAuth {
       () => PupilWorkbookManager().init(),
       dependsOn: [HubSessionManager, PupilProxyManager],
       dispose: (m) => m.dispose(),
+    );
+
+    di.registerSingleton<LearningContentSelection>(
+      LearningContentSelection(),
+      dispose: (s) => s.dispose(),
     );
 
     di.registerSingletonAsync<CompetenceManager>(

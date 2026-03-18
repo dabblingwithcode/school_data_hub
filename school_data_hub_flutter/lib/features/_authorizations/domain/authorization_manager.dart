@@ -25,9 +25,9 @@ class AuthorizationManager with ChangeNotifier {
 
   final _cacheManager = di<DefaultCacheManager>();
 
-  ValueListenable<List<Authorization>> get authorizations => _authorizations;
+  ListNotifier<Authorization> get authorizations => _authorizations;
 
-  final _authorizations = ValueNotifier<List<Authorization>>([]);
+  final _authorizations = ListNotifier<Authorization>();
 
   Map<int, Authorization> _authorizationsMap = {};
 
@@ -103,13 +103,20 @@ class AuthorizationManager with ChangeNotifier {
     if (_authorizationsMap.containsKey(id)) {
       _authorizationsMap.remove(id);
       _removePupilAuthListenablesForAuth(id);
-      _authorizations.value = _authorizationsMap.values.toList();
+      _syncAuthorizationsList();
       notifyListeners();
     }
   }
 
+  void _syncAuthorizationsList() {
+    _authorizations.startTransAction();
+    _authorizations.clear();
+    _authorizations.addAll(_authorizationsMap.values);
+    _authorizations.endTransAction();
+  }
+
   void clearData() {
-    _authorizations.value = [];
+    _authorizations.clear();
     _authorizationsMap = {};
     _pupilAuthListenables.clear();
   }
@@ -149,7 +156,7 @@ class AuthorizationManager with ChangeNotifier {
     for (var authorization in authorizations) {
       _authorizationsMap[authorization.id!] = authorization;
     }
-    _authorizations.value = _authorizationsMap.values.toList();
+    _syncAuthorizationsList();
   }
 
   void _updatePupilAuthInCollections(PupilAuthorization pupilAuth) {
@@ -169,7 +176,7 @@ class AuthorizationManager with ChangeNotifier {
     _authorizationsMap[authId] = authorization.copyWith(
       authorizedPupils: pupilAuths,
     );
-    _authorizations.value = _authorizationsMap.values.toList();
+    _syncAuthorizationsList();
   }
 
   Future<void> fetchAuthorizations() async {
@@ -194,7 +201,7 @@ class AuthorizationManager with ChangeNotifier {
       return;
     }
     _authorizationsMap[authorization.id!] = authorization;
-    _authorizations.value = _authorizationsMap.values.toList();
+    _syncAuthorizationsList();
 
     _notificationService.showSnackBar(
       NotificationType.success,
@@ -237,7 +244,7 @@ class AuthorizationManager with ChangeNotifier {
     }
     _authorizationsMap.remove(authId);
     _removePupilAuthListenablesForAuth(authId);
-    _authorizations.value = _authorizationsMap.values.toList();
+    _syncAuthorizationsList();
 
     _notificationService.showSnackBar(
       NotificationType.success,

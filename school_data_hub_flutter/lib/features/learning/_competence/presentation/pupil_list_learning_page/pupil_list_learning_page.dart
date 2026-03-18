@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/generi
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/presentation/learning_content_selection.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/learning_list_card/learning_list_card.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/learning_list_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_list_learning_search_bar/_pupil_list_learning_search_bar.dart';
@@ -26,7 +26,7 @@ class PupilListLearningPage extends WatchingWidget {
     final pupilsFilter = di<PupilsFilter>();
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
     final selectedContent = watchValue(
-      (CompetenceManager m) => m.selectedLearningContent,
+      (LearningContentSelection s) => s.selectedContent,
     );
 
     return Scaffold(

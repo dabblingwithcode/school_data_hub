@@ -1,4 +1,5 @@
 import 'package:school_data_hub_server/src/_features/books/endpoints/books/book_tagging_helper.dart';
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/_features/pupil/schemas/pupil_schemas.dart';
 import 'package:serverpod/serverpod.dart';
@@ -105,6 +106,8 @@ class LibraryBooksEndpoint extends Endpoint {
       return attachedLibraryBookInDatabase;
     });
 
+    session.messages.postMessage('hub_events_stream', libraryBookResponse);
+    HubUpdatesTracker.instance.touch(HubObjectType.libraryBook);
     return libraryBookResponse;
   }
 
@@ -297,6 +300,8 @@ class LibraryBooksEndpoint extends Endpoint {
       throw Exception(
           'Library book with id $libraryId not found after update.');
     }
+    session.messages.postMessage('hub_events_stream', updatedLibraryBook);
+    HubUpdatesTracker.instance.touch(HubObjectType.libraryBook);
     return updatedLibraryBook;
   }
 
@@ -311,6 +316,11 @@ class LibraryBooksEndpoint extends Endpoint {
       throw Exception('Library book with id $libraryBookId does not exist.');
     }
     await LibraryBook.db.deleteRow(session, libraryBook);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.libraryBook, id: libraryBookId),
+    );
+    HubUpdatesTracker.instance.touch(HubObjectType.libraryBook);
     return true;
   }
 }

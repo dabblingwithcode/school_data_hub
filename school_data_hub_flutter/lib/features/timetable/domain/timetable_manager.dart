@@ -1,11 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/managers/timetable_crud_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/managers/timetable_data_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/managers/timetable_lesson_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/managers/timetable_membership_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/managers/timetable_ui_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/models/timetable_proxy_models.dart';
+
+final _log = Logger('TimetableManager');
 
 /// Main timetable manager that orchestrates all sub-managers
 /// This is the refactored version that breaks down the original large class
@@ -16,6 +23,7 @@ class TimetableManager {
   final TimetableUiManager _uiManager;
   final TimetableLessonManager _lessonManager;
   final TimetableMembershipManager _membershipManager;
+  StreamSubscription<dynamic>? _hubSubscription;
 
   TimetableManager()
     : _dataManager = TimetableDataManager(),
@@ -53,6 +61,8 @@ class TimetableManager {
   Map<int, LessonGroup> get lessonGroupIdMap => _dataManager.lessonGroupIdMap;
 
   void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
     _dataManager.dispose();
     _uiManager.dispose();
   }
@@ -61,7 +71,31 @@ class TimetableManager {
   Future<TimetableManager> init() async {
     await _dataManager.init();
     _buildWeekdayProxies();
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     return this;
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is HubDeleteEvent &&
+        event.objectType == HubObjectType.timetableData) {
+      _log.fine('[STREAM] timetable delete event ${event.id}');
+      refreshData();
+    } else if (event is ScheduledLesson ||
+        event is Timetable ||
+        event is TimetableSlot ||
+        event is Subject ||
+        event is Classroom ||
+        event is LessonGroup ||
+        event is ScheduledLessonGroupMembership) {
+      _log.fine('[STREAM] timetable upsert ${event.runtimeType}');
+      refreshData();
+    } else if (event is HubReconnected) {
+      refreshData();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.timetableData)) {
+        refreshData();
+      }
+    }
   }
 
   /// Refresh all data from API

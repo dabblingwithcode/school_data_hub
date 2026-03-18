@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -11,6 +12,8 @@ class ScheduledLessonGroupMembershipEndpoint extends Endpoint {
       Session session, ScheduledLessonGroupMembership membership) async {
     final membershipInDatabase =
         await ScheduledLessonGroupMembership.db.insertRow(session, membership);
+    session.messages.postMessage('hub_events_stream', membershipInDatabase);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return membershipInDatabase;
   }
 
@@ -88,6 +91,8 @@ class ScheduledLessonGroupMembershipEndpoint extends Endpoint {
       Session session, ScheduledLessonGroupMembership membership) async {
     final updatedMembership =
         await ScheduledLessonGroupMembership.db.updateRow(session, membership);
+    session.messages.postMessage('hub_events_stream', updatedMembership);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return updatedMembership;
   }
 
@@ -103,6 +108,11 @@ class ScheduledLessonGroupMembershipEndpoint extends Endpoint {
     }
 
     await ScheduledLessonGroupMembership.db.deleteRow(session, membership);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.timetableData, id: id),
+    );
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return true;
   }
 
@@ -121,6 +131,12 @@ class ScheduledLessonGroupMembershipEndpoint extends Endpoint {
     }
 
     await ScheduledLessonGroupMembership.db.deleteRow(session, membership);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(
+          objectType: HubObjectType.timetableData, id: membership.id!),
+    );
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return true;
   }
 
@@ -149,6 +165,7 @@ class ScheduledLessonGroupMembershipEndpoint extends Endpoint {
       );
     });
 
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return true;
   }
 }

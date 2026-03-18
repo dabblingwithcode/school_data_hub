@@ -98,8 +98,11 @@ class LearningSupportManager {
     }
   }
 
-  LearningSupportManager() {
+  LearningSupportManager();
+
+  Future<LearningSupportManager> init() async {
     _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
+    return this;
   }
 
   void _onHubEvent(dynamic event) {

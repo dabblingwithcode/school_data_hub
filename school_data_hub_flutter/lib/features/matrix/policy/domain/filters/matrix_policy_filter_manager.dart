@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_user_filter_category.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
@@ -7,7 +8,7 @@ import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
 
-class MatrixPolicyFilterManager {
+class MatrixPolicyFilterManager implements Resettable {
   final _filtersOn = ValueNotifier<bool>(false);
   ValueListenable<bool> get filtersOn => _filtersOn;
 
@@ -48,6 +49,9 @@ class MatrixPolicyFilterManager {
     _policyManager.matrixUsers.removeListener(refreshFilteredMatrixUsers);
     _policyManager.matrixRooms.removeListener(reactWhenRoomListChanges);
   }
+
+  @override
+  void resetFilters() => resetAllMatrixFilters();
 
   void resetAllMatrixFilters() {
     _searchText.value = '';

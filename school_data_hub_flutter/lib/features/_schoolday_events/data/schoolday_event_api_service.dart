@@ -2,21 +2,21 @@ import 'dart:io';
 
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/models/enums.dart';
+import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/client/file_upload_service.dart';
 import 'package:school_data_hub_flutter/common/domain/models/nullable_records.dart';
-import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class SchooldayEventApiService {
-  final _notificationService = di<NotificationManager>();
   Client get _client => di<Client>();
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
   //- post schooldayEvent
 
-  Future<SchooldayEvent> postSchooldayEvent(
+  Future<SchooldayEvent?> postSchooldayEvent(
     String pupilName,
     int pupilId,
     int schooldayId,
@@ -26,11 +26,11 @@ class SchooldayEventApiService {
     String eventTime,
   ) async {
     final userName = _hubSessionManager.userName!;
-    _notificationService.apiRunning(true);
     final pupil = di<PupilProxyManager>().getPupilByPupilId(pupilId);
     final tutor = pupil?.groupTutor;
-    try {
-      var event = await _client.schooldayEvent.createSchooldayEvent(
+
+    final event = await ClientHelper.apiCall(
+      call: () => _client.schooldayEvent.createSchooldayEvent(
         pupilNameAndGroup: pupilName,
         dateAsString: dateTime.formatDateForUser(),
         pupilId: pupilId,
@@ -40,43 +40,29 @@ class SchooldayEventApiService {
         createdBy: userName,
         eventTime: eventTime,
         tutor: tutor ?? '',
-      );
+      ),
+      errorMessage: 'Fehler beim Erstellen des Vorfalls',
+    );
+    if (event == null) return null;
 
-      event = await updateSchooldayEvent(
-        schooldayEvent: event,
-        eventTime: eventTime,
-      );
-
-      _notificationService.apiRunning(false);
-
-      return event;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-
-      throw Exception('Failed to post an schooldayEvent: $e');
-    }
+    return await updateSchooldayEvent(
+      schooldayEvent: event,
+      eventTime: eventTime,
+    );
   }
 
   //- GET
 
-  Future<List<SchooldayEvent>> fetchSchooldayEvents() async {
-    _notificationService.apiRunning(true);
-    try {
-      final events = await _client.schooldayEvent.fetchSchooldayEvents();
-
-      _notificationService.apiRunning(false);
-
-      return events;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-
-      throw Exception('Failed to fetch schooldayEvents: $e');
-    }
+  Future<List<SchooldayEvent>?> fetchSchooldayEvents() async {
+    return await ClientHelper.apiCall(
+      call: () => _client.schooldayEvent.fetchSchooldayEvents(),
+      errorMessage: 'Fehler beim Laden der Vorfälle',
+    );
   }
 
   //- UPDATE
 
-  Future<SchooldayEvent> updateSchooldayEvent({
+  Future<SchooldayEvent?> updateSchooldayEvent({
     required SchooldayEvent schooldayEvent,
     String? createdBy,
     SchooldayEventType? type,
@@ -125,23 +111,18 @@ class SchooldayEventApiService {
     final pupil = di<PupilProxyManager>().getPupilByPupilId(
       schooldayEvent.pupilId,
     )!;
-    try {
-      _notificationService.apiRunning(true);
-      final updatedSchooldayEvent = await _client.schooldayEvent
-          .updateSchooldayEvent(
-            schooldayEventToUpdate,
-            changedProcessedStatus,
-            '${pupil.firstName} (${pupil.group})',
-            '${pupil.groupTutor}',
-            di<HubSessionManager>().userName!,
-            DateTime.now().formatDateForUser(),
-          );
-      _notificationService.apiRunning(false);
-      return updatedSchooldayEvent;
-    } catch (e) {
-      _notificationService.apiRunning(false);
-      throw Exception('Failed to update schooldayEvent: $e');
-    }
+
+    return await ClientHelper.apiCall(
+      call: () => _client.schooldayEvent.updateSchooldayEvent(
+        schooldayEventToUpdate,
+        changedProcessedStatus,
+        '${pupil.firstName} (${pupil.group})',
+        '${pupil.groupTutor}',
+        di<HubSessionManager>().userName!,
+        DateTime.now().formatDateForUser(),
+      ),
+      errorMessage: 'Fehler beim Aktualisieren des Vorfalls',
+    );
   }
 
   //- upload file to document an schooldayEvent
@@ -162,56 +143,39 @@ class SchooldayEventApiService {
     if (result.cancelled || !result.success || result.path == null) {
       return null;
     }
-    try {
-      return await _client.schooldayEvent.updateSchooldayEventFile(
+    return await ClientHelper.apiCall(
+      call: () => _client.schooldayEvent.updateSchooldayEventFile(
         schooldayEventId,
         result.path!,
         _hubSessionManager.userName!,
         isProcessed,
-      );
-    } catch (e) {
-      _notificationService.showInformationDialog(
-        NotificationType.error,
-        'Das Dokument konnte nicht aktualisiert werden: ${e.toString()}',
-      );
-      rethrow;
-    }
+      ),
+      errorMessage: 'Das Dokument konnte nicht aktualisiert werden',
+    );
   }
 
   //- delete schooldayEvent
 
-  Future<bool> deleteSchooldayEvent(int schooldayEventId) async {
-    try {
-      final success = await _client.schooldayEvent.deleteSchooldayEvent(
-        schooldayEventId,
-      );
-      return success;
-    } catch (e) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler beim Löschen des Ereignisses!: $e',
-      );
-      return false;
-    }
+  Future<bool?> deleteSchooldayEvent(int schooldayEventId) async {
+    return await ClientHelper.apiCall(
+      call: () => _client.schooldayEvent.deleteSchooldayEvent(schooldayEventId),
+      errorMessage: 'Fehler beim Löschen des Vorfalls',
+    );
   }
 
   //- delete schooldayEvent file
   //- depending on isProcessed, there are two possible endpoints for the file deletion
 
-  Future<SchooldayEvent> deleteSchooldayEventFile(
+  Future<SchooldayEvent?> deleteSchooldayEventFile(
     int schooldayEventId,
     bool isProcessed,
   ) async {
-    try {
-      final schooldayEvent = await _client.schooldayEvent
-          .deleteSchooldayEventFile(schooldayEventId, isProcessed);
-      return schooldayEvent;
-    } catch (e) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler beim Löschen der Datei!: $e',
-      );
-      rethrow;
-    }
+    return await ClientHelper.apiCall(
+      call: () => _client.schooldayEvent.deleteSchooldayEventFile(
+        schooldayEventId,
+        isProcessed,
+      ),
+      errorMessage: 'Fehler beim Löschen der Datei',
+    );
   }
 }

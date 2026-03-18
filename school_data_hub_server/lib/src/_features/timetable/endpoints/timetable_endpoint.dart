@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
 
@@ -19,6 +20,8 @@ class TimetableEndpoint extends Endpoint {
 
     final timetableInDatabase =
         await Timetable.db.insertRow(session, timetable);
+    session.messages.postMessage('hub_events_stream', timetableInDatabase);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return timetableInDatabase;
   }
 
@@ -123,6 +126,8 @@ class TimetableEndpoint extends Endpoint {
   Future<Timetable> updateTimetable(
       Session session, Timetable timetable) async {
     final updatedTimetable = await Timetable.db.updateRow(session, timetable);
+    session.messages.postMessage('hub_events_stream', updatedTimetable);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return updatedTimetable;
   }
 
@@ -136,6 +141,8 @@ class TimetableEndpoint extends Endpoint {
     timetable.endsAt = DateTime.now();
 
     final updatedTimetable = await Timetable.db.updateRow(session, timetable);
+    session.messages.postMessage('hub_events_stream', updatedTimetable);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return updatedTimetable;
   }
 
@@ -148,6 +155,11 @@ class TimetableEndpoint extends Endpoint {
     }
 
     await Timetable.db.deleteRow(session, timetable);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.timetableData, id: id),
+    );
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return true;
   }
 }

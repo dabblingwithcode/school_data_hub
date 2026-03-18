@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/books/data/book_api_service.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
@@ -13,6 +15,7 @@ final _log = Logger('BookManager');
 
 class BookManager {
   final _bookApiService = BookApiService();
+  StreamSubscription<dynamic>? _hubSubscription;
 
   final _notificationService = di<NotificationManager>();
 
@@ -32,14 +35,6 @@ class BookManager {
   final _bookTags = ValueNotifier<List<BookTag>>([]);
   ValueListenable<List<BookTag>> get bookTags => _bookTags;
 
-  List<BookTag> selectedTags = []; // Liste für ausgewählte Buch-Tags
-
-  final _lastSelectedLocation = ValueNotifier<LibraryBookLocation>(
-    LibraryBookLocation(location: 'Bitte auswählen'),
-  );
-  ValueListenable<LibraryBookLocation> get lastLocationValue =>
-      _lastSelectedLocation;
-
   ValueListenable<List<LibraryBookProxy>> get searchResults => _searchResults;
   final _searchResults = ValueNotifier<List<LibraryBookProxy>>([]);
 
@@ -49,15 +44,14 @@ class BookManager {
   BookManager();
 
   void dispose() {
+    _hubSubscription?.cancel();
+    _hubSubscription = null;
     _libraryBookProxies.dispose();
     _isbnLibraryBooksMap.dispose();
     _locations.dispose();
     _bookTags.dispose();
-    _lastSelectedLocation.dispose();
     _searchResults.dispose();
     _bookStats.dispose();
-
-    return;
   }
   //  final session = di<HubSessionManager>().credentials.value;
 
@@ -71,22 +65,48 @@ class BookManager {
   bool get isLoadingMore => _isLoadingMore;
 
   Future<BookManager> init() async {
-    // await getLibraryBooks();
     await fetchLocations();
     await fetchBookTags();
     await fetchLibraryBooks();
     await fetchBookStats();
-
+    _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     return this;
+  }
+
+  void _onHubEvent(dynamic event) {
+    if (event is LibraryBook) {
+      _log.fine('[STREAM] upsert libraryBook ${event.id}');
+      _upsertLibraryBookFromStream(event);
+    } else if (event is HubDeleteEvent) {
+      if (event.objectType == HubObjectType.libraryBook) {
+        _log.fine('[STREAM] delete libraryBook ${event.id}');
+        final proxy = _libraryBookProxies.value.firstWhereOrNull(
+          (p) => p.id == event.id,
+        );
+        if (proxy != null) {
+          _removeLibraryBookProxyFromCollection(proxy);
+        }
+      }
+    } else if (event is HubReconnected) {
+      _refetchAll();
+    } else if (event is HubSelectiveReconnect) {
+      if (event.changedTypes.contains(HubObjectType.libraryBook)) {
+        _refetchAll();
+      }
+    }
+  }
+
+  Future<void> _refetchAll() async {
+    await fetchLibraryBooks();
+    await fetchBookTags();
+    await fetchLocations();
+    await fetchBookStats();
   }
 
   void clearData() {
     _libraryBookProxies.value = [];
     _locations.value = [];
     _bookTags.value = [];
-    _lastSelectedLocation.value = LibraryBookLocation(
-      location: 'Bitte auswählen',
-    );
   }
 
   // - manage collections
@@ -135,6 +155,17 @@ class BookManager {
     libraryBookProxies.add(libraryBookProxy);
     _libraryBookProxies.value = libraryBookProxies;
     _isbnLibraryBooksMap.value[libraryBook.book!.isbn] = libraryBookProxies;
+  }
+
+  void _upsertLibraryBookFromStream(LibraryBook libraryBook) {
+    final existingProxy = _libraryBookProxies.value.firstWhereOrNull(
+      (item) => item.libraryId == libraryBook.libraryId,
+    );
+    if (existingProxy != null) {
+      _updateLibraryBookProxyInCollections(libraryBook);
+    } else {
+      _addLibraryBookProxyToCollections(libraryBook);
+    }
   }
 
   void _updateLibraryBookProxyInCollections(LibraryBook libraryBook) {
@@ -296,10 +327,6 @@ class BookManager {
     _locations.value = _locations.value
         .where((loc) => loc.location != location.location)
         .toList();
-  }
-
-  void setLastLocationValue(LibraryBookLocation location) {
-    _lastSelectedLocation.value = location;
   }
 
   // - BOOK IMAGE

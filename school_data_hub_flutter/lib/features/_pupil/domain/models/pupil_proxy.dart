@@ -3,20 +3,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_identity_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
-import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 
 typedef SiblingsResolver = List<PupilProxy> Function(PupilProxy pupil);
-
-final _log = Logger('PupilProxy');
 
 class PupilProxy with ChangeNotifier {
   PupilProxy({
@@ -36,20 +28,14 @@ class PupilProxy with ChangeNotifier {
   List<int>? _cachedSiblingIds;
   String? _cachedFamilyKey;
 
-  // Cached competence badge counts for performance
-  Map<int, int>? _competenceBadgeCounts;
-
-  static const _jsonEquality = DeepCollectionEquality();
+  static const _deepEquality = DeepCollectionEquality();
+  int _dataHash = 0;
 
   void updatePupil(PupilData pupilData) {
-    if (_jsonEquality.equals(_pupilData.toJson(), pupilData.toJson())) {
-      return;
-    }
+    final newHash = _deepEquality.hash(pupilData.toJson());
+    if (newHash == _dataHash) return;
+    _dataHash = newHash;
     _pupilData = pupilData;
-
-    // Invalidate cache when pupil data changes
-    _competenceBadgeCounts = null;
-
     notifyListeners();
   }
 
@@ -226,19 +212,10 @@ class PupilProxy with ChangeNotifier {
 
   List<CompetenceCheck>? get competenceChecks => _pupilData.competenceChecks;
 
-  List<CompetenceGoal> get competenceGoals =>
-      di<CompetenceManager>().getCompetenceGoals(pupilId);
-
   List<CompetenceReport>? get competenceReports => _pupilData.competenceReports;
 
   List<CompetenceReportCheck>? get competenceReportChecks =>
       _pupilData.competenceReportChecks;
-
-  List<PupilWorkbook>? get pupilWorkbooks =>
-      di<PupilWorkbookManager>().getPupilWorkbooks(pupilId);
-
-  List<PupilBookLending> get pupilBookLendings =>
-      di<PupilBookLendingManager>().getPupilBookLendings(pupilId);
 
   // learning support related
 
@@ -276,61 +253,11 @@ class PupilProxy with ChangeNotifier {
         ?.score;
   }
 
-  List<SupportGoal> get supportGoals =>
-      di<LearningSupportManager>().getSupportGoals(pupilId);
-
   List<LearningSupportPlan>? get learningSupportPlans =>
       _pupilData.learningSupportPlans;
 
   // schoolday related
 
-  List<MissedSchoolday>? get missedSchooldays =>
-      di<AttendanceManager>().getAllPupilMissedSchooldays(pupilId);
   List<SchooldayEvent>? get schooldayEvents => _pupilData.schooldayEvents;
 
-  // Cached competence badge counts for performance
-  Map<int, int> get competenceBadgeCounts {
-    if (_competenceBadgeCounts != null) {
-      return _competenceBadgeCounts!;
-    }
-
-    // Calculate badge counts
-    final competenceChecks = _pupilData.competenceChecks ?? [];
-    final Map<int, int> counts = {};
-    final Set<int> countedIds = {};
-
-    try {
-      final competenceManager = di<CompetenceManager>();
-      final rootMap = competenceManager.rootCompetencesMap;
-
-      // Initialize counts for all root competences
-      for (final competenceId in rootMap.keys) {
-        if (rootMap[competenceId] == competenceId) {
-          counts[competenceId] = 0;
-        }
-      }
-
-      // Count checks per root competence
-      for (final check in competenceChecks) {
-        if (countedIds.contains(check.competenceId)) continue;
-        countedIds.add(check.competenceId);
-
-        final rootCompetence = competenceManager.findRootCompetenceById(
-          check.competenceId,
-        );
-        final int rootId = rootCompetence.publicId;
-
-        if (counts.containsKey(rootId)) {
-          counts[rootId] = counts[rootId]! + 1;
-        } else {
-          counts[rootId] = 1;
-        }
-      }
-    } catch (e) {
-      _log.warning('Error calculating competence badge counts: $e');
-    }
-
-    _competenceBadgeCounts = counts;
-    return counts;
-  }
 }

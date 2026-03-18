@@ -45,6 +45,9 @@ class NewBook extends WatchingStatefulWidget {
 }
 
 class NewBookController extends State<NewBook> {
+  static LibraryBookLocation _lastLocation =
+      LibraryBookLocation(location: 'Bitte auswählen');
+
   final TextEditingController bookIdTextFieldController =
       TextEditingController();
 
@@ -86,8 +89,7 @@ class NewBookController extends State<NewBook> {
 
   final List<LibraryBookLocation> locations = di<BookManager>().locations.value;
 
-  LibraryBookLocation lastLocationValue =
-      di<BookManager>().lastLocationValue.value;
+  LibraryBookLocation lastLocationValue = _lastLocation;
 
   String readingLevel = ReadingLevel.notSet.value;
 
@@ -127,8 +129,7 @@ class NewBookController extends State<NewBook> {
 
       // Find the matching location instance from the dropdown items
       // to avoid identity mismatch (LibraryBookLocation doesn't override ==)
-      final widgetLocation =
-          widget.location ?? di<BookManager>().lastLocationValue.value;
+      final widgetLocation = widget.location ?? _lastLocation;
       lastLocationValue = _findMatchingLocation(widgetLocation);
 
       readingLevel = widget.bookReadingLevel ?? ReadingLevel.notSet.value;
@@ -164,7 +165,7 @@ class NewBookController extends State<NewBook> {
   void onChangedLocationDropDown(LibraryBookLocation value) {
     setState(() {
       lastLocationValue = value;
-      di<BookManager>().setLastLocationValue(value);
+      _lastLocation = value;
     });
   }
 
@@ -189,7 +190,7 @@ class NewBookController extends State<NewBook> {
 
   void _createDropdownItems() {
     final allLocations = di<BookManager>().locations.value.toList();
-    final lastLocation = di<BookManager>().lastLocationValue.value;
+    final lastLocation = _lastLocation;
 
     // Check if lastLocation is already in the list to avoid duplicates
     final isLastLocationInList = allLocations.any(

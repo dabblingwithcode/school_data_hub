@@ -1,10 +1,8 @@
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 class PupilWorkbookApiService {
-  final _notificationService = di<NotificationManager>();
   Client get _client => di<Client>();
   //- create
 
@@ -54,11 +52,6 @@ class PupilWorkbookApiService {
     final updatedPupilWorkbook = await ClientHelper.apiCall<PupilWorkbook>(
       call: () => _client.pupilWorkbooks.updatePupilWorkbook(pupilWorkbook),
       errorMessage: 'Fehler beim Aktualisieren des Arbeitshefts',
-    );
-
-    _notificationService.showSnackBar(
-      NotificationType.success,
-      'Arbeitsheft erfolgreich aktualisiert',
     );
 
     return updatedPupilWorkbook;

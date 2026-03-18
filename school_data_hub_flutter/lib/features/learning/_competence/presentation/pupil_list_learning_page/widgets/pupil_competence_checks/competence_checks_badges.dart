@@ -6,6 +6,7 @@ import 'package:school_data_hub_flutter/features/learning/_competence/domain/com
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/learning/_competence/domain/pupil_proxy_competence_ext.dart';
 
 String getRootCompetenceShortName(int competenceId) {
   final competence = di<CompetenceManager>().findCompetenceById(competenceId);

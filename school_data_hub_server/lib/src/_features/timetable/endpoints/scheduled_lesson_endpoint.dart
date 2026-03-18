@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/_features/timetable/schemas/timetable_schemas.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
@@ -73,6 +74,9 @@ class ScheduledLessonEndpoint extends Endpoint {
     if (scheduledLessonWithIncludes == null) {
       throw Exception('Failed to find scheduled lesson with includes.');
     }
+    session.messages
+        .postMessage('hub_events_stream', scheduledLessonWithIncludes);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return scheduledLessonWithIncludes;
   }
 
@@ -202,6 +206,9 @@ class ScheduledLessonEndpoint extends Endpoint {
     if (updatedScheduledLessonWithIncludes == null) {
       throw Exception('Failed to find scheduled lesson with includes.');
     }
+    session.messages
+        .postMessage('hub_events_stream', updatedScheduledLessonWithIncludes);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return updatedScheduledLessonWithIncludes;
   }
 
@@ -216,6 +223,8 @@ class ScheduledLessonEndpoint extends Endpoint {
 
     final updatedScheduledLesson =
         await ScheduledLesson.db.updateRow(session, scheduledLesson);
+    session.messages.postMessage('hub_events_stream', updatedScheduledLesson);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return updatedScheduledLesson;
   }
 
@@ -241,6 +250,11 @@ class ScheduledLessonEndpoint extends Endpoint {
       }
     }
 
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.timetableData, id: id),
+    );
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return true;
   }
 }

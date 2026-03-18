@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/filters/enums.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 final _log = Logger('CompetenceFilterManager');
 
-class CompetenceFilterManager {
+class CompetenceFilterManager implements Resettable {
   CompetenceManager get _competenceManager => di<CompetenceManager>();
   final _filterState = ValueNotifier<Map<CompetenceFilter, bool>>(
     initialCompetenceFilterValues,
@@ -37,6 +38,7 @@ class CompetenceFilterManager {
     _log.info('refreshed filtered competences');
   }
 
+  @override
   void resetFilters() {
     _filteredCompetences.value = _competenceManager.competences.value;
 

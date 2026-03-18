@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/_features/timetable/schemas/timetable_schemas.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:serverpod/serverpod.dart';
@@ -26,6 +27,8 @@ class LearningGroupEndpoint extends Endpoint {
     if (lessonGroupWithIncludes == null) {
       throw Exception('Failed to find lesson group with includes.');
     }
+    session.messages.postMessage('hub_events_stream', lessonGroupWithIncludes);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return lessonGroupWithIncludes;
   }
 
@@ -100,6 +103,9 @@ class LearningGroupEndpoint extends Endpoint {
     if (updatedLessonGroupWithIncludes == null) {
       throw Exception('Failed to find lesson group with includes.');
     }
+    session.messages
+        .postMessage('hub_events_stream', updatedLessonGroupWithIncludes);
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return updatedLessonGroupWithIncludes;
   }
 
@@ -134,6 +140,11 @@ class LearningGroupEndpoint extends Endpoint {
     }
 
     await LessonGroup.db.deleteRow(session, lessonGroup);
+    session.messages.postMessage(
+      'hub_events_stream',
+      HubDeleteEvent(objectType: HubObjectType.timetableData, id: id),
+    );
+    HubUpdatesTracker.instance.touch(HubObjectType.timetableData);
     return true;
   }
 }
