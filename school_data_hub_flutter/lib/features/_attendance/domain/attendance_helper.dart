@@ -245,6 +245,26 @@ class AttendanceHelper {
       }
     }
   }
+  /// Returns the list of valid schooldays within [startDate]..[endDate] (inclusive).
+  static List<Schoolday> schooldaysInRange({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) {
+    final validDates = _schoolCalendarManager.availableDates.value;
+    final schooldays = <Schoolday>[];
+    for (final date in validDates) {
+      if (date.isSameDate(startDate) ||
+          date.isSameDate(endDate) ||
+          (date.isAfterDate(startDate) && date.isBeforeDate(endDate))) {
+        final schoolday = _schoolCalendarManager.getSchooldayByDate(date);
+        if (schoolday != null) {
+          schooldays.add(schoolday);
+        }
+      }
+    }
+    return schooldays;
+  }
+
   //- Date functions
 
   static Future<void> setThisDate(

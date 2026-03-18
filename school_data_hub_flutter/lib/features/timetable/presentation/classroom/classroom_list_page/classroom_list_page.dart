@@ -18,7 +18,7 @@ class ClassroomListPage extends WatchingWidget {
       backgroundColor: AppColors.canvasColor,
       iconData: Icons.meeting_room,
       title: 'Räume verwalten',
-      itemsListenable: timetableManager.classrooms,
+      itemsListenable: timetableManager.data.classrooms,
       itemBuilder: (context, classroom) => ClassroomListCard(
         classroom: classroom,
         onEdit: () => _navigateToEditClassroom(context, classroom),

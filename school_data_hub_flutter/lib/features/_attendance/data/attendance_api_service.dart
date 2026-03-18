@@ -107,7 +107,6 @@ class AttendanceApiService {
   //- delete missed schoolday -//
 
   Future<bool?> deleteMissedSchoolday(int pupilId, int schooldayId) async {
-    _notificationService.apiRunning(true);
     final success = await ClientHelper.apiCall(
       call: () =>
           _client.missedSchoolday.deleteMissedSchoolday(pupilId, schooldayId),

@@ -4,7 +4,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_predicates.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
@@ -162,200 +162,59 @@ class LearningSupportFilterManager implements Resettable {
 
   bool matchSupportLevelFilters(PupilProxy pupil) {
     final activeFilters = _supportLevelFilterState.value;
+    final supportLevel = pupil.latestSupportLevel?.level;
 
-    final latestSupportLevel = pupil.latestSupportLevel;
-
-    final supportLevel = latestSupportLevel?.level;
-
-    bool isMatched = true;
-
-    bool complementaryFilter = false;
-
-    //- these are complementary filters
-    //- they should persist if one of them is active
-
-    // Filter support level 1
-
-    if (activeFilters[SupportLevelType.supportLevel1]! && supportLevel != 1) {
-      isMatched = false;
-    } else if (activeFilters[SupportLevelType.supportLevel1]! &&
-        supportLevel == 1) {
-      complementaryFilter = true;
+    // Complementary group: levels 1-4
+    if (!LearningSupportFilterPredicates.matchesSupportLevelGroup(
+      supportLevel,
+      activeFilters,
+    )) {
+      return false;
     }
 
-    // Filter support level 2
-
-    if (!complementaryFilter &&
-        activeFilters[SupportLevelType.supportLevel2]! &&
-        supportLevel != 2) {
-      isMatched = false;
-    } else if (!complementaryFilter &&
-        activeFilters[SupportLevelType.supportLevel2]! &&
-        supportLevel == 2) {
-      isMatched = true;
-      complementaryFilter = true;
+    // Exclusion filters: specialNeeds, migrationSupport
+    if (!LearningSupportFilterPredicates.matchesSpecialNeeds(
+      pupil.specialNeeds,
+      activeFilters[SupportLevelType.specialNeeds]!,
+    )) {
+      return false;
+    }
+    if (!LearningSupportFilterPredicates.matchesMigrationSupport(
+      pupil.migrationSupportEnds,
+      activeFilters[SupportLevelType.migrationSupport]!,
+    )) {
+      return false;
     }
 
-    // Filter support level 3
-
-    if (!complementaryFilter &&
-        activeFilters[SupportLevelType.supportLevel3]! &&
-        supportLevel != 3) {
-      isMatched = false;
-    } else if (!complementaryFilter &&
-        activeFilters[SupportLevelType.supportLevel3]! &&
-        supportLevel == 3) {
-      isMatched = true;
-      complementaryFilter = true;
-    }
-    // Filter support level 4
-    if (!complementaryFilter &&
-        activeFilters[SupportLevelType.supportLevel4]! &&
-        supportLevel != 4) {
-      isMatched = false;
-    } else if (!complementaryFilter &&
-        activeFilters[SupportLevelType.supportLevel4]! &&
-        supportLevel == 4) {
-      isMatched = true;
-      complementaryFilter = true;
-    }
-
-    //- These filters exclude pupil that not match
-    //- regardless of the other filters
-
-    if (isMatched == true) {
-      if (activeFilters[SupportLevelType.specialNeeds]! &&
-          pupil.specialNeeds == null) {
-        isMatched = false;
-      } else if (activeFilters[SupportLevelType.specialNeeds]! &&
-          pupil.specialNeeds != null) {
-        isMatched = true;
-      }
-
-      if (activeFilters[SupportLevelType.migrationSupport]! &&
-          PupilProxyHelper.hasLanguageSupport(pupil.migrationSupportEnds) !=
-              true) {
-        isMatched = false;
-      } else if (activeFilters[SupportLevelType.migrationSupport]! &&
-          PupilProxyHelper.hasLanguageSupport(pupil.migrationSupportEnds) ==
-              true) {
-        isMatched = true;
-        complementaryFilter = true;
-      }
-    }
-
-    return isMatched;
+    return true;
   }
 
   bool matchSupportAreaFilters(PupilProxy pupil) {
-    final Map<SupportArea, bool> activeFilters = _supportAreaFiltersState.value;
-
-    // motorics filter
-
-    if (pupil.supportCategoryStatuses != null) {
-      if (activeFilters[SupportArea.motorics]! &&
-          pupil.supportCategoryStatuses!.any(
-            (element) =>
-                _learningSupportManager
-                    .getRootSupportCategory(element.supportCategoryId)
-                    .categoryId ==
-                SupportArea.motorics.value,
-          )) {
-        return true;
-      }
-
-      // emotions filter
-
-      if (activeFilters[SupportArea.emotions]! &&
-          pupil.supportCategoryStatuses!.any(
-            (element) =>
-                _learningSupportManager
-                    .getRootSupportCategory(element.supportCategoryId)
-                    .categoryId ==
-                SupportArea.emotions.value,
-          )) {
-        return true;
-      }
-
-      // math filter
-
-      if (activeFilters[SupportArea.math] == true &&
-          pupil.supportCategoryStatuses!.any(
-            (element) =>
-                _learningSupportManager
-                    .getRootSupportCategory(element.supportCategoryId)
-                    .categoryId ==
-                SupportArea.math.value,
-          )) {
-        return true;
-      }
-
-      // learning filter
-
-      if (activeFilters[SupportArea.learning] == true &&
-          pupil.supportCategoryStatuses!.any(
-            (element) =>
-                _learningSupportManager
-                    .getRootSupportCategory(element.supportCategoryId)
-                    .categoryId ==
-                SupportArea.learning.value,
-          )) {
-        return true;
-      }
-
-      // German language filter
-
-      if (activeFilters[SupportArea.german] == true &&
-          pupil.supportCategoryStatuses!.any(
-            (element) =>
-                _learningSupportManager
-                    .getRootSupportCategory(element.supportCategoryId)
-                    .categoryId ==
-                SupportArea.german.value,
-          )) {
-        return true;
-      }
-
-      // Language filter
-
-      if (activeFilters[SupportArea.language] == true &&
-          pupil.supportCategoryStatuses!.any(
-            (element) =>
-                _learningSupportManager
-                    .getRootSupportCategory(element.supportCategoryId)
-                    .categoryId ==
-                SupportArea.language.value,
-          )) {
-        return true;
-      }
-    }
-    return false;
+    return LearningSupportFilterPredicates.matchesSupportAreaGroup(
+      pupil.supportCategoryStatuses,
+      _supportAreaFiltersState.value,
+      (categoryId) =>
+          _learningSupportManager
+              .getRootSupportCategory(categoryId)
+              .categoryId,
+    );
   }
 
   bool matchCurrentLearningSupportPlanFilters(PupilProxy pupil) {
-    final Map<CurrentLearningSupportPlan, bool> activeFilters =
-        _currentLearningSupportPlanFilterState.value;
-    final bool needsCurrentLearningSupportPlan =
-        pupil.latestSupportLevel != null;
-    final bool hasCurrentLearningSupportPlan =
-        needsCurrentLearningSupportPlan &&
+    final needsPlan = pupil.latestSupportLevel != null;
+    final hasPlan = needsPlan &&
         pupil.learningSupportPlans != null &&
         pupil.learningSupportPlans!.any(
-          (element) =>
-              element.schoolSemester != null &&
-              element.schoolSemester!.id ==
+          (p) =>
+              p.schoolSemester != null &&
+              p.schoolSemester!.id ==
                   di<SchoolCalendarManager>().currentSemester.value!.id,
         );
-    if (activeFilters[CurrentLearningSupportPlan.available]! &&
-        hasCurrentLearningSupportPlan) {
-      return true;
-    }
-    if (activeFilters[CurrentLearningSupportPlan.notAvailable]! &&
-        !hasCurrentLearningSupportPlan &&
-        needsCurrentLearningSupportPlan) {
-      return true;
-    }
 
-    return false;
+    return LearningSupportFilterPredicates.matchesCurrentPlanGroup(
+      needsPlan: needsPlan,
+      hasPlan: hasPlan,
+      activeFilters: _currentLearningSupportPlanFilterState.value,
+    );
   }
 }

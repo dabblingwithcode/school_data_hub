@@ -5,6 +5,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_filter_predicates.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -79,51 +80,16 @@ class AttendancePupilFilterManager implements Resettable {
   bool isMatchedByAttendanceFilters(PupilProxy pupil) {
     final thisDate = _schoolCalendarManager.thisDate.value.toLocal();
 
-    final Map<AttendancePupilFilter, bool> attendanceActiveFilters =
-        _attendancePupilFilterState.value;
-
-    final MissedSchoolday? attendanceEventThisDate = _attendanceManager
+    final event = _attendanceManager
         .getPupilMissedSchooldaysProxy(pupil.pupilId)
         .missedSchooldays
         .firstWhereOrNull(
-          (missedSchoolday) => missedSchoolday.schoolday!.schoolday.isSameDate(
-            thisDate.toLocal(),
-          ),
+          (m) => m.schoolday!.schoolday.isSameDate(thisDate.toLocal()),
         );
 
-    bool isMatched = true;
-    //- Filter pupils present
-
-    if ((attendanceActiveFilters[AttendancePupilFilter.present]! &&
-        !(attendanceEventThisDate == null ||
-            attendanceEventThisDate.missedType == MissedType.late))) {
-      return false;
-    }
-
-    //- Filter pupils not present
-
-    if (attendanceActiveFilters[AttendancePupilFilter.notPresent]! &&
-        !(attendanceEventThisDate != null &&
-            attendanceEventThisDate.missedType != MissedType.late)) {
-      isMatched = false;
-    }
-
-    //- Filter pupils not present AND unexcused
-
-    if (attendanceActiveFilters[AttendancePupilFilter.unexcused]! &&
-        !(attendanceEventThisDate != null &&
-            attendanceEventThisDate.unexcused == true &&
-            attendanceEventThisDate.missedType == MissedType.missed)) {
-      isMatched = false;
-    }
-
-    if (isMatched) {
-      return true;
-    }
-    _filterStateManager.setFilterState(
-      filterState: FilterState.attendance,
-      value: true,
+    return AttendanceFilterPredicates.matchesAttendanceGroup(
+      event,
+      _attendancePupilFilterState.value,
     );
-    return false;
   }
 }

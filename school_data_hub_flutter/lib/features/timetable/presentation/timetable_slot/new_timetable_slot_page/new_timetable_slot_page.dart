@@ -196,7 +196,7 @@ class NewTimetableSlotPage extends WatchingWidget {
     }
 
     try {
-      final timetable = timetableManager.timetable.value;
+      final timetable = timetableManager.data.timetable.value;
       _log.info(
         'Current timetable in manager: ${timetable?.name} (ID: ${timetable?.id})',
       );
@@ -204,10 +204,10 @@ class NewTimetableSlotPage extends WatchingWidget {
       if (timetable == null) {
         _log.severe('No timetable available. Debug info:');
         _log.severe(
-          '- TimetableManager has timetable: ${timetableManager.timetable.value != null}',
+          '- TimetableManager has timetable: ${timetableManager.data.timetable.value != null}',
         );
         _log.severe(
-          '- TimetableManager has slots: ${timetableManager.timetableSlots.value.length}',
+          '- TimetableManager has slots: ${timetableManager.data.timetableSlots.value.length}',
         );
 
         ScaffoldMessenger.of(context).showSnackBar(

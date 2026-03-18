@@ -8,15 +8,6 @@ import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 
 class CompetenceGoalApiService {
-  // Private constructor
-  CompetenceGoalApiService._internal();
-  // Singleton instance
-  static final CompetenceGoalApiService _instance =
-      CompetenceGoalApiService._internal();
-  // Factory constructor to return the singleton instance
-  factory CompetenceGoalApiService() {
-    return _instance;
-  }
   Client get _client => di<Client>();
 
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();

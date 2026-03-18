@@ -39,7 +39,6 @@ class SettingsSessionSection extends WatchingWidget {
     final notificationService = di<NotificationManager>();
 
     final locale = AppLocalizations.of(context)!;
-    final hubSessionManager = di<HubSessionManager>();
 
     final activeEnv = serverName;
     final activeSchemeKey = appColorSchemeKeyFromString(

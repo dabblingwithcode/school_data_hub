@@ -137,10 +137,10 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
   Widget build(BuildContext context) {
     final timetableManager = di<TimetableManager>();
     final selectedWeekday = watchValue(
-      (TimetableManager m) => m.selectedWeekday,
+      (TimetableManager m) => m.ui.selectedWeekday,
     );
-    final classrooms = watchValue((TimetableManager m) => m.classrooms);
-    final timetable = watchValue((TimetableManager m) => m.timetable);
+    final classrooms = watchValue((TimetableManager m) => m.data.classrooms);
+    final timetable = watchValue((TimetableManager m) => m.data.timetable);
 
     final dayLessons = timetableManager.getScheduledLessonsForWeekday(
       selectedWeekday,
@@ -342,7 +342,7 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     required List<Classroom> classrooms,
   }) {
     final timetableManager = di<TimetableManager>();
-    final slots = timetableManager.timetableSlots.value;
+    final slots = timetableManager.data.timetableSlots.value;
     final slot = slots.firstWhere(
       (s) => s.id == lesson.scheduledAtId,
       orElse: () => slots.first,
@@ -424,8 +424,8 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     Weekday weekday,
   ) async {
     final timetableManager = di<TimetableManager>();
-    final timetable = timetableManager.timetable.value;
-    final classrooms = timetableManager.classrooms.value;
+    final timetable = timetableManager.data.timetable.value;
+    final classrooms = timetableManager.data.classrooms.value;
     if (timetable == null || classrooms.isEmpty) return;
 
     final localDx = details.localPosition.dx + _gridHorizontal.offset;
@@ -498,7 +498,7 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
       final box = _gridKey.currentContext!.findRenderObject() as RenderBox;
       final local = box.globalToLocal(details.globalPosition);
       final timetableManager = di<TimetableManager>();
-      final classrooms = timetableManager.classrooms.value;
+      final classrooms = timetableManager.data.classrooms.value;
       final roomIndex = classrooms.indexWhere((r) => r.id == lesson.roomId);
       final startIndex = _timeToIndex(slot.startTime);
       if (roomIndex >= 0) {
@@ -669,15 +669,15 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     );
 
     final timetableManager = di<TimetableManager>();
-    final classrooms = timetableManager.classrooms.value;
-    final weekday = timetableManager.selectedWeekday.value;
+    final classrooms = timetableManager.data.classrooms.value;
+    final weekday = timetableManager.ui.selectedWeekday.value;
     if (classrooms.isEmpty) return;
 
     final targetRoomId = classrooms[roomIndex].id!;
     final allLessons = timetableManager.getAllScheduledLessonsForWeekday(
       weekday,
     );
-    final slotIdMap = timetableManager.slotIdMap;
+    final slotIdMap = timetableManager.data.slotIdMap;
 
     final validator = RoomDragSnapValidator(
       dayStartMinutes: _dayStartMinutes,
@@ -727,8 +727,8 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     _conflictMessage = null;
 
     final timetableManager = di<TimetableManager>();
-    final timetable = timetableManager.timetable.value;
-    final classrooms = timetableManager.classrooms.value;
+    final timetable = timetableManager.data.timetable.value;
+    final classrooms = timetableManager.data.classrooms.value;
     if (timetable == null ||
         classrooms.isEmpty ||
         _gridKey.currentContext == null ||
@@ -757,11 +757,11 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
       _slotsPerDay - durationSlots,
     );
 
-    final weekday = timetableManager.selectedWeekday.value;
+    final weekday = timetableManager.ui.selectedWeekday.value;
     final allLessons = timetableManager.getAllScheduledLessonsForWeekday(
       weekday,
     );
-    final slotIdMap = timetableManager.slotIdMap;
+    final slotIdMap = timetableManager.data.slotIdMap;
     final targetRoomId = classrooms[roomIndex].id!;
 
     final validator = RoomDragSnapValidator(

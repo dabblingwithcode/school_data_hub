@@ -17,59 +17,30 @@ final _log = Logger('TimetableManager');
 /// Main timetable manager that orchestrates all sub-managers
 /// This is the refactored version that breaks down the original large class
 class TimetableManager {
-  // Sub-managers
-  final TimetableDataManager _dataManager;
+  final TimetableDataManager data;
+  final TimetableUiManager ui;
   final TimetableCrudManager _crudManager;
-  final TimetableUiManager _uiManager;
   final TimetableLessonManager _lessonManager;
   final TimetableMembershipManager _membershipManager;
   StreamSubscription<dynamic>? _hubSubscription;
 
   TimetableManager()
-    : _dataManager = TimetableDataManager(),
+    : data = TimetableDataManager(),
+      ui = TimetableUiManager(),
       _crudManager = TimetableCrudManager(),
-      _uiManager = TimetableUiManager(),
       _lessonManager = TimetableLessonManager(),
       _membershipManager = TimetableMembershipManager();
-
-  // Expose data manager properties
-  ValueListenable<Timetable?> get timetable => _dataManager.timetable;
-  ValueListenable<List<TimetableSlot>> get timetableSlots =>
-      _dataManager.timetableSlots;
-  ValueListenable<List<Subject>> get subjects => _dataManager.subjects;
-  ValueListenable<List<Classroom>> get classrooms => _dataManager.classrooms;
-  ValueListenable<List<LessonGroup>> get lessonGroups =>
-      _dataManager.lessonGroups;
-  ValueListenable<List<ScheduledLesson>> get scheduledLessons =>
-      _dataManager.scheduledLessons;
-  ValueListenable<List<ScheduledLessonGroupMembership>>
-  get scheduledLessonGroupMemberships =>
-      _dataManager.scheduledLessonGroupMemberships;
-
-  // Expose UI manager properties
-  ValueListenable<Weekday> get selectedWeekday => _uiManager.selectedWeekday;
-  ValueListenable<LessonGroup?> get selectedLessonGroup =>
-      _uiManager.selectedLessonGroup;
-  ValueListenable<Set<int>> get selectedLessonGroupIds =>
-      _uiManager.selectedLessonGroupIds;
-  ValueListenable<List<WeekdayProxy>> get weekdays => _uiManager.weekdays;
-
-  // Expose lookup maps
-  Map<int, TimetableSlot> get slotIdMap => _dataManager.slotIdMap;
-  Map<int, Subject> get subjectIdMap => _dataManager.subjectIdMap;
-  Map<int, Classroom> get classroomIdMap => _dataManager.classroomIdMap;
-  Map<int, LessonGroup> get lessonGroupIdMap => _dataManager.lessonGroupIdMap;
 
   void dispose() {
     _hubSubscription?.cancel();
     _hubSubscription = null;
-    _dataManager.dispose();
-    _uiManager.dispose();
+    data.dispose();
+    ui.dispose();
   }
 
   /// Initialize the timetable manager
   Future<TimetableManager> init() async {
-    await _dataManager.init();
+    await data.init();
     _buildWeekdayProxies();
     _hubSubscription = di<HubStreamService>().events.listen(_onHubEvent);
     return this;
@@ -100,52 +71,38 @@ class TimetableManager {
 
   /// Refresh all data from API
   Future<void> refreshData() async {
-    await _dataManager.refreshData();
+    await data.refreshData();
     _buildWeekdayProxies();
   }
 
-  /// Debug method to print current state
-  void debugPrintState() {
-    _dataManager.debugPrintState();
-  }
-
-  /// Check if there's an active timetable
-  bool get hasActiveTimetable => _dataManager.timetable.value != null;
-
-  /// Get the active timetable
-  Timetable? get activeTimetable => _dataManager.timetable.value;
-
   /// Build weekday proxies for UI display
   void _buildWeekdayProxies() {
-    _uiManager.buildWeekdayProxies(
-      timetableSlots: _dataManager.timetableSlots.value,
-      scheduledLessons: _dataManager.scheduledLessons.value,
-      selectedGroupIds: _uiManager.selectedLessonGroupIds.value,
+    ui.buildWeekdayProxies(
+      timetableSlots: data.timetableSlots.value,
+      scheduledLessons: data.scheduledLessons.value,
+      selectedGroupIds: ui.selectedLessonGroupIds.value,
     );
   }
 
   // UI Management Methods
-  void selectWeekday(Weekday weekday) {
-    _uiManager.selectWeekday(weekday);
-  }
 
   void selectLessonGroup(LessonGroup? lessonGroup) {
-    _uiManager.selectLessonGroup(lessonGroup);
+    ui.selectLessonGroup(lessonGroup);
     _buildWeekdayProxies();
   }
 
   void addLessonGroupToSelection(LessonGroup lessonGroup) {
-    _uiManager.addLessonGroupToSelection(lessonGroup);
+    ui.addLessonGroupToSelection(lessonGroup);
     _buildWeekdayProxies();
   }
 
   void removeLessonGroupFromSelection(LessonGroup lessonGroup) {
-    _uiManager.removeLessonGroupFromSelection(lessonGroup);
+    ui.removeLessonGroupFromSelection(lessonGroup);
     _buildWeekdayProxies();
   }
 
   void clearLessonGroupSelection() {
-    _uiManager.clearLessonGroupSelection();
+    ui.clearLessonGroupSelection();
     _buildWeekdayProxies();
   }
 
@@ -169,47 +126,47 @@ class TimetableManager {
   Future<void> addSubject(Subject subject) async {
     final createdSubject = await _crudManager.addSubject(subject);
     if (createdSubject != null) {
-      _dataManager.addSubject(createdSubject);
+      data.addSubject(createdSubject);
     }
   }
 
   Future<void> updateSubject(Subject subject) async {
     final updatedSubject = await _crudManager.updateSubject(subject);
     if (updatedSubject != null) {
-      _dataManager.updateSubject(updatedSubject);
+      data.updateSubject(updatedSubject);
     }
   }
 
   Future<void> removeSubject(int subjectId) async {
     await _crudManager.removeSubject(subjectId);
-    _dataManager.removeSubject(subjectId);
+    data.removeSubject(subjectId);
   }
 
   // CRUD Operations for Classrooms
   Future<void> addClassroom(Classroom classroom) async {
     final createdClassroom = await _crudManager.addClassroom(classroom);
     if (createdClassroom != null) {
-      _dataManager.addClassroom(createdClassroom);
+      data.addClassroom(createdClassroom);
     }
   }
 
   Future<void> updateClassroom(Classroom classroom) async {
     final updatedClassroom = await _crudManager.updateClassroom(classroom);
     if (updatedClassroom != null) {
-      _dataManager.updateClassroom(updatedClassroom);
+      data.updateClassroom(updatedClassroom);
     }
   }
 
   Future<void> removeClassroom(int classroomId) async {
     await _crudManager.removeClassroom(classroomId);
-    _dataManager.removeClassroom(classroomId);
+    data.removeClassroom(classroomId);
   }
 
   // CRUD Operations for Lesson Groups
   Future<LessonGroup?> addLessonGroup(LessonGroup lessonGroup) async {
     final createdLessonGroup = await _crudManager.addLessonGroup(lessonGroup);
     if (createdLessonGroup != null) {
-      _dataManager.addLessonGroup(createdLessonGroup);
+      data.addLessonGroup(createdLessonGroup);
     }
     return createdLessonGroup;
   }
@@ -219,13 +176,13 @@ class TimetableManager {
       lessonGroup,
     );
     if (updatedLessonGroup != null) {
-      _dataManager.updateLessonGroup(updatedLessonGroup);
+      data.updateLessonGroup(updatedLessonGroup);
     }
   }
 
   Future<void> removeLessonGroup(int lessonGroupId) async {
     await _crudManager.removeLessonGroup(lessonGroupId);
-    _dataManager.removeLessonGroup(lessonGroupId);
+    data.removeLessonGroup(lessonGroupId);
   }
 
   // CRUD Operations for Timetable Slots
@@ -252,7 +209,7 @@ class TimetableManager {
     String startTime,
     int durationMinutes,
   ) async {
-    final timetable = _dataManager.timetable.value;
+    final timetable = data.timetable.value;
     final timetableId = timetable?.id;
     if (timetableId == null) {
       throw StateError('No timetable selected');
@@ -267,7 +224,7 @@ class TimetableManager {
     final endTime =
         '${endHour.toString().padLeft(2, '0')}:${endMinute.toString().padLeft(2, '0')}';
 
-    final existing = _dataManager.timetableSlots.value.where(
+    final existing = data.timetableSlots.value.where(
       (s) =>
           s.day == day &&
           s.startTime == startTime &&
@@ -286,7 +243,7 @@ class TimetableManager {
     );
     await addTimetableSlot(slot);
 
-    final refreshed = _dataManager.timetableSlots.value.where(
+    final refreshed = data.timetableSlots.value.where(
       (s) =>
           s.day == day &&
           s.startTime == startTime &&
@@ -301,7 +258,7 @@ class TimetableManager {
     await _crudManager.createTimetable(timetable);
     // Generate default slots
     if (timetable.id != null) {
-      await _dataManager.generateDefaultTimetableSlots(timetable.id!);
+      await data.generateDefaultTimetableSlots(timetable.id!);
     }
     // Refresh data to get the new timetable
     await refreshData();
@@ -316,14 +273,14 @@ class TimetableManager {
   List<ScheduledLesson> getAllLessonsForSlot(int slotId) {
     return _lessonManager.getAllLessonsForSlot(
       slotId,
-      _dataManager.scheduledLessons.value,
+      data.scheduledLessons.value,
     );
   }
 
   int getNextAvailableOrderForSlot(int slotId) {
     return _lessonManager.getNextAvailableOrderForSlot(
       slotId,
-      _dataManager.scheduledLessons.value,
+      data.scheduledLessons.value,
     );
   }
 
@@ -336,7 +293,7 @@ class TimetableManager {
       lesson,
       targetSlotId,
       targetPosition,
-      _dataManager.scheduledLessons.value,
+      data.scheduledLessons.value,
       (updatedLesson) => updateScheduledLesson(updatedLesson),
     );
   }
@@ -344,35 +301,35 @@ class TimetableManager {
   ScheduledLesson? getScheduledLessonForSlot(int slotId) {
     return _lessonManager.getScheduledLessonForSlot(
       slotId,
-      _dataManager.scheduledLessons.value,
+      data.scheduledLessons.value,
     );
   }
 
   ScheduledLesson? getScheduledLessonById(int lessonId) {
     return _lessonManager.getScheduledLessonById(
       lessonId,
-      _dataManager.scheduledLessons.value,
+      data.scheduledLessons.value,
     );
   }
 
   List<String> getTimeSlotPeriods() {
-    return _lessonManager.getTimeSlotPeriods(_dataManager.timetableSlots.value);
+    return _lessonManager.getTimeSlotPeriods(data.timetableSlots.value);
   }
 
   List<TimetableSlot> getSlotsByTimePeriod(String period) {
     return _lessonManager.getSlotsByTimePeriod(
       period,
-      _dataManager.timetableSlots.value,
+      data.timetableSlots.value,
     );
   }
 
   List<LessonGroup> getLessonGroupsForWeekday(Weekday weekday) {
-    return _uiManager.getLessonGroupsForWeekday(
+    return ui.getLessonGroupsForWeekday(
       weekday,
-      _dataManager.timetableSlots.value,
-      _dataManager.scheduledLessons.value,
-      _dataManager.lessonGroups.value,
-      _uiManager.selectedLessonGroupIds.value,
+      data.timetableSlots.value,
+      data.scheduledLessons.value,
+      data.lessonGroups.value,
+      ui.selectedLessonGroupIds.value,
     );
   }
 
@@ -382,14 +339,14 @@ class TimetableManager {
   ) {
     return _membershipManager.getMembershipsForLessonGroup(
       lessonGroupId,
-      _dataManager.scheduledLessonGroupMemberships.value,
+      data.scheduledLessonGroupMemberships.value,
     );
   }
 
   List<int> getPupilIdsForLessonGroup(int lessonGroupId) {
     return _membershipManager.getPupilIdsForLessonGroup(
       lessonGroupId,
-      _dataManager.scheduledLessonGroupMemberships.value,
+      data.scheduledLessonGroupMemberships.value,
     );
   }
 
@@ -397,9 +354,9 @@ class TimetableManager {
     _membershipManager.addPupilToLessonGroup(
       lessonGroupId,
       pupilDataId,
-      _dataManager.scheduledLessonGroupMemberships.value,
+      data.scheduledLessonGroupMemberships.value,
       (updatedMemberships) {
-        _dataManager.updateScheduledLessonGroupMemberships(updatedMemberships);
+        data.updateScheduledLessonGroupMemberships(updatedMemberships);
       },
     );
   }
@@ -408,9 +365,9 @@ class TimetableManager {
     _membershipManager.removePupilFromLessonGroup(
       lessonGroupId,
       pupilDataId,
-      _dataManager.scheduledLessonGroupMemberships.value,
+      data.scheduledLessonGroupMemberships.value,
       (updatedMemberships) {
-        _dataManager.updateScheduledLessonGroupMemberships(updatedMemberships);
+        data.updateScheduledLessonGroupMemberships(updatedMemberships);
       },
     );
   }
@@ -422,9 +379,9 @@ class TimetableManager {
     _membershipManager.updatePupilMembershipsForLessonGroup(
       lessonGroupId,
       pupilDataIds,
-      _dataManager.scheduledLessonGroupMemberships.value,
+      data.scheduledLessonGroupMemberships.value,
       (updatedMemberships) {
-        _dataManager.updateScheduledLessonGroupMemberships(updatedMemberships);
+        data.updateScheduledLessonGroupMemberships(updatedMemberships);
       },
     );
     await _crudManager.updatePupilMembershipsForLessonGroup(
@@ -437,123 +394,57 @@ class TimetableManager {
     return _membershipManager.isPupilMemberOfLessonGroup(
       lessonGroupId,
       pupilDataId,
-      _dataManager.scheduledLessonGroupMemberships.value,
+      data.scheduledLessonGroupMemberships.value,
     );
   }
 
-  // Utility Methods
-  Subject? getSubjectById(int subjectId) {
-    return _dataManager.subjectIdMap[subjectId];
-  }
-
-  Classroom? getClassroomById(int classroomId) {
-    return _dataManager.classroomIdMap[classroomId];
-  }
-
-  LessonGroup? getLessonGroupById(int lessonGroupId) {
-    return _dataManager.lessonGroupIdMap[lessonGroupId];
-  }
-
-  TimetableSlot? getTimetableSlotById(int slotId) {
-    return _dataManager.slotIdMap[slotId];
-  }
-
-  WeekdayProxy? getCurrentWeekdayProxy() {
-    return _uiManager.getCurrentWeekdayProxy();
-  }
-
   Set<int> getBusyUserIdsForTimeSlot(Weekday weekday, String period) {
-    return _uiManager.getBusyUserIdsForTimeSlot(
+    return ui.getBusyUserIdsForTimeSlot(
       weekday,
       period,
-      _dataManager.timetableSlots.value,
-      _dataManager.scheduledLessons.value,
+      data.timetableSlots.value,
+      data.scheduledLessons.value,
     );
   }
 
   int getScheduledLessonsCountForUser(int userId) {
-    return _uiManager.getScheduledLessonsCountForUser(
+    return ui.getScheduledLessonsCountForUser(
       userId,
-      _dataManager.scheduledLessons.value,
+      data.scheduledLessons.value,
     );
   }
 
   int getRemainingTimeUnitsForUser(int userId, int userTimeUnits) {
-    return _uiManager.getRemainingTimeUnitsForUser(
+    return ui.getRemainingTimeUnitsForUser(
       userId,
       userTimeUnits,
-      _dataManager.scheduledLessons.value,
+      data.scheduledLessons.value,
     );
   }
 
-  // Helper methods for UI
-  List<String> getUniqueTimeSlots() {
-    final timeSlots = <String>{};
-    for (final slot in _dataManager.timetableSlots.value) {
-      timeSlots.add('${slot.startTime} - ${slot.endTime}');
-    }
-    return timeSlots.toList()..sort();
-  }
-
-  /// Check if a time slot has a lesson for the selected lesson group
-  bool hasLessonForSlot(int slotId) {
-    return getScheduledLessonForSlot(slotId) != null;
-  }
-
-  /// Get all lessons for a specific weekday and time period regardless of group
-  List<ScheduledLesson> getAllLessonsForWeekdayAndTimePeriod(
-    Weekday weekday,
-    String period,
-  ) {
-    final slotsForPeriod = getSlotsByTimePeriod(period);
-    final slotForWeekday = slotsForPeriod
-        .where((slot) => slot.day == weekday)
-        .firstOrNull;
-
-    if (slotForWeekday == null) return [];
-
-    return getAllLessonsForSlot(slotForWeekday.id!);
-  }
-
-  /// Create a proxy for easy UI handling
-  ScheduledLessonProxy? getScheduledLessonProxyForSlot(int slotId) {
-    final lesson = getScheduledLessonForSlot(slotId);
-    return lesson != null
-        ? ScheduledLessonProxy(scheduledLesson: lesson)
-        : null;
-  }
-
-  // Getters for backward compatibility
-  List<TimetableSlot> getTimeSlotsForWeekday(Weekday weekday) {
-    return _dataManager.timetableSlots.value
-        .where((slot) => slot.day == weekday)
-        .toList()
-      ..sort((a, b) => a.startTime.compareTo(b.startTime));
-  }
-
   List<ScheduledLesson> getScheduledLessonsForWeekday(Weekday weekday) {
-    return _uiManager.getScheduledLessonsForWeekdayAndGroups(
+    return ui.getScheduledLessonsForWeekdayAndGroups(
       weekday,
-      _uiManager.selectedLessonGroupIds.value,
-      _dataManager.scheduledLessons.value,
-      _dataManager.timetableSlots.value,
+      ui.selectedLessonGroupIds.value,
+      data.scheduledLessons.value,
+      data.timetableSlots.value,
     );
   }
 
   /// All scheduled lessons on [weekday] (no lesson-group filter). Use for
   /// conflict checks e.g. in room grid drag-snap validation.
   List<ScheduledLesson> getAllScheduledLessonsForWeekday(Weekday weekday) {
-    return _uiManager.getScheduledLessonsForWeekdayAndGroups(
+    return ui.getScheduledLessonsForWeekdayAndGroups(
       weekday,
       <int>{},
-      _dataManager.scheduledLessons.value,
-      _dataManager.timetableSlots.value,
+      data.scheduledLessons.value,
+      data.timetableSlots.value,
     );
   }
 
   void clearData() {
-    _dataManager.clearData();
-    _uiManager.clearLessonGroupSelection();
+    data.clearData();
+    ui.clearLessonGroupSelection();
     _buildWeekdayProxies();
   }
 }

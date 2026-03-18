@@ -20,7 +20,7 @@ class SupportCategoryManager {
 
   final _envManager = di<EnvManager>();
 
-  final _log = Logger('LearningSupportManager');
+  final _log = Logger('SupportCategoryManager');
 
   final _learningSupportApiService = LearningSupportApiService();
 

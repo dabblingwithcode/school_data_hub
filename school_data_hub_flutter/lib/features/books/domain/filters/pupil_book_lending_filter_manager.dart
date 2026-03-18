@@ -4,6 +4,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_predicates.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
 
@@ -114,92 +115,53 @@ class PupilBookLendingFilterManager implements Resettable {
   List<PupilBookLending> _applyFilters(
     List<PupilBookLending> pupilBookLendings,
   ) {
-    List<PupilBookLending> filteredLendings = [];
-    Set<int> filteredPupilIds = {};
-
     final activeFilters = _pupilBookLendingFilterState.value;
 
     // If "all" filter is active, return all lendings without filtering
     if (activeFilters[PupilBookLendingFilter.all]!) {
-      filteredLendings = pupilBookLendings;
-      filteredPupilIds = pupilBookLendings.map((e) => e.pupilId).toSet();
-      // Sort pupil book lendings, latest first
-      filteredLendings.sort((a, b) => b.lentAt.compareTo(a.lentAt));
-      _pupilIdsWithFilteredPupilBookLendings.value = filteredPupilIds;
-      return filteredLendings;
+      final sorted = List<PupilBookLending>.from(pupilBookLendings)
+        ..sort((a, b) => b.lentAt.compareTo(a.lentAt));
+      _pupilIdsWithFilteredPupilBookLendings.value =
+          pupilBookLendings.map((e) => e.pupilId).toSet();
+      return sorted;
     }
 
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    DateTime thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
+    final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
+    final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
 
+    final filteredLendings = <PupilBookLending>[];
+    final filteredPupilIds = <int>{};
     bool filterIsActive = false;
 
-    for (PupilBookLending lending in pupilBookLendings) {
-      bool isMatched = true;
+    for (final lending in pupilBookLendings) {
+      // Exclusion filters
+      if (PupilBookLendingFilterPredicates.excludeBySevenDays(
+        lending: lending,
+        sevenDaysAgo: sevenDaysAgo,
+        filterOn: activeFilters[PupilBookLendingFilter.lastSevenDays]!,
+      )) continue;
 
-      bool complementaryFilter = false;
+      if (PupilBookLendingFilterPredicates.excludeByThirtyDays(
+        lending: lending,
+        thirtyDaysAgo: thirtyDaysAgo,
+        filterOn: activeFilters[PupilBookLendingFilter.lastThirtyDays]!,
+      )) continue;
 
-      //- Hard filters - these exclude items completely
-      //- we use continue for hard filters
+      if (PupilBookLendingFilterPredicates.excludeByCurrentlyBorrowed(
+        lending: lending,
+        filterOn: activeFilters[PupilBookLendingFilter.currentlyBorrowed]!,
+      )) continue;
 
-      // Filter by last seven days
-      if (activeFilters[PupilBookLendingFilter.lastSevenDays]! &&
-          lending.lentAt.isBefore(sevenDaysAgo)) {
-        continue;
-      }
+      if (PupilBookLendingFilterPredicates.excludeByReturned(
+        lending: lending,
+        filterOn: activeFilters[PupilBookLendingFilter.returned]!,
+      )) continue;
 
-      // Filter by last thirty days
-      if (activeFilters[PupilBookLendingFilter.lastThirtyDays]! &&
-          lending.lentAt.isBefore(thirtyDaysAgo)) {
-        continue;
-      }
-
-      // Filter by currently borrowed (not returned)
-      if (activeFilters[PupilBookLendingFilter.currentlyBorrowed]! &&
-          lending.returnedAt != null) {
-        continue;
-      }
-
-      // Filter by returned
-      if (activeFilters[PupilBookLendingFilter.returned]! &&
-          lending.returnedAt == null) {
-        continue;
-      }
-
-      //- Complementary filters - these are OR logic
-      //- at least one must match if any are active
-
-      // High score filter (score >= 3)
-      if (activeFilters[PupilBookLendingFilter.highScore]!) {
-        if (lending.score >= 3) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      // Low score filter (score > 0 and < 3)
-      if (activeFilters[PupilBookLendingFilter.lowScore]!) {
-        if (lending.score > 0 && lending.score < 3) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      // No score filter (score == 0)
-      if (activeFilters[PupilBookLendingFilter.noScore]!) {
-        if (lending.score == 0) {
-          isMatched = true;
-          complementaryFilter = true;
-        } else if (!complementaryFilter) {
-          isMatched = false;
-        }
-      }
-
-      if (!isMatched) {
+      // Complementary group: score filters
+      if (!PupilBookLendingFilterPredicates.matchesScoreGroup(
+        lending,
+        activeFilters,
+      )) {
         filterIsActive = true;
         continue;
       }
@@ -215,40 +177,8 @@ class PupilBookLendingFilterManager implements Resettable {
       );
     }
 
-    // Sort pupil book lendings, latest first
     filteredLendings.sort((a, b) => b.lentAt.compareTo(a.lentAt));
     _pupilIdsWithFilteredPupilBookLendings.value = filteredPupilIds;
-
     return filteredLendings;
-  }
-
-  bool filterByCurrentlyBorrowed(PupilBookLending lending) {
-    return lending.returnedAt == null;
-  }
-
-  bool filterByReturned(PupilBookLending lending) {
-    return lending.returnedAt != null;
-  }
-
-  bool filterByLastSevenDays(PupilBookLending lending) {
-    DateTime sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-    return lending.lentAt.isAfter(sevenDaysAgo);
-  }
-
-  bool filterByLastThirtyDays(PupilBookLending lending) {
-    DateTime thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
-    return lending.lentAt.isAfter(thirtyDaysAgo);
-  }
-
-  bool filterByHighScore(PupilBookLending lending) {
-    return lending.score >= 3;
-  }
-
-  bool filterByLowScore(PupilBookLending lending) {
-    return lending.score > 0 && lending.score < 3;
-  }
-
-  bool filterByNoScore(PupilBookLending lending) {
-    return lending.score == 0;
   }
 }

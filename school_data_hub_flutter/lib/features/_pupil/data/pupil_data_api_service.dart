@@ -8,17 +8,6 @@ import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 
 class PupilDataApiService {
-  // Private constructor
-  PupilDataApiService._internal();
-
-  // Singleton instance
-  static final PupilDataApiService _instance = PupilDataApiService._internal();
-
-  // Factory constructor to return the singleton instance
-  factory PupilDataApiService() {
-    return _instance;
-  }
-
   final _notificationService = di<NotificationManager>();
   HubSessionManager get _hubSessionManager => di<HubSessionManager>();
   Client get _client => di<Client>();

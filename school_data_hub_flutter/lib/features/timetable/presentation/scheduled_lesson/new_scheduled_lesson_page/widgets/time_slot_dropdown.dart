@@ -21,7 +21,7 @@ class TimeSlotDropdown extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final slots = watchValue((TimetableManager m) => m.timetableSlots);
+    final slots = watchValue((TimetableManager m) => m.data.timetableSlots);
 
     return DropdownButtonFormField<TimetableSlot>(
       initialValue: selectedSlot,

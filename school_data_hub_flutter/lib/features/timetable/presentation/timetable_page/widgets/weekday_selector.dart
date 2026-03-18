@@ -13,7 +13,7 @@ class WeekdaySelector extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final selectedWeekday = watchValue(
-      (TimetableManager x) => x.selectedWeekday,
+      (TimetableManager x) => x.ui.selectedWeekday,
     );
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -34,7 +34,7 @@ class WeekdaySelector extends WatchingWidget {
               selected: isSelected,
               onSelected: (selected) {
                 if (selected) {
-                  timetableManager.selectWeekday(weekday);
+                  timetableManager.ui.selectWeekday(weekday);
                 }
               },
               selectedColor: AppColors.accentColor,

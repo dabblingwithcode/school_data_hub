@@ -47,11 +47,11 @@ class ClassroomDropdown extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final classrooms = watchValue((TimetableManager m) => m.classrooms);
+    final classrooms = watchValue((TimetableManager m) => m.data.classrooms);
     final scheduledLessons = watchValue(
-      (TimetableManager m) => m.scheduledLessons,
+      (TimetableManager m) => m.data.scheduledLessons,
     );
-    final selectedSlot = watchValue((TimetableManager m) => m.selectedWeekday);
+    final selectedSlot = watchValue((TimetableManager m) => m.ui.selectedWeekday);
 
     final hasTargetSlot =
         targetWeekday != null &&

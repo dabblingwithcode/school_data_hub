@@ -20,6 +20,8 @@ class SchoolListFilterManager implements Resettable {
   ValueListenable<bool> get filterState => _filterState;
   final _filterState = ValueNotifier<bool>(false);
 
+  String _searchText = '';
+
   final _schoolListFilterState = ValueNotifier<Map<SchoolListFilter, bool>>(
     initialSchoolListFilterValues,
   );
@@ -61,10 +63,11 @@ class SchoolListFilterManager implements Resettable {
 
   @override
   void resetFilters() {
-    _filterState.value = false;
+    _searchText = '';
     _schoolListFilterState.value = Map.from(initialSchoolListFilterValues);
     _entryFilterState.value = {...initialSchoolListEntryFilterValues};
     _filteredSchoolLists.value = _schoolListManager.schoolLists.value;
+    _filterState.value = false;
     _filtersStateManager.setFilterState(
       filterState: FilterState.schoolList,
       value: false,
@@ -72,19 +75,8 @@ class SchoolListFilterManager implements Resettable {
   }
 
   void onSearchTextSchoolListsFilter(String text) {
-    if (text.isEmpty) {
-      _filteredSchoolLists.value = _schoolListManager.schoolLists.value;
-      return;
-    }
-    _filterState.value = true;
-    _filtersStateManager.setFilterState(
-      filterState: FilterState.schoolList,
-      value: true,
-    );
-    String lowerCaseText = text.toLowerCase();
-    _filteredSchoolLists.value = _schoolListManager.schoolLists.value
-        .where((element) => element.name.toLowerCase().contains(lowerCaseText))
-        .toList();
+    _searchText = text;
+    _applyActiveFilters();
   }
 
   /// Toggle filter for public school lists
@@ -124,33 +116,39 @@ class SchoolListFilterManager implements Resettable {
     _applyActiveFilters();
   }
 
-  /// Apply the currently active filters to the school lists
+  /// Apply category filters and text search compositionally.
   void _applyActiveFilters() {
     final userName = _hubSessionManager.userName;
-    List<SchoolList> filteredLists = _schoolListManager.schoolLists.value;
+    List<SchoolList> result = _schoolListManager.schoolLists.value;
     bool anyFilterActive = false;
 
+    // Category filter (mutually exclusive)
     if (_schoolListFilterState.value[SchoolListFilter.publicLists] == true) {
-      filteredLists = filteredLists
-          .where((list) => list.public == true)
-          .toList();
+      result = result.where((list) => list.public == true).toList();
       anyFilterActive = true;
     } else if (_schoolListFilterState.value[SchoolListFilter.myLists] == true &&
         userName != null) {
-      filteredLists = filteredLists
-          .where((list) => list.createdBy == userName)
-          .toList();
+      result = result.where((list) => list.createdBy == userName).toList();
       anyFilterActive = true;
     } else if (_schoolListFilterState.value[SchoolListFilter.otherLists] ==
             true &&
         userName != null) {
-      filteredLists = filteredLists
+      result = result
           .where((list) => list.public == false && list.createdBy != userName)
           .toList();
       anyFilterActive = true;
     }
 
-    _filteredSchoolLists.value = filteredLists;
+    // Text search (composes with category filter)
+    if (_searchText.isNotEmpty) {
+      final lowerCaseText = _searchText.toLowerCase();
+      result = result
+          .where((list) => list.name.toLowerCase().contains(lowerCaseText))
+          .toList();
+      anyFilterActive = true;
+    }
+
+    _filteredSchoolLists.value = result;
     _filterState.value = anyFilterActive;
     _filtersStateManager.setFilterState(
       filterState: FilterState.schoolList,

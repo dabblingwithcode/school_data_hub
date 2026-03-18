@@ -14,12 +14,12 @@ class TimetableSlotListPage extends WatchingWidget {
   Widget build(BuildContext context) {
     // Watch the timetable slots
     final timetableManager = di<TimetableManager>();
-    final timetableSlots = watch(timetableManager.timetableSlots);
-    final activeTimetable = watch(timetableManager.timetable);
+    final timetableSlots = watch(timetableManager.data.timetableSlots);
+    final activeTimetable = watch(timetableManager.data.timetable);
 
     Future<void> navigateToNewTimetableSlot(BuildContext context) async {
       // Check if there's an active timetable
-      if (!timetableManager.hasActiveTimetable) {
+      if (timetableManager.data.timetable.value == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(

@@ -14,9 +14,9 @@ class TimetableFilterBottomSheet extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final timetableManager = di<TimetableManager>();
-    final lessonGroups = watchValue((TimetableManager x) => x.lessonGroups);
+    final lessonGroups = watchValue((TimetableManager x) => x.data.lessonGroups);
     final selectedGroupIds = watchValue(
-      (TimetableManager x) => x.selectedLessonGroupIds,
+      (TimetableManager x) => x.ui.selectedLessonGroupIds,
     );
 
     void toggleLessonGroupSelection(LessonGroup group) {

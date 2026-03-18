@@ -18,7 +18,7 @@ class SubjectListPage extends WatchingWidget {
       backgroundColor: AppColors.canvasColor,
       iconData: Icons.subject,
       title: 'Fächer',
-      itemsListenable: timetableManager.subjects,
+      itemsListenable: timetableManager.data.subjects,
       itemBuilder: (context, subject) => SubjectListCard(
         subject: subject,
         onTap: () => _navigateToSubject(context, subject),

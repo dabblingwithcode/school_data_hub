@@ -15,7 +15,10 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/data/learning_support_api_service.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/models/pupil_support_goals_proxy.dart';
+import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
+
+final _log = Logger('LearningSupportManager');
 
 class LearningSupportManager {
   //- IMPORTS -//
@@ -66,30 +69,24 @@ class LearningSupportManager {
     if (goals != null) {
       getPupilSupportGoalsProxy(pupilId).setSupportGoals(goals);
       _loadedPupilIds.add(pupilId);
+      _log.fine('Fetched ${goals.length} goals for pupil $pupilId');
     }
   }
 
-  /// Fetches all goals (used on reconnect for already-loaded pupils).
+  /// Refetches goals only for already-loaded pupils (parallel per-pupil fetch).
   Future<void> _refetchLoadedGoals() async {
-    final goals = await _learningSupportApiService.fetchAllSupportGoals();
-    if (goals == null) return;
-
-    // Clear and repopulate only loaded proxies.
-    for (final pupilId in _loadedPupilIds) {
-      final proxy = _pupilSupportGoalsMap[pupilId];
-      if (proxy != null) {
-        proxy.setSupportGoals(
-          goals.where((g) => g.pupilId == pupilId).toList(),
-        );
-      }
-    }
+    final pupilIds = _loadedPupilIds.toList();
+    _log.info('Refetching goals for ${pupilIds.length} loaded pupils');
+    await Future.wait(pupilIds.map(fetchGoalsForPupil));
   }
 
   void _upsertGoalFromStream(SupportGoal goal) {
+    _log.fine('[STREAM] upsert supportGoal ${goal.id} for pupil ${goal.pupilId}');
     getPupilSupportGoalsProxy(goal.pupilId).upsertSupportGoal(goal);
   }
 
   void _deleteGoalFromStream(int goalId) {
+    _log.fine('[STREAM] delete supportGoal $goalId');
     for (final proxy in _pupilSupportGoalsMap.values) {
       if (proxy.supportGoals.any((g) => g.id == goalId)) {
         proxy.removeSupportGoalById(goalId);

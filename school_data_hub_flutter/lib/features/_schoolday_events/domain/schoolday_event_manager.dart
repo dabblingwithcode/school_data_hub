@@ -76,12 +76,17 @@ class SchooldayEventManager with ChangeNotifier {
   }
 
   void _updatePupilProxies() {
-    final pupilIds = _pupilManager.allPupils.map((e) => e.pupilId).toList();
+    final pupilIds = _pupilManager.allPupils.map((e) => e.pupilId).toSet();
+    // Add proxies for new pupils
     for (var pupilId in pupilIds) {
       if (!_pupilSchooldayEventsMap.containsKey(pupilId)) {
         _pupilSchooldayEventsMap[pupilId] = PupilSchooldayEventsProxy();
       }
     }
+    // Remove proxies for pupils no longer in the list
+    _pupilSchooldayEventsMap.removeWhere(
+      (pupilId, _) => !pupilIds.contains(pupilId),
+    );
   }
 
   //- Getters

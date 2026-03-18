@@ -71,7 +71,7 @@ class MatrixRoomManager {
         roomType: markAsCompulsoryWithType,
       );
       final updated = [...current, newEntry];
-      final result = await CompulsoryRoomApiService.instance.setCompulsoryRooms(
+      final result = await CompulsoryRoomApiService().setCompulsoryRooms(
         updated,
       );
       if (result != null) {
@@ -343,7 +343,7 @@ class MatrixRoomManager {
     rooms.sort((a, b) => a.name!.compareTo(b.name!));
     setRooms(rooms);
 
-    final compulsory = await CompulsoryRoomApiService.instance
+    final compulsory = await CompulsoryRoomApiService()
         .getCompulsoryRooms();
     _compulsoryRooms.value = compulsory ?? [];
 

@@ -18,7 +18,7 @@ class LessonGroupListPage extends WatchingWidget {
       backgroundColor: AppColors.canvasColor,
       iconData: Icons.group,
       title: 'Lerngruppen verwalten',
-      itemsListenable: timetableManager.lessonGroups,
+      itemsListenable: timetableManager.data.lessonGroups,
       itemBuilder: (context, lessonGroup) => LessonGroupListCard(
         lessonGroup: lessonGroup,
         onEdit: () => _navigateToEditLessonGroup(context, lessonGroup),

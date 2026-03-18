@@ -21,6 +21,8 @@ class CompetenceReportManager {
   ValueListenable<Map<int, List<CompetenceReport>>> get reportsByPupil =>
       _reportsByPupil;
 
+  final Set<int> _loadedPupilIds = {};
+
   StreamSubscription<dynamic>? _hubSubscription;
 
   CompetenceReportManager();
@@ -34,6 +36,7 @@ class CompetenceReportManager {
     _hubSubscription?.cancel();
     _hubSubscription = null;
     _reportsByPupil.dispose();
+    _loadedPupilIds.clear();
   }
 
   void _onHubEvent(dynamic event) {
@@ -194,6 +197,12 @@ class CompetenceReportManager {
     return _reportsByPupil.value[pupilId] ?? [];
   }
 
+  /// Fetches reports only if not already loaded for this pupil.
+  Future<void> ensureReportsLoaded(int pupilId) async {
+    if (_loadedPupilIds.contains(pupilId)) return;
+    await fetchReportsForPupil(pupilId);
+  }
+
   Future<void> fetchReportsForPupil(int pupilId) async {
     _log.info('fetchReportsForPupil: pupilId=$pupilId');
     final reports = await _reportApiService.fetchCompetenceReports(pupilId);
@@ -209,6 +218,7 @@ class CompetenceReportManager {
       final map = Map<int, List<CompetenceReport>>.from(_reportsByPupil.value);
       map[pupilId] = reports;
       _reportsByPupil.value = map;
+      _loadedPupilIds.add(pupilId);
     } else {
       _log.warning('fetchReportsForPupil: API returned null for pupilId=$pupilId');
     }

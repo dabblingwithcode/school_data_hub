@@ -137,7 +137,7 @@ class NewLessonGroupPage extends WatchingWidget {
                         }
 
                         final currentTimetable =
-                            timetableManager.timetable.value;
+                            timetableManager.data.timetable.value;
                         if (currentTimetable?.id == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -239,6 +239,7 @@ class NewLessonGroupPage extends WatchingWidget {
 
                               // Check if the lesson group is used in any scheduled lessons
                               final scheduledLessons = timetableManager
+                                  .data
                                   .scheduledLessons
                                   .value
                                   .where(

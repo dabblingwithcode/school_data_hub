@@ -46,9 +46,9 @@ class LessonGroupDropdown extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lessonGroups = watchValue((TimetableManager m) => m.lessonGroups);
+    final lessonGroups = watchValue((TimetableManager m) => m.data.lessonGroups);
     final scheduledLessons = watchValue(
-      (TimetableManager m) => m.scheduledLessons,
+      (TimetableManager m) => m.data.scheduledLessons,
     );
 
     final hasTargetSlot =

@@ -40,7 +40,8 @@ class PupilProxy with ChangeNotifier {
   }
 
   void updatePupilIdentity(PupilIdentity pupilIdentity) {
-    if (!_pupilIdentity.isEqual(pupilIdentity)) _pupilIdentity = pupilIdentity;
+    if (_pupilIdentity.isEqual(pupilIdentity)) return;
+    _pupilIdentity = pupilIdentity;
     notifyListeners();
   }
 

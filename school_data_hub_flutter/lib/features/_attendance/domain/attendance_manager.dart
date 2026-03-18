@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_attendance/data/attendance_api_service.dart';
+import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/models/pupil_missed_classes_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
@@ -189,7 +190,11 @@ class AttendanceManager with ChangeNotifier {
   void fetchAllPupilMissedSchooldayes() async {
     final fetchedMissedSchooldayes = await _attendanceApiService
         .fetchAllMissedSchooldayes();
-    if (fetchedMissedSchooldayes == null) return;
+    if (fetchedMissedSchooldayes == null) {
+      _log.warning('fetchAllPupilMissedSchooldayes returned null');
+      return;
+    }
+    _log.info('${fetchedMissedSchooldayes.length} missed schooldays fetched');
     _updateMissedSchooldayesInCollections(fetchedMissedSchooldayes);
   }
 
@@ -197,7 +202,10 @@ class AttendanceManager with ChangeNotifier {
     _log.info('fetchMissedSchooldayesOnASchoolday $schoolday');
     final List<MissedSchoolday>? missedSchooldays = await _attendanceApiService
         .fetchMissedSchooldayesOnASchoolday(schoolday.toUtc());
-    if (missedSchooldays == null) return;
+    if (missedSchooldays == null) {
+      _log.warning('fetchMissedSchooldayesOnASchoolday failed for $schoolday');
+      return;
+    }
     _updateMissedSchooldayesInCollections(missedSchooldays);
   }
 
@@ -221,6 +229,7 @@ class AttendanceManager with ChangeNotifier {
         );
 
     if (responseMissedSchoolday == null) {
+      _log.warning('updateUnexcusedValue failed for pupil $pupilId on $date');
       return;
     }
     updateMissedSchooldayInCollections(responseMissedSchoolday);
@@ -266,6 +275,7 @@ class AttendanceManager with ChangeNotifier {
             returnedAt: returnedDateTime?.toUtc(),
           );
       if (newMissedSchoolday == null) {
+        _log.warning('updateReturnedValue: postMissedSchoolday failed for pupil $pupilId on $date');
         return;
       }
       updateMissedSchooldayInCollections(newMissedSchoolday);
@@ -298,6 +308,7 @@ class AttendanceManager with ChangeNotifier {
             missedSchooldayToUpdate: missedSchooldayToUpdate,
           );
       if (updatedMissedSchoolday == null) {
+        _log.warning('updateReturnedValue: updateMissedSchoolday failed for pupil $pupilId on $date');
         return;
       }
       updateMissedSchooldayInCollections(updatedMissedSchoolday);
@@ -312,6 +323,7 @@ class AttendanceManager with ChangeNotifier {
             missedSchooldayToUpdate: missedSchooldayToUpdate,
           );
       if (updatedMissedSchoolday == null) {
+        _log.warning('updateReturnedValue: updateMissedSchoolday failed for pupil $pupilId on $date');
         return;
       }
       updateMissedSchooldayInCollections(updatedMissedSchoolday);
@@ -340,6 +352,7 @@ class AttendanceManager with ChangeNotifier {
             writtenExcuse: null,
           );
       if (updatedMissedSchoolday == null) {
+        _log.warning('updateLateTypeValue: postMissedSchoolday failed for pupil $pupilId on $date');
         return;
       }
       updateMissedSchooldayInCollections(updatedMissedSchoolday);
@@ -356,6 +369,7 @@ class AttendanceManager with ChangeNotifier {
           missedSchooldayToUpdate: missedSchooldayToUpdate,
         );
     if (updatedMissedSchoolday == null) {
+      _log.warning('updateLateTypeValue: updateMissedSchoolday failed for pupil $pupilId on $date');
       return;
     }
     updateMissedSchooldayInCollections(updatedMissedSchoolday);
@@ -383,6 +397,7 @@ class AttendanceManager with ChangeNotifier {
           missedSchooldayToUpdate: missedSchooldayToUpdate,
         );
     if (updatedMissedSchoolday == null) {
+      _log.warning('updateCommentValue failed for pupil $pupilId on $date');
       return;
     }
     updateMissedSchooldayInCollections(updatedMissedSchoolday);
@@ -395,22 +410,16 @@ class AttendanceManager with ChangeNotifier {
     required MissedType missedType,
     String? comment,
   }) async {
-    List<MissedSchoolday> missedSchooldays = [];
+    final createdBy = _sessionManager.signedInUser!.userName!;
+    final schooldays = AttendanceHelper.schooldaysInRange(
+      startDate: startdate,
+      endDate: enddate,
+    );
 
-    final List<DateTime> validSchooldays =
-        _schoolCalendarManager.availableDates.value;
-
-    for (DateTime validSchoolday in validSchooldays) {
-      if (validSchoolday.isSameDate(startdate) ||
-          validSchoolday.isSameDate(enddate) ||
-          (validSchoolday.isAfterDate(startdate) &&
-              validSchoolday.isBeforeDate(enddate))) {
-        final schoolday = _schoolCalendarManager.getSchooldayByDate(
-          validSchoolday,
-        );
-        missedSchooldays.add(
-          MissedSchoolday(
-            createdBy: _sessionManager.signedInUser!.userName!,
+    final missedSchooldays = schooldays
+        .map(
+          (schoolday) => MissedSchoolday(
+            createdBy: createdBy,
             pupilId: id,
             schoolday: schoolday,
             missedType: missedType,
@@ -422,20 +431,20 @@ class AttendanceManager with ChangeNotifier {
             writtenExcuse: false,
             modifiedBy: null,
             comment: comment,
-            schooldayId: schoolday!.id!,
+            schooldayId: schoolday.id!,
           ),
-        );
-      }
-    }
-    final List<MissedSchoolday>? responseMissedSchooldayes =
-        await _attendanceApiService.postMissedSchooldayList(
-          missedSchooldays: missedSchooldays,
-        );
+        )
+        .toList();
+
+    final responseMissedSchooldayes = await _attendanceApiService
+        .postMissedSchooldayList(missedSchooldays: missedSchooldays);
     if (responseMissedSchooldayes == null) {
+      _log.warning(
+        'postManyMissedSchooldays failed for pupil $id from $startdate to $enddate',
+      );
       return;
     }
-    for (final MissedSchoolday responseMissedSchoolday
-        in responseMissedSchooldayes) {
+    for (final responseMissedSchoolday in responseMissedSchooldayes) {
       updateMissedSchooldayInCollections(responseMissedSchoolday);
     }
     _notificationService.showSnackBar(
@@ -466,6 +475,7 @@ class AttendanceManager with ChangeNotifier {
             date: date,
           );
       if (updatedMissedSchoolday == null) {
+        _log.warning('updateMissedTypeValue: postMissedSchoolday failed for pupil $pupilId on $date');
         return;
       }
       updateMissedSchooldayInCollections(updatedMissedSchoolday);
@@ -483,6 +493,7 @@ class AttendanceManager with ChangeNotifier {
           missedSchooldayToUpdate: missedSchooldayToUpdate,
         );
     if (updatedMissedSchoolday == null) {
+      _log.warning('updateMissedTypeValue: updateMissedSchoolday failed for pupil $pupilId on $date');
       return;
     }
     updateMissedSchooldayInCollections(updatedMissedSchoolday);
@@ -509,6 +520,7 @@ class AttendanceManager with ChangeNotifier {
           missedSchooldayToUpdate: missedSchooldayToUpdate,
         );
     if (updatedMissedSchoolday == null) {
+      _log.warning('updateContactedValue failed for pupil $pupilId on $date');
       return;
     }
     updateMissedSchooldayInCollections(updatedMissedSchoolday);

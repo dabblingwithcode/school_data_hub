@@ -3,10 +3,6 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/client/client_helper.dart';
 
 class CompulsoryRoomApiService {
-  CompulsoryRoomApiService._();
-
-  static final CompulsoryRoomApiService instance = CompulsoryRoomApiService._();
-
   Client get _client => di<Client>();
 
   Future<List<CompulsoryRoom>?> getCompulsoryRooms() async {

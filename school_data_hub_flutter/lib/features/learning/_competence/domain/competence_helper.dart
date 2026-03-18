@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/utils/hierarchical_sort.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -12,33 +13,11 @@ import 'package:school_data_hub_flutter/features/learning/_competence/domain/enu
 class CompetenceHelper {
   static CompetenceManager get _competenceManager => di<CompetenceManager>();
   static List<Competence> sortCompetences(List<Competence> competences) {
-    List<Competence> rootCompetences = [];
-    List<Competence> childCompetences = [];
-
-    for (var competence in competences) {
-      if (competence.parentCompetence == null) {
-        rootCompetences.add(competence);
-      } else {
-        childCompetences.add(competence);
-      }
-    }
-    // Sort the child competences list based on parentCompetence and order values
-    childCompetences.sort((a, b) {
-      if (a.parentCompetence == b.parentCompetence) {
-        if (a.order == null && b.order == null) return 0;
-        if (a.order == null) return 1;
-        if (b.order == null) return -1;
-        return a.order!.compareTo(b.order!);
-      }
-      return (a.parentCompetence ?? 0).compareTo(b.parentCompetence ?? 0);
-    });
-
-    // Combine the root competences and sorted child competences
-    List<Competence> sortedCompetences = [
-      ...rootCompetences,
-      ...childCompetences,
-    ];
-    return sortedCompetences;
+    return HierarchicalSort.sort(
+      items: competences,
+      getParent: (c) => c.parentCompetence,
+      getOrder: (c) => c.order,
+    );
   }
 
   static CompetenceCheck? getGroupCompetenceCheckFromPupil({
@@ -59,41 +38,11 @@ class CompetenceHelper {
   static Map<int, int> generateRootCompetencesMap(
     List<Competence> competences,
   ) {
-    final Map<int, Competence> rootCompetencesMap = {
-      for (Competence competence in competences)
-        competence.publicId: competence,
-    };
-    Map<int, int> rootCompetencesCache = {};
-
-    int findRootCompetence(int publicId) {
-      if (rootCompetencesCache.containsKey(publicId)) {
-        return rootCompetencesCache[publicId]!;
-      }
-      final Competence? competence = rootCompetencesMap[publicId];
-      if (competence == null) {
-        rootCompetencesCache[publicId] = publicId;
-        return publicId;
-      }
-      if (competence.parentCompetence == null) {
-        rootCompetencesCache[publicId] = publicId;
-        return publicId;
-      }
-      final int? parentId = competence.parentCompetence;
-      if (parentId == null || !rootCompetencesMap.containsKey(parentId)) {
-        // Orphan (e.g. parent already deleted): treat as own root
-        rootCompetencesCache[publicId] = publicId;
-        return publicId;
-      }
-      final int rootpublicId = findRootCompetence(parentId);
-      rootCompetencesCache[publicId] = rootpublicId;
-      return rootpublicId;
-    }
-
-    final Map<int, int> result = {};
-    for (var competence in competences) {
-      result[competence.publicId] = findRootCompetence(competence.publicId);
-    }
-    return result;
+    return HierarchicalSort.generateRootMap(
+      items: competences,
+      getPublicId: (c) => c.publicId,
+      getParent: (c) => c.parentCompetence,
+    );
   }
 
   static Color getCompetenceColor(int publicId) {

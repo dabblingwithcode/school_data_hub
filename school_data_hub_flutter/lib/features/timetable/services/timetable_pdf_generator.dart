@@ -39,9 +39,9 @@ class TimetablePdfGenerator {
   static Future<File> generateTimetablePdf({
     required TimetableManager timetableManager,
   }) async {
-    final timetable = timetableManager.activeTimetable;
-    final timetableSlots = timetableManager.timetableSlots.value;
-    final classrooms = timetableManager.classrooms.value;
+    final timetable = timetableManager.data.timetable.value;
+    final timetableSlots = timetableManager.data.timetableSlots.value;
+    final classrooms = timetableManager.data.classrooms.value;
 
     // Fixed whole grid: 07:50–16:00, every 15 minutes.
     final startMinutes = _gridDayStartMinutes;
@@ -75,7 +75,7 @@ class TimetablePdfGenerator {
     final weekdays = Weekday.values;
     final totalPages = weekdays.length;
     final slotIdToSlot = {for (final s in timetableSlots) s.id!: s};
-    final scheduledLessons = timetableManager.scheduledLessons.value;
+    final scheduledLessons = timetableManager.data.scheduledLessons.value;
 
     di<NotificationManager>().setHeavyLoadingValue(true);
     try {

@@ -52,12 +52,12 @@ class NewScheduledLessonPage extends WatchingWidget {
     // Create ValueListenable for state management
     final selectedSubject = createOnce<ValueNotifier<Subject?>>(() {
       if (_isEditing) {
-        final editingLesson = timetableManager.scheduledLessons.value
+        final editingLesson = timetableManager.data.scheduledLessons.value
             .where((lesson) => lesson.id == editingLessonId)
             .firstOrNull;
         if (editingLesson != null) {
           return ValueNotifier<Subject?>(
-            timetableManager.getSubjectById(editingLesson.subjectId),
+            timetableManager.data.subjectIdMap[editingLesson.subjectId],
           );
         }
       }
@@ -66,12 +66,12 @@ class NewScheduledLessonPage extends WatchingWidget {
 
     final selectedClassroom = createOnce<ValueNotifier<Classroom?>>(() {
       if (_isEditing) {
-        final editingLesson = timetableManager.scheduledLessons.value
+        final editingLesson = timetableManager.data.scheduledLessons.value
             .where((lesson) => lesson.id == editingLessonId)
             .firstOrNull;
         if (editingLesson != null) {
           return ValueNotifier<Classroom?>(
-            timetableManager.getClassroomById(editingLesson.roomId),
+            timetableManager.data.classroomIdMap[editingLesson.roomId],
           );
         }
       } else if (initialClassroom != null) {
@@ -82,17 +82,17 @@ class NewScheduledLessonPage extends WatchingWidget {
 
     final selectedLessonGroup = createOnce<ValueNotifier<LessonGroup?>>(() {
       if (_isEditing) {
-        final editingLesson = timetableManager.scheduledLessons.value
+        final editingLesson = timetableManager.data.scheduledLessons.value
             .where((lesson) => lesson.id == editingLessonId)
             .firstOrNull;
         if (editingLesson != null) {
           return ValueNotifier<LessonGroup?>(
-            timetableManager.getLessonGroupById(editingLesson.lessonGroupId),
+            timetableManager.data.lessonGroupIdMap[editingLesson.lessonGroupId],
           );
         }
       } else {
         return ValueNotifier<LessonGroup?>(
-          timetableManager.selectedLessonGroup.value,
+          timetableManager.ui.selectedLessonGroup.value,
         );
       }
       return ValueNotifier<LessonGroup?>(null);
@@ -100,7 +100,7 @@ class NewScheduledLessonPage extends WatchingWidget {
 
     final selectedTeachers = createOnce<ValueNotifier<List<User>>>(() {
       if (_isEditing) {
-        final editingLesson = timetableManager.scheduledLessons.value
+        final editingLesson = timetableManager.data.scheduledLessons.value
             .where((lesson) => lesson.id == editingLessonId)
             .firstOrNull;
         if (editingLesson != null) {
@@ -133,14 +133,14 @@ class NewScheduledLessonPage extends WatchingWidget {
     Weekday? effectiveWeekday = initialWeekday;
     if (_isEditing || preselectedSlotId != null) {
       final editingLesson = _isEditing
-          ? timetableManager.scheduledLessons.value
+          ? timetableManager.data.scheduledLessons.value
                 .where((lesson) => lesson.id == editingLessonId)
                 .firstOrNull
           : null;
       final slot = editingLesson != null
-          ? timetableManager.getTimetableSlotById(editingLesson.scheduledAtId)
+          ? timetableManager.data.slotIdMap[editingLesson.scheduledAtId]
           : preselectedSlotId != null
-          ? timetableManager.getTimetableSlotById(preselectedSlotId!)
+          ? timetableManager.data.slotIdMap[preselectedSlotId!]
           : null;
       if (slot != null) {
         effectiveStartTime ??= slot.startTime;
@@ -223,7 +223,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                             children: [
                               Text(
                                 TimetableUtils.getWeekdayName(
-                                  di<TimetableManager>().selectedWeekday.value,
+                                  di<TimetableManager>().ui.selectedWeekday.value,
                                 ),
                                 style: const TextStyle(
                                   fontSize: 25,
@@ -325,7 +325,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                           targetStartTime: targetStartTime,
                           targetEndTime: targetEndTime,
                           scheduledLessons:
-                              timetableManager.scheduledLessons.value,
+                              timetableManager.data.scheduledLessons.value,
                           excludeLessonId: editingLessonId,
                         ),
                         const Gap(20),
@@ -357,7 +357,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                     final now = DateTime.now().formatToUtcForServer();
 
                     // Compute or re-use timetable slot based on weekday, start time and duration.
-                    final timetable = timetableManager.timetable.value;
+                    final timetable = timetableManager.data.timetable.value;
                     if (timetable == null) {
                       di<NotificationManager>().showSnackBar(
                         NotificationType.error,
@@ -386,6 +386,7 @@ class NewScheduledLessonPage extends WatchingWidget {
 
                     if (_isEditing) {
                       final editingLesson = timetableManager
+                          .data
                           .scheduledLessons
                           .value
                           .where((lesson) => lesson.id == editingLessonId)
@@ -482,6 +483,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                   onDelete: _isEditing
                       ? () {
                           final editingLesson = timetableManager
+                              .data
                               .scheduledLessons
                               .value
                               .where((lesson) => lesson.id == editingLessonId)

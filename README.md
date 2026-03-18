@@ -283,15 +283,16 @@ When setting up a local development environment, the `server_url` depends on whi
 
 ## Contributing
 
-These are some areas where the code should be reviewed, (pull requests welcome):
+These are some areas where contributions are welcome (pull requests appreciated):
 
-- **Code Quality**: Migrate pupils' filter architecture to `PupilsFilter` (work in progress)
-- **Architecture**: Review domain layers, review presentation layers.
+- **Architecture**: Review presentation layers, evaluate event-based decoupling between managers
 - **State Management (client)**: Review state management across pages
-- **Error Handling (client, server)**: Improve error handling in API calls
 - **Navigation**: Review and improve navigation patterns
 - **Internationalization (client)**: Add multi-language support (WIP)
-- **Design (client)**: Review widget layout/design, implement a comprehensive theme system
+- **Design (client)**: Review widget layout/design using Orient UI design system
+- **Testing**: Extend test coverage — filter predicates and domain helpers are covered (92 tests); integration and widget tests needed
+
+For a detailed analysis of the domain layer's current state, patterns, and remaining action steps, see [`docs/domain_layer_assessment.md`](docs/domain_layer_assessment.md).
 
 ## Credits
 

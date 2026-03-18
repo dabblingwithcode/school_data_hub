@@ -28,7 +28,7 @@ class TimetablePage extends WatchingWidget {
     // Ensure data is initialized; in normal navigation flow this should
     // already be true, but calling debugPrintState here is consistent
     // with the existing TimetablePage.
-    timetableManager.debugPrintState();
+    timetableManager.data.debugPrintState();
 
     return Scaffold(
       backgroundColor: AppColors.canvasColor,
@@ -124,7 +124,7 @@ class TimetablePage extends WatchingWidget {
             icon: const Icon(Icons.picture_as_pdf, size: 35),
             onPressed: () async {
               final manager = di<TimetableManager>();
-              if (!manager.hasActiveTimetable) {
+              if (manager.data.timetable.value == null) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

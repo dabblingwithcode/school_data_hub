@@ -59,6 +59,7 @@ class BookManager {
   final int _perPage = 30;
   bool _isLoadingMore = false;
   bool _hasMorePages = true;
+  int _searchGeneration = 0;
 
   bool get hasMorePages => _hasMorePages;
 
@@ -440,48 +441,42 @@ class BookManager {
     bool? available,
     List<BookTag>? tags,
   }) async {
+    _searchGeneration++;
+    final generation = _searchGeneration;
     _currentPage = 1;
     _isLoadingMore = false;
     _hasMorePages = true;
-    try {
-      final List<LibraryBook>? results = await _bookApiService.searchBooks(
-        title: title?.isNotEmpty == true ? title : null,
-        author: author?.isNotEmpty == true ? author : null,
-        keywords: keywords?.isNotEmpty == true ? keywords : null,
-        location: location,
-        readingLevel: readingLevel?.isNotEmpty == true ? readingLevel : null,
-        available: available,
-        tags: tags,
-        page: _currentPage,
-        perPage: _perPage,
-      );
-      if (results == null) {
-        return;
-      }
-      final searchResults = <LibraryBookProxy>[];
-      for (final result in results) {
-        final LibraryBookProxy libraryBookProxy = LibraryBookProxy(
-          librarybook: result,
-        );
-        // Check if this libraryId already exists to prevent duplicates
-        if (!searchResults.any(
-          (existing) => existing.libraryId == libraryBookProxy.libraryId,
-        )) {
-          searchResults.add(libraryBookProxy);
-        }
-      }
-      _searchResults.value = searchResults;
 
-      _notificationService.showSnackBar(
-        NotificationType.success,
-        'Suchergebnisse aktualisiert',
+    final List<LibraryBook>? results = await _bookApiService.searchBooks(
+      title: title?.isNotEmpty == true ? title : null,
+      author: author?.isNotEmpty == true ? author : null,
+      keywords: keywords?.isNotEmpty == true ? keywords : null,
+      location: location,
+      readingLevel: readingLevel?.isNotEmpty == true ? readingLevel : null,
+      available: available,
+      tags: tags,
+      page: _currentPage,
+      perPage: _perPage,
+    );
+    if (results == null || generation != _searchGeneration) return;
+
+    final searchResults = <LibraryBookProxy>[];
+    for (final result in results) {
+      final LibraryBookProxy libraryBookProxy = LibraryBookProxy(
+        librarybook: result,
       );
-    } catch (e) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler bei der Suche: $e',
-      );
+      if (!searchResults.any(
+        (existing) => existing.libraryId == libraryBookProxy.libraryId,
+      )) {
+        searchResults.add(libraryBookProxy);
+      }
     }
+    _searchResults.value = searchResults;
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Suchergebnisse aktualisiert',
+    );
   }
 
   Future<void> loadNextPage({
@@ -493,9 +488,9 @@ class BookManager {
     bool? available,
     List<BookTag>? tags,
   }) async {
-    if (_isLoadingMore) return;
-    if (!_hasMorePages) return;
+    if (_isLoadingMore || !_hasMorePages) return;
     _isLoadingMore = true;
+    final generation = _searchGeneration;
 
     try {
       _currentPage++;
@@ -511,20 +506,18 @@ class BookManager {
         page: _currentPage,
         perPage: _perPage,
       );
-      if (newPageResults == null) {
-        return;
-      }
+      if (newPageResults == null || generation != _searchGeneration) return;
+
       if (newPageResults.isEmpty) {
         _hasMorePages = false;
       } else {
         final List<LibraryBookProxy> searchResultsToUpdate = _searchResults
             .value
-            .toList(); // Create a copy
+            .toList();
         for (final result in newPageResults) {
           final LibraryBookProxy libraryBookProxy = LibraryBookProxy(
             librarybook: result,
           );
-          // Check if this libraryId already exists to prevent duplicates
           if (!searchResultsToUpdate.any(
             (existing) => existing.libraryId == libraryBookProxy.libraryId,
           )) {
@@ -536,11 +529,6 @@ class BookManager {
           _hasMorePages = false;
         }
       }
-    } catch (e) {
-      _notificationService.showSnackBar(
-        NotificationType.error,
-        'Fehler beim Laden weiterer Ergebnisse: $e',
-      );
     } finally {
       _isLoadingMore = false;
     }

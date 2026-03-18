@@ -18,7 +18,7 @@ class SubjectDropdown extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subjects = watchValue((TimetableManager m) => m.subjects);
+    final subjects = watchValue((TimetableManager m) => m.data.subjects);
 
     // Map the selected subject (possibly from a different instance) to the
     // concrete instance used in the items list so DropdownButtonFormField

@@ -134,18 +134,44 @@ class UserManager {
 
   void _onHubEvent(dynamic event) {
     if (event is User) {
-      _log.fine('[STREAM] user event, refetching all users');
-      fetchUsersCommand.runAsync();
+      _upsertUserFromStream(event);
     } else if (event is HubDeleteEvent &&
         event.objectType == HubObjectType.user) {
-      _log.fine('[STREAM] user deleted, refetching all users');
-      fetchUsersCommand.runAsync();
+      _deleteUserFromStream(event.id);
     } else if (event is HubReconnected) {
       fetchUsersCommand.runAsync();
     } else if (event is HubSelectiveReconnect) {
       if (event.changedTypes.contains(HubObjectType.user)) {
         fetchUsersCommand.runAsync();
       }
+    }
+  }
+
+  void _upsertUserFromStream(User user) {
+    _log.fine('[STREAM] upsert user ${user.id}');
+    final list = List<UserWithDevices>.from(_usersWithDevices.value);
+    final index = list.indexWhere((e) => e.user.id == user.id);
+    if (index != -1) {
+      // Preserve existing devices, update user data
+      list[index] = list[index].copyWith(user: user);
+    } else {
+      list.add(UserWithDevices(user: user, devices: []));
+    }
+    list.sort(
+      (a, b) => (a.user.userInfo?.userName ?? '').compareTo(
+        b.user.userInfo?.userName ?? '',
+      ),
+    );
+    _usersWithDevices.value = list;
+    _syncUsersFromDevices();
+  }
+
+  void _deleteUserFromStream(int id) {
+    _log.fine('[STREAM] delete user $id');
+    final list = _usersWithDevices.value.where((e) => e.user.id != id).toList();
+    if (list.length != _usersWithDevices.value.length) {
+      _usersWithDevices.value = list;
+      _syncUsersFromDevices();
     }
   }
 
