@@ -1,13 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/authorization_filter_predicates.dart';
-import 'package:school_data_hub_flutter/features/_authorizations/domain/filters/pupil_authorization_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/filters/authorization_filter_predicates.dart';
+import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
 
-PupilAuthorization _make({
-  bool? status,
-  String? comment,
-  int? fileId,
-}) {
+PupilAuthorization _make({bool? status, String? comment, int? fileId}) {
   return PupilAuthorization(
     authorizationId: 1,
     pupilId: 1,
@@ -20,9 +16,7 @@ PupilAuthorization _make({
 Map<AuthorizationFilter, bool> _filters([
   Set<AuthorizationFilter> active = const {},
 ]) {
-  return {
-    for (final f in AuthorizationFilter.values) f: active.contains(f),
-  };
+  return {for (final f in AuthorizationFilter.values) f: active.contains(f)};
 }
 
 void main() {

@@ -14,7 +14,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_prox
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/pupil_proxy_learning_support_ext.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_screen/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_goal_check_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
@@ -150,7 +150,9 @@ class _CategoryBadgeRow extends WatchingWidget {
                           const Divider(),
                           if (statuses.isEmpty)
                             Padding(
-                              padding: EdgeInsets.symmetric(vertical: Style.spacing.lg),
+                              padding: EdgeInsets.symmetric(
+                                vertical: Style.spacing.lg,
+                              ),
                               child: Text(
                                 'Keine Status vorhanden',
                                 style: context.typography.body.copyWith(
@@ -190,7 +192,10 @@ class _CategoryBadgeRow extends WatchingWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(left: Style.spacing.xs, right: Style.spacing.md),
+          padding: EdgeInsets.only(
+            left: Style.spacing.xs,
+            right: Style.spacing.md,
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -267,10 +272,7 @@ class _CreatedByRow extends WatchingWidget {
       children: [
         Text('Erstellt von:', style: context.typography.bodySmall),
         Gap(Style.spacing.xs),
-        Text(
-          goal.createdBy,
-          style: context.typography.bodySmall.bold,
-        ),
+        Text(goal.createdBy, style: context.typography.bodySmall.bold),
         Gap(Style.spacing.xs),
         Text('am', style: context.typography.bodySmall),
         Gap(Style.spacing.xs),
@@ -304,10 +306,7 @@ class _StrategiesSection extends WatchingWidget {
           child: Row(
             children: [
               Gap(Style.spacing.lg),
-              Text(
-                'Strategien',
-                style: context.typography.body.bold,
-              ),
+              Text('Strategien', style: context.typography.body.bold),
               const Spacer(),
               Icon(
                 isExpanded ? Icons.expand_less : Icons.expand_more,
@@ -412,7 +411,11 @@ class _GoalChecksSection extends WatchingWidget {
             Gap(Style.spacing.xs),
             if (goalChecks.isEmpty) ...[
               Padding(
-                padding: EdgeInsets.only(top: Style.spacing.lg, left: Style.spacing.lg, bottom: Style.spacing.sm),
+                padding: EdgeInsets.only(
+                  top: Style.spacing.lg,
+                  left: Style.spacing.lg,
+                  bottom: Style.spacing.sm,
+                ),
                 child: Text(
                   'Noch keine Checks vorhanden',
                   style: context.typography.body.copyWith(
@@ -454,7 +457,10 @@ class _GoalCheckEntry extends StatelessWidget {
     final learningSupportManager = di<LearningSupportManager>();
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Style.spacing.md, vertical: Style.spacing.xs),
+      padding: EdgeInsets.symmetric(
+        horizontal: Style.spacing.md,
+        vertical: Style.spacing.xs,
+      ),
       child: GestureDetector(
         onLongPress: () async {
           final delete = await confirmationDialog(

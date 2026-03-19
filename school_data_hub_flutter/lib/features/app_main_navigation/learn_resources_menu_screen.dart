@@ -9,9 +9,9 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/books_main_menu_screen/books_main_menu_screen.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/presentation/competence_list_page/competence_list_page.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_page/competence_report_item_list_scope.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/support_category_list_page.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_screen/competence_list_screen.dart';
+import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_screen/competence_report_item_list_scope.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_screen/support_category_list_screen.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_screen/workbook_list_screen.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 

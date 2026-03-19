@@ -1,0 +1,94 @@
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_filter_predicates.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
+
+class AttendancePupilFilterManager implements Resettable {
+  FiltersStateManager get _filterStateManager => di<FiltersStateManager>();
+  PupilsFilter get _pupilsFilter => di<PupilsFilter>();
+  SchoolCalendarManager get _schoolCalendarManager =>
+      di<SchoolCalendarManager>();
+  AttendanceManager get _attendanceManager => di<AttendanceManager>();
+  final _attendancePupilFilterState =
+      ValueNotifier<Map<AttendancePupilFilter, bool>>(
+        initialAttendancePupilFilterValues,
+      );
+
+  ValueListenable<Map<AttendancePupilFilter, bool>>
+  get attendancePupilFilterState => _attendancePupilFilterState;
+
+  AttendancePupilFilterManager init() {
+    _attendanceManager.missedSchooldays.addListener(refreshPupilsFilter);
+    return this;
+  }
+
+  void refreshPupilsFilter() {
+    if (_filterStateManager.filterStates.value[FilterState.attendance] ==
+        false) {
+      return;
+    }
+    _pupilsFilter.refresh();
+  }
+
+  void dispose() {
+    _attendanceManager.missedSchooldays.removeListener(refreshPupilsFilter);
+    _attendancePupilFilterState.dispose();
+
+    return;
+  }
+
+  void setAttendancePupilFilter({
+    required List<AttendancePupilFilterRecord> attendancePupilFilterRecords,
+  }) {
+    for (final record in attendancePupilFilterRecords) {
+      _attendancePupilFilterState.value = {
+        ..._attendancePupilFilterState.value,
+        record.attendancePupilFilter: record.value,
+      };
+    }
+
+    final bool attendanceFilterStateEqualsInitialState =
+        const MapEquality<AttendancePupilFilter, bool>().equals(
+          _attendancePupilFilterState.value,
+          initialAttendancePupilFilterValues,
+        );
+
+    _filterStateManager.setFilterState(
+      filterState: FilterState.attendance,
+      value: !attendanceFilterStateEqualsInitialState,
+    );
+    _pupilsFilter.refresh();
+  }
+
+  @override
+  void resetFilters() {
+    _attendancePupilFilterState.value = {...initialAttendancePupilFilterValues};
+    _filterStateManager.setFilterState(
+      filterState: FilterState.attendance,
+      value: false,
+    );
+  }
+
+  bool isMatchedByAttendanceFilters(PupilProxy pupil) {
+    final thisDate = _schoolCalendarManager.thisDate.value.toLocal();
+
+    final event = _attendanceManager
+        .getPupilMissedSchooldaysProxy(pupil.pupilId)
+        .missedSchooldays
+        .firstWhereOrNull(
+          (m) => m.schoolday!.schoolday.isSameDate(thisDate.toLocal()),
+        );
+
+    return AttendanceFilterPredicates.matchesAttendanceGroup(
+      event,
+      _attendancePupilFilterState.value,
+    );
+  }
+}

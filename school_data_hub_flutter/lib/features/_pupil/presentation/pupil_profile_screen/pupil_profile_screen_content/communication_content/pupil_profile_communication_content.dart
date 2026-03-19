@@ -1,0 +1,204 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:gap/gap.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
+import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen_content/communication_content/communication_values.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen_content/communication_content/dialogs/language_dialog.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_content_widgets.dart';
+
+class PupilProfileCommunicationContent extends WatchingWidget {
+  final PupilProxy pupil;
+  const PupilProfileCommunicationContent({required this.pupil, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final hubSessionManager = di<HubSessionManager>();
+    final communicationPupil = watchPropertyValue(
+      (m) => m.communicationPupil,
+      target: pupil,
+    );
+    final tutorInfo = watchPropertyValue((m) => m.tutorInfo, target: pupil);
+
+    return PupilProfileContentCard(
+      icon: Icons.translate_rounded,
+      iconColor: const Color.fromARGB(255, 13, 193, 154),
+      title: 'Sprache & Kommunikation',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const PupilProfileContentSectionHeader(
+            icon: Icons.language_rounded,
+            title: 'Herkunftssprache',
+          ),
+          const Gap(8),
+          // Language Information
+          PupilProfileContentSectionStart(
+            icon: Icons.home_outlined,
+            label: 'Familiensprache',
+            value: pupil.language,
+          ),
+          PupilProfileContentSectionInside(
+            icon: Icons.support_outlined,
+            label: 'Herkunftssprachlicher Unterricht',
+            value: pupil.familyLanguageLessonsSince != null
+                ? 'seit ${pupil.familyLanguageLessonsSince!.formatDateForUser()}'
+                : 'nein',
+          ),
+          PupilProfileContentSectionInside(
+            icon: Icons.person_outline,
+            label: 'Migrationshintergrund',
+            value: pupil.migrationBackground ? 'Ja' : 'Nein',
+          ),
+
+          PupilProfileContentSectionInside(
+            icon: Icons.person_outline,
+            label: 'Staatsangehörigkeit',
+            value: pupil.nationality ?? 'Kein Eintrag',
+          ),
+
+          PupilProfileContentSectionEnd(
+            icon: Icons.support_outlined,
+            label: 'Erstförderung',
+            value: pupil.migrationSupportEnds != null
+                ? 'bis : ${pupil.migrationSupportEnds!.formatDateForUser()}'
+                : 'keine',
+          ),
+
+          const Gap(16),
+          // German Language Competence
+          const PupilProfileContentSectionHeader(
+            icon: Icons.record_voice_over_outlined,
+            title: 'Kommunikation',
+          ),
+          const Gap(8),
+          PupilProfileContentTwoRows(
+            icon: Icons.person_outline,
+            label: 'Kind',
+            valueWidget: communicationPupil == null
+                ? Text(
+                    'kein Eintrag - tippen zum Hinzufügen',
+                    style: context.typography.body.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: Style.of(context).colors.interactive,
+                    ),
+                  )
+                : CommunicationValues(communicationSkills: communicationPupil),
+            onTap: () =>
+                languageDialog(context, pupil, CommunicationSubject.pupil),
+            onLongPress: () async {
+              if (hubSessionManager.isAdmin == false) {
+                informationDialog(
+                  context,
+                  'Keine Berechtigung',
+                  'Diese Aktion ist nur für Admins verfügbar.',
+                );
+                return;
+              }
+              final confirm = await confirmationDialog(
+                context: context,
+                title: 'Eintrag zurücksetzen',
+                message: 'Eintrag zurücksetzen?',
+              );
+              if (confirm == true) {
+                PupilMutator().updatePupilCommunicationSkills(
+                  pupilId: pupil.pupilId,
+                  communicationSkills: null,
+                );
+              }
+            },
+          ),
+          const Gap(10),
+          PupilProfileContentTwoRows(
+            icon: Icons.person_outline,
+            label: 'Mutter / TutorIn 1',
+            valueWidget: tutorInfo?.communicationTutor1 == null
+                ? Text(
+                    'kein Eintrag - tippen zum Hinzufügen',
+                    style: context.typography.body.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: Style.of(context).colors.interactive,
+                    ),
+                  )
+                : CommunicationValues(
+                    communicationSkills: tutorInfo!.communicationTutor1,
+                  ),
+            onTap: () =>
+                languageDialog(context, pupil, CommunicationSubject.tutor1),
+            onLongPress: () async {
+              final isAdmin = hubSessionManager.isAdmin;
+              if (!isAdmin) {
+                informationDialog(
+                  context,
+                  'Keine Berechtigung',
+                  'Diese Aktion ist nur für Admins verfügbar.',
+                );
+                return;
+              }
+              final success = await confirmationDialog(
+                context: context,
+                title: 'Eintrag zurücksetzen',
+                message: 'Eintrag zurücksetzen?',
+              );
+              if (success == true) {
+                PupilMutator().updateTutorInfo(
+                  pupilId: pupil.pupilId,
+                  tutorInfo: tutorInfo?.copyWith(communicationTutor1: null),
+                );
+              }
+            },
+          ),
+          const Gap(10),
+          PupilProfileContentTwoRows(
+            icon: Icons.person_outline,
+            label: 'Vater / TutorIn 2',
+            valueWidget: tutorInfo?.communicationTutor2 == null
+                ? Text(
+                    'kein Eintrag - tippen zum Hinzufügen',
+                    style: context.typography.body.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: Style.of(context).colors.interactive,
+                    ),
+                  )
+                : CommunicationValues(
+                    communicationSkills: tutorInfo!.communicationTutor2,
+                  ),
+            onTap: () =>
+                languageDialog(context, pupil, CommunicationSubject.tutor2),
+            onLongPress: () async {
+              final isAdmin = hubSessionManager.isAdmin;
+              if (!isAdmin) {
+                informationDialog(
+                  context,
+                  'Keine Berechtigung',
+                  'Diese Aktion ist nur für Admins verfügbar.',
+                );
+                return;
+              }
+              final success = await confirmationDialog(
+                context: context,
+                title: 'Eintrag zurücksetzen',
+                message: 'Eintrag zurücksetzen?',
+              );
+              if (success == true) {
+                PupilMutator().updateTutorInfo(
+                  pupilId: pupil.pupilId,
+                  tutorInfo: tutorInfo != null
+                      ? tutorInfo.copyWith(communicationTutor2: null)
+                      : TutorInfo(createdBy: hubSessionManager.userName!),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -31,16 +31,9 @@ class BirthdayDateRangeDialog extends WatchingWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.cake_rounded,
-                  size: 20,
-                  color: style.colors.error,
-                ),
+                Icon(Icons.cake_rounded, size: 20, color: style.colors.error),
                 const Gap(10),
-                Text(
-                  'Geburtstage',
-                  style: context.typography.title,
-                ),
+                Text('Geburtstage', style: context.typography.title),
               ],
             ),
             const Gap(20),
@@ -70,7 +63,7 @@ class BirthdayDateRangeDialog extends WatchingWidget {
                       borderRadius: BorderRadius.circular(Style.radii.small),
                     ),
                     child: SizedBox(
-                      width: 100,
+                      width: 130,
                       child: Center(
                         child: Text(
                           pastDateValue.isSameDate(now)
@@ -113,7 +106,7 @@ class BirthdayDateRangeDialog extends WatchingWidget {
                       borderRadius: BorderRadius.circular(Style.radii.small),
                     ),
                     child: SizedBox(
-                      width: 100,
+                      width: 130,
                       child: Center(
                         child: Text(
                           futureDateValue.isSameDate(now)

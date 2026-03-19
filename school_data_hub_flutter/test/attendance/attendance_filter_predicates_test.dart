@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_filter_predicates.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_filter_predicates.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
 
 MissedSchoolday _make({
   MissedType missedType = MissedType.missed,
@@ -22,9 +22,7 @@ MissedSchoolday _make({
 Map<AttendancePupilFilter, bool> _filters([
   Set<AttendancePupilFilter> active = const {},
 ]) {
-  return {
-    for (final f in AttendancePupilFilter.values) f: active.contains(f),
-  };
+  return {for (final f in AttendancePupilFilter.values) f: active.contains(f)};
 }
 
 void main() {
@@ -35,7 +33,9 @@ void main() {
 
     test('late counts as present', () {
       expect(
-        AttendanceFilterPredicates.isPresent(_make(missedType: MissedType.late)),
+        AttendanceFilterPredicates.isPresent(
+          _make(missedType: MissedType.late),
+        ),
         isTrue,
       );
     });

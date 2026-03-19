@@ -86,11 +86,7 @@ class ServerLogsScreen extends WatchingWidget {
           ),
           TappableIcon(
             tooltip: 'Alle löschen',
-            icon: Icon(
-              Icons.delete_sweep,
-              size: 30,
-              color: style.colors.error,
-            ),
+            icon: Icon(Icons.delete_sweep, size: 30, color: style.colors.error),
             onPressed: () => _showDeleteAllPopup(context, manager),
           ),
         ],
@@ -100,25 +96,18 @@ class ServerLogsScreen extends WatchingWidget {
           constraints: const BoxConstraints(maxWidth: 700),
           child: CustomScrollView(
             slivers: [
+              SliverPadding(padding: EdgeInsets.only(bottom: Style.spacing.md)),
               if (isLoading && logs.isEmpty)
                 SliverFillRemaining(
-                  child: Center(
-                    child: Spinner(color: style.colors.foreground),
-                  ),
+                  child: Center(child: Spinner(color: style.colors.foreground)),
                 )
               else ...[
                 ContentSliverList<HubSessionLogInfo>(
                   itemsListenable: manager.sessionLogs,
-                  itemBuilder: (context, info) => Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Style.spacing.sm,
-                      vertical: 2,
-                    ),
-                    child: SessionLogCard(
-                      info: info,
-                      onDelete: () => manager.deleteCommand.run(
-                        info.sessionLogEntry.sessionId,
-                      ),
+                  itemBuilder: (context, info) => SessionLogCard(
+                    info: info,
+                    onDelete: () => manager.deleteCommand.run(
+                      info.sessionLogEntry.sessionId,
                     ),
                   ),
                 ),
@@ -133,9 +122,7 @@ class ServerLogsScreen extends WatchingWidget {
                         child: isLoadingMore
                             ? Padding(
                                 padding: EdgeInsets.all(Style.spacing.lg),
-                                child: Spinner(
-                                  color: style.colors.foreground,
-                                ),
+                                child: Spinner(color: style.colors.foreground),
                               )
                             : Button.small(
                                 onPressed: manager.loadMoreCommand.run,

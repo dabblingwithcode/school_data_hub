@@ -12,8 +12,8 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/dialogs/remove_room_from_policy_dialog.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/change_power_levels_dialog.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/users_in_room_list.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/widgets/change_power_levels_dialog.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/widgets/users_in_room_list.dart';
 
 class MatrixRoomEditScreen extends WatchingStatefulWidget {
   final MatrixRoom room;
@@ -260,7 +260,8 @@ class _MatrixRoomEditScreenState extends State<MatrixRoomEditScreen> {
                                                           ),
                                                     )
                                                   : Container(
-                                                      color: style.colors
+                                                      color: style
+                                                          .colors
                                                           .mutedForeground,
                                                       alignment:
                                                           Alignment.center,
@@ -271,8 +272,8 @@ class _MatrixRoomEditScreenState extends State<MatrixRoomEditScreen> {
                                                     ),
                                             )
                                           : Container(
-                                              color: style.colors
-                                                  .mutedForeground,
+                                              color:
+                                                  style.colors.mutedForeground,
                                               alignment: Alignment.center,
                                               child: const Icon(
                                                 Icons.group,
@@ -297,8 +298,8 @@ class _MatrixRoomEditScreenState extends State<MatrixRoomEditScreen> {
                                               _pickAndSetAvatar(room),
                                           icon: Icon(
                                             Icons.add_a_photo_outlined,
-                                            color: style.colors
-                                                .accentForeground,
+                                            color:
+                                                style.colors.accentForeground,
                                             size: 16,
                                           ),
                                         ),
@@ -485,7 +486,11 @@ class _MatrixRoomEditScreenState extends State<MatrixRoomEditScreen> {
           const Gap(20),
           IconButton(
             tooltip: 'Aus Policy entfernen',
-            icon: Icon(Icons.delete_rounded, size: 30, color: style.colors.error),
+            icon: Icon(
+              Icons.delete_rounded,
+              size: 30,
+              color: style.colors.error,
+            ),
             onPressed: () async {
               final result = await showRemoveRoomFromPolicyDialog(
                 context,

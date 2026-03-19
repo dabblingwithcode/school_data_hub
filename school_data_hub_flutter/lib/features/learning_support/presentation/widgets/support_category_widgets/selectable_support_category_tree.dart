@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/manager/select_support_category_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_screen/manager/select_support_category_manager.dart';
 
 const _categoryTextStyle = TextStyle(
   color: Colors.white,

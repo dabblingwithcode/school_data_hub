@@ -1,0 +1,144 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/features/statistics/chart_screen/widgets/attendance_stats_view.dart';
+import 'package:school_data_hub_flutter/features/statistics/chart_screen/widgets/book_lending_stats_view.dart';
+import 'package:school_data_hub_flutter/features/statistics/chart_screen/widgets/chart_page_bottom_bar.dart';
+import 'package:school_data_hub_flutter/features/statistics/chart_screen/widgets/credit_transactions_stats_view.dart';
+import 'package:school_data_hub_flutter/features/statistics/chart_screen/widgets/event_stats_view.dart';
+import 'package:school_data_hub_flutter/features/statistics/chart_screen/widgets/pupil_stats_view.dart';
+
+class ChartScreen extends WatchingWidget {
+  final Map<
+    DateTime,
+    ({
+      int specialNeeds,
+      int migrationSupport,
+      int supportLevel3,
+      int regularPupils,
+      int newPupils,
+    })
+  >
+  chartData;
+  final Map<
+    DateTime,
+    ({
+      int parentsMeeting,
+      int admonition,
+      int afternoonCareAdmonition,
+      int admonitionAndBanned,
+      int otherEvent,
+    })
+  >
+  eventChartData;
+  final Map<DateTime, ({int excused, int unexcused, int goneHome})>
+  attendanceChartData;
+  final Map<DateTime, ({int currentlyLent})> bookLendingChartData;
+  final Map<DateTime, ({int incoming, int outgoing, int balance})>
+  creditTransactionsChartData;
+  final List<Schoolday> schooldays;
+
+  const ChartScreen({
+    super.key,
+    required this.chartData,
+    required this.eventChartData,
+    required this.attendanceChartData,
+    required this.bookLendingChartData,
+    required this.creditTransactionsChartData,
+    required this.schooldays,
+  });
+
+  // Sort schooldays by date - make it accessible
+  List<Schoolday> get sortedSchooldays {
+    return List<Schoolday>.from(schooldays)
+      ..sort((a, b) => a.schoolday.compareTo(b.schoolday));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Style.of(context);
+    final selectedIndex = createOnce<ValueNotifier<int>>(
+      () => ValueNotifier<int>(0),
+    );
+    final index = watchPropertyValue((m) => m.value, target: selectedIndex);
+
+    if (schooldays.isEmpty) {
+      return Scaffold(
+        backgroundColor: style.colors.canvas,
+        appBar: const AppHeader(
+          iconData: Icons.bar_chart_rounded,
+          title: 'Statistik Diagramm',
+        ),
+        body: const Center(child: Text('Keine Daten verfügbar')),
+        bottomNavigationBar: const ActionBar(),
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: style.colors.canvas,
+      appBar: const AppHeader(
+        iconData: Icons.bar_chart_rounded,
+        title: 'Statistik Diagramm',
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: _buildBody(index as int),
+        ),
+      ),
+      bottomNavigationBar: ChartPageBottomBar(
+        selectedIndex: index,
+        onDestinationSelected: (value) => selectedIndex.value = value,
+      ),
+    );
+  }
+
+  Widget _buildBody(int index) {
+    switch (index) {
+      case 0:
+        return PupilStatsView(
+          sortedSchooldays: sortedSchooldays,
+          chartData: chartData,
+        );
+      case 1:
+        return EventStatsView(
+          sortedSchooldays: sortedSchooldays,
+          eventChartData: eventChartData,
+        );
+      case 2:
+        return AttendanceStatsView(
+          sortedSchooldays: sortedSchooldays,
+          attendanceChartData: attendanceChartData,
+        );
+      case 3:
+        return BookLendingStatsView(
+          sortedSchooldays: sortedSchooldays,
+          bookLendingChartData: bookLendingChartData,
+        );
+      case 4:
+        return CreditTransactionsStatsView(
+          sortedSchooldays: sortedSchooldays,
+          creditTransactionsChartData: creditTransactionsChartData,
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+}
+
+class ChartData {
+  final DateTime date;
+  final String dateString;
+  final int count;
+  final String seriesId;
+
+  ChartData({
+    required this.date,
+    required this.dateString,
+    required this.count,
+    required this.seriesId,
+  });
+}

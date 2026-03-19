@@ -11,10 +11,10 @@ import 'package:printing/printing.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/models/attendance_values.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_stats_helper.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/models/attendance_values.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 

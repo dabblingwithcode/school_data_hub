@@ -6,7 +6,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:printing/printing.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';

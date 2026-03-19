@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_proxy_books_ext.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
@@ -152,10 +152,7 @@ class BookLendingPupilCard extends WatchingWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 8.0),
-            child: Text(
-              'Status:',
-              style: context.typography.body.bold,
-            ),
+            child: Text('Status:', style: context.typography.body.bold),
           ),
           const Gap(2),
           Padding(

@@ -7,12 +7,9 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/search_input.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
-import 'package:school_data_hub_flutter/common/widgets/orient_ui/empty_state.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
@@ -24,161 +21,84 @@ class WorkbookListScreen extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = Style.of(context);
-    callOnce((context) => di<WorkbookManager>().fetchWorkbooks());
-    bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
+    final workbookManager = di<WorkbookManager>();
+    final pupilsFilter = di<PupilsFilter>();
+    final filtersStateManager = di<FiltersStateManager>();
 
-    List<Workbook> workbooks = watchValue((WorkbookManager x) => x.workbooks);
+    callOnce((context) => workbookManager.fetchWorkbooks());
 
-    return Scaffold(
-      backgroundColor: style.colors.canvas,
-      appBar: const AppHeader(
-        iconData: Icons.note_alt_rounded,
-        title: 'Arbeitshefte',
+    return ListScreen<Workbook>(
+      iconData: Icons.note_alt_rounded,
+      title: 'Arbeitshefte',
+      backgroundColor: Style.of(context).colors.canvas,
+      searchBarConfig: GenericListSearchBarConfig(
+        statsWidget: const _WorkbookStatsWidget(),
+        searchType: SearchType.workbook,
+        hintText: 'Arbeitsheft suchen',
+        refreshFunction: workbookManager.fetchWorkbooks,
+        onChanged: (value) => pupilsFilter.textFilter.setFilterText(value),
+        filtersActive: filtersStateManager.filtersActive,
+        onResetFilters: pupilsFilter.resetFilters,
       ),
-
-      body: RefreshIndicator(
-        onRefresh: () async => di<WorkbookManager>().fetchWorkbooks(),
-        child: workbooks.isEmpty
-            ? const EmptyState(
-                title: 'Keine Arbeitshefte',
-                description:
-                    'Es wurden noch keine Arbeitshefte angelegt!',
-              )
-            : Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 800),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          left: Style.spacing.md,
-                          top: Style.spacing.lg,
-                          right: Style.spacing.md,
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Gesamt:',
-                              style: context.typography.bodySmall,
-                            ),
-                            Gap(Style.spacing.sm),
-                            Text(
-                              workbooks.length.toString(),
-                              style: context.typography.title.withColor(
-                                style.colors.foreground,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(Style.spacing.sm + 2),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: SearchInput(
-                                searchType: SearchType.workbook,
-                                hintText: 'Arbeitsheft suchen',
-                                refreshFunction:
-                                    di<WorkbookManager>().fetchWorkbooks,
-                                onChanged: (value) => di<PupilsFilter>()
-                                    .textFilter
-                                    .setFilterText(value),
-                                filtersActive:
-                                    di<FiltersStateManager>().filtersActive,
-                                onResetFilters: di<PupilsFilter>().resetFilters,
-                              ),
-                            ),
-                            TappableIcon(
-                              tooltip: 'Filter zurücksetzen',
-                              icon: Icon(
-                                Icons.filter_list,
-                                color: filtersOn
-                                    ? style.colors.warning
-                                    : style.colors.mutedForeground,
-                                size: 30,
-                              ),
-                              onPressed: filtersOn
-                                  ? () => di<PupilsFilter>().resetFilters()
-                                  : null,
-                            ),
-                          ],
-                        ),
-                      ),
-                      workbooks.isEmpty
-                          ? Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(Style.spacing.sm),
-                                child: Text(
-                                  'Keine Ergebnisse',
-                                  style: context.typography.subtitle,
-                                ),
-                              ),
-                            )
-                          : Expanded(
-                              child: ListView.builder(
-                                itemCount: workbooks.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return WorkbookCard(
-                                    key: ValueKey(workbooks[index].isbn),
-                                    workbook: workbooks[index],
-                                  );
-                                },
-                              ),
-                            ),
-                    ],
-                  ),
-                ),
-              ),
-      ),
-      bottomNavigationBar: ActionBar(
-        actions: [
-          TappableIcon(
-            tooltip: 'Neues Arbeitsheft',
-            icon: const Icon(Icons.add, size: 35),
-            onPressed: () async {
-              int? isbn;
-              if (Platform.isAndroid || Platform.isIOS) {
-                final scanResult = await qrScanner(
-                  context: context,
-                  overlayText: 'ISBN code scannen',
-                );
-                if (scanResult == null) return;
-                isbn = int.parse(scanResult);
-              } else {
-                final isbnText = await shortTextfieldDialog(
-                  context: context,
-                  title: 'ISBN',
-                  hintText: 'ISBN',
-                  labelText: 'ISBN',
-                );
-                if (isbnText == null) return;
-                isbn = int.tryParse(isbnText);
-              }
-              if (isbn == null) return;
-              final workbookManager = di<WorkbookManager>();
-              if (!workbookManager.workbooks.value.any(
-                (element) => element.isbn == isbn,
-              )) {
-                if (context.mounted) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (ctx) =>
-                          NewWorkbookScreen(isEdit: false, isbn: isbn!),
-                    ),
-                  );
-                }
-                return;
-              }
-              if (!context.mounted) return;
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) =>
-                      NewWorkbookScreen(isbn: isbn!, isEdit: false),
-                ),
+      itemsListenable: workbookManager.workbooks,
+      itemBuilder: (context, workbook) =>
+          WorkbookCard(key: ValueKey(workbook.isbn), workbook: workbook),
+      onRefresh: () async => workbookManager.fetchWorkbooks(),
+      emptyMessage: 'Es wurden noch keine Arbeitshefte angelegt!',
+      bottomBarActions: [
+        TappableIcon(
+          tooltip: 'Neues Arbeitsheft',
+          icon: const Icon(Icons.add, size: 35),
+          onPressed: () async {
+            int? isbn;
+            if (Platform.isAndroid || Platform.isIOS) {
+              final scanResult = await qrScanner(
+                context: context,
+                overlayText: 'ISBN code scannen',
               );
-            },
+              if (scanResult == null) return;
+              isbn = int.parse(scanResult);
+            } else {
+              final isbnText = await shortTextfieldDialog(
+                context: context,
+                title: 'ISBN',
+                hintText: 'ISBN',
+                labelText: 'ISBN',
+              );
+              if (isbnText == null) return;
+              isbn = int.tryParse(isbnText);
+            }
+            if (isbn == null) return;
+            if (!context.mounted) return;
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (ctx) => NewWorkbookScreen(isEdit: false, isbn: isbn!),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _WorkbookStatsWidget extends WatchingWidget {
+  const _WorkbookStatsWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Style.of(context);
+    final workbooks = watchValue((WorkbookManager x) => x.workbooks);
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 10.0, top: 5.0, right: 10.0),
+      child: Row(
+        children: [
+          Text('Gesamt:', style: context.typography.bodySmall),
+          const Gap(10),
+          Text(
+            workbooks.length.toString(),
+            style: context.typography.title.withColor(style.colors.foreground),
           ),
         ],
       ),

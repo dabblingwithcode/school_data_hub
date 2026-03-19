@@ -13,7 +13,7 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/learn_resou
 import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists_menu_screen.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_menu_screen.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/tools_screen.dart';
-import 'package:school_data_hub_flutter/features/app_settings/settings_page/settings_page.dart';
+import 'package:school_data_hub_flutter/features/app_settings/settings_screen/settings_screen.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class MainMenuBottomNavigation extends WatchingStatefulWidget {

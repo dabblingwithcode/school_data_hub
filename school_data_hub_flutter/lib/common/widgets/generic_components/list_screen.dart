@@ -135,13 +135,10 @@ class ListScreen<T> extends StatelessWidget {
                     height: sliverAppBarHeight,
                     searchWidgetWithStatsRow: searchWidget,
                   ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: Style.spacing.sm),
-                  sliver: ContentSliverList<T>(
-                    itemsListenable: itemsListenable,
-                    itemBuilder: itemBuilder,
-                    emptyMessage: emptyMessage,
-                  ),
+                ContentSliverList<T>(
+                  itemsListenable: itemsListenable,
+                  itemBuilder: itemBuilder,
+                  emptyMessage: emptyMessage,
                 ),
               ],
             ),

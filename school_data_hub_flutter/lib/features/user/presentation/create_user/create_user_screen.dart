@@ -8,6 +8,11 @@ import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/pupil_set_avatar.dart'
+    show CropAvatarView;
+import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
@@ -17,18 +22,13 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/multi_choice.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/spinner.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
-import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
-import 'package:school_data_hub_flutter/common/widgets/avatar/pupil_set_avatar.dart'
-    show CropAvatarView;
+import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/widgets/scope_names_selector.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/widgets/roles_dropdown.dart';
@@ -163,8 +163,9 @@ class CreateOrEditUserScreen extends WatchingWidget {
                         padding: EdgeInsets.only(bottom: Style.spacing.sm),
                         child: Text(
                           'Erstellt: ${user.userInfo!.created.formatDateForUser()}',
-                          style: context.typography.bodySmall
-                              .withColor(style.colors.mutedForeground),
+                          style: context.typography.bodySmall.withColor(
+                            style.colors.mutedForeground,
+                          ),
                         ),
                       ),
                     if (devices.isNotEmpty) ...[
@@ -212,14 +213,20 @@ class CreateOrEditUserScreen extends WatchingWidget {
                                                     ? d.deviceName
                                                     : d.deviceId,
                                                 style: context
-                                                    .typography.bodySmall.w600,
+                                                    .typography
+                                                    .bodySmall
+                                                    .w600,
                                               ),
                                               Text(
                                                 'Zuletzt: ${d.lastLogin.formatDateForUser()} · ${d.isActive ? "Aktiv" : "Inaktiv"}',
                                                 style: context
-                                                    .typography.caption
-                                                    .withColor(style.colors
-                                                        .mutedForeground),
+                                                    .typography
+                                                    .caption
+                                                    .withColor(
+                                                      style
+                                                          .colors
+                                                          .mutedForeground,
+                                                    ),
                                               ),
                                             ],
                                           ),
@@ -316,16 +323,14 @@ class CreateOrEditUserScreen extends WatchingWidget {
                           children: [
                             MultiChoice(
                               value: watchedSetAsAdmin,
-                              onChanged: (bool v) =>
-                                  setAsAdmin.value = v,
+                              onChanged: (bool v) => setAsAdmin.value = v,
                             ),
                             const Gap(8),
                             Text('Ist Admin', style: context.typography.body),
                             Gap(Style.spacing.xl),
                             MultiChoice(
                               value: watchedSetAsTester,
-                              onChanged: (bool v) =>
-                                  setAsTester.value = v,
+                              onChanged: (bool v) => setAsTester.value = v,
                             ),
                             const Gap(8),
                             Text(
@@ -354,8 +359,9 @@ class CreateOrEditUserScreen extends WatchingWidget {
                       children: [
                         Text(
                           'Wählen Sie die Kinder aus, für die dieser Benutzer berechtigt ist.',
-                          style: context.typography.bodySmall
-                              .withColor(style.colors.mutedForeground),
+                          style: context.typography.bodySmall.withColor(
+                            style.colors.mutedForeground,
+                          ),
                         ),
                         Gap(Style.spacing.md),
                         Button(
@@ -431,7 +437,9 @@ class CreateOrEditUserScreen extends WatchingWidget {
                                         bottom: Style.spacing.sm,
                                       ),
                                       child: CardBox(
-                                        padding: EdgeInsets.all(Style.spacing.sm),
+                                        padding: EdgeInsets.all(
+                                          Style.spacing.sm,
+                                        ),
                                         child: Row(
                                           children: [
                                             AvatarWithBadges(
@@ -446,7 +454,9 @@ class CreateOrEditUserScreen extends WatchingWidget {
                                                 Text(
                                                   listedPupil.firstName,
                                                   style: context
-                                                      .typography.subtitle.bold,
+                                                      .typography
+                                                      .subtitle
+                                                      .bold,
                                                 ),
                                                 Text(
                                                   listedPupil.lastName,
@@ -461,7 +471,9 @@ class CreateOrEditUserScreen extends WatchingWidget {
                                                 Text(
                                                   listedPupil.group,
                                                   style: context
-                                                      .typography.subtitle.bold
+                                                      .typography
+                                                      .subtitle
+                                                      .bold
                                                       .withColor(
                                                         style.colors.groupColor,
                                                       ),
@@ -469,9 +481,12 @@ class CreateOrEditUserScreen extends WatchingWidget {
                                                 Text(
                                                   listedPupil.schoolGrade.name,
                                                   style: context
-                                                      .typography.subtitle.bold
+                                                      .typography
+                                                      .subtitle
+                                                      .bold
                                                       .withColor(
-                                                        style.colors
+                                                        style
+                                                            .colors
                                                             .schoolGradeColor,
                                                       ),
                                                 ),
@@ -491,8 +506,9 @@ class CreateOrEditUserScreen extends WatchingWidget {
                           const Gap(8),
                           Text(
                             'Keine Kinder ausgewählt',
-                            style: context.typography.bodySmall
-                                .withColor(style.colors.mutedForeground),
+                            style: context.typography.bodySmall.withColor(
+                              style.colors.mutedForeground,
+                            ),
                           ),
                         ],
                       ],
@@ -609,8 +625,7 @@ class CreateOrEditUserScreen extends WatchingWidget {
                         children: [
                           MultiChoice(
                             value: watchedMultipleEntries,
-                            onChanged: (bool v) =>
-                                multipleEntries.value = v,
+                            onChanged: (bool v) => multipleEntries.value = v,
                           ),
                           const Gap(8),
                           Text(
@@ -771,9 +786,7 @@ class _UserAvatarPickerState extends State<_UserAvatarPicker> {
             ),
             clipBehavior: Clip.antiAlias,
             child: _uploading
-                ? Center(
-                    child: Spinner(color: style.colors.background),
-                  )
+                ? Center(child: Spinner(color: style.colors.background))
                 : _buildImage(),
           ),
           if (!_uploading)
@@ -892,8 +905,9 @@ class _SectionCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: context.typography.subtitle.bold
-                .withColor(style.colors.accent),
+            style: context.typography.subtitle.bold.withColor(
+              style.colors.accent,
+            ),
           ),
           Gap(Style.spacing.md),
           child,
@@ -914,10 +928,7 @@ class _LabeledField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: context.typography.body.bold,
-        ),
+        Text(label, style: context.typography.body.bold),
         const Gap(6),
         child,
       ],

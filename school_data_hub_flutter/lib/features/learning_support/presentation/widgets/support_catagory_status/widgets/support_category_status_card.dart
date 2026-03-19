@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_contr
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/pupil_proxy_learning_support_ext.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_screen/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_goal_card.dart';

@@ -6,14 +6,14 @@ import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/get_image_cached_or_download.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/pupil_set_avatar.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:widget_zoom/widget_zoom.dart';
 
 class AvatarImage extends WatchingStatefulWidget {
@@ -79,8 +79,7 @@ class _AvatarImageState extends State<AvatarImage> {
               child: widget.pupil.avatar == null
                   ? const Text('Foto hochladen')
                   : const Text('Foto ersetzen'),
-              onTap: () =>
-                  setAvatar(context: context, pupil: widget.pupil),
+              onTap: () => setAvatar(context: context, pupil: widget.pupil),
             ),
             if (widget.pupil.avatar != null)
               PopupMenuItem<void>(
@@ -108,7 +107,8 @@ class _AvatarImageState extends State<AvatarImage> {
         child: Center(
           child: avatar != null
               ? WidgetZoom(
-                  heroAnimationTag: widget.heroTag ??
+                  heroAnimationTag:
+                      widget.heroTag ??
                       '${avatar.documentId}_${widget.pupil.pupilId}',
                   zoomWidget: SizedBox(
                     width: widget.size,
@@ -140,12 +140,10 @@ class _AvatarImageState extends State<AvatarImage> {
                   width: widget.size,
                   height: widget.size,
                   decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(widget.size / 2),
+                    borderRadius: BorderRadius.circular(widget.size / 2),
                   ),
                   child: ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(widget.size / 2),
+                    borderRadius: BorderRadius.circular(widget.size / 2),
                     child: Image.asset(
                       avatarAuth
                           ? 'assets/dummy-profile-pic-auth.png'

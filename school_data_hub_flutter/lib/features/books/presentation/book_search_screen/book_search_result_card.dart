@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
+import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
-import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tag.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
@@ -30,19 +31,12 @@ class BookSearchResultCard extends WatchingWidget {
     final descriptionTileController = createOnce<ExpansionController>(
       () => ExpansionController(),
     );
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Card(
-        color: style.colors.background,
-        surfaceTintColor: style.colors.background,
-        child: InkWell(
-          onLongPress: () async {},
-          child: _BookSearchResultContent(
-            bookProxy: bookProxy,
-            books: books,
-            descriptionTileController: descriptionTileController,
-          ),
-        ),
+    return CardBox(
+      padding: EdgeInsets.only(top: Style.spacing.sm, bottom: Style.spacing.sm),
+      child: _BookSearchResultContent(
+        bookProxy: bookProxy,
+        books: books,
+        descriptionTileController: descriptionTileController,
       ),
     );
   }
@@ -83,7 +77,7 @@ class _BookSearchResultContent extends WatchingWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 15),
+                  padding: EdgeInsets.only(left: Style.spacing.lg),
                   child: Text(
                     bookProxy.title,
                     style: context.typography.subtitle.bold,
@@ -94,7 +88,10 @@ class _BookSearchResultContent extends WatchingWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 15),
+          padding: EdgeInsets.only(
+            left: Style.spacing.lg,
+            right: Style.spacing.md,
+          ),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -110,7 +107,7 @@ class _BookSearchResultContent extends WatchingWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 15),
+              padding: EdgeInsets.only(left: Style.spacing.lg),
               child: KeyedSubtree(
                 key: ValueKey(bookProxy.imagePath),
                 child: UnencryptedImageInCard(
@@ -121,7 +118,7 @@ class _BookSearchResultContent extends WatchingWidget {
                 ),
               ),
             ),
-            const Gap(15),
+            Gap(Style.spacing.lg),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -182,7 +179,7 @@ class _BookSearchResultContent extends WatchingWidget {
           ],
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15),
+          padding: EdgeInsets.symmetric(horizontal: Style.spacing.lg),
           child: ExpansionHeader(
             expansionController: descriptionTileController,
             includeSwitch: true,
@@ -196,7 +193,7 @@ class _BookSearchResultContent extends WatchingWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15),
+          padding: EdgeInsets.symmetric(horizontal: Style.spacing.lg),
           child: ExpansionBody(
             tileController: descriptionTileController,
             widgetList: [
@@ -217,9 +214,17 @@ class _BookSearchResultContent extends WatchingWidget {
                     description: result.value,
                   );
                 },
-                child: Text(
-                  bookProxy.description,
-                  style: context.typography.body.withColor(style.colors.accent),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 200),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(right: Style.spacing.lg),
+                    child: Text(
+                      bookProxy.description,
+                      style: context.typography.body.withColor(
+                        style.colors.accent,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],

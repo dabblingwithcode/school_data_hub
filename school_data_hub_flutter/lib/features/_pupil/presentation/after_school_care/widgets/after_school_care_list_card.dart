@@ -9,8 +9,8 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/widgets/after_school_care_details.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
@@ -92,10 +92,8 @@ class _AfterSchoolCareNameRow extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final style = Style.of(context);
-    final firstName =
-        watchPropertyValue((m) => m.firstName, target: pupil);
-    final lastName =
-        watchPropertyValue((m) => m.lastName, target: pupil);
+    final firstName = watchPropertyValue((m) => m.firstName, target: pupil);
+    final lastName = watchPropertyValue((m) => m.lastName, target: pupil);
     return Row(
       children: [
         Text(
@@ -103,9 +101,9 @@ class _AfterSchoolCareNameRow extends WatchingWidget {
           overflow: TextOverflow.fade,
           softWrap: false,
           textAlign: TextAlign.left,
-          style: context.typography.title.withColor(
-            style.colors.foreground,
-          ).bold,
+          style: context.typography.title
+              .withColor(style.colors.foreground)
+              .bold,
         ),
         Gap(Style.spacing.xs),
         Text(
@@ -113,9 +111,7 @@ class _AfterSchoolCareNameRow extends WatchingWidget {
           overflow: TextOverflow.fade,
           softWrap: false,
           textAlign: TextAlign.left,
-          style: context.typography.title.withColor(
-            style.colors.foreground,
-          ),
+          style: context.typography.title.withColor(style.colors.foreground),
         ),
         Gap(Style.spacing.xs),
       ],
@@ -136,12 +132,12 @@ class _AfterSchoolCareTimeDisplay extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final style = Style.of(context);
-    final thisDate =
-        watchValue((SchoolCalendarManager x) => x.thisDate);
+    final thisDate = watchValue((SchoolCalendarManager x) => x.thisDate);
     watchPropertyValue((m) => m.afterSchoolCare, target: pupil);
     final weekday = dateTimeToAfterSchoolCareWeekday(thisDate);
-    final timeText =
-        weekday != null ? (pupil.pickUpTime(weekday) ?? 'keine') : 'keine';
+    final timeText = weekday != null
+        ? (pupil.pickUpTime(weekday) ?? 'keine')
+        : 'keine';
 
     return GestureDetector(
       onTap: () => tileController.toggle(),

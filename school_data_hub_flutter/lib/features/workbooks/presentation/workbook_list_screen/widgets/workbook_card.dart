@@ -15,7 +15,7 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/_competence/presentation/widgets/competence_grades_widget.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/widgets/competence_grades_widget.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
@@ -194,16 +194,13 @@ class _WorkbookCardContent extends WatchingWidget {
                           ),
                           SizedBox(width: Style.spacing.xs),
                           workbook.level != null
-                              ? GradesWidget(
-                                  stringWithGrades: workbook.level!,
-                                )
+                              ? GradesWidget(stringWithGrades: workbook.level!)
                               : Text(
                                   'nicht angegeben',
                                   overflow: TextOverflow.fade,
-                                  style:
-                                      context.typography.subtitle.withColor(
-                                        style.colors.foreground,
-                                      ),
+                                  style: context.typography.subtitle.withColor(
+                                    style.colors.foreground,
+                                  ),
                                 ),
                         ],
                       ),
@@ -263,8 +260,7 @@ class _WorkbookCardContent extends WatchingWidget {
                             Gap(Style.spacing.sm),
                             Expanded(
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     '${pupil.firstName} ${pupil.lastName}',
@@ -273,27 +269,24 @@ class _WorkbookCardContent extends WatchingWidget {
                                   const Gap(4),
                                   Text(
                                     '${pupilWorkbook.createdBy} - ${pupilWorkbook.createdAt.formatDateForUser()}',
-                                    style: context.typography.bodySmall
-                                        .muted(context),
+                                    style: context.typography.bodySmall.muted(
+                                      context,
+                                    ),
                                   ),
                                   if (pupilWorkbook.comment != null &&
-                                      pupilWorkbook
-                                          .comment!.isNotEmpty)
+                                      pupilWorkbook.comment!.isNotEmpty)
                                     Padding(
                                       padding: EdgeInsets.only(
                                         top: Style.spacing.xs,
                                       ),
                                       child: Text(
                                         pupilWorkbook.comment!,
-                                        style: context
-                                            .typography.bodySmall
+                                        style: context.typography.bodySmall
                                             .copyWith(
-                                              fontStyle:
-                                                  FontStyle.italic,
+                                              fontStyle: FontStyle.italic,
                                             ),
                                         maxLines: 2,
-                                        overflow:
-                                            TextOverflow.ellipsis,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                 ],

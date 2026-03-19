@@ -4,7 +4,7 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -50,7 +50,9 @@ class PupilManagementSection extends WatchingWidget {
                   if (selectedPupilIds.isNotEmpty)
                     Text(
                       '${selectedPupilIds.length} ausgewählt',
-                      style: context.typography.body.withColor(style.colors.mutedForeground),
+                      style: context.typography.body.withColor(
+                        style.colors.mutedForeground,
+                      ),
                     ),
                   Gap(Style.spacing.sm),
                   ElevatedButton.icon(
@@ -138,7 +140,9 @@ class PupilManagementSection extends WatchingWidget {
         ),
         subtitle: Text(
           'ID: ${pupil.pupilId}',
-          style: context.typography.bodySmall.withColor(style.colors.mutedForeground),
+          style: context.typography.bodySmall.withColor(
+            style.colors.mutedForeground,
+          ),
         ),
         trailing: IconButton(
           icon: Icon(Icons.remove_circle_outline, color: style.colors.error),

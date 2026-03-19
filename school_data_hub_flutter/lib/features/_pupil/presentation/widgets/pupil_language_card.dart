@@ -4,8 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
@@ -48,10 +48,7 @@ class PupilLanguageCard extends StatelessWidget {
                     children: [
                       const Text('Familiensprache:'),
                       const Gap(4),
-                      Text(
-                        pupil.language,
-                        style: context.typography.body.bold,
-                      ),
+                      Text(pupil.language, style: context.typography.body.bold),
                     ],
                   ),
                   const Gap(4),

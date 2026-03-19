@@ -4,8 +4,8 @@ import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_stats_helper.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_stats_helper.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_selector_filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_text_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
@@ -13,8 +13,8 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_helper_functions.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/books/domain/filters/pupil_book_lending_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 
@@ -31,9 +31,8 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
       di<AttendancePupilFilterManager>();
   FiltersStateManager get _filtersStateManager => di<FiltersStateManager>();
 
-  PupilsFilterImplementation(
-    PupilProxyManager pupilsManager,
-  ) : _pupilsManager = pupilsManager {
+  PupilsFilterImplementation(PupilProxyManager pupilsManager)
+    : _pupilsManager = pupilsManager {
     _log.info('PupilsFilterImplementation created');
     // We need to populate the group filters with the available groups
     final availableGroups = _pupilIdentityManager.groups.value;
@@ -78,6 +77,7 @@ class PupilsFilterImplementation with ChangeNotifier implements PupilsFilter {
     }
     refresh();
   }
+
   // guard from trying to call a value when the filter is disposed
   bool _isDisposed = false;
   @override

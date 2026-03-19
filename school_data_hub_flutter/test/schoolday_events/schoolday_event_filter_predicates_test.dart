@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/filters/schoolday_event_filter_predicates.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/models/schoolday_event_enums.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_predicates.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/models/schoolday_event_enums.dart';
 
 /// Helper to create a minimal [SchooldayEvent] for filter testing.
 SchooldayEvent _makeEvent({
@@ -29,11 +29,10 @@ SchooldayEvent _makeEvent({
 }
 
 /// Build a filter map with all filters off, then turn on the specified ones.
-Map<SchooldayEventFilter, bool> _filters(
-    [Set<SchooldayEventFilter> active = const {}]) {
-  return {
-    for (final f in SchooldayEventFilter.values) f: active.contains(f),
-  };
+Map<SchooldayEventFilter, bool> _filters([
+  Set<SchooldayEventFilter> active = const {},
+]) {
+  return {for (final f in SchooldayEventFilter.values) f: active.contains(f)};
 }
 
 void main() {
@@ -125,9 +124,7 @@ void main() {
     });
 
     test('passes when event type matches active filter', () {
-      final event = _makeEvent(
-        eventType: SchooldayEventType.admonition,
-      );
+      final event = _makeEvent(eventType: SchooldayEventType.admonition);
       expect(
         SchooldayEventFilterPredicates.matchesFirstComplementaryGroup(
           event,
@@ -138,9 +135,7 @@ void main() {
     });
 
     test('fails when event type does not match active filter', () {
-      final event = _makeEvent(
-        eventType: SchooldayEventType.parentsMeeting,
-      );
+      final event = _makeEvent(eventType: SchooldayEventType.parentsMeeting);
       expect(
         SchooldayEventFilterPredicates.matchesFirstComplementaryGroup(
           event,

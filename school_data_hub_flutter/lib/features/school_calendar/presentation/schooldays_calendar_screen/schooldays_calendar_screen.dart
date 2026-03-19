@@ -11,11 +11,11 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.d
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_screen/widgets/attendance_list_card.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
+import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_screen/widgets/attendance_list_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_screen/widgets/schoolday_event_pupil_list_card/schoolday_event_pupil_list_card.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
+import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_screen/widgets/schoolday_event_pupil_list_card/schoolday_event_pupil_list_card.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_helper.dart'
     show SchoolCalendarHelper;
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
@@ -87,7 +87,10 @@ class SchooldaysCalendarScreen extends WatchingWidget {
         foregroundColor: style.colors.background,
         backgroundColor: AppColors.backgroundColor,
         title: Center(
-          child: Text('Schultage', style: context.typography.title.withColor(style.colors.background)),
+          child: Text(
+            'Schultage',
+            style: context.typography.title.withColor(style.colors.background),
+          ),
         ),
         actions: [
           TappableIcon(

@@ -21,17 +21,17 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/matrix_tools_page.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_screen/pupil_identity_stream_screen.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/matrix_tools_screen.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_screen.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_screen/matrix_users_list_screen.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_screen/edit_school_data_screen.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_screen/school_semester_list.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/schooldays_calendar_screen/schooldays_calendar_screen.dart';
-import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page_controller.dart';
-import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
+import 'package:school_data_hub_flutter/features/statistics/chart_screen/chart_page_controller.dart';
+import 'package:school_data_hub_flutter/features/statistics/statistics_screen/controller/statistics.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_screen/timetable_screen.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_screen.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_screen.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_screen.dart';
@@ -101,10 +101,7 @@ class ToolsScreen extends WatchingWidget {
                   children: [
                     Icon(icon, size: 24, color: style.colors.accent),
                     const Gap(8),
-                    Text(
-                      title,
-                      style: context.typography.title,
-                    ),
+                    Text(title, style: context.typography.title),
                   ],
                 ),
                 const Gap(16),
@@ -127,10 +124,7 @@ class ToolsScreen extends WatchingWidget {
 
     return Scaffold(
       backgroundColor: Style.of(context).colors.canvas,
-      appBar: const AppHeader(
-        iconData: Icons.build_rounded,
-        title: 'Tools',
-      ),
+      appBar: const AppHeader(iconData: Icons.build_rounded, title: 'Tools'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final width = Platform.isWindows
@@ -182,10 +176,11 @@ class ToolsScreen extends WatchingWidget {
                               if (!context.mounted) return;
                               Navigator.of(context).push(
                                 MaterialPageRoute<void>(
-                                  builder: (context) => PupilIdentityStreamScreen(
-                                    role: PupilIdentityStreamRole.receiver,
-                                    importedChannelName: channelName,
-                                  ),
+                                  builder: (context) =>
+                                      PupilIdentityStreamScreen(
+                                        role: PupilIdentityStreamRole.receiver,
+                                        importedChannelName: channelName,
+                                      ),
                                 ),
                               );
                             },
@@ -250,11 +245,12 @@ class ToolsScreen extends WatchingWidget {
                               if (!context.mounted) return;
                               Navigator.of(context).push(
                                 MaterialPageRoute<void>(
-                                  builder: (context) => PupilIdentityStreamScreen(
-                                    role: PupilIdentityStreamRole.sender,
-                                    encryptedData: encryptedPupilIdentities,
-                                    selectedPupilIds: pupilIds,
-                                  ),
+                                  builder: (context) =>
+                                      PupilIdentityStreamScreen(
+                                        role: PupilIdentityStreamRole.sender,
+                                        encryptedData: encryptedPupilIdentities,
+                                        selectedPupilIds: pupilIds,
+                                      ),
                                 ),
                               );
                             },

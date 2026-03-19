@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_prox
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_screen/controller/select_matrix_rooms_list_controller.dart';
 
 class NewMatrixUserScreen extends StatefulWidget {
   final String? matrixId;
@@ -46,10 +46,7 @@ class NewMatrixUserScreenState extends State<NewMatrixUserScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Bitte warten',
-                    style: context.typography.subtitle.bold,
-                  ),
+                  Text('Bitte warten', style: context.typography.subtitle.bold),
                   const Gap(20),
                   const CircularProgressIndicator(),
                 ],
@@ -90,7 +87,8 @@ class _NewMatrixUserScreenContent extends StatefulWidget {
       _NewMatrixUserScreenContentState();
 }
 
-class _NewMatrixUserScreenContentState extends State<_NewMatrixUserScreenContent> {
+class _NewMatrixUserScreenContentState
+    extends State<_NewMatrixUserScreenContent> {
   final TextEditingController matrixIdController = TextEditingController();
   final TextEditingController displayNameController = TextEditingController();
   Set<String> roomIds = {};
@@ -138,10 +136,7 @@ class _NewMatrixUserScreenContentState extends State<_NewMatrixUserScreenContent
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      '@',
-                      style: context.typography.body.bold,
-                    ),
+                    Text('@', style: context.typography.body.bold),
                     const Gap(5),
                     SizedBox(
                       width: 160,
@@ -163,9 +158,7 @@ class _NewMatrixUserScreenContentState extends State<_NewMatrixUserScreenContent
                               width: 2,
                             ),
                           ),
-                          labelStyle: TextStyle(
-                            color: style.colors.accent,
-                          ),
+                          labelStyle: TextStyle(color: style.colors.accent),
                           labelText: 'Matrix-Id',
                         ),
                         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -244,7 +237,10 @@ class _NewMatrixUserScreenContentState extends State<_NewMatrixUserScreenContent
                                               ),
                                               child: Text(
                                                 listedRoom.name!,
-                                                style: context.typography.body.bold,
+                                                style: context
+                                                    .typography
+                                                    .body
+                                                    .bold,
                                               ),
                                             ),
                                             const Spacer(),
@@ -318,7 +314,8 @@ class _NewMatrixUserScreenContentState extends State<_NewMatrixUserScreenContent
                     if (file != null && context.mounted) {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (context) => PdfViewerScreen(pdfGenerator: () async => file),
+                          builder: (context) =>
+                              PdfViewerScreen(pdfGenerator: () async => file),
                         ),
                       );
                     }

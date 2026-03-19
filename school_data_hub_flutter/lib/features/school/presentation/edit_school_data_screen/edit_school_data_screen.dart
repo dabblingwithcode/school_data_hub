@@ -36,7 +36,7 @@ class EditSchoolDataScreen extends WatchingWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(Style.spacing.lg),
+            padding: EdgeInsets.all(Style.spacing.sm),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -63,7 +63,7 @@ class EditSchoolDataScreen extends WatchingWidget {
                   'Bearbeiten Sie die Informationen Ihrer Schule. Felder mit * sind Pflichtfelder.',
                   style: context.typography.body.muted(context),
                 ),
-
+                Gap(Style.spacing.lg),
                 const SchoolDataFormScreen(),
                 Gap(Style.spacing.xl),
                 Row(

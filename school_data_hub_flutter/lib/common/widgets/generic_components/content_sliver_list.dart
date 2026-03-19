@@ -55,11 +55,14 @@ class ContentSliverList<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _ListSliver<T>(
-      itemsListenable: itemsListenable,
-      itemBuilder: itemBuilder,
-      emptyMessage: emptyMessage,
-      spacing: spacing ?? Style.spacing.listCardSpacing,
+    return SliverPadding(
+      padding: EdgeInsets.symmetric(horizontal: Style.spacing.sm),
+      sliver: _ListSliver<T>(
+        itemsListenable: itemsListenable,
+        itemBuilder: itemBuilder,
+        emptyMessage: emptyMessage,
+        spacing: spacing ?? Style.spacing.listCardSpacing,
+      ),
     );
   }
 }

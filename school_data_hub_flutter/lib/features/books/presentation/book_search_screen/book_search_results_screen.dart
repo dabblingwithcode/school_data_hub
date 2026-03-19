@@ -1,16 +1,17 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/content_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/spinner.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
-import 'package:flutter_it/flutter_it.dart';
-
-import '../../domain/models/library_book_proxy.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
-import 'book_search_result_card.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_search_screen/book_search_result_card.dart';
 
 class BookSearchResultsScreen extends WatchingWidget {
   final String? title;
@@ -34,85 +35,82 @@ class BookSearchResultsScreen extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = Style.of(context);
     final bookManager = di<BookManager>();
-    final scrollController = createOnce(() => ScrollController());
 
-    callOnce((context) {
-      scrollController.addListener(() {
-        if (scrollController.position.pixels >=
-                scrollController.position.maxScrollExtent - 300 &&
-            !bookManager.isLoadingMore) {
-          bookManager.loadNextPage(
-            title: title,
-            author: author,
-            keywords: keywords,
-            location: location,
-            readingLevel: readingLevel,
-            available: borrowStatus == BorrowedStatus.available
-                ? true
-                : borrowStatus == BorrowedStatus.borrowed
-                ? false
-                : null,
-            tags: selectedTags.isNotEmpty ? selectedTags : null,
-          );
-        }
-      });
-    });
-
-    final searchResults = watchValue((BookManager x) => x.searchResults);
+    final groupedResults =
+        createOnce<ValueListenable<List<List<LibraryBookProxy>>>>(
+          () => bookManager.searchResults.map(
+            (results) => groupBy(
+              results,
+              (LibraryBookProxy book) => book.isbn,
+            ).values.where((g) => g.isNotEmpty).toList(),
+          ),
+        );
 
     return Scaffold(
-      appBar: const AppHeader(
-        iconData: Icons.search,
-        title: 'Suchergebnisse',
-      ),
-      body: searchResults.isEmpty
-          ? const Center(child: Text("Keine Ergebnisse"))
-          : Builder(
-              builder: (context) {
-                final groupedMap = groupBy(
-                  searchResults,
-                  (LibraryBookProxy book) => book.isbn,
-                );
-                final groups = groupedMap.values.toList();
-
-                return Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 800),
-                    child: ListView.builder(
-                      controller: scrollController,
-                      itemCount:
-                          groups.length + (bookManager.hasMorePages ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index < groups.length) {
-                          final group = groups[index];
-                          if (group.isEmpty) {
-                            return const SizedBox.shrink();
-                          }
-                          return BookSearchResultCard(group: group);
-                        } else {
-                          if (bookManager.hasMorePages &&
-                              bookManager.isLoadingMore) {
-                            return Padding(
-                              padding: EdgeInsets.all(Style.spacing.lg),
-                              child: Center(
-                                child: Spinner(
-                                  color: style.colors.accent,
-                                ),
-                              ),
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        }
-                      },
-                    ),
-                  ),
-                );
-              },
+      backgroundColor: Style.of(context).colors.canvas,
+      appBar: const AppHeader(iconData: Icons.search, title: 'Suchergebnisse'),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification.metrics.pixels >=
+                  notification.metrics.maxScrollExtent - 300 &&
+              !bookManager.isLoadingMore) {
+            bookManager.loadNextPage(
+              title: title,
+              author: author,
+              keywords: keywords,
+              location: location,
+              readingLevel: readingLevel,
+              available: borrowStatus == BorrowedStatus.available
+                  ? true
+                  : borrowStatus == BorrowedStatus.borrowed
+                  ? false
+                  : null,
+              tags: selectedTags.isNotEmpty ? selectedTags : null,
+            );
+          }
+          return false;
+        },
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: CustomScrollView(
+              slivers: [
+                ContentSliverList<List<LibraryBookProxy>>(
+                  itemsListenable: groupedResults,
+                  itemBuilder: (context, group) =>
+                      BookSearchResultCard(group: group),
+                ),
+                const _LoadingSliver(),
+              ],
             ),
+          ),
+        ),
+      ),
       bottomNavigationBar: const ActionBar(),
     );
+  }
+}
+
+class _LoadingSliver extends WatchingWidget {
+  const _LoadingSliver();
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Style.of(context);
+    final bookManager = di<BookManager>();
+    // Watch searchResults so this rebuilds after each page load;
+    // hasMorePages/isLoadingMore are plain getters, not listenable.
+    watchValue((BookManager x) => x.searchResults);
+
+    if (bookManager.hasMorePages && bookManager.isLoadingMore) {
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.all(Style.spacing.lg),
+          child: Center(child: Spinner(color: style.colors.accent)),
+        ),
+      );
+    }
+    return const SliverToBoxAdapter(child: SizedBox.shrink());
   }
 }

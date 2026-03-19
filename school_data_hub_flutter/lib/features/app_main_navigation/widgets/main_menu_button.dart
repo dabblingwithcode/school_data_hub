@@ -24,9 +24,7 @@ class MainMenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final style = Style.of(context);
     final size = buttonSize;
-    final borderRadius = BorderRadius.all(
-      Radius.circular(Style.radii.large),
-    );
+    final borderRadius = BorderRadius.all(Radius.circular(Style.radii.medium));
     return Padding(
       padding: EdgeInsets.all(Style.spacing.xs),
       child: Tooltip(

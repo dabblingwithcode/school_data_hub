@@ -18,7 +18,7 @@ ColorTokens get _colorsLight => ColorTokens(
     primary: AppColors.appStyleButtonColor,
     primaryForeground: const Color(0xFFFAFAFA),
     secondary: AppColors.secondaryButtonColor,
-    secondaryForeground: const Color(0xFF18181B),
+    secondaryForeground: const Color(0xFFFAFAFA),
     destructive: AppColors.dangerButtonColor,
     destructiveForeground: const Color(0xFFFAFAFA),
     link: AppColors.interactiveColor,

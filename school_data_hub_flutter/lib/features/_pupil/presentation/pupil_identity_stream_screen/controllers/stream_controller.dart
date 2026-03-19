@@ -1,0 +1,738 @@
+import 'dart:async';
+
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:logging/logging.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/notification_manager.dart';
+import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_stream_crypto.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_stream_suscription.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_screen/models/stream_state.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_screen/utils/stream_utils.dart';
+
+final _log = Logger('PupilIdentityStreamController');
+
+class PupilIdentityStreamController {
+  final PupilIdentityStreamRole role;
+  final String? encryptedData;
+  final List<int>? selectedPupilIds;
+  final String? importedChannelName;
+  late String channelName;
+
+  final _notificationService = di<NotificationManager>();
+
+  // Controller creates and owns the state
+  late final PupilIdentityStreamState state;
+  StreamSubscription<PupilIdentityDto>? _subscription;
+
+  Timer? _rejectionTimer;
+  bool _isDisposed = false;
+  PupilIdentitySession? _session;
+
+  // Callbacks for UI interactions
+  final void Function(String userName) onConfirmationRequired;
+  final void Function(int totalCount, int newCount) onTransferCompleted;
+  final void Function(bool wasAutoRejected) onRejectionReceived;
+  final void Function()? onSenderShutdown;
+
+  PupilIdentityStreamController({
+    required this.role,
+    this.encryptedData,
+    this.selectedPupilIds,
+    this.importedChannelName,
+    required this.onConfirmationRequired,
+    required this.onTransferCompleted,
+    required this.onRejectionReceived,
+    this.onSenderShutdown,
+  }) {
+    // Controller creates and owns the state
+    state = PupilIdentityStreamState();
+    channelName = importedChannelName ?? StreamUtils.generateConnectionCode();
+
+    // Auto-start the connection when controller is created
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      setupConnection();
+    });
+  }
+
+  /// Complete a transfer and update state
+  void completeTransfer() {
+    if (_isDisposed) {
+      return;
+    }
+    state.streamState.isProcessing.value = false;
+    state.streamState.isCompleted.value = true;
+    state.streamState.isTransmitting.value = false;
+    _notificationService.setHeavyLoadingValue(false);
+
+    if (role == PupilIdentityStreamRole.receiver) {
+      state.streamState.receiverJoined.value = false;
+      state.streamState.requestSent.value = false;
+      state.streamState.isConnected.value = false;
+    }
+
+    // For sender, record the successful transfer
+    if (role == PupilIdentityStreamRole.sender &&
+        state.streamState.receiverUserName.value.isNotEmpty) {
+      state.transferState.transferCounter.value += 1;
+      final now = DateTime.now();
+      final dateStr =
+          '${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+      state.transferState.transferHistory.value = [
+        '${state.streamState.receiverUserName.value} - $dateStr',
+        ...state.transferState.transferHistory.value,
+      ];
+
+      // Remove from active transfers
+      final updatedActiveTransfers = Set<String>.from(
+        state.receiverState.activeTransfers.value,
+      );
+      updatedActiveTransfers.remove(state.streamState.receiverUserName.value);
+      state.receiverState.activeTransfers.value = updatedActiveTransfers;
+    }
+
+    state.streamState.statusMessage.value =
+        role == PupilIdentityStreamRole.sender
+        ? 'Datenübertragung abgeschlossen!'
+        : 'Schülerdaten wurden erfolgreich empfangen!';
+
+    // Only cancel subscription for receiver, sender should stay connected
+    if (role == PupilIdentityStreamRole.receiver) {
+      _subscription?.cancel();
+    }
+  }
+
+  String get _sendChannel => _session?.privateStreamId ?? channelName;
+
+  Future<String> _encryptIfSession(String value) async =>
+      _session != null ? await _session!.encryptValueAsync(value) : value;
+
+  /// Validate user session before sending a message to prevent null sender
+  String? _validateUserSession() {
+    final currentUser = di<HubSessionManager>().user?.userInfo?.userName;
+    if (currentUser == null || currentUser.isEmpty) {
+      _log.severe(
+        'Cannot send message: username is null or empty. User session may have expired.',
+      );
+      return null;
+    }
+    return currentUser;
+  }
+
+  /// Reset sender state for new requests
+  void resetSenderForNewRequest() {
+    if (_isDisposed) {
+      return;
+    }
+    if (role == PupilIdentityStreamRole.sender) {
+      state.streamState.receiverJoined.value = false;
+      state.streamState.receiverUserName.value = '';
+      state.streamState.requestReceived.value = false;
+      state.streamState.isTransmitting.value = false;
+      _notificationService.setHeavyLoadingValue(false);
+      state.streamState.isCompleted.value = false;
+      state.streamState.statusMessage.value =
+          'Bereit für neue Übertragung. Warte auf Empfänger...';
+    }
+  }
+
+  /// Handle confirmation of a user request
+  Future<void> confirmUserRequest(String userName) async {
+    // Add to active transfers and remove from pending requests
+    state.receiverState.activeTransfers.value = {
+      ...state.receiverState.activeTransfers.value,
+      userName,
+    };
+    final updatedPendingRequests = Map<String, DateTime>.from(
+      state.receiverState.pendingRequests.value,
+    );
+    updatedPendingRequests.remove(userName);
+    state.receiverState.pendingRequests.value = updatedPendingRequests;
+
+    // Build encrypted data for the receiver
+    String? dataToSend = encryptedData;
+    if (dataToSend == null && selectedPupilIds != null) {
+      dataToSend = await PupilIdentityHelper()
+          .generateEncryptedPupilIdentitiesTransferString(selectedPupilIds!);
+    }
+
+    // Update local state to transmitting
+    _handleRequestConfirmed();
+
+    // Validate user session before sending
+    final validatedSender = _validateUserSession();
+    if (validatedSender == null) {
+      _log.severe(
+        'Cannot confirm transfer for $userName: invalid user session',
+      );
+      return;
+    }
+
+    // Notify receiver of confirmation (backward compatibility)
+    await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+      _sendChannel,
+      PupilIdentityDto(
+        sender: validatedSender,
+        type: 'confirmed',
+        value: await _encryptIfSession(userName),
+      ),
+    );
+
+    // Send the data targeted to this receiver
+    await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+      _sendChannel,
+      PupilIdentityDto(
+        sender: validatedSender,
+        type: 'data',
+        dataTimeStamp: di<EnvManager>().activeEnv?.lastIdentitiesUpdate,
+        value: await _encryptIfSession('$userName:${dataToSend ?? ''}'),
+      ),
+    );
+
+    state.streamState.statusMessage.value =
+        'Daten an $userName gesendet. Warte auf Bestätigung...';
+  }
+
+  /// Handle rejection of a user request
+  Future<void> rejectUserRequest(String userName) async {
+    // Add to rejected users list
+    state.receiverState.rejectedUsers.value = {
+      ...state.receiverState.rejectedUsers.value,
+      userName,
+    };
+
+    // Remove from pending requests and connected receivers
+    final updatedPendingRequests = Map<String, DateTime>.from(
+      state.receiverState.pendingRequests.value,
+    );
+    updatedPendingRequests.remove(userName);
+    state.receiverState.pendingRequests.value = updatedPendingRequests;
+
+    final updatedConnectedReceivers = Set<String>.from(
+      state.receiverState.connectedReceivers.value,
+    );
+    updatedConnectedReceivers.remove(userName);
+    state.receiverState.connectedReceivers.value = updatedConnectedReceivers;
+
+    // Send rejection message to specific receiver
+    await _sendRejectionMessage(userName, isAutoRejection: false);
+  }
+
+  /// Clear rejected users list
+  void clearRejectedUsers() {
+    state.receiverState.rejectedUsers.value = {};
+  }
+
+  /// Send rejection message with retry logic for reliability
+  Future<void> _sendRejectionMessage(
+    String userName, {
+    bool isAutoRejection = false,
+  }) async {
+    // Validate user session before sending
+    final validatedSender = _validateUserSession();
+    if (validatedSender == null) {
+      _log.severe('Cannot send rejection to $userName: invalid user session');
+      return;
+    }
+
+    final rejectionValue = isAutoRejection ? 'auto:$userName' : userName;
+    int retryCount = 0;
+    const maxRetries = 3;
+    const retryDelay = Duration(milliseconds: 100);
+
+    while (retryCount < maxRetries) {
+      try {
+        _log.info(
+          'Sending rejection message to $userName (attempt ${retryCount + 1})',
+        );
+        await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+          _sendChannel,
+          PupilIdentityDto(
+            sender: validatedSender,
+            type: 'rejected',
+            value: await _encryptIfSession(rejectionValue),
+          ),
+        );
+        _log.info('Rejection message sent successfully to $userName');
+        return; // Success, exit retry loop
+      } catch (e) {
+        retryCount++;
+        _log.warning(
+          'Failed to send rejection message to $userName (attempt $retryCount): $e',
+        );
+
+        if (retryCount < maxRetries) {
+          await Future<void>.delayed(retryDelay);
+        } else {
+          _log.severe(
+            'Failed to send rejection message to $userName after $maxRetries attempts',
+          );
+        }
+      }
+    }
+  }
+
+  /// Setup the stream connection
+  Future<void> setupConnection() async {
+    _log.info('Setting up connection for role: $role, channel: $channelName');
+    state.streamState.isProcessing.value = true;
+    state.streamState.statusMessage.value =
+        role == PupilIdentityStreamRole.sender
+        ? 'Warte auf Verbindung des Empfängers...'
+        : 'Verbindung zum Sender herstellen...';
+
+    try {
+      // If we're a sender, we need to generate encrypted data if not provided
+      String? dataToSend = encryptedData;
+      if (role == PupilIdentityStreamRole.sender &&
+          dataToSend == null &&
+          selectedPupilIds != null) {
+        _log.info(
+          'Generating encrypted data for ${selectedPupilIds!.length} pupils',
+        );
+        dataToSend = await PupilIdentityHelper()
+            .generateEncryptedPupilIdentitiesTransferString(selectedPupilIds!);
+      }
+
+      _log.info('Creating stream subscription...');
+      final crypto = PupilIdentityStreamCrypto();
+      _subscription = PupilIdentityStream().encryptedPupilIdsStreamSubscription(
+        channelName: channelName,
+        role: role,
+        encryptedPupilIds: dataToSend,
+        crypto: crypto,
+        onSessionReady: (PupilIdentitySession session) {
+          _session = session;
+          _log.info('Private stream session ready: ${session.privateStreamId}');
+          if (role == PupilIdentityStreamRole.receiver) {
+            _sendReceiverMessages();
+          }
+        },
+        onConnected: () => _handleConnected(),
+        onStatusUpdate: (message) => _handleStatusUpdate(message),
+        onCompleted: () => _handleCompleted(),
+        onReceiverJoined: (userName) => _handleReceiverJoined(userName),
+        onReceiverConnecting: (userName) => _handleReceiverConnecting(userName),
+        onReceiverLeft: (userName) => _handleReceiverLeft(userName),
+        onRequestReceived: (userName) => _handleRequestReceived(userName),
+        onRequestConfirmed: () => _handleRequestConfirmed(),
+        onRequestRejected: (wasAutoRejected) =>
+            _handleRequestRejected(wasAutoRejected),
+        onDataReceived: (newCount, totalCount) =>
+            _handleDataReceived(newCount, totalCount),
+        onShouldPopPage: () => _handleShouldPopPage(),
+        onSenderShutdown: (message) => _handleSenderShutdown(message),
+      );
+    } catch (e) {
+      state.streamState.statusMessage.value =
+          'Fehler bei der Verbindung: ${e.toString()}';
+    }
+  }
+
+  /// Handle connection established
+  void _handleConnected() {
+    _log.info('onConnected callback triggered for role: $role');
+    state.streamState.isConnected.value = true;
+    if (role == PupilIdentityStreamRole.sender) {
+      state.streamState.statusMessage.value =
+          'Verbunden! Warte auf Empfänger...';
+    } else {
+      state.streamState.statusMessage.value =
+          'Verbunden! Warte auf Handshake...';
+      // Receiver sends presence on public channel so sender sees "Empfänger verbindet..."
+      final validatedSender = _validateUserSession();
+      if (validatedSender != null) {
+        di<Client>().pupilIdentity
+            .sendPupilIdentityMessage(
+              _sendChannel,
+              PupilIdentityDto(
+                sender: validatedSender,
+                type: 'receiver_presence',
+                value: validatedSender,
+              ),
+            )
+            .ignore();
+      }
+      // Joined/request sent only after private session (in onSessionReady)
+    }
+    _log.info(
+      'Connection established for channel: $channelName with role: $role',
+    );
+  }
+
+  /// Send receiver join and request messages (on private channel; values are encrypted).
+  Future<void> _sendReceiverMessages() async {
+    _log.info('Receiver sending joined message and data request...');
+
+    // Validate user session before sending
+    final validatedSender = _validateUserSession();
+    if (validatedSender == null) {
+      _log.severe('Cannot send receiver messages: invalid user session');
+      return;
+    }
+
+    // Encrypt payload when using private channel so sender can decrypt
+    final joinedValue = await _encryptIfSession(validatedSender);
+    final requestValue = await _encryptIfSession(validatedSender);
+
+    try {
+      await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+        _sendChannel,
+        PupilIdentityDto(
+          sender: validatedSender,
+          type: 'joined',
+          value: joinedValue,
+        ),
+      );
+      _log.info(
+        'Joined message sent successfully, waiting before sending request...',
+      );
+
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+
+      if (!state.streamState.isConnected.value) {
+        _log.info(
+          'Connection lost (likely auto-rejected), not sending request',
+        );
+        return;
+      }
+
+      _log.info('Sending data request...');
+      await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+        _sendChannel,
+        PupilIdentityDto(
+          sender: validatedSender,
+          type: 'request',
+          value: requestValue,
+        ),
+      );
+
+      if (state.streamState.isConnected.value) {
+        _log.info('Data request sent successfully');
+        state.streamState.requestSent.value = true;
+        state.streamState.statusMessage.value =
+            'Datenanfrage gesendet. Warte auf Bestätigung...';
+        _startRejectionTimeout();
+      }
+    } catch (error) {
+      _log.severe('Error in receiver flow: $error');
+      if (state.streamState.isConnected.value) {
+        state.streamState.statusMessage.value = 'Fehler beim Senden: $error';
+      }
+    }
+  }
+
+  /// Start a timeout to detect if receiver is being ignored (possibly banned)
+  void _startRejectionTimeout() {
+    _rejectionTimer?.cancel(); // Cancel any existing timer
+    _rejectionTimer = Timer(const Duration(seconds: 10), () {
+      // If we haven't received any response after 10 seconds, assume we might be banned
+      if (state.streamState.isConnected.value &&
+          state.streamState.requestSent.value &&
+          !state.streamState.isTransmitting.value) {
+        _log.warning(
+          'No response received within timeout, connection might be rejected silently',
+        );
+        state.streamState.statusMessage.value =
+            'Keine Antwort vom Sender. Möglicherweise wurden Sie abgelehnt.';
+
+        // Optionally trigger rejection handling
+        // _handleRequestRejected(true); // Assume auto-rejection due to timeout
+      }
+    });
+  }
+
+  /// Handle status updates
+  void _handleStatusUpdate(String message) {
+    state.streamState.statusMessage.value = message;
+    _log.info('Status update: $message');
+  }
+
+  /// Handle transfer completion
+  void _handleCompleted() {
+    completeTransfer();
+    // Reset sender for new requests after a short delay
+    if (role == PupilIdentityStreamRole.sender) {
+      Future.delayed(const Duration(seconds: 3), () {
+        if (_isDisposed) {
+          return;
+        }
+        resetSenderForNewRequest();
+      });
+    }
+    _log.info(
+      '[${role.name.toUpperCase()}]: Data transfer completed for channel:[ $channelName]',
+    );
+  }
+
+  /// Handle receiver connecting (receiver_presence on public channel before handshake).
+  /// Do not add to connectedReceivers here; the receiver card appears only after
+  /// we receive "joined" on the private stream in _handleReceiverJoined.
+  void _handleReceiverConnecting(String userName) {
+    _log.info('onReceiverConnecting: $userName');
+    state.streamState.receiverJoined.value = true;
+    state.streamState.receiverUserName.value = userName;
+    state.streamState.statusMessage.value =
+        'Empfänger $userName verbindet... Warte auf Handshake...';
+  }
+
+  /// Handle receiver joined
+  void _handleReceiverJoined(String userName) {
+    _log.info('onReceiverJoined callback triggered with userName: $userName');
+
+    // Check if user was previously rejected
+    if (state.receiverState.rejectedUsers.value.contains(userName)) {
+      _log.info('User $userName was previously rejected, auto-rejecting');
+      // Send auto-rejection message immediately, with retries for reliability
+      _sendRejectionMessage(userName, isAutoRejection: true);
+      return;
+    }
+
+    // Add to connected receivers
+    state.receiverState.connectedReceivers.value = {
+      ...state.receiverState.connectedReceivers.value,
+      userName,
+    };
+
+    state.streamState.receiverJoined.value = true;
+    state.streamState.receiverUserName.value = userName;
+    state.streamState.statusMessage.value =
+        'Empfänger $userName ist beigetreten! Warte auf Datenanfrage...';
+  }
+
+  /// Handle receiver left
+  void _handleReceiverLeft(String userName) {
+    _log.info('Receiver $userName left the stream');
+
+    // Remove from connected receivers
+    final updatedConnectedReceivers = Set<String>.from(
+      state.receiverState.connectedReceivers.value,
+    );
+    updatedConnectedReceivers.remove(userName);
+    state.receiverState.connectedReceivers.value = updatedConnectedReceivers;
+
+    // Remove from pending requests if any
+    final updatedPendingRequests = Map<String, DateTime>.from(
+      state.receiverState.pendingRequests.value,
+    );
+    updatedPendingRequests.remove(userName);
+    state.receiverState.pendingRequests.value = updatedPendingRequests;
+
+    // Remove from active transfers if any
+    final updatedActiveTransfers = Set<String>.from(
+      state.receiverState.activeTransfers.value,
+    );
+    updatedActiveTransfers.remove(userName);
+    state.receiverState.activeTransfers.value = updatedActiveTransfers;
+
+    // Update status message and reset completion state if needed
+    if (updatedConnectedReceivers.isEmpty) {
+      // No receivers left - reset to standby state
+      resetSenderForNewRequest();
+      _log.info('Reset to standby state - no receivers connected');
+    } else {
+      // Other receivers still connected
+      state.streamState.statusMessage.value =
+          'Empfänger $userName hat die Verbindung beendet. ${updatedConnectedReceivers.length} Empfänger verbunden.';
+    }
+  }
+
+  /// Handle request received
+  void _handleRequestReceived(String userName) {
+    // Check if user was previously rejected
+    if (state.receiverState.rejectedUsers.value.contains(userName)) {
+      _log.info(
+        'User $userName was previously rejected, auto-rejecting request',
+      );
+      // Send auto-rejection message with retry logic
+      _sendRejectionMessage(userName, isAutoRejection: true);
+      return;
+    }
+
+    // Ensure receiver appears in the list (e.g. if "joined" was missed or arrived after "request")
+    if (!state.receiverState.connectedReceivers.value.contains(userName)) {
+      state.receiverState.connectedReceivers.value = {
+        ...state.receiverState.connectedReceivers.value,
+        userName,
+      };
+      state.streamState.receiverJoined.value = true;
+      state.streamState.receiverUserName.value = userName;
+    }
+    state.streamState.statusMessage.value =
+        'Empfänger $userName hat Daten angefordert. Warten auf Bestätigung...';
+
+    // Add to pending requests with timestamp
+    final updatedPendingRequests = Map<String, DateTime>.from(
+      state.receiverState.pendingRequests.value,
+    );
+    updatedPendingRequests[userName] = DateTime.now();
+    state.receiverState.pendingRequests.value = updatedPendingRequests;
+
+    state.streamState.requestReceived.value = true;
+
+    // Auto-confirm if enabled
+    if (state.streamState.autoConfirmEnabled.value) {
+      _log.info(
+        'Auto-confirm enabled, automatically confirming transfer for $userName',
+      );
+      confirmUserRequest(userName);
+    } else {
+      onConfirmationRequired.call(userName);
+    }
+  }
+
+  /// Handle request confirmed
+  void _handleRequestConfirmed() {
+    _rejectionTimer?.cancel(); // Cancel timeout since we got a response
+    state.streamState.isTransmitting.value = true;
+    _notificationService.setHeavyLoadingValue(true);
+    state.streamState.statusMessage.value =
+        'Bestätigung erhalten. Sende Daten...';
+  }
+
+  /// Handle request rejected
+  void _handleRequestRejected(bool wasAutoRejected) {
+    _rejectionTimer?.cancel(); // Cancel timeout since we got a response
+    // For receiver - update connection state and show rejection dialog
+    state.streamState.isConnected.value = false;
+    state.streamState.isProcessing.value = false;
+    onRejectionReceived.call(wasAutoRejected);
+  }
+
+  /// Handle data received
+  void _handleDataReceived(int newCount, int totalCount) {
+    // Show success dialog for receiver
+    onTransferCompleted.call(totalCount, newCount);
+  }
+
+  /// Handle should pop page
+  void _handleShouldPopPage() {
+    // This callback is now handled by the success dialog
+    // The dialog will close both itself and the page
+  }
+
+  void _handleSenderShutdown(String message) {
+    _log.info('Sender shutdown received: $message');
+    // Call the callback to notify the UI
+    onSenderShutdown?.call();
+  }
+
+  /// Cancel transfer and cleanup
+  void cancelTransfer() {
+    _subscription?.cancel();
+  }
+
+  /// Dispose resources
+  void dispose() {
+    _isDisposed = true;
+    // Cancel the rejection timeout timer
+    _rejectionTimer?.cancel();
+
+    // If receiver is leaving, send close message before disposing
+    if (role == PupilIdentityStreamRole.receiver &&
+        state.streamState.isConnected.value) {
+      // Validate user session before sending
+      final validatedSender = _validateUserSession();
+      if (validatedSender != null) {
+        // Send close message and ignore errors since we're disposing (async to allow encrypt)
+        Future(() async {
+          final value = await _encryptIfSession(validatedSender);
+          return di<Client>().pupilIdentity.sendPupilIdentityMessage(
+            _sendChannel,
+            PupilIdentityDto(
+              sender: validatedSender,
+              type: 'close',
+              value: value,
+            ),
+          );
+        }).ignore();
+      }
+    }
+
+    _subscription?.cancel();
+    state.dispose(); // Controller owns and disposes the state
+  }
+
+  // Additional methods needed by the UI
+  void startStream() {
+    // Initialize stream connection for both sender and receiver
+    setupConnection();
+  }
+
+  void stopStream() async {
+    // Validate user session before sending any messages
+    final validatedSender = _validateUserSession();
+
+    // If sender is shutting down, notify all receivers
+    if (role == PupilIdentityStreamRole.sender &&
+        state.streamState.isConnected.value) {
+      if (validatedSender != null) {
+        try {
+          // Send shutdown message to all connected receivers
+          await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+            _sendChannel,
+            PupilIdentityDto(
+              sender: validatedSender,
+              type: 'shutdown',
+              value: await _encryptIfSession('Sender hat den Stream beendet'),
+            ),
+          );
+          _log.info('Sent shutdown message to all receivers');
+
+          // Wait a brief moment to ensure message is sent
+          await Future<void>.delayed(const Duration(milliseconds: 200));
+        } catch (e) {
+          _log.warning('Failed to send shutdown message: $e');
+        }
+      }
+    }
+
+    // If receiver is leaving, send close message to notify sender
+    if (role == PupilIdentityStreamRole.receiver &&
+        state.streamState.isConnected.value) {
+      if (validatedSender != null) {
+        try {
+          await di<Client>().pupilIdentity.sendPupilIdentityMessage(
+            _sendChannel,
+            PupilIdentityDto(
+              sender: validatedSender,
+              type: 'close',
+              value: await _encryptIfSession(validatedSender),
+            ),
+          );
+          _log.info('Sent close message to sender before leaving');
+        } catch (e) {
+          _log.warning('Failed to send close message: $e');
+        }
+      }
+    }
+
+    _rejectionTimer?.cancel();
+    _subscription?.cancel();
+    // state.streamState.isConnected.value = false;
+    //state.streamState.isProcessing.value = false;
+  }
+
+  void setChannelName(String newChannelName) {
+    channelName = newChannelName;
+  }
+
+  void confirmTransfer(String receiverName) {
+    // Use the existing confirmUserRequest method
+    confirmUserRequest(receiverName);
+  }
+
+  void rejectTransfer(String receiverName) {
+    // Use the existing rejectUserRequest method
+    rejectUserRequest(receiverName);
+  }
+
+  /// Set auto-confirm enabled state
+  void setAutoConfirmEnabled(bool enabled) {
+    state.streamState.autoConfirmEnabled.value = enabled;
+  }
+}

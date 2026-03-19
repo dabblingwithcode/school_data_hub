@@ -83,12 +83,8 @@ ${info.sessionLogEntry.stackTrace ?? 'none set'}
 
     return GestureDetector(
       onLongPress: onDelete != null ? handleLongPress : null,
-      child: Container(
-        decoration: BoxDecoration(
-          color: style.colors.surfaceContainer,
-          borderRadius: BorderRadius.circular(Style.radii.large),
-          border: Border.all(color: borderColor, width: 2),
-        ),
+      child: CardBox(
+        padding: EdgeInsets.zero,
         child: ExpansionTile(
           tilePadding: EdgeInsets.symmetric(
             horizontal: 14,
@@ -128,8 +124,9 @@ ${info.sessionLogEntry.stackTrace ?? 'none set'}
                   const SizedBox(width: 4),
                   Text(
                     timestamp,
-                    style: context.typography.bodySmall
-                        .withColor(style.colors.mutedForeground),
+                    style: context.typography.bodySmall.withColor(
+                      style.colors.mutedForeground,
+                    ),
                   ),
                   const Spacer(),
                   Icon(
@@ -140,8 +137,9 @@ ${info.sessionLogEntry.stackTrace ?? 'none set'}
                   const SizedBox(width: 4),
                   Text(
                     durationMs,
-                    style: context.typography.bodySmall
-                        .withColor(style.colors.mutedForeground),
+                    style: context.typography.bodySmall.withColor(
+                      style.colors.mutedForeground,
+                    ),
                   ),
                   if (entry.numQueries != null) ...[
                     const SizedBox(width: 12),
@@ -153,8 +151,9 @@ ${info.sessionLogEntry.stackTrace ?? 'none set'}
                     const SizedBox(width: 4),
                     Text(
                       '${entry.numQueries} Q',
-                      style: context.typography.bodySmall
-                          .withColor(style.colors.mutedForeground),
+                      style: context.typography.bodySmall.withColor(
+                        style.colors.mutedForeground,
+                      ),
                     ),
                     const Gap(20),
                     TappableIcon(
@@ -210,10 +209,7 @@ class _ExpandableErrorText extends StatelessWidget {
 }
 
 class _ExpandableMonoText extends StatefulWidget {
-  const _ExpandableMonoText({
-    required this.text,
-    this.color,
-  });
+  const _ExpandableMonoText({required this.text, this.color});
 
   final String text;
   final Color? color;
@@ -339,10 +335,7 @@ class _LogLevelDot extends StatelessWidget {
       child: Container(
         width: 8,
         height: 8,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
       ),
     );
   }

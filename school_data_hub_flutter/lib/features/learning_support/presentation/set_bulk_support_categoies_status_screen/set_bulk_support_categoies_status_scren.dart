@@ -1,0 +1,188 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/spinner.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_screen/manager/set_bulk_support_categories_status_manager.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_screen/widgets/scorable_support_category_tree.dart';
+
+/// A page that allows scoring support categories for a pupil.
+///
+/// Categories that already have a status are indicated with a green dot.
+/// Changes can be made using the GrowthDropdown for each category.
+/// The FAB saves all pending changes at once.
+class SetBulkSupportCategoriesStatusScreen extends WatchingWidget {
+  final PupilProxy pupil;
+
+  const SetBulkSupportCategoriesStatusScreen({required this.pupil, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final style = Style.of(context);
+    final manager = createOnce(
+      () => SetBuldSupportCategoriesStatusManager(pupil: pupil),
+    );
+    final pendingScores = watch(manager.pendingScores).value;
+    final hasPendingChanges = pendingScores.isNotEmpty;
+
+    return Scaffold(
+      appBar: AppBar(
+        foregroundColor: style.colors.background,
+        centerTitle: true,
+        backgroundColor: style.colors.accent,
+        title: Text(
+          'Förderung - ${pupil.firstName}',
+          style: context.typography.title.withColor(style.colors.background),
+        ),
+        actions: [
+          if (hasPendingChanges)
+            IconButton(
+              icon: Icon(Icons.clear_all, color: style.colors.background),
+              tooltip: 'Alle Änderungen verwerfen',
+              onPressed: () => manager.clearAllScores(),
+            ),
+        ],
+      ),
+      body: Center(
+        heightFactor: 1,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(Style.spacing.sm),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(Style.spacing.sm),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Kategorien bewerten',
+                                style: context.typography.title.withColor(
+                                  style.colors.foreground,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                hasPendingChanges
+                                    ? '${pendingScores.length} Änderung${pendingScores.length > 1 ? 'en' : ''} ausstehend'
+                                    : 'Bewertungen mit dem Dropdown auswählen',
+                                style: context.typography.body.withColor(
+                                  hasPendingChanges
+                                      ? style.colors.interactive
+                                      : style.colors.mutedForeground,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Legend
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 10,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: style.colors.success,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Bereits bewertet',
+                              style: context.typography.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  ScorableSupportCategoryTree(pupil: pupil, manager: manager),
+                  const SizedBox(height: 80), // Space for FAB
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: hasPendingChanges
+          ? FloatingActionButton.extended(
+              backgroundColor: style.colors.accent,
+              icon: Icon(Icons.save, color: style.colors.background),
+              label: Text(
+                'Speichern (${pendingScores.length})',
+                style: TextStyle(color: style.colors.background),
+              ),
+              onPressed: () => _saveAllChanges(context, manager),
+            )
+          : null,
+    );
+  }
+
+  Future<void> _saveAllChanges(
+    BuildContext context,
+    SetBuldSupportCategoriesStatusManager manager,
+  ) async {
+    final style = Style.of(context);
+    final learningSupportManager = di<LearningSupportManager>();
+    final pendingScores = manager.pendingScoresList;
+
+    if (pendingScores.isEmpty) return;
+
+    // Show loading indicator
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(child: Spinner(color: style.colors.accent)),
+    );
+
+    try {
+      // Process all pending scores
+      for (final pending in pendingScores) {
+        // For now, we always create a new status entry
+        // The backend handles whether it's an update or create
+        await learningSupportManager.postSupportCategoryStatus(
+          pupilId: pupil.pupilId,
+          supportCategoryId: pending.categoryId,
+          status: pending.score,
+          comment: '', // Empty comment for batch scoring
+        );
+      }
+
+      // Clear pending changes after successful save
+      manager.clearAllScores();
+
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Return to previous page
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      // Close loading dialog on error
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Show error message
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Fehler beim Speichern: $e'),
+            backgroundColor: style.colors.error,
+          ),
+        );
+      }
+    }
+  }
+}

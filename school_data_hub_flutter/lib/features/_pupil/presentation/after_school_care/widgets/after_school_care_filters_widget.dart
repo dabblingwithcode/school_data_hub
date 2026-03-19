@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/filters/attendance_pupil_filter.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
 
 class AfterSchoolCareFiltersWidget extends WatchingWidget {
   const AfterSchoolCareFiltersWidget({super.key});

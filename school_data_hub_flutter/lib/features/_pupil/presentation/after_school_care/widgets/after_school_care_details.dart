@@ -10,7 +10,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/widgets/dialogs/after_school_care_edit_emergency_care_dialog.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_content_widgets.dart';
 
 class AfterSchoolCareDetails extends WatchingWidget {
   final PupilProxy pupil;

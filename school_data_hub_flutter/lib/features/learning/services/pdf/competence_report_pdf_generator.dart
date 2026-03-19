@@ -10,7 +10,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/services/pdf/competence_report_pdf_helpers.dart';

@@ -3,15 +3,15 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
-import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorizations_list_screen/authorizations_list_screen.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/services/pupil_label_pdf_service.dart';
-import 'package:school_data_hub_flutter/features/_school_lists/presentation/school_lists_page/school_lists_page.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
+import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_screen/authorizations_list_screen.dart';
+import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_screen/school_lists_screen.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class SchoolListsMenuScreen extends StatelessWidget {
@@ -22,10 +22,7 @@ class SchoolListsMenuScreen extends StatelessWidget {
     final locale = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Style.of(context).colors.canvas,
-      appBar: AppHeader(
-        iconData: Icons.rule_rounded,
-        title: locale.checkLists,
-      ),
+      appBar: AppHeader(iconData: Icons.rule_rounded, title: locale.checkLists),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final width = Platform.isWindows
@@ -44,7 +41,7 @@ class SchoolListsMenuScreen extends StatelessWidget {
                   alignment: WrapAlignment.center,
                   children: [
                     MainMenuButton(
-                      destinationPage: const SchoolListsPage(),
+                      destinationPage: const SchoolListsScreen(),
                       buttonIcon: Icon(
                         Icons.rule,
                         size: 50,
