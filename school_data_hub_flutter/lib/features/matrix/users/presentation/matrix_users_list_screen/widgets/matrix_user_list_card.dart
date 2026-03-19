@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
@@ -15,8 +16,8 @@ import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_contr
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
@@ -376,7 +377,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
               //         _mainMenuBottomNavManager.setPupilProfileNavPage(
               //           ProfileNavigationState.info.value,
               //         );
-              //         Navigator.of(context).push(
+              //         Navigator.of(context, rootNavigator: true).push(
               //           MaterialPageRoute(
               //             builder: (ctx) => PupilProfilePage(pupil: pupil),
               //           ),
@@ -391,7 +392,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
               //           _mainMenuBottomNavManager.setPupilProfileNavPage(
               //             ProfileNavigationState.info.value,
               //           );
-              //           Navigator.of(context).push(
+              //           Navigator.of(context, rootNavigator: true).push(
               //             MaterialPageRoute(
               //               builder: (ctx) => PupilProfilePage(
               //                 pupil: userRelationship.pupil!,
@@ -467,14 +468,11 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                   );
                                   return;
                                 }
-                                Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (ctx) => PupilProfilePage(
-                                      pupil: MatrixUserHelper.linkedPupil(
-                                        matrixUser,
-                                      )!,
-                                    ),
+                                context.push(
+                                  RoutePaths.pupilProfilePath(
+                                    pupil.internalId,
                                   ),
+                                  extra: pupil,
                                 );
                               },
                               child: matrixUser.isParent
@@ -545,11 +543,11 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                   di<BottomNavManager>().setPupilProfileNavPage(
                                     ProfileNavigationState.info.value,
                                   );
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute<void>(
-                                      builder: (ctx) =>
-                                          PupilProfilePage(pupil: pupil),
+                                  context.push(
+                                    RoutePaths.pupilProfilePath(
+                                      pupil.internalId,
                                     ),
+                                    extra: pupil,
                                   );
                                 },
                                 borderRadius: BorderRadius.circular(14),
@@ -616,7 +614,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                               if (!context.mounted) {
                                 return;
                               }
-                              Navigator.of(context).push(
+                              Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute<void>(
                                   builder: (context) => PdfViewerScreen(
                                     pdfGenerator: () async => file,
@@ -674,7 +672,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                     matrixUser.joinedRooms.map((e) => e.roomId).toList(),
                   );
                   final List<String> selectedRoomIds =
-                      await Navigator.of(context).push(
+                      await Navigator.of(context, rootNavigator: true).push(
                         MaterialPageRoute<List<String>>(
                           builder: (ctx) =>
                               SelectMatrixRoomsList(availableRooms),

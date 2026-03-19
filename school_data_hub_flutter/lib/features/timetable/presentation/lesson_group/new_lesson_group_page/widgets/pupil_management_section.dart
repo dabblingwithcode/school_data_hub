@@ -154,7 +154,7 @@ class PupilManagementSection extends WatchingWidget {
   }
 
   void _selectPupils(BuildContext context) async {
-    final result = await Navigator.of(context).push<List<int>>(
+    final result = await Navigator.of(context, rootNavigator: true).push<List<int>>(
       MaterialPageRoute<List<int>>(
         builder: (context) => SelectPupilsListScreen(
           selectablePupils: di<PupilProxyManager>().allPupils,

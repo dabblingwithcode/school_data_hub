@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/credit/credit_list_screen/credit_list_screen.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/credit/credit_list_screen/widgets/dialogues/change_credit_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_content_widgets.dart';
 
@@ -28,9 +29,7 @@ class PupilProfileCreditContent extends WatchingWidget {
       iconColor: const Color.fromARGB(255, 231, 227, 24),
       title: 'Guthaben',
       onTitleTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (ctx) => const CreditListScreen()),
-        );
+        context.push(RoutePaths.pupilCredit);
       },
       headerTrailing: Row(
         children: [

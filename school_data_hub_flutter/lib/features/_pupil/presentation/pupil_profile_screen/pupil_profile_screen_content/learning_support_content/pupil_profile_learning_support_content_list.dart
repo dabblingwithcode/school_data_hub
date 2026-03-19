@@ -265,7 +265,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
           ...[
             GestureDetector(
               onTap: () {
-                Navigator.of(context).push(
+                Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<void>(
                     builder: (ctx) =>
                         SetBulkSupportCategoriesStatusScreen(pupil: pupil),
@@ -311,7 +311,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
             padding: const EdgeInsets.all(10.0),
             child: Button(
               onPressed: () {
-                Navigator.of(context).push(
+                Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<void>(
                     builder: (ctx) => NewSupportCategoryStatus(
                       appBarTitle: 'Neuer Förderbereich',

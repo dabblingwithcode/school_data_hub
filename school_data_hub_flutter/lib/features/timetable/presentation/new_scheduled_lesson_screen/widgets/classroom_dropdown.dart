@@ -122,7 +122,7 @@ class ClassroomDropdown extends WatchingWidget {
         SizedBox(width: Style.spacing.md),
         GestureDetector(
           onTap: () async {
-            final result = await Navigator.of(context).push<Classroom>(
+            final result = await Navigator.of(context, rootNavigator: true).push<Classroom>(
               MaterialPageRoute<Classroom>(
                 builder: (context) => const NewClassroomScreen(),
               ),

@@ -66,7 +66,7 @@ class NewSupportCategoryStatusScreen extends StatelessWidget {
                             ? Button(
                                 onPressed: () async {
                                   final int? categoryId =
-                                      await Navigator.of(context).push(
+                                      await Navigator.of(context, rootNavigator: true).push(
                                         MaterialPageRoute<int>(
                                           builder: (ctx) =>
                                               SelectSupportCategoryScreen(

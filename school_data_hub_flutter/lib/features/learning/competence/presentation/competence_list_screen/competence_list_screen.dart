@@ -11,8 +11,9 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.d
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_screen/widgets/competence_filters_widget.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_screen/widgets/competence_tree.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_sortable_screen/competence_sortable_list_screen.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/post_or_patch_competence_screen/post_or_patch_competence_screen.dart';
 
 class CompetenceListScreen extends WatchingWidget {
@@ -25,7 +26,7 @@ class CompetenceListScreen extends WatchingWidget {
       int? competenceId,
       Competence? competence,
     }) {
-      Navigator.of(context).push(
+      Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute<void>(
           builder: (ctx) => PostOrPatchCompetenceScreen(
             parentCompetence: competenceId,
@@ -75,11 +76,7 @@ class CompetenceListScreen extends WatchingWidget {
             tooltip: 'Reihenfolge ändern',
             icon: const Icon(Icons.edit, size: 30),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => const CompetenceSortableListScreen(),
-                ),
-              );
+              context.push(RoutePaths.learningCompetencesSortable);
             },
           ),
           FilterButton(

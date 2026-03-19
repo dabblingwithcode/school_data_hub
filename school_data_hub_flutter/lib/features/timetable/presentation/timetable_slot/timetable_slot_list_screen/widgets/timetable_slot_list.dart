@@ -143,7 +143,7 @@ class TimetableSlotList extends StatelessWidget {
   }
 
   void _editSlot(BuildContext context, TimetableSlot slot) {
-    Navigator.of(context).push(
+    Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<void>(
         builder: (_) => NewTimetableSlotScreen(
           timetableManager: timetableManager,

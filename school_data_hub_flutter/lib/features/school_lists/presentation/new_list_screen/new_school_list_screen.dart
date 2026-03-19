@@ -7,9 +7,10 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
@@ -171,12 +172,9 @@ class NewSchoolListScreen extends WatchingWidget {
                                         pupilIds.value = currentPupilIds;
                                       },
                                       onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute<void>(
-                                            builder: (ctx) => PupilProfilePage(
-                                              pupil: listedPupil,
-                                            ),
-                                          ),
+                                        context.push(
+                                          RoutePaths.pupilProfilePath(listedPupil.internalId),
+                                          extra: listedPupil,
                                         );
                                       },
                                       child: CardBox(
@@ -263,7 +261,7 @@ class NewSchoolListScreen extends WatchingWidget {
                   variant: ButtonVariant.secondary,
                   onPressed: () async {
                     final List<int> selectedPupilIds =
-                        await Navigator.of(context).push(
+                        await Navigator.of(context, rootNavigator: true).push(
                           MaterialPageRoute<List<int>>(
                             builder: (ctx) => SelectPupilsListScreen(
                               selectablePupils: pupilManager.getPupilsNotListed(

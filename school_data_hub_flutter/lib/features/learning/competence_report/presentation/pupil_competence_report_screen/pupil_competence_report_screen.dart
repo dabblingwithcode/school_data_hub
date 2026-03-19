@@ -64,7 +64,7 @@ class PupilCompetenceReportScreen extends WatchingWidget {
             tooltip: 'Neues Zeugnis',
             icon: const Icon(Icons.add, size: 30),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute<void>(
                   builder: (_) => NewCompetenceReportScreen(pupil: pupil),
                 ),

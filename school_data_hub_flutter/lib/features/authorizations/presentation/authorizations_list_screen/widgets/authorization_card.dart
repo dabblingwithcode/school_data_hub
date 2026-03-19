@@ -19,7 +19,7 @@ class AuthorizationCard extends WatchingWidget {
     return CardBox(
       padding: EdgeInsets.all(Style.spacing.lg),
       onTap: () {
-        Navigator.of(context).push(
+        Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute<void>(
             builder: (ctx) => AuthorizationPupilsScreen(authorization),
           ),

@@ -7,7 +7,8 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_screen/widgets/competence_report_item_tree.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_items_sortable_list_screen/sortable_report_item_list_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/post_or_patch_report_item_screen/post_or_patch_report_item_screen.dart';
 
 class CompetenceReportItemListScreen extends WatchingWidget {
@@ -22,7 +23,7 @@ class CompetenceReportItemListScreen extends WatchingWidget {
       int? parentItemId,
       CompetenceReportItem? item,
     }) {
-      Navigator.of(context).push(
+      Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute<void>(
           builder: (ctx) =>
               PostOrPatchReportItemScreen(parentItem: parentItemId, item: item),
@@ -66,11 +67,7 @@ class CompetenceReportItemListScreen extends WatchingWidget {
             tooltip: 'Bearbeiten',
             icon: const Icon(Icons.edit, size: 30),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => const SortableReportItemListScreen(),
-                ),
-              );
+              context.push(RoutePaths.learningCompetenceReportSortable);
             },
           ),
         ],

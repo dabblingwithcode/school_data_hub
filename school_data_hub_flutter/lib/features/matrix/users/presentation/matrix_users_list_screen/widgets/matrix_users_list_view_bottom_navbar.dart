@@ -62,7 +62,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                   tooltip: 'neues Matrix-Konto',
                   icon: const Icon(Icons.add, size: 30),
                   onPressed: () {
-                    Navigator.of(context).push(
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<void>(
                         builder: (ctx) => const NewMatrixUserScreen(),
                       ),
@@ -74,7 +74,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                   tooltip: 'Matrix-Räume',
                   icon: const Icon(Icons.meeting_room_rounded, size: 30),
                   onPressed: () {
-                    Navigator.of(context).push(
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<void>(
                         builder: (ctx) => const MatrixRoomsListScreen(),
                       ),
@@ -86,7 +86,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                   tooltip: 'Event Reports',
                   icon: const Icon(Icons.flag_circle_rounded, size: 30),
                   onPressed: () {
-                    Navigator.of(context).push(
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<void>(
                         builder: (ctx) => const MatrixEventReportsScreen(),
                       ),
@@ -109,7 +109,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                         .createMatrixCredentialsForPupilsWithoutContactInfo();
                     if (!context.mounted) return;
                     if (file != null) {
-                      Navigator.of(context).push(
+                      Navigator.of(context, rootNavigator: true).push(
                         MaterialPageRoute<void>(
                           builder: (_) =>
                               PdfViewerScreen(pdfGenerator: () async => file),
@@ -128,7 +128,7 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                   ),
                   onPressed: () {
                     final matrixUsers = matrixPolicyManager.matrixUsers.value;
-                    Navigator.of(context).push(
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<void>(
                         builder: (context) =>
                             SelectMatrixUsersList(matrixUsers),

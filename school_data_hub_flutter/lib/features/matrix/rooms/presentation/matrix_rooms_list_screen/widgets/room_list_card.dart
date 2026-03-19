@@ -149,7 +149,7 @@ class RoomListCard extends WatchingWidget {
                                 children: [
                                   InkWell(
                                     onTap: () async {
-                                      Navigator.of(context).push<void>(
+                                      Navigator.of(context, rootNavigator: true).push<void>(
                                         MaterialPageRoute<void>(
                                           builder: (ctx) =>
                                               MatrixRoomEditScreen(room: room),

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
@@ -142,7 +143,7 @@ class MatrixUsersInRoomList extends WatchingWidget {
             );
 
             final List<String> selectedUserIds =
-                await Navigator.of(context).push(
+                await Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<List<String>>(
                     builder: (ctx) => SelectMatrixUsersList(
                       MatrixUserHelper.usersFromUserIds(availableUsers),
@@ -218,10 +219,9 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
       if (linkedPupil != null && linkedPupil.avatar != null) {
         return InkWell(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (ctx) => PupilProfilePage(pupil: linkedPupil),
-              ),
+            context.push(
+              RoutePaths.pupilProfilePath(linkedPupil.internalId),
+              extra: linkedPupil,
             );
           },
           child: AvatarWithBadges(pupil: linkedPupil, size: 56),

@@ -55,7 +55,7 @@ class SupportCategoryStatusCard extends WatchingWidget {
               Expanded(
                 child: GestureDetector(
                   onLongPress: () {
-                    Navigator.of(context).push(
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<void>(
                         builder: (ctx) => NewSupportCategoryStatus(
                           appBarTitle: 'Neuer Status',
@@ -115,7 +115,7 @@ class SupportCategoryStatusCard extends WatchingWidget {
                   label: 'NEUES FÖRDERZIEL',
                   variant: ButtonVariant.primary,
                   onPressed: () async {
-                    await Navigator.of(context).push(
+                    await Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<void>(
                         builder: (ctx) => NewSupportCategoryStatus(
                           appBarTitle: 'Neues Förderziel',

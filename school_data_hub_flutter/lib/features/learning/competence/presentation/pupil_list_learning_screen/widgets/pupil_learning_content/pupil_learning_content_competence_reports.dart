@@ -68,7 +68,7 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
           alignment: Alignment.centerRight,
           child: TextButton.icon(
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute<void>(
                   builder: (context) => PdfViewerScreen(
                     pdfGenerator: () =>

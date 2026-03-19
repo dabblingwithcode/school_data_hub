@@ -47,7 +47,7 @@ class CategoryListScreen extends WatchingWidget {
             icon: const Icon(Icons.edit_rounded, size: 30),
             tooltip: 'Reihenfolge ändern',
             onPressed: () {
-              Navigator.of(context).push<void>(
+              Navigator.of(context, rootNavigator: true).push<void>(
                 MaterialPageRoute<void>(
                   builder: (ctx) => const SortableSupportCategoryListScreen(),
                 ),

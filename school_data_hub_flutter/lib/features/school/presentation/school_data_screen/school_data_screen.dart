@@ -9,8 +9,9 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/empty_state.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/spinner.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
-import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_screen/edit_school_data_screen.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/school_data_screen/widgets/contact_info_card.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/school_data_screen/widgets/school_info_card.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/school_data_screen/widgets/school_logo_card.dart';
@@ -69,11 +70,7 @@ class SchoolDataScreen extends WatchingWidget {
       description: 'Erstellen Sie die Schulinformationen',
       action: Button(
         onPressed: () async {
-          await Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (context) => const EditSchoolDataScreen(),
-            ),
-          );
+          await context.push(RoutePaths.schoolEdit);
           // Refresh data when returning from edit page
           await schoolDataManager.refreshData();
         },
@@ -116,11 +113,7 @@ class SchoolDataScreen extends WatchingWidget {
               Center(
                 child: Button(
                   onPressed: () async {
-                    await Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (context) => const EditSchoolDataScreen(),
-                      ),
-                    );
+                    await context.push(RoutePaths.schoolEdit);
                     // Refresh data when returning from edit page
                     await di<SchoolDataMainManager>().refreshData();
                   },

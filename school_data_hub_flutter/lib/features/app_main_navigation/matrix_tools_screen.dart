@@ -62,7 +62,7 @@ class MatrixToolsScreen extends WatchingWidget {
                         await showQrCode(qrString, context);
                         return;
                       }
-                      Navigator.of(context).push(
+                      Navigator.of(context, rootNavigator: true).push(
                         MaterialPageRoute<void>(
                           builder: (_) => const SetMatrixEnvironmentScreen(),
                         ),
@@ -143,7 +143,7 @@ class MatrixToolsScreen extends WatchingWidget {
                             .createMatrixCredentialsForPupilsWithoutContactInfo();
                         if (!context.mounted) return;
                         if (file != null) {
-                          Navigator.of(context).push(
+                          Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute<void>(
                               builder: (_) => PdfViewerScreen(
                                 pdfGenerator: () async => file,
@@ -164,7 +164,7 @@ class MatrixToolsScreen extends WatchingWidget {
                       onTap: () async {
                         final matrixUsersList =
                             di<MatrixPolicyManager>().matrixUsers.value;
-                        Navigator.of(context).push(
+                        Navigator.of(context, rootNavigator: true).push(
                           MaterialPageRoute<void>(
                             builder: (context) =>
                                 SelectMatrixUsersList(matrixUsersList),

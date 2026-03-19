@@ -7,11 +7,10 @@ import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/services/pupil_label_pdf_service.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
-import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_screen/authorizations_list_screen.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_screen/school_lists_screen.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class SchoolListsMenuScreen extends StatelessWidget {
@@ -41,7 +40,7 @@ class SchoolListsMenuScreen extends StatelessWidget {
                   alignment: WrapAlignment.center,
                   children: [
                     MainMenuButton(
-                      destinationPage: const SchoolListsScreen(),
+                      routePath: RoutePaths.schoolListsDetail,
                       buttonIcon: Icon(
                         Icons.rule,
                         size: 50,
@@ -50,7 +49,7 @@ class SchoolListsMenuScreen extends StatelessWidget {
                       buttonText: locale.lists,
                     ),
                     MainMenuButton(
-                      destinationPage: const AuthorizationsListScreen(),
+                      routePath: RoutePaths.schoolAuthorizations,
                       buttonIcon: Icon(
                         Icons.fact_check_rounded,
                         size: 50,

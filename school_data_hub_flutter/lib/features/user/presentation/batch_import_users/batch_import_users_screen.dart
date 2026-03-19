@@ -214,7 +214,7 @@ class _BatchImportUsersScreenState extends State<BatchImportUsersScreen> {
     if (credentials.isEmpty) return;
     final file = await StaffCredentialsPdfService.generatePdfFile(credentials);
     if (file == null || !mounted) return;
-    await Navigator.of(context).push<void>(
+    await Navigator.of(context, rootNavigator: true).push<void>(
       MaterialPageRoute(
         builder: (context) => PdfViewerScreen(pdfGenerator: () async => file),
       ),

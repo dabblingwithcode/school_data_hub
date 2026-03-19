@@ -62,7 +62,7 @@ class MissedSchooldaysPupilListScreen extends StatelessWidget {
             icon: const Icon(Icons.print_rounded, size: 30),
             tooltip: 'PDF drucken',
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute<void>(
                   builder: (context) => PdfViewerScreen(
                     pdfGenerator: () =>

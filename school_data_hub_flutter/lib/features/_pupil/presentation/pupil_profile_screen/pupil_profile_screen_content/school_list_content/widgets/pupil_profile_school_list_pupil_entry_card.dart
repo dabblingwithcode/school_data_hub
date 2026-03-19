@@ -81,7 +81,7 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).push<void>(
+                            Navigator.of(context, rootNavigator: true).push<void>(
                               MaterialPageRoute<void>(
                                 builder: (ctx) =>
                                     SchoolListPupilEntriesScreen(schoolList),

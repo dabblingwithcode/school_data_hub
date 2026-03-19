@@ -60,7 +60,7 @@ class SortableSupportCategoryListScreen extends WatchingWidget {
             icon: const Icon(Icons.add, size: 30),
             tooltip: 'Neue Kategorie',
             onPressed: () {
-              Navigator.of(context).push<void>(
+              Navigator.of(context, rootNavigator: true).push<void>(
                 MaterialPageRoute<void>(
                   builder: (ctx) => const PostOrPatchSupportCategoryScreen(
                     category: null,

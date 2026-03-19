@@ -42,7 +42,7 @@
 //                 const Gap(30),
 //                 InkWell(
 //                   onTap: () {
-//                     Navigator.of(context).push(
+//                     Navigator.of(context, rootNavigator: true).push(
 //                       MaterialPageRoute(
 //                         builder: (ctx) => const SelectCompetence(),
 //                       ),
@@ -63,7 +63,7 @@
 //                             pupils: pupils,
 //                           );
 //                       if (context.mounted) {
-//                         Navigator.of(context).push(
+//                         Navigator.of(context, rootNavigator: true).push(
 //                           MaterialPageRoute(
 //                             builder: (context) =>
 //                                 LearningGoalsPdfViewPage(pdfFile: pdfFile),

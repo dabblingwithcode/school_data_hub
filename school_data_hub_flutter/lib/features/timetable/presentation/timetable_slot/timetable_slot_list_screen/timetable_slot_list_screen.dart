@@ -34,7 +34,7 @@ class TimetableSlotListScreen extends WatchingWidget {
         return;
       }
 
-      await Navigator.of(context).push(
+      await Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute<void>(
           builder: (context) =>
               NewTimetableSlotScreen(timetableManager: timetableManager),

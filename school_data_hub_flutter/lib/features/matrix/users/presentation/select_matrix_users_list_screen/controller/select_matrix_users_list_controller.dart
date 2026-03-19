@@ -148,7 +148,7 @@ class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
         // Show PDF preview
         if (context.mounted) {
           _log.info('Navigating to BulkPdfViewPage with file: ${pdfFile.path}');
-          Navigator.of(context).push(
+          Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute<void>(
               builder: (context) =>
                   PdfViewerScreen(pdfGenerator: () async => pdfFile),

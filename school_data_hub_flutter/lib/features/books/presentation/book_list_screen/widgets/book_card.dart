@@ -80,7 +80,7 @@ class BookCard extends WatchingWidget {
                   child: InkWell(
                     onLongPress: (di<HubSessionManager>().isAdmin)
                         ? () {
-                            // Navigator.of(context).push(MaterialPageRoute(
+                            // Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
                             //   builder: (ctx) => NewBook(
                             //     isEdit: true,
                             //     bookAuthor: books.first.author,

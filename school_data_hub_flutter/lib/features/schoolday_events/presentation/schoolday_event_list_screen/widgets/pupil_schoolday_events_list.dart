@@ -57,7 +57,7 @@ class PupilSchooldayEventsList extends WatchingWidget {
           ),
           child: Button(
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute<void>(
                   builder: (ctx) =>
                       NewSchooldayEventScreen(pupilId: pupil.pupilId),

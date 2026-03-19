@@ -246,7 +246,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                       );
                       if (confirm != true) return;
                       if (context.mounted) {
-                        Navigator.of(context).push(
+                        Navigator.of(context, rootNavigator: true).push(
                           MaterialPageRoute<void>(
                             builder: (ctx) => NewMatrixUserScreen(
                               pupil: pupil,
@@ -300,7 +300,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               isStaff: false,
                             );
                         if (file != null && context.mounted) {
-                          Navigator.of(context).push(
+                          Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute<void>(
                               builder: (context) => PdfViewerScreen(
                                 pdfGenerator: () async => file,
@@ -360,7 +360,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                           pupil,
                         ].map((e) => e.group).toList().join();
                       }
-                      Navigator.of(context).push(
+                      Navigator.of(context, rootNavigator: true).push(
                         MaterialPageRoute<void>(
                           builder: (ctx) => NewMatrixUserScreen(
                             pupil: pupil,
@@ -408,7 +408,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                               isStaff: false,
                             );
                         if (file != null && context.mounted) {
-                          Navigator.of(context).push(
+                          Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute<void>(
                               builder: (context) => PdfViewerScreen(
                                 pdfGenerator: () async => file,

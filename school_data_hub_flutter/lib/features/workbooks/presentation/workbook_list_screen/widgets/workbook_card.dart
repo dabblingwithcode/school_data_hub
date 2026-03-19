@@ -94,7 +94,7 @@ class _WorkbookCardContent extends WatchingWidget {
                 child: GestureDetector(
                   onLongPress: (di<HubSessionManager>().isAdmin)
                       ? () async {
-                          Navigator.of(context).push<void>(
+                          Navigator.of(context, rootNavigator: true).push<void>(
                             MaterialPageRoute<void>(
                               builder: (ctx) => NewWorkbookScreen(
                                 workbook: workbook,

@@ -8,8 +8,9 @@ import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_heade
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/models/schoolday_event_enums.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
@@ -53,11 +54,9 @@ class SchooldayEventPupilListCard extends WatchingWidget {
                                 mainMenuBottomNavManager.setPupilProfileNavPage(
                                   4,
                                 );
-                                Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (ctx) =>
-                                        PupilProfilePage(pupil: pupil),
-                                  ),
+                                context.push(
+                                  RoutePaths.pupilProfilePath(pupil.internalId),
+                                  extra: pupil,
                                 );
                               },
                               child: _NameRow(pupil: pupil),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/learning_content_selection.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_learning_content/pupil_learning_content_books.dart';
@@ -8,7 +10,6 @@ import 'package:school_data_hub_flutter/features/learning/competence/presentatio
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_learning_content/pupil_learning_content_competence_statuses.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_learning_content/pupil_learning_content_workbooks.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_list_learning_content_nav_bar.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/pupil_competence_report_screen/pupil_competence_report_screen.dart';
 
 class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
   final PupilProxy pupil;
@@ -38,10 +39,9 @@ class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
               icon: const Icon(Icons.assignment),
               label: 'Zeugnisse öffnen',
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => PupilCompetenceReportScreen(pupil: pupil),
-                  ),
+                context.push(
+                  RoutePaths.learningCompetenceReport,
+                  extra: pupil,
                 );
               },
             ),

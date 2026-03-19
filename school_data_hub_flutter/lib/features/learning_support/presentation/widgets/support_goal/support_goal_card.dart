@@ -230,7 +230,7 @@ class _GoalDescriptionRow extends WatchingWidget {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              Navigator.of(context).push(
+              Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute<void>(
                   builder: (ctx) => NewSupportCategoryStatus(
                     appBarTitle: 'Förderziel bearbeiten',

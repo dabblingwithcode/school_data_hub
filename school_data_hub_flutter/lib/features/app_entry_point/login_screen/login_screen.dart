@@ -1,38 +1,26 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_screen/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_screen/widgets/environments_dropdown.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_bottom_navigation.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
-class LoginScreen extends WatchingWidget {
+class LoginScreen extends StatelessWidget {
   final LoginController controller;
   const LoginScreen({super.key, required this.controller});
 
-  static final _log = Logger('LoginScreen');
-
   @override
   Widget build(BuildContext context) {
-    final bool isAuthenticated = watchValue(
-      (EnvManager x) => x.isAuthenticated,
-    );
-
     final locale = AppLocalizations.of(context)!;
     final style = Style.of(context);
-    _log.info('isAuthenticated: $isAuthenticated');
     final bool keyboardOn = MediaQuery.of(context).viewInsets.vertical > 0.0;
 
-    return (isAuthenticated)
-        ? const MainMenuBottomNavigation()
-        : Scaffold(
+    // No auth check needed — go_router redirect handles auth→home transition.
+    return Scaffold(
             backgroundColor: style.colors.canvas,
             resizeToAvoidBottomInset: true,
             body: Container(

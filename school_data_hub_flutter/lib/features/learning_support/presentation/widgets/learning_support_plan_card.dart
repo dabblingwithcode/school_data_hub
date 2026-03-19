@@ -109,7 +109,7 @@ class _PlanMetadataAndActions extends StatelessWidget {
   });
 
   void _editPlan(BuildContext context) {
-    Navigator.of(context).push(
+    Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<void>(
         builder: (ctx) =>
             NewLearningSupportPlan(pupil: pupil, existingPlan: plan),
@@ -123,7 +123,7 @@ class _PlanMetadataAndActions extends StatelessWidget {
       final supportCategories = supportCategoryManager.supportCategories.value;
 
       if (context.mounted) {
-        Navigator.of(context).push(
+        Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute<void>(
             builder: (ctx) => PdfViewerScreen(
               pdfGenerator: () =>

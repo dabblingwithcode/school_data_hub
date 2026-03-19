@@ -446,7 +446,7 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     // The user will choose duration, classroom, group, etc. before
     // a ScheduledLesson is created server-side.
     if (!mounted) return;
-    await Navigator.of(context).push(
+    await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<void>(
         builder: (_) => NewScheduledLessonScreen(
           timetableManager: timetableManager,
@@ -462,7 +462,7 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
 
   void _editLesson(ScheduledLesson lesson) {
     final timetableManager = di<TimetableManager>();
-    Navigator.of(context).push(
+    Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<void>(
         builder: (_) => NewScheduledLessonScreen(
           timetableManager: timetableManager,

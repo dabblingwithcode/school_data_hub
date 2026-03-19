@@ -66,7 +66,7 @@ class PupilListLearningScreen extends WatchingWidget {
               tooltip: 'Kompetenz hinzufuegen',
               icon: const Icon(Icons.add_a_photo_rounded, size: 30),
               onPressed: () {
-                Navigator.of(context).push(
+                Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<void>(
                     builder: (ctx) => const SelectCompetence(),
                   ),
@@ -80,7 +80,7 @@ class PupilListLearningScreen extends WatchingWidget {
               tooltip: 'PDF drucken',
               icon: const Icon(Icons.print_rounded, size: 30),
               onPressed: () {
-                Navigator.of(context).push(
+                Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<void>(
                     builder: (context) => PdfViewerScreen(
                       pdfGenerator: () =>

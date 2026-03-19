@@ -17,7 +17,7 @@ class SortableReportItemListScreen extends WatchingWidget {
       int? parentItemId,
       CompetenceReportItem? item,
     }) {
-      Navigator.of(context).push(
+      Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute<void>(
           builder: (ctx) =>
               PostOrPatchReportItemScreen(parentItem: parentItemId, item: item),

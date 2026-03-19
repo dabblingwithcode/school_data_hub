@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_content_widgets.dart';
-import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_screen/schoolday_event_list_screen.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_screen/widgets/pupil_schoolday_events_list.dart';
 
 class PupilProfileSchooldayEventsContent extends StatelessWidget {
@@ -15,11 +16,7 @@ class PupilProfileSchooldayEventsContent extends StatelessWidget {
       iconColor: const Color.fromARGB(255, 224, 177, 23),
       title: 'Ereignisse',
       onTitleTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (ctx) => const SchooldayEventListScreen(),
-          ),
-        );
+        context.push(RoutePaths.pupilSchooldayEvents);
       },
       child: PupilSchooldayEventsList(pupil: pupil),
     );

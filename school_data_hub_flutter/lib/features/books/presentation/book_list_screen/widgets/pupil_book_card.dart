@@ -34,7 +34,7 @@ class PupilBookCard extends WatchingWidget {
     return CardBox(
       child: InkWell(
         // onTap: () {
-        //   Navigator.of(context).push(MaterialPageRoute(
+        //   Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
         //     builder: (ctx) => SchoolListPupils(
         //       workbook,
         //     ),

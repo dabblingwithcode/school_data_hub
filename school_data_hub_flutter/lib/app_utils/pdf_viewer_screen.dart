@@ -146,7 +146,7 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
                 IconButton(
                   icon: const Icon(Icons.zoom_in),
                   onPressed: () {
-                    Navigator.of(context).push(
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<void>(
                         builder: (context) => _PdfZoomableImage(file: file),
                       ),

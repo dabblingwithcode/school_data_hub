@@ -157,7 +157,7 @@ class SchoolListPupilEntriesScreen extends WatchingWidget {
           icon: const Icon(Icons.add, size: 30),
           onPressed: () async {
             final List<int> selectedPupilIds =
-                await Navigator.of(context).push(
+                await Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<List<int>>(
                     builder: (ctx) => SelectPupilsListScreen(
                       selectablePupils: di<PupilProxyManager>()
@@ -184,7 +184,7 @@ class SchoolListPupilEntriesScreen extends WatchingWidget {
           tooltip: 'Liste als PDF',
           icon: const Icon(Icons.print, size: 30),
           onPressed: () async {
-            Navigator.of(context).push(
+            Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute<void>(
                 builder: (ctx) => PdfViewerScreen(
                   pdfGenerator: () =>

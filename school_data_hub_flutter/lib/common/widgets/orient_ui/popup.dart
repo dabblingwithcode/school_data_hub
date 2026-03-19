@@ -24,7 +24,7 @@ class Popup extends StatelessWidget {
     String? title,
     required Widget child,
   }) {
-    return Navigator.of(context).push(
+    return Navigator.of(context, rootNavigator: true).push(
       _PopupRoute(
         title: title,
         child: child,

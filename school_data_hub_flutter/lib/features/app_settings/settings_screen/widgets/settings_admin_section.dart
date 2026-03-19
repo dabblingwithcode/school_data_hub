@@ -105,7 +105,7 @@ class SettingsAdminSection extends WatchingWidget {
                   title: const Text('Benutzer aus Excel importieren'),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
-                    Navigator.of(context).push(
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<void>(
                         builder: (ctx) => const BatchImportUsersScreen(),
                       ),

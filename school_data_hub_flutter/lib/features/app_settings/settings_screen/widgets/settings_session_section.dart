@@ -242,7 +242,7 @@ class SettingsSessionSection extends WatchingWidget {
 
                       await cacheManager.emptyCache();
                       if (context.mounted) {
-                        Navigator.of(context).pushAndRemoveUntil(
+                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                           MaterialPageRoute<void>(
                             builder: (ctx) => const Login(),
                           ),

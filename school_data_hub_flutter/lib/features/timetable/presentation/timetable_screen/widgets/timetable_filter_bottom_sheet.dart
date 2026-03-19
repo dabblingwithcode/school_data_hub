@@ -32,7 +32,7 @@ class TimetableFilterBottomSheet extends WatchingWidget {
     }
 
     void navigateToNewLessonGroup() {
-      Navigator.of(context).push(
+      Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute<void>(
           builder: (context) => const NewLessonGroupScreen(),
         ),
@@ -40,7 +40,7 @@ class TimetableFilterBottomSheet extends WatchingWidget {
     }
 
     void navigateToLearningGroupList() {
-      Navigator.of(context).push(
+      Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute<void>(
           builder: (context) => const LessonGroupListScreen(),
         ),

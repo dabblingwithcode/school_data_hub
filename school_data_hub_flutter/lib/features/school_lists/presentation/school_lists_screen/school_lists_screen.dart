@@ -46,7 +46,7 @@ class SchoolListsScreen extends StatelessWidget {
           tooltip: 'Neue Liste',
           icon: const Icon(Icons.add, size: 35),
           onPressed: () {
-            Navigator.of(context).push(
+            Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute<void>(
                 builder: (ctx) => const NewSchoolListScreen(),
               ),

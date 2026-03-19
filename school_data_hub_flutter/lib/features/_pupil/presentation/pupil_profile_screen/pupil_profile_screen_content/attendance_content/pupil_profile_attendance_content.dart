@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_content_widgets.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/attendance/presentation/missed_schooldays_pupil_list_screen/missed_schooldays_pupil_list_screen.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/widgets/attendance_stats_pupil.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/widgets/missed_schoolday_card.dart';
 
@@ -33,11 +34,7 @@ class PupilAttendanceContent extends WatchingWidget {
       iconColor: const Color.fromARGB(255, 61, 61, 61),
       title: 'Fehlzeiten',
       onTitleTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (ctx) => const MissedSchooldaysPupilListScreen(),
-          ),
-        );
+        context.push(RoutePaths.pupilMissedSchooldays);
       },
       child: Column(
         children: [

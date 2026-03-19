@@ -15,8 +15,9 @@ import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/pupil_set_avatar.dart'
     show CropAvatarView;
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/change_password/change_password_screen.dart';
 
 class SettingsAccountSection extends WatchingWidget {
   const SettingsAccountSection({super.key});
@@ -146,11 +147,7 @@ class SettingsAccountSection extends WatchingWidget {
                 ),
                 ListTile(
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (ctx) => const UserChangePasswordScreen(),
-                      ),
-                    );
+                    context.push(RoutePaths.settingsChangePassword);
                   },
                   leading: const Icon(Icons.password_rounded),
                   title: const Text('Passwort ändern'),

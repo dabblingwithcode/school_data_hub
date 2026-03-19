@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class MainMenuButton extends StatelessWidget {
+  /// Route path for go_router navigation. Preferred over [destinationPage].
+  final String? routePath;
+
+  /// Legacy: widget to push via Navigator. Use [routePath] for new code.
   final Widget? destinationPage;
   final VoidCallback? onTap;
   final Widget buttonIcon;
@@ -11,6 +16,7 @@ class MainMenuButton extends StatelessWidget {
   final double buttonSize;
 
   const MainMenuButton({
+    this.routePath,
     this.destinationPage,
     this.onTap,
     required this.buttonIcon,
@@ -37,17 +43,19 @@ class MainMenuButton extends StatelessWidget {
           borderRadius: borderRadius,
           clipBehavior: Clip.antiAlias,
           child: GestureDetector(
-            onTap:
-                onTap ??
-                (destinationPage != null
-                    ? () {
-                        Navigator.of(context).push<void>(
-                          MaterialPageRoute<void>(
-                            builder: (ctx) => destinationPage!,
-                          ),
-                        );
-                      }
-                    : null),
+            onTap: onTap ??
+                (routePath != null
+                    ? () => context.push(routePath!)
+                    : destinationPage != null
+                        ? () {
+                            Navigator.of(context, rootNavigator: true)
+                                .push<void>(
+                              MaterialPageRoute<void>(
+                                builder: (ctx) => destinationPage!,
+                              ),
+                            );
+                          }
+                        : null),
             child: MouseRegion(
               cursor: WidgetStateMouseCursor.clickable,
               child: SizedBox(

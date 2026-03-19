@@ -119,7 +119,7 @@ class LessonGroupDropdown extends WatchingWidget {
         SizedBox(width: Style.spacing.md),
         GestureDetector(
           onTap: () async {
-            final result = await Navigator.of(context).push<LessonGroup>(
+            final result = await Navigator.of(context, rootNavigator: true).push<LessonGroup>(
               MaterialPageRoute<LessonGroup>(
                 builder: (context) => const NewLessonGroupScreen(),
               ),

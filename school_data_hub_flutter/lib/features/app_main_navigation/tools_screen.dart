@@ -15,6 +15,7 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
@@ -25,13 +26,8 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_ident
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/matrix_tools_screen.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_screen/matrix_users_list_screen.dart';
-import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_screen/edit_school_data_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_screen/school_semester_list.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/presentation/schooldays_calendar_screen/schooldays_calendar_screen.dart';
-import 'package:school_data_hub_flutter/features/statistics/chart_screen/chart_page_controller.dart';
-import 'package:school_data_hub_flutter/features/statistics/statistics_screen/controller/statistics.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_screen/timetable_screen.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_screen.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_screen.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_screen.dart';
@@ -174,7 +170,7 @@ class ToolsScreen extends WatchingWidget {
                                 return;
                               }
                               if (!context.mounted) return;
-                              Navigator.of(context).push(
+                              Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute<void>(
                                   builder: (context) =>
                                       PupilIdentityStreamScreen(
@@ -203,7 +199,7 @@ class ToolsScreen extends WatchingWidget {
                                       return;
                                     }
                                     if (!context.mounted) return;
-                                    Navigator.of(context).push(
+                                    Navigator.of(context, rootNavigator: true).push(
                                       MaterialPageRoute<void>(
                                         builder: (context) =>
                                             PupilIdentityStreamScreen(
@@ -222,7 +218,7 @@ class ToolsScreen extends WatchingWidget {
                             onPressed: () async {
                               Navigator.pop(context);
                               final List<int>? pupilIds =
-                                  await Navigator.of(context).push(
+                                  await Navigator.of(context, rootNavigator: true).push(
                                     MaterialPageRoute<List<int>>(
                                       builder: (ctx) => SelectPupilsListScreen(
                                         selectablePupils:
@@ -243,7 +239,7 @@ class ToolsScreen extends WatchingWidget {
                                         internalIds,
                                       );
                               if (!context.mounted) return;
-                              Navigator.of(context).push(
+                              Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute<void>(
                                   builder: (context) =>
                                       PupilIdentityStreamScreen(
@@ -309,11 +305,7 @@ class ToolsScreen extends WatchingWidget {
                           _ToolsMenuButton(
                             onPressed: () {
                               Navigator.pop(context);
-                              Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) => const ChartPageController(),
-                                ),
-                              );
+                              context.push(RoutePaths.toolsCharts);
                             },
                             icon: Icons.bar_chart_rounded,
                             label: 'Diagramme',
@@ -321,11 +313,7 @@ class ToolsScreen extends WatchingWidget {
                           _ToolsMenuButton(
                             onPressed: () {
                               Navigator.pop(context);
-                              Navigator.of(context).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) => const Statistics(),
-                                ),
-                              );
+                              context.push(RoutePaths.toolsStatistics);
                             },
                             icon: Icons.table_chart_rounded,
                             label: 'Statistik-Zahlen',
@@ -340,7 +328,7 @@ class ToolsScreen extends WatchingWidget {
                       buttonText: 'Daten',
                     ),
                     MainMenuButton(
-                      destinationPage: const TimetablePage(),
+                      routePath: RoutePaths.toolsTimetable,
                       buttonIcon: Icon(
                         Icons.dashboard_rounded,
                         size: 50,
@@ -350,7 +338,7 @@ class ToolsScreen extends WatchingWidget {
                     ),
                     // --- Calendar section ---
                     MainMenuButton(
-                      destinationPage: const SchooldaysCalendarScreen(),
+                      routePath: RoutePaths.schoolCalendar,
                       buttonIcon: Icon(
                         Icons.calendar_month_rounded,
                         size: 50,
@@ -371,7 +359,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context).push(
+                                Navigator.of(context, rootNavigator: true).push(
                                   MaterialPageRoute<void>(
                                     builder: (_) =>
                                         const CreateOrEditUserScreen(),
@@ -384,7 +372,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context).push(
+                                Navigator.of(context, rootNavigator: true).push(
                                   MaterialPageRoute<void>(
                                     builder: (_) => const UserListScreen(),
                                   ),
@@ -396,7 +384,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context).push(
+                                Navigator.of(context, rootNavigator: true).push(
                                   MaterialPageRoute<void>(
                                     builder: (_) =>
                                         const ResetUserPasswordScreen(),
@@ -418,7 +406,7 @@ class ToolsScreen extends WatchingWidget {
                       // Matrix Kontakte (when configured)
                       if (matrixSessionConfigured) ...[
                         MainMenuButton(
-                          destinationPage: const MatrixUsersListScreen(),
+                          routePath: RoutePaths.adminMatrixUsers,
                           buttonIcon: Image.asset(
                             'assets/schulpost_logo_200px_white.png',
                             width: 50,
@@ -438,12 +426,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        const EditSchoolDataScreen(),
-                                  ),
-                                );
+                                context.push(RoutePaths.schoolEdit);
                               },
                               icon: Icons.school_rounded,
                               label: 'Schuldaten',
@@ -451,11 +434,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => const TimetablePage(),
-                                  ),
-                                );
+                                context.push(RoutePaths.toolsTimetable);
                               },
                               icon: Icons.schedule,
                               label: 'Stundenplan',
@@ -464,7 +443,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context).push(
+                                Navigator.of(context, rootNavigator: true).push(
                                   MaterialPageRoute<void>(
                                     builder: (_) =>
                                         const SchoolSemesterListScreen(),
@@ -488,7 +467,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context).push(
+                                Navigator.of(context, rootNavigator: true).push(
                                   MaterialPageRoute<void>(
                                     builder: (_) => const MatrixToolsScreen(),
                                   ),

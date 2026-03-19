@@ -9,8 +9,9 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_proxy_books_ext.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
@@ -62,11 +63,9 @@ class BookLendingPupilCard extends WatchingWidget {
                                 di<BottomNavManager>().setPupilProfileNavPage(
                                   9,
                                 );
-                                Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (ctx) =>
-                                        PupilProfilePage(pupil: pupil),
-                                  ),
+                                context.push(
+                                  RoutePaths.pupilProfilePath(pupil.internalId),
+                                  extra: pupil,
                                 );
                               },
                               child: Row(

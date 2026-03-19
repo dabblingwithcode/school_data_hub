@@ -19,7 +19,7 @@ class SupportCategoryLeafCardSortable extends StatelessWidget {
   });
 
   Future<void> _navigateToSelectParent(BuildContext context) async {
-    final result = await Navigator.of(context).push<int>(
+    final result = await Navigator.of(context, rootNavigator: true).push<int>(
       MaterialPageRoute<int>(
         builder: (ctx) =>
             SelectParentCategoryScreen(movingCategoryId: category.categoryId),
@@ -67,7 +67,7 @@ class SupportCategoryLeafCardSortable extends StatelessWidget {
               size: 22,
             ),
             onPressed: () {
-              Navigator.of(context).push<void>(
+              Navigator.of(context, rootNavigator: true).push<void>(
                 MaterialPageRoute<void>(
                   builder: (ctx) =>
                       PostOrPatchSupportCategoryScreen(category: category),

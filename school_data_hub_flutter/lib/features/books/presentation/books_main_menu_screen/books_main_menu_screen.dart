@@ -11,10 +11,11 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_infos_screen/book_infos_screen.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_search_form_screen/book_search_form_screen.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_screen/book_tag_management_controller.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/new_book_screen/new_book_controller.dart';
 
@@ -101,11 +102,7 @@ class BookActionsCard extends StatelessWidget {
                 minWidth: buttonMinWidth,
                 maxWidth: buttonMaxWidth,
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (ctx) => const BookSearchFormScreen(),
-                    ),
-                  );
+                  context.push(RoutePaths.learningBooksSearch);
                 },
               ),
               BookActionButton(
@@ -114,7 +111,7 @@ class BookActionsCard extends StatelessWidget {
                 minWidth: buttonMinWidth,
                 maxWidth: buttonMaxWidth,
                 onTap: () {
-                  Navigator.of(context).push(
+                  Navigator.of(context, rootNavigator: true).push(
                     MaterialPageRoute<void>(
                       builder: (ctx) => const BookTagManagement(),
                     ),
@@ -274,7 +271,7 @@ Future<void> _showBookInfosDialog(
 
     if (libraryId != null && libraryId.isNotEmpty) {
       if (!context.mounted) return;
-      Navigator.of(context).push(
+      Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute<void>(
           builder: (ctx) => BookInfosScreen(libraryId: libraryId),
         ),
@@ -289,7 +286,7 @@ Future<void> _showBookInfosDialog(
 
     final bookId = scannedLibraryId.replaceFirst('Buch ID: ', '').trim();
     if (context.mounted) {
-      Navigator.of(context).push(
+      Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute<void>(
           builder: (ctx) => BookInfosScreen(libraryId: bookId),
         ),
@@ -314,7 +311,7 @@ Future<void> _showNewBookDialog(
       final cleanIsbn = isbn.replaceAll('-', '');
 
       if (!context.mounted) return;
-      Navigator.of(context).push(
+      Navigator.of(context, rootNavigator: true).push(
         MaterialPageRoute<void>(
           builder: (ctx) => NewBook(isEdit: false, isbn: int.parse(cleanIsbn)),
         ),
@@ -336,7 +333,7 @@ Future<void> _showNewBookDialog(
 
     final cleanScannedIsbn = scannedIsbn.replaceAll('-', '');
     if (!context.mounted) return;
-    Navigator.of(context).push(
+    Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<void>(
         builder: (ctx) =>
             NewBook(isEdit: false, isbn: int.parse(cleanScannedIsbn)),

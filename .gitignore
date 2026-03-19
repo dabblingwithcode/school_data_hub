@@ -8,3 +8,8 @@ legal/
 .dart_skills/
 .vscode/
 docs/
+node_modules/
+.baremobile/
+screenshots/
+package-lock.json
+package.json

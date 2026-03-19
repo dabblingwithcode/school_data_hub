@@ -56,7 +56,7 @@ class NewSupportGoalScreen extends StatelessWidget {
                         ? Button(
                             onPressed: () async {
                               final int?
-                              categoryId = await Navigator.of(context).push(
+                              categoryId = await Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute<int>(
                                   builder: (ctx) => SelectSupportCategoryScreen(
                                     pupil: pupilManager.getPupilByPupilId(

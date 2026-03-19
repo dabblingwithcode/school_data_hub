@@ -267,7 +267,7 @@ class _BookSearchFormScreenState extends State<BookSearchFormScreen> {
                 tags: selectedBookTags.isNotEmpty ? selectedBookTags : null,
               );
               if (!context.mounted) return;
-              Navigator.of(context).push(
+              Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute<void>(
                   builder: (context) => BookSearchResultsScreen(
                     title: title,

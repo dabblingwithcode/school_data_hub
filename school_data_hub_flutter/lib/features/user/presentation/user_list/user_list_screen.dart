@@ -144,7 +144,7 @@ class _UserListScreenState extends State<UserListScreen> {
               tooltip: 'Import aus Excel',
               icon: const Icon(Icons.upload_file, size: 30),
               onPressed: () {
-                Navigator.of(context).push(
+                Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<void>(
                     builder: (ctx) => const BatchImportUsersScreen(),
                   ),
@@ -155,7 +155,7 @@ class _UserListScreenState extends State<UserListScreen> {
               tooltip: 'Neuer Benutzer',
               icon: const Icon(Icons.add, size: 30),
               onPressed: () {
-                Navigator.of(context).push(
+                Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<void>(
                     builder: (ctx) => const CreateOrEditUserScreen(),
                   ),

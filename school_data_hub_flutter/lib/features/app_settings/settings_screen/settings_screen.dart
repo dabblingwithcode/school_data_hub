@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_screen/logs_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/app_utils/shorebird_code_push_screen.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
@@ -94,11 +95,7 @@ class SettingsScreen extends WatchingWidget {
                             leading: const Icon(Icons.bug_report_rounded),
                             title: const Text('Logs'),
                             trailing: const Icon(Icons.chevron_right),
-                            onTap: () => Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (ctx) => const LogsScreen(),
-                              ),
-                            ),
+                            onTap: () => context.push(RoutePaths.settingsLogs),
                           ),
                           if (AuthClearanceHelper.isAdmin())
                             ListTile(
@@ -136,7 +133,7 @@ class SettingsScreen extends WatchingWidget {
                             title: const Text('Server-Datenmodell'),
                             trailing: const Icon(Icons.chevron_right),
                             onTap: () {
-                              Navigator.of(context).push(
+                              Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute<void>(
                                   builder: (_) =>
                                       const ServerModelDiagramScreen(),
@@ -170,7 +167,7 @@ class SettingsScreen extends WatchingWidget {
                             title: const Text('App Updates überprüfen'),
                             trailing: const Icon(Icons.chevron_right),
                             onTap: () {
-                              Navigator.of(context).push(
+                              Navigator.of(context, rootNavigator: true).push(
                                 MaterialPageRoute<void>(
                                   builder: (ctx) =>
                                       const ShorebirdCodePushScreen(),

@@ -10,9 +10,10 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
@@ -74,10 +75,9 @@ class _EntryName extends StatelessWidget {
     return InkWell(
       onTap: () {
         mainMenuBottomNavManager.setPupilProfileNavPage(6);
-        Navigator.of(context).push<void>(
-          MaterialPageRoute<void>(
-            builder: (ctx) => PupilProfilePage(pupil: pupil),
-          ),
+        context.push(
+          RoutePaths.pupilProfilePath(pupil.internalId),
+          extra: pupil,
         );
       },
       onLongPress: () async {

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_screen/matrix_event_reports_screen.dart';
@@ -13,7 +15,6 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matri
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/widgets/room_list_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/widgets/room_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/new_matrix_room_screen/new_matrix_room_screen.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_screen/matrix_users_list_screen.dart';
 
 class MatrixRoomsListScreen extends WatchingWidget {
   const MatrixRoomsListScreen({super.key});
@@ -90,7 +91,7 @@ class MatrixRoomsListScreen extends WatchingWidget {
             tooltip: 'Neuer Raum',
             icon: const Icon(Icons.add, size: 30),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute<void>(
                   builder: (ctx) => const NewMatrixRoomScreen(),
                 ),
@@ -109,18 +110,14 @@ class MatrixRoomsListScreen extends WatchingWidget {
             tooltip: 'Matrix-Konten',
             icon: const Icon(Icons.people_alt_rounded, size: 30),
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => const MatrixUsersListScreen(),
-                ),
-              );
+              context.push(RoutePaths.adminMatrixUsers);
             },
           ),
           IconButton(
             tooltip: 'Event Reports',
             icon: const Icon(Icons.flag_circle_rounded, size: 30),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute<void>(
                   builder: (ctx) => const MatrixEventReportsScreen(),
                 ),

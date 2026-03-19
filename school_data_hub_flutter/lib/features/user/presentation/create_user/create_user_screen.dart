@@ -370,7 +370,7 @@ class CreateOrEditUserScreen extends WatchingWidget {
                           label: 'KINDER AUSWÄHLEN',
                           onPressed: () async {
                             final List<int> selectedPupilIds =
-                                await Navigator.of(context).push(
+                                await Navigator.of(context, rootNavigator: true).push(
                                   MaterialPageRoute<List<int>>(
                                     builder: (ctx) => SelectPupilsListScreen(
                                       selectablePupils: pupilManager

@@ -70,7 +70,7 @@ class WorkbookListScreen extends WatchingWidget {
             }
             if (isbn == null) return;
             if (!context.mounted) return;
-            Navigator.of(context).push(
+            Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute<void>(
                 builder: (ctx) => NewWorkbookScreen(isEdit: false, isbn: isbn!),
               ),

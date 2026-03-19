@@ -41,7 +41,7 @@ class SchoolListStatsRow extends WatchingWidget {
             );
             if (confirm != true) return;
             if (!context.mounted) return;
-            Navigator.of(context).push(
+            Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute<void>(
                 builder: (ctx) =>
                     NewSchoolListScreen(initialSchoolList: schoolList),

@@ -18,8 +18,9 @@ import 'package:school_data_hub_flutter/features/attendance/presentation/attenda
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_screen/widgets/dialogues/late_in_minutes_dialog.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_screen/widgets/dialogues/multiple_entries_dialog.dart';
 import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_screen/widgets/dialogues/returned_time_picker.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_navigation.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
@@ -51,10 +52,9 @@ class AttendanceCard extends WatchingWidget {
                   child: GestureDetector(
                     onLongPress: () =>
                         createMissedSchooldayList(context, pupil),
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => PupilProfilePage(pupil: pupil),
-                      ),
+                    onTap: () => context.push(
+                      RoutePaths.pupilProfilePath(pupil.internalId),
+                      extra: pupil,
                     ),
                     child: Column(
                       children: [
@@ -477,8 +477,9 @@ class AttendanceCard extends WatchingWidget {
     di<BottomNavManager>().setPupilProfileNavPage(
       ProfileNavigationState.attendance.value,
     );
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => PupilProfilePage(pupil: pupil)),
+    context.pushReplacement(
+      RoutePaths.pupilProfilePath(pupil.internalId),
+      extra: pupil,
     );
   }
 

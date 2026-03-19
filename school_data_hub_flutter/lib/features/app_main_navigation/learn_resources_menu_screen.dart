@@ -6,13 +6,9 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/books_main_menu_screen/books_main_menu_screen.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_screen/competence_list_screen.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_screen/competence_report_item_list_scope.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_screen/support_category_list_screen.dart';
-import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_screen/workbook_list_screen.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class LearnResourcesMenuScreen extends StatelessWidget {
@@ -46,7 +42,7 @@ class LearnResourcesMenuScreen extends StatelessWidget {
                   alignment: WrapAlignment.center,
                   children: [
                     MainMenuButton(
-                      destinationPage: const CompetenceListScreen(),
+                      routePath: RoutePaths.learningCompetences,
                       buttonIcon: Icon(
                         Icons.lightbulb,
                         size: 50,
@@ -55,7 +51,7 @@ class LearnResourcesMenuScreen extends StatelessWidget {
                       buttonText: locale.competences,
                     ),
                     MainMenuButton(
-                      destinationPage: const CategoryListScreen(),
+                      routePath: RoutePaths.learningSupportCategory,
                       buttonIcon: Icon(
                         Icons.support_rounded,
                         size: 50,
@@ -65,7 +61,7 @@ class LearnResourcesMenuScreen extends StatelessWidget {
                     ),
                     if (di<HubSessionManager>().user!.userFlags.isTester)
                       MainMenuButton(
-                        destinationPage: const WorkbookListScreen(),
+                        routePath: RoutePaths.learningWorkbooks,
                         buttonIcon: Icon(
                           Icons.note_alt,
                           size: 50,
@@ -74,7 +70,7 @@ class LearnResourcesMenuScreen extends StatelessWidget {
                         buttonText: locale.workbooks,
                       ),
                     MainMenuButton(
-                      destinationPage: const BooksMainMenuScreen(),
+                      routePath: RoutePaths.learningBooks,
                       buttonIcon: Icon(
                         Icons.book,
                         size: 50,
@@ -83,7 +79,7 @@ class LearnResourcesMenuScreen extends StatelessWidget {
                       buttonText: 'Bücherei',
                     ),
                     MainMenuButton(
-                      destinationPage: const CompetenceReportItemListScope(),
+                      routePath: RoutePaths.learningCompetenceReport,
                       buttonIcon: Icon(
                         Icons.assignment,
                         size: 50,

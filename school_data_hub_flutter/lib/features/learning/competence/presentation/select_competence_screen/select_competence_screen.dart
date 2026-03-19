@@ -89,7 +89,7 @@ class SelectCompetenceScreen extends StatelessWidget {
                       viewModel.selectedCompetence!,
                     );
                   } else {
-                    Navigator.of(context).push(
+                    Navigator.of(context, rootNavigator: true).push(
                       MaterialPageRoute<void>(
                         builder: (ctx) => MultiPupilCompetenceCheckScreen(
                           competence: viewModel.selectedCompetence!,

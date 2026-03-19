@@ -42,7 +42,7 @@ class ConfirmationPopup extends StatelessWidget {
     VoidCallback? onCancel,
     bool destructive = false,
   }) {
-    return Navigator.of(context).push(
+    return Navigator.of(context, rootNavigator: true).push(
       _ConfirmationPopupRoute(
         icon: icon,
         title: title,

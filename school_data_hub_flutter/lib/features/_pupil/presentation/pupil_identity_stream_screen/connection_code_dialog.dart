@@ -42,7 +42,7 @@ Future<void> showConnectionCodeDialog(BuildContext context) async {
               final code = controller.text.trim();
               if (code.isNotEmpty) {
                 Navigator.of(context).pop();
-                Navigator.of(context).push(
+                Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute<void>(
                     builder: (context) => PupilIdentityStreamScreen(
                       role: PupilIdentityStreamRole.receiver,

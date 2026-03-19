@@ -17,14 +17,10 @@ import 'package:school_data_hub_flutter/core/client/hub_state_indicators.dart';
 import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
-import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
+import 'package:school_data_hub_flutter/core/router/app_router.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/error_screen.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/global_overlay_host/global_overlay_host.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_screen.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/login_screen/login_controller.dart';
-import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_screen.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_bottom_navigation.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 import 'package:terminate_restart/terminate_restart.dart';
 import 'package:window_manager/window_manager.dart';
@@ -93,8 +89,9 @@ void main() async {
 class MyApp extends WatchingWidget {
   const MyApp({super.key});
 
+  /// Global navigator key — used by snackbars.dart for root-level toast context
+  /// and passed to GoRouter.
   static final navigatorKey = GlobalKey<NavigatorState>();
-  static final _log = Logger('MyApp');
 
   @override
   Widget build(BuildContext context) {
@@ -110,30 +107,53 @@ class MyApp extends WatchingWidget {
       ),
     );
 
+    // Watch auth state for HubStateIndicators visibility and DI gate
     final bool envIsReady = watchValue((EnvManager x) => x.envIsReady);
     final bool userIsAuthenticated = watchValue(
       (EnvManager x) => x.isAuthenticated,
     );
-    final bool isConnected = watchValue(
-      (ServerpodConnectivityMonitor x) => x.isConnected,
+
+    // Create the router once — stable across rebuilds
+    final appRouter = createOnce(
+      () => AppRouter(navigatorKey: navigatorKey),
     );
 
     return Style(
       brightness: Brightness.light,
-      child: MaterialApp(
-        navigatorKey: navigatorKey,
+      child: MaterialApp.router(
+        routerConfig: appRouter.router,
         builder: (context, child) {
-          return Stack(
-            children: [
-              child!,
-              if (userIsAuthenticated && envIsReady)
-                Positioned(
-                  top: MediaQuery.of(context).padding.top,
-                  right: 10,
-                  height: kToolbarHeight,
-                  child: const _HubStateIndicators(),
-                ),
-            ],
+          // Determine app phase for GlobalOverlayHost (used in log messages)
+          final phase = userIsAuthenticated && envIsReady
+              ? AppPhase.loggedIn
+              : AppPhase.unlogged;
+
+          // Gate authenticated routes behind DI readiness.
+          // When the auth scope is first pushed, async singletons may still be
+          // initializing. _DependencyGate shows LoadingScreen until di.allReady()
+          // resolves, then passes through the router child.
+          // When _DependencyGate is removed from the tree (logout → condition
+          // becomes false), its State is disposed. On re-login a fresh State is
+          // created with a new di.allReady() future for the new scope.
+          Widget content = child!;
+          if (userIsAuthenticated && envIsReady) {
+            content = _DependencyGate(child: content);
+          }
+
+          return GlobalOverlayHost(
+            phase: phase,
+            child: Stack(
+              children: [
+                content,
+                if (userIsAuthenticated && envIsReady)
+                  Positioned(
+                    top: MediaQuery.of(context).padding.top,
+                    right: 10,
+                    height: kToolbarHeight,
+                    child: const _HubStateIndicators(),
+                  ),
+              ],
+            ),
           );
         },
         localizationsDelegates: const <LocalizationsDelegate<Object>>[
@@ -143,60 +163,52 @@ class MyApp extends WatchingWidget {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: const [
-          Locale('de', 'DE'), // Set the default locale
-          // Locale('en', 'EN'),
-          //Locale('es', 'ES'),
+          Locale('de', 'DE'),
         ],
         debugShowCheckedModeBanner: false,
         title: 'Schuldaten Hub',
-        home: !isConnected
-            ? const GlobalOverlayHost(
-                phase: AppPhase.unlogged,
-                child: NoConnectionScreen(),
-              )
-            : envIsReady
-            ? FutureBuilder(
-                future: di.allReady(timeout: const Duration(seconds: 30)),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    _log.shout(
-                      'Dependency Injection Error: ${snapshot.error}',
-                      snapshot.stackTrace,
-                    );
-                    return GlobalOverlayHost(
-                      phase: AppPhase.unlogged,
-                      child: ErrorScreen(error: snapshot.error.toString()),
-                    );
-                  }
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (userIsAuthenticated) {
-                      return const GlobalOverlayHost(
-                        phase: AppPhase.loggedIn,
-                        child: MainMenuBottomNavigation(),
-                      );
-                    } else {
-                      return const GlobalOverlayHost(
-                        phase: AppPhase.unlogged,
-                        child: Login(),
-                      );
-                    }
-                  }
-                  return const GlobalOverlayHost(
-                    phase: AppPhase.loading,
-                    child: LoadingScreen(),
-                  );
-                },
-              )
-            : di<EnvManager>().activeEnv != null
-            ? const GlobalOverlayHost(
-                phase: AppPhase.loading,
-                child: LoadingScreen(),
-              )
-            : const GlobalOverlayHost(
-                phase: AppPhase.unlogged,
-                child: EntryPoint(),
-              ),
       ),
+    );
+  }
+}
+
+/// Gates rendering behind [di.allReady] so that auth-scope async singletons
+/// are fully initialized before the main UI builds.
+///
+/// Uses a [StatefulWidget] so the future is created once per mount. When the
+/// user logs out, this widget is removed from the tree (the `if` in the builder
+/// is false). On re-login, a new instance is created with a fresh future.
+class _DependencyGate extends StatefulWidget {
+  const _DependencyGate({required this.child});
+  final Widget child;
+
+  @override
+  State<_DependencyGate> createState() => _DependencyGateState();
+}
+
+class _DependencyGateState extends State<_DependencyGate> {
+  static final _log = Logger('DependencyGate');
+  late final Future<void> _ready = di.allReady(
+    timeout: const Duration(seconds: 30),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _ready,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          _log.shout(
+            'Dependency Injection Error: ${snapshot.error}',
+            snapshot.stackTrace,
+          );
+          return ErrorScreen(error: snapshot.error.toString());
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          return widget.child;
+        }
+        return const LoadingScreen();
+      },
     );
   }
 }

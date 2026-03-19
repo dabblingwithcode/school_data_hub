@@ -12,8 +12,9 @@ import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_do
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_helper.dart';
@@ -60,12 +61,7 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                                 di<BottomNavManager>().setPupilProfileNavPage(
                                   9,
                                 );
-                                Navigator.of(context).push<void>(
-                                  MaterialPageRoute<void>(
-                                    builder: (ctx) =>
-                                        PupilProfilePage(pupil: passedPupil),
-                                  ),
-                                );
+                                context.push(RoutePaths.pupilProfilePath(passedPupil.internalId), extra: passedPupil);
                               },
                               child: _MultiPupilCompetenceNameRow(
                                 pupil: passedPupil,

@@ -9,7 +9,8 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/filters/attendance_pupil_filter.dart';
 import 'package:school_data_hub_flutter/features/attendance/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/attendance/presentation/attendance_screen/attendance_list_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_screen/chart_screen.dart';
 
@@ -82,11 +83,7 @@ class AttendanceStatsView extends WatchingWidget {
                       ),
                     ],
                   );
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (context) => const AttendanceListScreen(),
-                    ),
-                  );
+                  context.push(RoutePaths.pupilAttendance);
                 },
                 child: const Text('Fehlzeiten anzeigen'),
               ),

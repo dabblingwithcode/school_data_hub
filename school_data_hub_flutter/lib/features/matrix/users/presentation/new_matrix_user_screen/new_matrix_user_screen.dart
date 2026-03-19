@@ -283,7 +283,7 @@ class _NewMatrixUserScreenContentState
                   variant: ButtonVariant.primary,
                   onPressed: () async {
                     final List<String> selectedRoomIds =
-                        await Navigator.of(context).push(
+                        await Navigator.of(context, rootNavigator: true).push(
                           MaterialPageRoute<List<String>>(
                             builder: (ctx) => SelectMatrixRoomsList(
                               MatrixRoomHelper.restOfRooms(roomIds.toList()),
@@ -312,7 +312,7 @@ class _NewMatrixUserScreenContentState
                         );
 
                     if (file != null && context.mounted) {
-                      Navigator.of(context).push(
+                      Navigator.of(context, rootNavigator: true).push(
                         MaterialPageRoute<void>(
                           builder: (context) =>
                               PdfViewerScreen(pdfGenerator: () async => file),

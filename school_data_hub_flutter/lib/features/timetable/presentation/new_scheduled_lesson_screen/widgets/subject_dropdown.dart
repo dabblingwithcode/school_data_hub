@@ -73,7 +73,7 @@ class SubjectDropdown extends WatchingWidget {
         SizedBox(width: Style.spacing.md),
         GestureDetector(
           onTap: () async {
-            final result = await Navigator.of(context).push<Subject>(
+            final result = await Navigator.of(context, rootNavigator: true).push<Subject>(
               MaterialPageRoute<Subject>(
                 builder: (context) => const NewSubjectScreen(),
               ),

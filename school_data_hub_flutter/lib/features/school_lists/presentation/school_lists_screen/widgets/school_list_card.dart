@@ -25,7 +25,7 @@ class SchoolListCard extends WatchingWidget {
     ).firstWhere((element) => element.listId == this.schoolList.listId);
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
+        Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute<void>(
             builder: (ctx) => SchoolListPupilEntriesScreen(schoolList),
           ),

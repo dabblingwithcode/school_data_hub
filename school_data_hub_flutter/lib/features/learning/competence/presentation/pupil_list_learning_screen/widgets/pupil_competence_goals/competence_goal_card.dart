@@ -32,7 +32,7 @@ class CompetenceGoalCard extends StatelessWidget {
       child: CardBox(
         padding: EdgeInsets.all(Style.spacing.sm),
         onTap: () {
-          Navigator.of(context).push(
+          Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute<void>(
               builder: (context) =>
                   NewCompetenceGoalPage(existingGoal: pupilGoal),

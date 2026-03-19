@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_screen/logs_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
@@ -49,11 +50,7 @@ class LoadingScreenState extends State<LoadingScreen> {
                         width: 300,
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (ctx) => const LogsScreen(),
-                              ),
-                            );
+                            context.push(RoutePaths.settingsLogs);
                           },
                           child: const Image(
                             image: AssetImage('assets/foreground.png'),

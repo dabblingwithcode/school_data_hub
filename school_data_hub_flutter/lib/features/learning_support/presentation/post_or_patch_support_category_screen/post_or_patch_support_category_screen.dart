@@ -111,7 +111,7 @@ class _PostOrPatchSupportCategoryScreenState
   }
 
   Future<void> _openSelectParent() async {
-    final result = await Navigator.of(context).push<int>(
+    final result = await Navigator.of(context, rootNavigator: true).push<int>(
       MaterialPageRoute<int>(
         builder: (ctx) => SelectParentCategoryScreen(
           movingCategoryId: widget.category?.categoryId ?? -1,

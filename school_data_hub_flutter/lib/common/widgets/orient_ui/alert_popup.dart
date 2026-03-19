@@ -29,7 +29,7 @@ class AlertPopup extends StatelessWidget {
     String? description,
     Widget? action,
   }) {
-    return Navigator.of(context).push(
+    return Navigator.of(context, rootNavigator: true).push(
       _AlertPopupRoute(
         icon: icon,
         title: title,
