@@ -11,12 +11,7 @@ import 'package:school_data_hub_flutter/features/app_entry_point/error_screen.da
 import 'package:school_data_hub_flutter/features/app_entry_point/loading_screen.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/login_screen/login_controller.dart';
 import 'package:school_data_hub_flutter/features/app_entry_point/no_connection_screen.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/learn_resources_menu_screen.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists_menu_screen.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_menu_screen.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/tools_screen.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/scaffold_with_nav_bar.dart';
-import 'package:school_data_hub_flutter/features/app_settings/settings_screen/settings_screen.dart';
 
 // --- Feature screen imports for top-level routes ---
 // Pupil lists
@@ -216,68 +211,11 @@ class AppRouter {
             builder: (_, __) => const Statistics(),
           ),
 
-          // --- Main app shell with bottom navigation (5 tabs) ---
-          StatefulShellRoute(
-            builder: (context, state, navigationShell) => navigationShell,
-            navigatorContainerBuilder: (
-              BuildContext context,
-              StatefulNavigationShell navigationShell,
-              List<Widget> children,
-            ) =>
-                ScaffoldWithNavBar(
-              navigationShell: navigationShell,
-              children: children,
-            ),
-            branches: [
-              // Tab 0 — Pupil Lists
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: RoutePaths.home,
-                    builder: (context, state) =>
-                        const PupilListsMenuScreen(),
-                  ),
-                ],
-              ),
-              // Tab 1 — School Lists
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: RoutePaths.schoolLists,
-                    builder: (context, state) =>
-                        const SchoolListsMenuScreen(),
-                  ),
-                ],
-              ),
-              // Tab 2 — Learning Resources
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: RoutePaths.learning,
-                    builder: (context, state) =>
-                        const LearnResourcesMenuScreen(),
-                  ),
-                ],
-              ),
-              // Tab 3 — Tools
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: RoutePaths.tools,
-                    builder: (context, state) => const ToolsScreen(),
-                  ),
-                ],
-              ),
-              // Tab 4 — Settings
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: RoutePaths.settings,
-                    builder: (context, state) => const SettingsScreen(),
-                  ),
-                ],
-              ),
-            ],
+          // --- Main app shell with bottom navigation (5 tabs via PageView) ---
+          GoRoute(
+            path: RoutePaths.home,
+            builder: (_, state) =>
+                ScaffoldWithNavBar(initialTab: state.extra as int?),
           ),
         ],
       );

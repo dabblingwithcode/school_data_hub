@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
@@ -10,23 +9,24 @@ import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/learn_resources_menu_screen.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists_menu_screen.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_menu_screen.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/tools_screen.dart';
+import 'package:school_data_hub_flutter/features/app_settings/settings_screen/settings_screen.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
-/// Shell widget for [StatefulShellRoute] — renders the branch navigators inside
-/// a [Scaffold] with a [PageView] body and a bottom navigation bar.
+/// Main shell widget — PageView with 5 tabs and a bottom navigation bar.
 ///
-/// Uses the primary [StatefulShellRoute] constructor with
-/// [navigatorContainerBuilder] so that the branch navigators are provided as
-/// [children] and wrapped in a [PageView] for swipe-between-tabs support.
+/// This is a simple PageView-based shell (like the old [MainMenuBottomNavigation]).
+/// go_router handles auth/connection redirects; this widget just renders the
+/// authenticated main UI. Feature screens push onto the root navigator via
+/// [context.push], so no branch navigators or [StatefulShellRoute] needed.
 class ScaffoldWithNavBar extends WatchingStatefulWidget {
-  const ScaffoldWithNavBar({
-    required this.navigationShell,
-    required this.children,
-    super.key,
-  });
+  const ScaffoldWithNavBar({this.initialTab, super.key});
 
-  final StatefulNavigationShell navigationShell;
-  final List<Widget> children;
+  /// If non-null, overrides [BottomNavManager] and opens on this tab index.
+  final int? initialTab;
 
   @override
   State<ScaffoldWithNavBar> createState() => _ScaffoldWithNavBarState();
@@ -34,18 +34,29 @@ class ScaffoldWithNavBar extends WatchingStatefulWidget {
 
 class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
     with WidgetsBindingObserver {
-  late final PageController _pageController = PageController(
-    initialPage: widget.navigationShell.currentIndex,
-  );
+  static const _pages = <Widget>[
+    PupilListsMenuScreen(),
+    SchoolListsMenuScreen(),
+    LearnResourcesMenuScreen(),
+    ToolsScreen(),
+    SettingsScreen(),
+  ];
 
-  /// Guards against recursive calls when the PageView animation triggers
-  /// onPageChanged which calls goBranch which triggers the handler.
-  bool _isAnimating = false;
+  late final PageController _pageController;
+
+  /// Duration per page when animating between tabs via bottom nav tap.
+  static const _msPerPage = 150;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    final initialPage =
+        widget.initialTab ?? di<BottomNavManager>().bottomNavState.value;
+    if (widget.initialTab != null) {
+      di<BottomNavManager>().setBottomNavPage(widget.initialTab!);
+    }
+    _pageController = PageController(initialPage: initialPage);
   }
 
   @override
@@ -58,37 +69,32 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
-    // On some devices (e.g. Samsung Tab S6 Lite), orientation change can report
-    // new orientation before updated dimensions. Force a rebuild after a short
-    // delay so the next frame gets correct viewport constraints.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() {});
     });
   }
 
   void _onTap(int index) {
-    // Sync BottomNavManager so existing code that reads bottomNavState still works
     di<BottomNavManager>().setBottomNavPage(index);
-
-    // Animate the PageView to the tapped tab
-    _isAnimating = true;
-    _pageController
-        .animateToPage(
-          index,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeIn,
-        )
-        .then((_) => _isAnimating = false);
+    final distance =
+        (index - (_pageController.page?.round() ?? 0)).abs().clamp(1, 5);
+    _pageController.animateToPage(
+      index,
+      duration: Duration(milliseconds: _msPerPage * distance),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    final tab = watchValue((BottomNavManager x) => x.bottomNavState);
 
-    // One-time env-data check (migrated from MainMenuBottomNavigation)
+    // One-time env-data check
     callOnce((context) async {
       final envManager = di<EnvManager>();
-      final envDataIncomplete = envManager.isAnyImportantEnvDataNotPopulatedInServer();
+      final envDataIncomplete =
+          envManager.isAnyImportantEnvDataNotPopulatedInServer();
       if (envDataIncomplete) {
         final serverDataStatus = envManager.populatedEnvServerData;
         final List<String> missingFields = [];
@@ -118,20 +124,18 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
       PupilIdentityHelper.checkForOutdatedPupilIdentities();
     });
 
-    // Keep BottomNavManager in sync when go_router changes branch externally
-    // (e.g. programmatic navigation via setBottomNavPage(0) in PupilIdentityManager)
+    // Programmatic tab changes (e.g. PupilIdentityManager.setBottomNavPage(0))
     registerHandler(
       select: (BottomNavManager x) => x.bottomNavState,
       handler: (context, value, cancel) {
-        if (value != widget.navigationShell.currentIndex && !_isAnimating) {
-          _isAnimating = true;
-          _pageController
-              .animateToPage(
-                value,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeIn,
-              )
-              .then((_) => _isAnimating = false);
+        if ((_pageController.page?.round() ?? 0) != value) {
+          final distance =
+              (value - (_pageController.page?.round() ?? 0)).abs().clamp(1, 5);
+          _pageController.animateToPage(
+            value,
+            duration: Duration(milliseconds: _msPerPage * distance),
+            curve: Curves.easeInOut,
+          );
         }
       },
     );
@@ -140,21 +144,17 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
       backgroundColor: Style.of(context).colors.canvas,
       body: PageView(
         controller: _pageController,
-        physics: const ClampingScrollPhysics(),
         onPageChanged: (index) {
-          if (_isAnimating) return; // Avoid recursive calls during animation
-          // Sync go_router branch and BottomNavManager when user swipes
-          widget.navigationShell.goBranch(index);
           di<BottomNavManager>().setBottomNavPage(index);
         },
-        children: widget.children,
+        children: _pages,
       ),
       bottomNavigationBar: BottomNavBarLayout(
         bottomNavBar: BottomNavigationBar(
           iconSize: 28,
           onTap: _onTap,
           showSelectedLabels: true,
-          currentIndex: widget.navigationShell.currentIndex,
+          currentIndex: tab,
           selectedItemColor: AppColors.accentColor,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(

@@ -114,9 +114,7 @@ class MyApp extends WatchingWidget {
     );
 
     // Create the router once — stable across rebuilds
-    final appRouter = createOnce(
-      () => AppRouter(navigatorKey: navigatorKey),
-    );
+    final appRouter = createOnce(() => AppRouter(navigatorKey: navigatorKey));
 
     return Style(
       brightness: Brightness.light,
@@ -162,9 +160,7 @@ class MyApp extends WatchingWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: const [
-          Locale('de', 'DE'),
-        ],
+        supportedLocales: const [Locale('de', 'DE')],
         debugShowCheckedModeBanner: false,
         title: 'Schuldaten Hub',
       ),
