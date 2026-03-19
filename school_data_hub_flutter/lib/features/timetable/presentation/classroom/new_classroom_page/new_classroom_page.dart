@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/new_classroom_page/widgets/action_buttons.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/new_classroom_page/widgets/room_code_field.dart';
@@ -14,16 +13,17 @@ export 'widgets/action_buttons.dart';
 export 'widgets/room_code_field.dart';
 export 'widgets/room_name_field.dart';
 
-class NewClassroomPage extends WatchingWidget {
+class NewClassroomScreen extends WatchingWidget {
   final Classroom? classroom;
 
-  const NewClassroomPage({super.key, this.classroom});
+  const NewClassroomScreen({super.key, this.classroom});
 
   bool get _isEditing => classroom != null;
 
   @override
   Widget build(BuildContext context) {
     final timetableManager = di<TimetableManager>();
+    final style = Style.of(context);
 
     // Create form key using createOnce
     final formKey = createOnce<GlobalKey<FormState>>(
@@ -48,23 +48,24 @@ class NewClassroomPage extends WatchingWidget {
     });
 
     return Scaffold(
+      backgroundColor: style.colors.canvas,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: AppColors.backgroundColor,
+        backgroundColor: style.colors.accent,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.meeting_room, size: 25, color: Colors.white),
-            const Gap(10),
+            Icon(Icons.meeting_room, size: 25, color: style.colors.background),
+            Gap(Style.spacing.md),
             Text(
               _isEditing ? 'Raum bearbeiten' : 'Neuer Raum',
-              style: AppStyles.appBarTextStyle,
+              style: context.typography.title.withColor(style.colors.background),
             ),
           ],
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
@@ -75,11 +76,11 @@ class NewClassroomPage extends WatchingWidget {
                 children: <Widget>[
                   // Room code field
                   RoomCodeField(controller: roomCodeController),
-                  const Gap(20),
+                  Gap(Style.spacing.xl),
 
                   // Room name field
                   RoomNameField(controller: roomNameController),
-                  const Gap(32),
+                  Gap(Style.spacing.xxl),
 
                   // Action buttons
                   ActionButtons(

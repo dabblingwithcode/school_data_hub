@@ -5,16 +5,16 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
@@ -22,22 +22,23 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dar
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_search_bar_stats.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_screen/new_matrix_user_screen.dart';
 
-class PupilsMatrixContactsListPage extends WatchingWidget {
-  const PupilsMatrixContactsListPage({super.key});
+class PupilsMatrixContactsListScreen extends WatchingWidget {
+  const PupilsMatrixContactsListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final pupilManager = di<PupilProxyManager>();
     final pupilsFilter = di<PupilsFilter>();
     final filterStateManager = di<FiltersStateManager>();
     return Scaffold(
-      appBar: const GenericAppBar(
+      appBar: const AppHeader(
         iconData: Icons.contact_mail_rounded,
         title: 'Matrix Kontakte',
       ),
@@ -74,7 +75,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                   final missingContacts =
                       pupil.tutorInfo?.parentsContact == null ||
                       pupil.contact == null;
-                  final subtleBorder = AppColors.canvasColor;
+                  final subtleBorder = style.colors.canvas;
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8.0,
@@ -83,10 +84,12 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                     child: Card(
                       color: missingContacts
                           ? const Color.fromARGB(255, 251, 232, 176)
-                          : Colors.white,
+                          : style.colors.background,
                       shape: RoundedRectangleBorder(
                         side: BorderSide(
-                          color: missingContacts ? Colors.orange : subtleBorder,
+                          color: missingContacts
+                              ? style.colors.warning
+                              : subtleBorder,
                           width: 3,
                         ),
                         borderRadius: BorderRadius.circular(12),
@@ -119,10 +122,10 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                           },
                                           child: Text(
                                             '${pupil.firstName} ${pupil.lastName}',
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                            style: context
+                                                .typography
+                                                .subtitle
+                                                .bold,
                                           ),
                                         ),
                                         if (pupil.family != null)
@@ -132,8 +135,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                               Icon(
                                                 Icons.group,
                                                 size: 25,
-                                                color:
-                                                    AppColors.backgroundColor,
+                                                color: style.colors.accent,
                                               ),
                                             ],
                                           ),
@@ -180,7 +182,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                             MaterialPageRoute<
                                                               void
                                                             >(
-                                                              builder: (ctx) => NewMatrixUserPage(
+                                                              builder: (ctx) => NewMatrixUserScreen(
                                                                 pupil: pupil,
                                                                 matrixId:
                                                                     MatrixPolicyHelper.generateMatrixId(
@@ -247,14 +249,14 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                           color:
                                                               pupil.contact ==
                                                                   null
-                                                              ? Colors.black
-                                                              : AppColors
-                                                                    .backgroundColor,
+                                                              ? style
+                                                                    .colors
+                                                                    .foreground
+                                                              : style
+                                                                    .colors
+                                                                    .accent,
                                                           fontWeight:
-                                                              pupil.contact ==
-                                                                  null
-                                                              ? FontWeight.bold
-                                                              : FontWeight.bold,
+                                                              FontWeight.bold,
                                                         ),
                                                       ),
                                                     ),
@@ -352,7 +354,7 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                             MaterialPageRoute<
                                                               void
                                                             >(
-                                                              builder: (ctx) => NewMatrixUserPage(
+                                                              builder: (ctx) => NewMatrixUserScreen(
                                                                 pupil: pupil,
                                                                 matrixId:
                                                                     MatrixPolicyHelper.generateMatrixId(
@@ -446,16 +448,14 @@ class PupilsMatrixContactsListPage extends WatchingWidget {
                                                                       .tutorInfo
                                                                       ?.parentsContact ==
                                                                   null
-                                                              ? Colors.black
-                                                              : AppColors
-                                                                    .backgroundColor,
+                                                              ? style
+                                                                    .colors
+                                                                    .foreground
+                                                              : style
+                                                                    .colors
+                                                                    .accent,
                                                           fontWeight:
-                                                              pupil
-                                                                      .tutorInfo
-                                                                      ?.parentsContact ==
-                                                                  null
-                                                              ? FontWeight.bold
-                                                              : FontWeight.bold,
+                                                              FontWeight.bold,
                                                         ),
                                                       ),
                                                     ),

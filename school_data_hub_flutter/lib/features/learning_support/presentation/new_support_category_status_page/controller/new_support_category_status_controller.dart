@@ -110,7 +110,7 @@ class NewSupportCategoryStatusController
 
   @override
   Widget build(BuildContext context) {
-    return NewSupportCategoryStatusPage(this);
+    return NewSupportCategoryStatusScreen(this);
   }
 
   @override

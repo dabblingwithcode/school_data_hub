@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matr
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 
 class SelectMatrixUserCard extends WatchingWidget {
   final SelectMatrixUsersListController controller;
@@ -20,6 +20,7 @@ class SelectMatrixUserCard extends WatchingWidget {
   const SelectMatrixUserCard(this.controller, this.passedUser, {super.key});
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final matrixUser = watch<MatrixUser>(passedUser);
     final MatrixUserRelationship? userRelationship =
         MatrixUserHelper.getUserRelationship(matrixUser);
@@ -30,7 +31,7 @@ class SelectMatrixUserCard extends WatchingWidget {
           controller.isSelectMode ? controller.onCardPress(matrixUser.id!) : {},
       child: Card(
         color: controller.selectedUsers.contains(matrixUser.id!)
-            ? AppColors.selectedCardColor
+            ? style.colors.selectedCard
             : userRelationship != null && userRelationship.isParent
             ? const Color.fromARGB(255, 202, 252, 187)
             : !matrixUser.id!.contains('_')

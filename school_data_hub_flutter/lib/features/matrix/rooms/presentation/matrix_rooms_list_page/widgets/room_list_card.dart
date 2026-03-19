@@ -4,14 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/dialogs/remove_room_from_policy_dialog.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_room_edit_page/matrix_room_edit_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_room_edit_screen/matrix_room_edit_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/change_power_levels_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/users_in_room_list.dart';
 
@@ -48,12 +48,13 @@ class RoomListCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final matrixPolicyManager = di<MatrixPolicyManager>();
     final roomManager = matrixPolicyManager.rooms;
     watch(roomManager.compulsoryRooms);
     final compulsory = roomManager.getCompulsoryRoomFor(matrixRoom.id);
-    final tileController = createOnce<CustomExpansionTileController>(
-      () => CustomExpansionTileController(),
+    final tileController = createOnce<ExpansionController>(
+      () => ExpansionController(),
     );
 
     final room = watch<MatrixRoom>(
@@ -73,8 +74,8 @@ class RoomListCard extends WatchingWidget {
     final matrixUsersInRoom = MatrixRoomHelper.usersInRoom(room.id);
 
     return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
+      color: style.colors.background,
+      surfaceTintColor: style.colors.background,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       elevation: 1.0,
       margin: const EdgeInsets.only(
@@ -110,7 +111,7 @@ class RoomListCard extends WatchingWidget {
                                       fit: BoxFit.cover,
                                       headers: imageHeaders,
                                       errorBuilder: (_, __, ___) => Container(
-                                        color: Colors.grey.shade300,
+                                        color: style.colors.mutedForeground,
                                         alignment: Alignment.center,
                                         child: const Icon(
                                           Icons.group,
@@ -119,13 +120,13 @@ class RoomListCard extends WatchingWidget {
                                       ),
                                     )
                                   : Container(
-                                      color: Colors.grey.shade300,
+                                      color: style.colors.mutedForeground,
                                       alignment: Alignment.center,
                                       child: const Icon(Icons.group, size: 18),
                                     ),
                             )
                           : Container(
-                              color: Colors.grey.shade300,
+                              color: style.colors.mutedForeground,
                               alignment: Alignment.center,
                               child: const Icon(Icons.group, size: 18),
                             ),
@@ -151,7 +152,7 @@ class RoomListCard extends WatchingWidget {
                                       Navigator.of(context).push<void>(
                                         MaterialPageRoute<void>(
                                           builder: (ctx) =>
-                                              MatrixRoomEditPage(room: room),
+                                              MatrixRoomEditScreen(room: room),
                                         ),
                                       );
                                     },
@@ -174,11 +175,8 @@ class RoomListCard extends WatchingWidget {
                                       overflow: TextOverflow.fade,
                                       softWrap: false,
                                       textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
+                                      style: context.typography.subtitle.bold
+                                          .withColor(style.colors.foreground),
                                     ),
                                   ),
                                   if (compulsory != null) ...[
@@ -188,7 +186,7 @@ class RoomListCard extends WatchingWidget {
                                         _compulsoryRoomTypeLabel(
                                           compulsory.roomType,
                                         ),
-                                        style: const TextStyle(fontSize: 12),
+                                        style: context.typography.bodySmall,
                                       ),
                                       backgroundColor: _compulsoryRoomTypeColor(
                                         compulsory.roomType,
@@ -218,7 +216,7 @@ class RoomListCard extends WatchingWidget {
                                 children: [
                                   SelectableText(
                                     room.id,
-                                    style: const TextStyle(fontSize: 14),
+                                    style: context.typography.body,
                                   ),
                                 ],
                               ),
@@ -275,47 +273,6 @@ class RoomListCard extends WatchingWidget {
                           ),
                         ],
                       ),
-
-                      // Row(
-                      //   children: [
-                      //     Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         for (final roomAdmin in room.roomAdmins!)
-                      //           Row(
-                      //             mainAxisAlignment: MainAxisAlignment.start,
-                      //             children: [
-                      //               InkWell(
-                      //                 onLongPress: () async {
-                      //                   final bool?
-                      //                   confirmation = await confirmationDialog(
-                      //                     context: context,
-                      //                     message:
-                      //                         'Moderationsrechte für ${roomAdmin.id} entziehen?',
-                      //                     title: 'Moderationsrechte entziehen',
-                      //                   );
-                      //                   if (confirmation != true) return;
-                      //                   _matrixPolicyManager.rooms
-                      //                       .changeRoomPowerLevels(
-                      //                         roomId: room.id,
-                      //                         removeAdminWithId: roomAdmin.id,
-                      //                       );
-                      //                 },
-                      //                 child: Text(roomAdmin.id),
-                      //               ),
-                      //               const Gap(5),
-                      //               Text(
-                      //                 roomAdmin.powerLevel.toString(),
-                      //                 style: const TextStyle(
-                      //                   fontWeight: FontWeight.bold,
-                      //                 ),
-                      //               ),
-                      //             ],
-                      //           ),
-                      //       ],
-                      //     ),
-                      //   ],
-                      // ),
                     ],
                   ),
                 ),
@@ -329,10 +286,8 @@ class RoomListCard extends WatchingWidget {
                       Center(
                         child: Text(
                           matrixUsersInRoom.length.toString(),
-                          style: TextStyle(
-                            fontSize: 23,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.backgroundColor,
+                          style: context.typography.heading.withColor(
+                            style.colors.accent,
                           ),
                         ),
                       ),
@@ -341,12 +296,9 @@ class RoomListCard extends WatchingWidget {
                 ),
               ],
             ),
-            const Row(
+            Row(
               children: [
-                Text(
-                  'Berechtigungen',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
+                Text('Berechtigungen', style: context.typography.body.bold),
               ],
             ),
             Row(
@@ -356,10 +308,7 @@ class RoomListCard extends WatchingWidget {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        const Text(
-                          'Schreiben: ',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        Text('Schreiben: ', style: context.typography.subtitle),
                         const Gap(5),
                         InkWell(
                           onTap: () async {
@@ -375,18 +324,13 @@ class RoomListCard extends WatchingWidget {
                           },
                           child: Text(
                             room.eventsDefault.toString(),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.interactiveColor,
+                            style: context.typography.subtitle.bold.withColor(
+                              style.colors.interactive,
                             ),
                           ),
                         ),
                         const Gap(5),
-                        const Text(
-                          'Reaktionen:',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        Text('Reaktionen:', style: context.typography.subtitle),
                         const Gap(5),
                         InkWell(
                           onTap: () async {
@@ -402,10 +346,8 @@ class RoomListCard extends WatchingWidget {
                           },
                           child: Text(
                             room.powerLevelReactions.toString(),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.interactiveColor,
+                            style: context.typography.subtitle.bold.withColor(
+                              style.colors.interactive,
                             ),
                           ),
                         ),
@@ -418,7 +360,7 @@ class RoomListCard extends WatchingWidget {
             ),
             const Gap(5),
 
-            CustomExpansionTileContent(
+            ExpansionBody(
               title: null,
               tileController: tileController,
               widgetList: [MatrixUsersInRoomList(room: room)],

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/widgets/select_matrix_room_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/widgets/select_room_list_searchbar.dart';
 
-class SelectMatrixRoomsListPage extends WatchingWidget {
+class SelectMatrixRoomsListScreen extends WatchingWidget {
   final SelectMatrixRoomsListController controller;
   final List<MatrixRoom> filteredRoomsInLIst;
-  const SelectMatrixRoomsListPage(
+  const SelectMatrixRoomsListScreen(
     this.controller,
     this.filteredRoomsInLIst, {
     super.key,
@@ -21,25 +21,13 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final filtersOn = watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        leading: controller.isSelectMode
-            ? IconButton(
-                onPressed: () {
-                  controller.cancelSelect();
-                },
-                icon: const Icon(Icons.close, color: Colors.white),
-              )
-            : null,
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('Räume auswählen', style: AppStyles.appBarTextStyle)],
-        ),
+      backgroundColor: style.colors.canvas,
+      appBar: const AppHeader(
+        iconData: Icons.meeting_room_rounded,
+        title: 'Räume auswählen',
       ),
       body: RefreshIndicator(
         onRefresh: () async {},
@@ -75,13 +63,13 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
                   ),
                 ),
                 filteredRoomsInLIst.isEmpty
-                    ? const SliverToBoxAdapter(
+                    ? SliverToBoxAdapter(
                         child: Center(
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: Text(
                               'Keine Ergebnisse',
-                              style: TextStyle(fontSize: 18),
+                              style: context.typography.subtitle,
                             ),
                           ),
                         ),
@@ -103,7 +91,7 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: GenericBottomNavBar(
+      bottomNavigationBar: ActionBar(
         actions: [
           if (controller.isSelectMode)
             IconButton(
@@ -116,8 +104,8 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
             icon: Icon(
               Icons.select_all_rounded,
               color: controller.isSelectAllMode
-                  ? Colors.deepOrange
-                  : Colors.white,
+                  ? style.colors.error
+                  : style.colors.accentForeground,
               size: 30,
             ),
             onPressed: controller.toggleSelectAll,
@@ -126,7 +114,9 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
             tooltip: 'Okay',
             icon: Icon(
               Icons.check,
-              color: controller.isSelectMode ? Colors.green : Colors.white,
+              color: controller.isSelectMode
+                  ? style.colors.success
+                  : style.colors.accentForeground,
               size: 30,
             ),
             onPressed: () => Navigator.pop(context, controller.selectedRooms),
@@ -136,7 +126,9 @@ class SelectMatrixRoomsListPage extends WatchingWidget {
             tooltip: 'Filter',
             icon: Icon(
               Icons.filter_list,
-              color: filtersOn ? Colors.deepOrange : Colors.white,
+              color: filtersOn
+                  ? style.colors.error
+                  : style.colors.accentForeground,
               size: 30,
             ),
             onPressed: () => {},

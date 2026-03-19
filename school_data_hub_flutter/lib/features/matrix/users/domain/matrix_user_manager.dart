@@ -38,6 +38,9 @@ class MatrixUserManager {
   ValueListenable<List<MatrixUser>> get matrixUsers => _matrixUsers;
 
   void dispose() {
+    for (final user in _matrixUsers.value) {
+      user.dispose();
+    }
     _matrixUsers.dispose();
   }
 
@@ -325,7 +328,7 @@ class MatrixUserManager {
 
   /// Creates Matrix accounts for pupils with no contact info and returns a
   /// bulk PDF of the new credentials. Caller should open the file (e.g. with
-  /// [PdfViewerPage]) when non-null.
+  /// [PdfViewerScreen]) when non-null.
   Future<File?> createMatrixCredentialsForPupilsWithoutContactInfo() async {
     _notificationService.setHeavyLoadingValue(true);
     try {

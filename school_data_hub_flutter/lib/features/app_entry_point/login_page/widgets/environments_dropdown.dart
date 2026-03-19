@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -14,14 +15,18 @@ class EnvironmentsDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final envManager = di<EnvManager>();
+    final style = Style.of(context);
     return DropdownButton<String>(
       value: selectedEnv,
-      hint: const Text('Select Server', style: TextStyle(color: Colors.white)),
-      dropdownColor: Colors.grey[800],
-      icon: const Icon(Icons.arrow_downward, color: Colors.white),
+      hint: Text(
+        'Select Server',
+        style: TextStyle(color: style.colors.background),
+      ),
+      dropdownColor: style.colors.mutedForeground,
+      icon: Icon(Icons.arrow_downward, color: style.colors.background),
       iconSize: 24,
       elevation: 16,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: style.colors.background),
       underline: const SizedBox.shrink(),
       onChanged: (String? newValue) {
         changeEnv(newValue);
@@ -30,13 +35,11 @@ class EnvironmentsDropdown extends StatelessWidget {
         return DropdownMenuItem<String>(
           value: value,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(Style.spacing.md),
             child: Text(
               value,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+              style: context.typography.title.withColor(
+                style.colors.background,
               ),
             ),
           ),

@@ -146,8 +146,8 @@ class LoginController extends State<Login> {
   @override
   Widget build(BuildContext context) {
     final ready = allReady();
-    if (!ready) return const LoadingPage();
-    return LoginPage(controller: this);
+    if (!ready) return const LoadingScreen();
+    return LoginScreen(controller: this);
   }
 
   @override

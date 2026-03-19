@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 Future<int?> changePowerLevelsDialog(BuildContext context) async {
   int credit = 0;
   return await showDialog(
       context: context,
       builder: (context) {
+        final style = Style.of(context);
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
             content: Column(
@@ -16,22 +18,21 @@ Future<int?> changePowerLevelsDialog(BuildContext context) async {
                   child: Text(
                     credit > 0 ? '+$credit' : credit.toString(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: credit < 0
-                            ? Colors.red
-                            : credit > 0
-                                ? Colors.green
-                                : Colors.black),
+                    style: context.typography.display.withColor(
+                      credit < 0
+                          ? style.colors.error
+                          : credit > 0
+                              ? style.colors.success
+                              : style.colors.foreground,
+                    ),
                   ),
                 ),
               ],
             ),
-            title: const Text(
+            title: Text(
               'Power Level ändern',
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              style: context.typography.title,
             ),
             actions: <Widget>[
               Row(
@@ -40,17 +41,14 @@ Future<int?> changePowerLevelsDialog(BuildContext context) async {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 10.0),
-                      child: ElevatedButton(
-                        style: AppStyles.cancelButtonStyle,
+                      child: Button(
+                        variant: ButtonVariant.destructive,
                         onPressed: () {
                           setState(() {
                             credit--;
                           });
                         },
-                        child: const Text(
-                          "-1",
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: "-1",
                       ),
                     ),
                   ),
@@ -58,17 +56,14 @@ Future<int?> changePowerLevelsDialog(BuildContext context) async {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 10.0),
-                      child: ElevatedButton(
-                        style: AppStyles.successButtonStyle,
+                      child: Button(
+                        variant: ButtonVariant.primary,
                         onPressed: () {
                           setState(() {
                             credit++;
                           });
                         },
-                        child: const Text(
-                          "+1",
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: "+1",
                       ),
                     ),
                   ),
@@ -80,17 +75,14 @@ Future<int?> changePowerLevelsDialog(BuildContext context) async {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 10.0),
-                      child: ElevatedButton(
-                        style: AppStyles.cancelButtonStyle,
+                      child: Button(
+                        variant: ButtonVariant.destructive,
                         onPressed: () {
                           setState(() {
                             credit = credit - 10;
                           });
                         },
-                        child: const Text(
-                          "-10",
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: "-10",
                       ),
                     ),
                   ),
@@ -98,17 +90,14 @@ Future<int?> changePowerLevelsDialog(BuildContext context) async {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 10.0),
-                      child: ElevatedButton(
-                        style: AppStyles.successButtonStyle,
+                      child: Button(
+                        variant: ButtonVariant.primary,
                         onPressed: () {
                           setState(() {
                             credit = credit + 10;
                           });
                         },
-                        child: const Text(
-                          "+10",
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: "+10",
                       ),
                     ),
                   ),
@@ -116,26 +105,20 @@ Future<int?> changePowerLevelsDialog(BuildContext context) async {
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 10.0),
-                child: ElevatedButton(
-                  style: AppStyles.actionButtonStyle,
+                child: Button(
+                  variant: ButtonVariant.secondary,
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text(
-                    "ABBRECHEN",
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  label: "ABBRECHEN",
                 ),
               ),
-              ElevatedButton(
-                style: AppStyles.successButtonStyle,
+              Button(
+                variant: ButtonVariant.primary,
                 onPressed: () {
                   Navigator.of(context).pop(credit);
                 },
-                child: const Text(
-                  "SENDEN",
-                  style: AppStyles.buttonTextStyle,
-                ),
+                label: "SENDEN",
               ),
             ],
           );

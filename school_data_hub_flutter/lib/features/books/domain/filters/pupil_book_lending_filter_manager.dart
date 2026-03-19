@@ -139,23 +139,31 @@ class PupilBookLendingFilterManager implements Resettable {
         lending: lending,
         sevenDaysAgo: sevenDaysAgo,
         filterOn: activeFilters[PupilBookLendingFilter.lastSevenDays]!,
-      )) continue;
+      )) {
+        continue;
+      }
 
       if (PupilBookLendingFilterPredicates.excludeByThirtyDays(
         lending: lending,
         thirtyDaysAgo: thirtyDaysAgo,
         filterOn: activeFilters[PupilBookLendingFilter.lastThirtyDays]!,
-      )) continue;
+      )) {
+        continue;
+      }
 
       if (PupilBookLendingFilterPredicates.excludeByCurrentlyBorrowed(
         lending: lending,
         filterOn: activeFilters[PupilBookLendingFilter.currentlyBorrowed]!,
-      )) continue;
+      )) {
+        continue;
+      }
 
       if (PupilBookLendingFilterPredicates.excludeByReturned(
         lending: lending,
         filterOn: activeFilters[PupilBookLendingFilter.returned]!,
-      )) continue;
+      )) {
+        continue;
+      }
 
       // Complementary group: score filters
       if (!PupilBookLendingFilterPredicates.matchesScoreGroup(

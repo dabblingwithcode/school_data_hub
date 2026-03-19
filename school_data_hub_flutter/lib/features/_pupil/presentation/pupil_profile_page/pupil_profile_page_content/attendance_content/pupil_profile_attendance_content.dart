@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_helper.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_page/missed_schooldays_pupil_list_page.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_screen/missed_schooldays_pupil_list_screen.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_stats_pupil.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/missed_schoolday_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -34,7 +35,7 @@ class PupilAttendanceContent extends WatchingWidget {
       onTitleTap: () {
         Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (ctx) => const MissedSchooldaysPupilListPage(),
+            builder: (ctx) => const MissedSchooldaysPupilListScreen(),
           ),
         );
       },
@@ -42,35 +43,31 @@ class PupilAttendanceContent extends WatchingWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [const Gap(5), AttendanceStatsPupil(pupil)],
+            children: [Gap(Style.spacing.xs), AttendanceStatsPupil(pupil)],
           ),
-          const Gap(5),
+          Gap(Style.spacing.xs),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Fehlstunden:', style: TextStyle(fontSize: 14)),
+              Text('Fehlstunden:', style: context.typography.body),
               Text(
                 ' ${missedHoursForActualReport.missed.toString()}',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                style: context.typography.subtitle.bold.withColor(
+                  Style.of(context).colors.foreground,
                 ),
               ),
-              const Gap(5),
-              const Text('davon unent:', style: TextStyle(fontSize: 14)),
+              Gap(Style.spacing.xs),
+              Text('davon unent:', style: context.typography.body),
               Text(
                 ' ${missedHoursForActualReport.unexcused.toString()}',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                style: context.typography.subtitle.bold.withColor(
+                  Style.of(context).colors.foreground,
                 ),
               ),
-              const Gap(15),
+              Gap(Style.spacing.lg),
             ],
           ),
-          const Gap(10),
+          Gap(Style.spacing.md),
           ListView.builder(
             padding: const EdgeInsets.only(top: 5, bottom: 5),
             shrinkWrap: true,

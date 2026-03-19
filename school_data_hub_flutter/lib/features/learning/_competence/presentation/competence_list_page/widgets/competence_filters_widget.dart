@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/filters/enums.dart';
@@ -23,10 +23,10 @@ class CompetenceFilters extends WatchingWidget {
 
     return Column(
       children: [
-        const Row(children: [Text('Jahrgang', style: AppStyles.subtitle)]),
-        const Gap(5),
+        Row(children: [Text('Jahrgang', style: context.typography.subtitle.bold)]),
+        Gap(Style.spacing.xs),
         Wrap(
-          spacing: 5,
+          spacing: Style.spacing.xs,
           crossAxisAlignment: WrapCrossAlignment.center,
           alignment: WrapAlignment.center,
           children: [

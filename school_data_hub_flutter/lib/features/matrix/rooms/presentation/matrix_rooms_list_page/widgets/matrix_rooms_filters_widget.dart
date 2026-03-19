@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 
 /// Filter chips and actions for the Matrix rooms list.
@@ -24,7 +24,7 @@ class MatrixRoomsFiltersWidget extends WatchingWidget {
             children: [
               Row(
                 children: [
-                  const Text('Filter', style: AppStyles.title),
+                  Text('Filter', style: context.typography.title),
                   const Spacer(),
                   IconButton.filled(
                     tooltip: 'Zurücksetzen',

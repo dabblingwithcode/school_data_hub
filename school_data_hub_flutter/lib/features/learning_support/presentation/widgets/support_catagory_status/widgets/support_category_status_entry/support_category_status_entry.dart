@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
@@ -25,14 +25,15 @@ class SupportCategoryStatusEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final learningSupportManager = di<LearningSupportManager>();
+    final style = Style.of(context);
     final bool authorizedToChangeStatus =
         LearningSupportHelper.isAuthorizedToChangeStatus(status);
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
+      padding: EdgeInsets.only(left: Style.spacing.sm, right: Style.spacing.sm, bottom: Style.spacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Gap(10),
+          Gap(Style.spacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +43,7 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                   children: [
                     Expanded(
                       child: authorizedToChangeStatus
-                          ? InkWell(
+                          ? GestureDetector(
                               onTap: () async {
                                 final DateTime? correctedCreatedAt =
                                     await showDatePicker(
@@ -77,19 +78,14 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                               },
                               child: Text(
                                 status.createdAt.formatDateForUser(),
-                                style: TextStyle(
-                                  color: AppColors.interactiveColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                                style: context.typography.title.withColor(
+                                  style.colors.interactive,
                                 ),
                               ),
                             )
                           : Text(
                               status.createdAt.formatDateForUser(),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
+                              style: context.typography.title,
                             ),
                     ),
                   ],
@@ -98,13 +94,13 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                 // Created by row
                 Wrap(
                   children: [
-                    const Text(
+                    Text(
                       'Eingetragen von ',
-                      style: TextStyle(fontSize: 14),
+                      style: context.typography.body,
                     ),
-                    const Gap(5),
+                    Gap(Style.spacing.xs),
                     authorizedToChangeStatus
-                        ? InkWell(
+                        ? GestureDetector(
                             onTap: () async {
                               final String? correctedCreatedBy =
                                   await shortTextfieldDialog(
@@ -126,20 +122,19 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                             },
                             child: Text(
                               status.createdBy,
-                              style: TextStyle(
-                                color: AppColors.interactiveColor,
-                                fontWeight: FontWeight.bold,
+                              style: context.typography.body.bold.withColor(
+                                style.colors.interactive,
                               ),
                             ),
                           )
                         : Text(
                             status.createdBy,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style: context.typography.body.bold,
                           ),
                   ],
                 ),
 
-                const Gap(5),
+                Gap(Style.spacing.xs),
 
                 // Comment row with edit icon
                 Row(
@@ -147,39 +142,41 @@ class SupportCategoryStatusEntry extends StatelessWidget {
                   children: [
                     Expanded(
                       child: authorizedToChangeStatus
-                          ? InkWell(
+                          ? GestureDetector(
                               onTap: () =>
                                   _editComment(context, learningSupportManager),
                               child: Text(
                                 status.comment ?? 'nicht vorhanden',
-                                style: TextStyle(
-                                  color: AppColors.interactiveColor,
-                                  fontWeight: FontWeight.bold,
+                                style: context.typography.body.bold.withColor(
+                                  style.colors.interactive,
                                 ),
                               ),
                             )
                           : Text(status.comment ?? 'nicht vorhanden'),
                     ),
                     if (authorizedToChangeStatus)
-                      IconButton(
-                        icon: const Icon(Icons.edit, size: 18),
-                        color: AppColors.interactiveColor,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        tooltip: 'Kommentar bearbeiten',
-                        onPressed: () =>
+                      GestureDetector(
+                        onTap: () =>
                             _editComment(context, learningSupportManager),
+                        child: Tooltip(
+                          message: 'Kommentar bearbeiten',
+                          child: Icon(
+                            Icons.edit,
+                            size: 18,
+                            color: style.colors.interactive,
+                          ),
+                        ),
                       ),
                   ],
                 ),
-                const Gap(5),
+                Gap(Style.spacing.xs),
               ],
             ),
           ),
           Column(
             children: [
               authorizedToChangeStatus
-                  ? InkWell(
+                  ? GestureDetector(
                       onTap: () async {
                         final int? newScore = await _showScoreEditDialog(
                           context,
@@ -238,14 +235,15 @@ class SupportCategoryStatusEntry extends StatelessWidget {
     BuildContext context,
     int currentScore,
   ) async {
+    final style = Style.of(context);
     return showDialog<int>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             'Ist-Zustand ändern',
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: context.typography.title,
           ),
           content: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -255,15 +253,15 @@ class SupportCategoryStatusEntry extends StatelessWidget {
               return GestureDetector(
                 onTap: () => Navigator.of(context).pop(score),
                 child: Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: EdgeInsets.all(Style.spacing.sm),
                   decoration: BoxDecoration(
                     border: isSelected
                         ? Border.all(
-                            color: AppColors.interactiveColor,
+                            color: style.colors.interactive,
                             width: 3,
                           )
                         : null,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(Style.radii.small),
                   ),
                   child: Image.asset(
                     'assets/images/growth_icons/growth_$score-4.png',

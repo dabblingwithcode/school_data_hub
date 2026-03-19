@@ -4,19 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:printing/printing.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
-final _log = Logger('PdfViewerPage');
+final _log = Logger('PdfViewerScreen');
 
-class PdfViewerPage extends StatefulWidget {
+class PdfViewerScreen extends StatefulWidget {
   final Future<File> Function() pdfGenerator;
   final String title;
   final IconData iconData;
   final bool showZoomButton;
 
-  const PdfViewerPage({
+  const PdfViewerScreen({
     required this.pdfGenerator,
     this.title = 'PDF Vorschau',
     this.iconData = Icons.picture_as_pdf,
@@ -25,10 +26,10 @@ class PdfViewerPage extends StatefulWidget {
   });
 
   @override
-  State<PdfViewerPage> createState() => _PdfViewerPageState();
+  State<PdfViewerScreen> createState() => _PdfViewerScreenState();
 }
 
-class _PdfViewerPageState extends State<PdfViewerPage> {
+class _PdfViewerScreenState extends State<PdfViewerScreen> {
   File? _generatedFile;
 
   @override
@@ -41,13 +42,14 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return FutureBuilder<File>(
       future: widget.pdfGenerator(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           _log.severe('Failed to generate PDF', snapshot.error);
           return Scaffold(
-            appBar: GenericAppBar(
+            appBar: AppHeader(
               iconData: widget.iconData,
               title: widget.title,
             ),
@@ -55,19 +57,20 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                  const SizedBox(height: 16),
+                  Icon(Icons.error_outline, size: 48, color: style.colors.error),
+                  SizedBox(height: Style.spacing.lg),
                   const Text('Fehler beim Erstellen des PDFs'),
-                  const SizedBox(height: 8),
+                  SizedBox(height: Style.spacing.sm),
                   Text(
                     snapshot.error.toString(),
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    style: context.typography.bodySmall
+                        .withColor(style.colors.mutedForeground),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
+                  SizedBox(height: Style.spacing.lg),
+                  Button(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Zurück'),
+                    label: 'Zurück',
                   ),
                 ],
               ),
@@ -77,7 +80,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
 
         if (!snapshot.hasData) {
           return Scaffold(
-            appBar: GenericAppBar(
+            appBar: AppHeader(
               iconData: widget.iconData,
               title: widget.title,
             ),
@@ -99,15 +102,15 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
         _log.info('Opening PDF view for file: ${file.path}');
 
         return Scaffold(
-          appBar: GenericAppBar(
+          appBar: AppHeader(
             iconData: widget.iconData,
             title: widget.title,
           ),
           body: PdfPreview(
             actionBarTheme: PdfActionBarTheme(
-              backgroundColor: AppColors.backgroundColor,
-              iconColor: Colors.white,
-              textStyle: const TextStyle(color: Colors.white),
+              backgroundColor: style.colors.accent,
+              iconColor: style.colors.background,
+              textStyle: TextStyle(color: style.colors.background),
             ),
             allowSharing: true,
             allowPrinting: true,
@@ -115,13 +118,15 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
             canChangeOrientation: false,
             canDebug: false,
             useActions: true,
-            scrollViewDecoration: const BoxDecoration(color: Colors.grey),
-            pdfPreviewPageDecoration: const BoxDecoration(
-              color: Colors.white,
+            scrollViewDecoration: BoxDecoration(
+              color: style.colors.mutedForeground,
+            ),
+            pdfPreviewPageDecoration: BoxDecoration(
+              color: style.colors.background,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black26,
-                  offset: Offset(0, 2),
+                  color: style.colors.foreground.withValues(alpha: 0.26),
+                  offset: const Offset(0, 2),
                   blurRadius: 4,
                 ),
               ],
@@ -163,9 +168,9 @@ class _PdfZoomableImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const GenericAppBar(title: 'PDF Zoom', iconData: Icons.zoom_in),
+      appBar: const AppHeader(title: 'PDF Zoom', iconData: Icons.zoom_in),
       body: PdfViewer.file(file.path),
-      bottomNavigationBar: const GenericBottomNavBar(),
+      bottomNavigationBar: const ActionBar(),
     );
   }
 }

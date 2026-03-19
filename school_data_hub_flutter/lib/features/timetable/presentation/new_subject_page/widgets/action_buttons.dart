@@ -1,4 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class ActionButtons extends StatelessWidget {
   final VoidCallback onSave;
@@ -16,41 +19,24 @@ class ActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: ElevatedButton(
-            onPressed: onSave,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: Text(isEditing ? 'Aktualisieren' : 'Erstellen'),
-          ),
+        Button(
+          onPressed: onSave,
+          label: isEditing ? 'Aktualisieren' : 'Erstellen',
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: OutlinedButton(
-            onPressed: onCancel,
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-            child: const Text('Abbrechen'),
-          ),
+        Gap(Style.spacing.lg),
+        Button(
+          onPressed: onCancel,
+          label: 'Abbrechen',
+          variant: ButtonVariant.secondary,
         ),
         if (isEditing && onDelete != null) ...[
-          const SizedBox(width: 12),
-          Expanded(
-            child: OutlinedButton(
-              onPressed: onDelete,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.red,
-                side: const BorderSide(color: Colors.red),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: const Text('Löschen'),
-            ),
+          Gap(Style.spacing.lg),
+          Button(
+            onPressed: onDelete,
+            label: 'Löschen',
+            variant: ButtonVariant.destructive,
           ),
         ],
       ],

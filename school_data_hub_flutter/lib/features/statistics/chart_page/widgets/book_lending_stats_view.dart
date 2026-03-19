@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page.dart';
 import 'package:flutter_it/flutter_it.dart';
@@ -36,7 +36,7 @@ class BookLendingStatsView extends WatchingWidget {
           builder: (context) => AlertDialog(
             title: Text(
               chartData.date.formatWithWeekday(),
-              style: AppStyles.title,
+              style: context.typography.title,
             ),
             content: Text(
               'Ausgeliehene Bücher: ${dateData.currentlyLent}',
@@ -84,10 +84,10 @@ class BookLendingStatsView extends WatchingWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Gap(15),
-            const Center(
+            Center(
               child: Text(
                 'Ausgeliehene Bücher nach Schultag',
-                style: AppStyles.title,
+                style: context.typography.title,
               ),
             ),
             const Gap(10),
@@ -173,9 +173,9 @@ class BookLendingStatsView extends WatchingWidget {
                     ),
                   ),
                   const Gap(8),
-                  const Text(
+                  Text(
                     'Ausgeliehene Bücher',
-                    style: TextStyle(fontSize: 16),
+                    style: context.typography.subtitle,
                   ),
                 ],
               ),

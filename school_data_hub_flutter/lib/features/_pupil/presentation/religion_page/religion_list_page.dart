@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -44,8 +44,8 @@ void _onPop(bool didPop, dynamic result) {
   di<FiltersStateManager>().resetFilters();
 }
 
-class ReligionListPage extends WatchingWidget {
-  const ReligionListPage({super.key});
+class ReligionListScreen extends WatchingWidget {
+  const ReligionListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +63,8 @@ class ReligionListPage extends WatchingWidget {
 
     return PopScope(
       onPopInvokedWithResult: _onPop,
-      child: GenericListPage<PupilProxy>(
-        backgroundColor: AppColors.canvasColor,
+      child: ListScreen<PupilProxy>(
+        backgroundColor: Style.of(context).colors.canvas,
         iconData: Icons.church,
         title: 'Religion',
         sliverAppBarHeight: 110,
@@ -82,7 +82,7 @@ class ReligionListPage extends WatchingWidget {
         ),
         filterSheetChildren: const [
           CommonPupilFiltersWidget(),
-          Gap(10),
+          Gap(12),
           ReligionFiltersSection(),
         ],
         itemsListenable: pupilsListenable,

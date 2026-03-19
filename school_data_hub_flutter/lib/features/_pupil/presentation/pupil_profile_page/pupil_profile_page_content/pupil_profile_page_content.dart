@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page_content/after_school_care_content/pupil_profile_after_school_care_content.dart';
@@ -68,7 +68,7 @@ class _PupilProfilePageContentState extends State<PupilProfilePageContent> {
     );
 
     return Container(
-      decoration: BoxDecoration(color: AppColors.pupilProfileBackgroundColor),
+      decoration: BoxDecoration(color: Style.of(context).colors.canvas),
       child: LayoutBuilder(
         builder: (context, constraints) {
           // Set once so short pages fill the viewport.

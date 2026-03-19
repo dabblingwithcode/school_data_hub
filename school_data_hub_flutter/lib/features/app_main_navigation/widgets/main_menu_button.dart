@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class MainMenuButton extends StatelessWidget {
   final Widget? destinationPage;
@@ -22,20 +22,23 @@ class MainMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final size = buttonSize;
-    const borderRadius = BorderRadius.all(Radius.circular(15.0));
+    final borderRadius = BorderRadius.all(
+      Radius.circular(Style.radii.large),
+    );
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: EdgeInsets.all(Style.spacing.xs),
       child: Tooltip(
         message: tooltipText ?? buttonText,
         waitDuration: const Duration(milliseconds: 500),
         preferBelow: true,
         verticalOffset: -100,
         child: Material(
-          color: AppColors.backgroundColor,
+          color: style.colors.accent,
           borderRadius: borderRadius,
           clipBehavior: Clip.antiAlias,
-          child: InkWell(
+          child: GestureDetector(
             onTap:
                 onTap ??
                 (destinationPage != null
@@ -47,25 +50,25 @@ class MainMenuButton extends StatelessWidget {
                         );
                       }
                     : null),
-            mouseCursor: WidgetStateMouseCursor.clickable,
-            borderRadius: borderRadius,
-            child: SizedBox(
-              width: size,
-              height: size,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  buttonIcon,
-                  const Gap(10),
-                  Text(
-                    buttonText,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+            child: MouseRegion(
+              cursor: WidgetStateMouseCursor.clickable,
+              child: SizedBox(
+                width: size,
+                height: size,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    buttonIcon,
+                    const Gap(10),
+                    Text(
+                      buttonText,
+                      textAlign: TextAlign.center,
+                      style: context.typography.body.bold.withColor(
+                        style.colors.background,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

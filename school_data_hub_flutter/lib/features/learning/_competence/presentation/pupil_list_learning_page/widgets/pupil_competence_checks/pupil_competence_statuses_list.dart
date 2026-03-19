@@ -3,9 +3,11 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_competence_checks/competence_check_card.dart';
@@ -37,12 +39,6 @@ class PupilCompetenceStatusesList extends WatchingWidget {
     final leafCompetenceIdsByRoot = <int, List<int>>{};
 
     for (final competenceId in pupilCompetenceChecksMap.keys) {
-      // Find the competence object
-      // final competence = competences.firstWhere(
-      //   (c) => c.publicId == competenceId,
-      //   orElse: () => competenceManager.findCompetenceById(competenceId),
-      // );
-
       // Get the root competence ID
       final rootCompetenceId = competenceManager
           .findRootCompetenceById(competenceId)
@@ -87,7 +83,7 @@ class _RootCompetenceExpansionTile extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tileController = createOnce(() => CustomExpansionTileController());
+    final tileController = createOnce(() => ExpansionController());
     final competenceManager = di<CompetenceManager>();
     final rootCompetence = competenceManager.findRootCompetenceById(
       rootCompetenceId,
@@ -105,16 +101,15 @@ class _RootCompetenceExpansionTile extends WatchingWidget {
       pupil,
     );
 
-    return Card(
-      color: AppColors.cardInCardColor,
-      surfaceTintColor: Colors.white,
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
+    return CardBox(
+      variant: CardBoxVariant.filledSecondary,
+      padding: EdgeInsets.zero,
       child: Column(
         children: [
-          InkWell(
+          GestureDetector(
             onTap: () => tileController.toggle(),
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: EdgeInsets.all(Style.spacing.md),
               child: Row(
                 children: [
                   Container(
@@ -127,41 +122,35 @@ class _RootCompetenceExpansionTile extends WatchingWidget {
                     child: Center(
                       child: Text(
                         _getCompetenceShortName(rootCompetence.name),
-                        style: TextStyle(
-                          color: AppColors.bestContrastCompetenceFontColor(
+                        style: context.typography.subtitle.bold.withColor(
+                          AppColors.bestContrastCompetenceFontColor(
                             color,
                           ),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-                  const Gap(10),
+                  Gap(Style.spacing.md),
                   Expanded(
                     child: Text(
                       rootCompetence.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.readableOnWhiteBackgroungColor(color),
+                      style: context.typography.title.withColor(
+                        AppColors.readableOnWhiteBackgroungColor(color),
                       ),
                     ),
                   ),
-                  const Gap(10),
+                  Gap(Style.spacing.md),
                   Text(
                     totalChecks.toString(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.readableOnWhiteBackgroungColor(color),
+                    style: context.typography.title.withColor(
+                      AppColors.readableOnWhiteBackgroungColor(color),
                     ),
                   ),
-                  const Gap(10),
-                  CustomExpansionTileSwitch(
-                    customExpansionTileController: tileController,
+                  Gap(Style.spacing.md),
+                  ExpansionHeader(
+                    expansionController: tileController,
                     switchColor: AppColors.readableOnWhiteBackgroungColor(
                       color,
                     ),
@@ -170,14 +159,14 @@ class _RootCompetenceExpansionTile extends WatchingWidget {
               ),
             ),
           ),
-          CustomExpansionTileContent(
+          ExpansionBody(
             tileController: tileController,
             widgetList: [
               Column(
                 children: [
                   for (final competenceId in leafCompetenceIds)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
+                      padding: EdgeInsets.only(bottom: Style.spacing.sm),
                       child: _buildCompetenceCard(
                         context: context,
                         competenceId: competenceId,

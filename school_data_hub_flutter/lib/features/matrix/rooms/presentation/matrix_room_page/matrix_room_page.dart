@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
@@ -13,12 +13,13 @@ import 'package:school_data_hub_flutter/features/matrix/users/presentation/matri
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_user_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/widgets/matrix_users_list_view_bottom_navbar.dart';
 
-class MatrixRoomPage extends WatchingWidget {
+class MatrixRoomScreen extends WatchingWidget {
   final MatrixRoom matrixRoom;
-  const MatrixRoomPage({required this.matrixRoom, super.key});
+  const MatrixRoomScreen({required this.matrixRoom, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     List<MatrixUser> matrixUsers = watchValue(
       (MatrixPolicyManager x) => x.matrixUsers,
     );
@@ -32,8 +33,8 @@ class MatrixRoomPage extends WatchingWidget {
         .toList();
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: GenericAppBar(iconData: Icons.room, title: matrixRoom.name!),
+      backgroundColor: style.colors.canvas,
+      appBar: AppHeader(iconData: Icons.room, title: matrixRoom.name!),
       body: RefreshIndicator(
         onRefresh: () async => di<MatrixPolicyManager>().fetchMatrixPolicy(),
         child: Center(
@@ -49,13 +50,13 @@ class MatrixRoomPage extends WatchingWidget {
                   height: 110,
                 ),
                 matrixUsers.isEmpty
-                    ? const SliverToBoxAdapter(
+                    ? SliverToBoxAdapter(
                         child: Center(
                           child: Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: Text(
                               'Keine Ergebnisse',
-                              style: TextStyle(fontSize: 18),
+                              style: context.typography.subtitle,
                             ),
                           ),
                         ),

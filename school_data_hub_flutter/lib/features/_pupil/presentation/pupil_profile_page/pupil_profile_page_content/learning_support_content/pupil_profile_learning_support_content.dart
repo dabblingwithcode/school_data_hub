@@ -17,7 +17,7 @@ class PupilProfileLearningSupportContent extends StatelessWidget {
       onTitleTap: () {
         Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (ctx) => const LearningSupportListPage(),
+            builder: (ctx) => const LearningSupportListScreen(),
           ),
         );
       },

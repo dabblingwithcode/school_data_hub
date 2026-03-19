@@ -3,19 +3,20 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/data/matrix_room_api_service.dart';
 
-class NewMatrixRoomPage extends StatefulWidget {
-  const NewMatrixRoomPage({super.key});
+class NewMatrixRoomScreen extends StatefulWidget {
+  const NewMatrixRoomScreen({super.key});
 
   @override
-  State<NewMatrixRoomPage> createState() => _NewMatrixRoomPageState();
+  State<NewMatrixRoomScreen> createState() => _NewMatrixRoomScreenState();
 }
 
-class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
+class _NewMatrixRoomScreenState extends State<NewMatrixRoomScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController topicController = TextEditingController();
   final TextEditingController aliasController = TextEditingController();
@@ -116,20 +117,12 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.meeting_room_rounded, size: 25, color: Colors.white),
-            Gap(10),
-            Text('Neuer Matrix-Raum', style: AppStyles.appBarTextStyle),
-          ],
-        ),
+      backgroundColor: style.colors.canvas,
+      appBar: const AppHeader(
+        iconData: Icons.meeting_room_rounded,
+        title: 'Neuer Matrix-Raum',
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -146,26 +139,20 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                       children: [
                         // Add existing room by ID
                         Card(
-                          color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Bestehenden Raum zur Policy hinzufügen',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: context.typography.subtitle.bold,
                                 ),
                                 const Gap(8),
-                                const Text(
+                                Text(
                                   'Matrix-Raum-ID eingeben (z.B. !abc123:server.de)',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
+                                  style: context.typography.bodySmall
+                                      .withColor(style.colors.mutedForeground),
                                 ),
                                 const Gap(8),
                                 TextField(
@@ -177,24 +164,13 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                                   enabled: !isAddingExisting,
                                 ),
                                 const Gap(8),
-                                ElevatedButton(
-                                  style: AppStyles.successButtonStyle,
+                                Button(
+                                  variant: ButtonVariant.primary,
                                   onPressed: isAddingExisting
                                       ? null
                                       : addExistingRoom,
-                                  child: isAddingExisting
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : const Text(
-                                          'Zur Policy hinzufügen',
-                                          style: AppStyles.buttonTextStyle,
-                                        ),
+                                  loading: isAddingExisting,
+                                  label: 'Zur Policy hinzufügen',
                                 ),
                               ],
                             ),
@@ -203,18 +179,14 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                         const Gap(16),
                         // Room name field
                         Card(
-                          color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Raum-Name',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: context.typography.subtitle.bold,
                                 ),
                                 const Gap(8),
                                 TextField(
@@ -233,18 +205,14 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
 
                         // Room topic field
                         Card(
-                          color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Thema',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: context.typography.subtitle.bold,
                                 ),
                                 const Gap(8),
                                 TextField(
@@ -264,18 +232,14 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
 
                         // Room alias field
                         Card(
-                          color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Alias (optional)',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: context.typography.subtitle.bold,
                                 ),
                                 const Gap(8),
                                 TextField(
@@ -286,12 +250,10 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                                   ),
                                 ),
                                 const Gap(8),
-                                const Text(
+                                Text(
                                   'Der Alias darf keine Leerzeichen oder Sonderzeichen enthalten.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
+                                  style: context.typography.bodySmall
+                                      .withColor(style.colors.mutedForeground),
                                 ),
                               ],
                             ),
@@ -302,18 +264,14 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
 
                         // Room type selection
                         Card(
-                          color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Raumtyp',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: context.typography.subtitle.bold,
                                 ),
                                 const Gap(16),
                                 DropdownButtonFormField<ChatTypePreset>(
@@ -350,7 +308,6 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                         const Gap(16),
                         // Mark as compulsory room
                         Card(
-                          color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
@@ -366,12 +323,9 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                                         });
                                       },
                                     ),
-                                    const Text(
+                                    Text(
                                       'Als Pflichtraum markieren',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: context.typography.subtitle.bold,
                                     ),
                                   ],
                                 ),
@@ -418,35 +372,21 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // Cancel button - with constrained width
-                      ElevatedButton(
-                        style: AppStyles.cancelButtonStyle,
+                      // Cancel button
+                      Button(
+                        variant: ButtonVariant.destructive,
                         onPressed: isProcessing
                             ? null
                             : () => Navigator.of(context).pop(),
-                        child: const Text(
-                          'ABBRECHEN',
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: 'ABBRECHEN',
                       ),
                       const Gap(10),
-                      // Create button - with constrained width
-                      ElevatedButton(
-                        style: AppStyles.successButtonStyle,
+                      // Create button
+                      Button(
+                        variant: ButtonVariant.primary,
                         onPressed: isProcessing ? null : createRoom,
-                        child: isProcessing
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Text(
-                                'RAUM ERSTELLEN',
-                                style: AppStyles.buttonTextStyle,
-                              ),
+                        loading: isProcessing,
+                        label: 'RAUM ERSTELLEN',
                       ),
                     ],
                   ),
@@ -460,6 +400,7 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
   }
 
   Widget _buildRoomTypeDescription() {
+    final style = Style.of(context);
     String description;
 
     switch (selectedRoomType) {
@@ -479,7 +420,8 @@ class _NewMatrixRoomPageState extends State<NewMatrixRoomPage> {
 
     return Text(
       description,
-      style: const TextStyle(fontSize: 12, color: Colors.grey),
+      style: context.typography.bodySmall
+          .withColor(style.colors.mutedForeground),
     );
   }
 

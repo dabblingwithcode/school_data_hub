@@ -44,6 +44,9 @@ class SchooldayEventManager with ChangeNotifier {
     _hubSubscription?.cancel();
     _hubSubscription = null;
     _pupilManagerSubscription?.cancel();
+    for (final proxy in _pupilSchooldayEventsMap.values) {
+      proxy.dispose();
+    }
     _pupilSchooldayEventsMap.clear();
     _schooldayEventsMap.clear();
     _schooldayEvents.dispose();

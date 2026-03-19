@@ -448,7 +448,7 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     if (!mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => NewScheduledLessonPage(
+        builder: (_) => NewScheduledLessonScreen(
           timetableManager: timetableManager,
           initialWeekday: weekday,
           initialStartTime: startTime,
@@ -464,7 +464,7 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     final timetableManager = di<TimetableManager>();
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => NewScheduledLessonPage(
+        builder: (_) => NewScheduledLessonScreen(
           timetableManager: timetableManager,
           editingLessonId: lesson.id,
         ),

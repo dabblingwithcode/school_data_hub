@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_reorderable_list_view.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/reorderable_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/post_or_patch_support_category_page/post_or_patch_support_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/select_parent_category_page.dart';
@@ -89,13 +90,13 @@ class _SupportCategoryCardSortableState
   Future<void> _navigateToSelectParent(BuildContext context) async {
     final result = await Navigator.of(context).push<int>(
       MaterialPageRoute<int>(
-        builder: (ctx) => SelectParentCategoryPage(
+        builder: (ctx) => SelectParentCategoryScreen(
           movingCategoryId: widget.category.categoryId,
         ),
       ),
     );
     if (result != null && context.mounted) {
-      final newParent = result == SelectParentCategoryPage.rootSentinel
+      final newParent = result == SelectParentCategoryScreen.rootSentinel
           ? null
           : result;
       await di<SupportCategoryManager>().updateSupportCategoryParent(
@@ -125,7 +126,7 @@ class _SupportCategoryCardSortableState
     } else {
       return Padding(
         key: ValueKey('child_${parentId}_$categoryId'),
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs),
         child: SupportCategoryLeafCardSortable(
           index: index,
           category: category,
@@ -136,31 +137,30 @@ class _SupportCategoryCardSortableState
 
   @override
   Widget build(BuildContext context) {
-    final expansionController = createOnce(
-      () => CustomExpansionTileController(),
-    );
+    final style = Style.of(context);
+    final expansionController = createOnce(() => ExpansionController());
     final isExpanded = watch(expansionController.isExpanded).value;
     final isRoot = widget.category.parentCategory == null;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: isRoot ? 3 : 0),
-      child: Card(
-        color: widget.backgroundColor,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Container(
+        decoration: BoxDecoration(
+          color: widget.backgroundColor,
+          borderRadius: BorderRadius.circular(Style.radii.medium),
+        ),
         clipBehavior: Clip.antiAlias,
-        margin: EdgeInsets.zero,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(Style.spacing.md),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Gap(10),
+                  Gap(Style.spacing.md),
                   Expanded(
-                    child: InkWell(
+                    child: GestureDetector(
                       onLongPress: () => _navigateToSelectParent(context),
                       child: Text(
                         widget.category.name,
@@ -168,7 +168,7 @@ class _SupportCategoryCardSortableState
                         softWrap: true,
                         textAlign: TextAlign.start,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: style.colors.background,
                           fontWeight: FontWeight.bold,
                           fontSize: isRoot ? 20 : 16,
                         ),
@@ -176,11 +176,11 @@ class _SupportCategoryCardSortableState
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white, size: 22),
+                    icon: Icon(Icons.edit, color: style.colors.background, size: 22),
                     onPressed: () {
                       Navigator.of(context).push<void>(
                         MaterialPageRoute<void>(
-                          builder: (ctx) => PostOrPatchSupportCategoryPage(
+                          builder: (ctx) => PostOrPatchSupportCategoryScreen(
                             category: widget.category,
                           ),
                         ),
@@ -191,7 +191,7 @@ class _SupportCategoryCardSortableState
                   Checkbox(
                     value: widget.category.printable ?? false,
                     checkColor: widget.backgroundColor,
-                    fillColor: WidgetStateProperty.all(Colors.white),
+                    fillColor: WidgetStateProperty.all(style.colors.background),
                     onChanged: (value) {
                       di<SupportCategoryManager>()
                           .updateSupportCategoryPrintable(
@@ -201,28 +201,26 @@ class _SupportCategoryCardSortableState
                     },
                   ),
                   if (_childOrder.isNotEmpty) ...[
-                    CustomExpansionTileSwitch(
-                      customExpansionTileController: expansionController,
-                    ),
+                    ExpansionHeader(expansionController: expansionController),
                   ],
                   if (isExpanded)
                     const SizedBox(width: 36)
                   else
                     ReorderableDragStartListener(
                       index: widget.index,
-                      child: const Icon(
+                      child: Icon(
                         Icons.drag_handle,
-                        color: Colors.white70,
+                        color: style.colors.background.withValues(alpha: 0.7),
                       ),
                     ),
                 ],
               ),
             ),
             if (_childOrder.isNotEmpty)
-              CustomExpansionTileContent(
+              ExpansionBody(
                 tileController: expansionController,
                 widgetList: [
-                  GenericReorderableListView(
+                  ReorderableList(
                     onReorder: _onReorder,
                     children: [
                       for (int i = 0; i < _childOrder.length; i++)

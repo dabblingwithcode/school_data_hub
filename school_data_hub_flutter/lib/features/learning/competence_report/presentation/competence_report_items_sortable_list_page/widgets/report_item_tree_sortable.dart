@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_reorderable_list_view.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/reorderable_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_items_sortable_list_page/widgets/report_item_card_sortable.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_items_sortable_list_page/widgets/report_item_leaf_card_sortable.dart';
@@ -88,7 +89,7 @@ class _ReportItemTreeSortableState extends State<ReportItemTreeSortable> {
     } else {
       return Padding(
         key: ValueKey(publicId),
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs),
         child: ReportItemLeafCardSortable(
           index: index,
           item: item,
@@ -100,7 +101,7 @@ class _ReportItemTreeSortableState extends State<ReportItemTreeSortable> {
 
   @override
   Widget build(BuildContext context) {
-    return GenericReorderableListView(
+    return ReorderableList(
       onReorder: _onReorder,
       children: [
         for (int i = 0; i < _rootOrder.length; i++)

@@ -7,20 +7,23 @@ import 'package:image_picker/image_picker.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/utils/env_utils.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_set_avatar.dart'
+import 'package:school_data_hub_flutter/common/widgets/avatar/pupil_set_avatar.dart'
     show CropAvatarView;
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/change_password/change_password_page.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/change_password/change_password_screen.dart';
 
 class SettingsAccountSection extends WatchingWidget {
   const SettingsAccountSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     di.allReady();
 
     final user = watchPropertyValue((HubSessionManager x) => x.user)!;
@@ -41,114 +44,121 @@ class SettingsAccountSection extends WatchingWidget {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Text(
             'Konto',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.backgroundColor,
-            ),
+            style: context.typography.title,
           ),
         ),
-        Card(
-          color: Colors.white,
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          child: Column(
-            children: [
-              _UserProfileHeader(
-                username: username,
-                fullName: fullName,
-                imageUrl: imageUrl,
-              ),
-              if (email.isNotEmpty)
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: Style.spacing.md,
+            vertical: Style.spacing.xs,
+          ),
+          child: CardBox(
+            padding: EdgeInsets.all(Style.spacing.sm),
+            child: Column(
+              children: [
+                _UserProfileHeader(
+                  username: username,
+                  fullName: fullName,
+                  imageUrl: imageUrl,
+                ),
+                if (email.isNotEmpty)
+                  ListTile(
+                    leading: const Icon(Icons.email_outlined),
+                    title: const Text('E-Mail'),
+                    subtitle: Text(email),
+                  ),
                 ListTile(
-                  leading: const Icon(Icons.email_outlined),
-                  title: const Text('E-Mail'),
-                  subtitle: Text(email),
+                  leading: const Icon(Icons.badge_outlined),
+                  title: const Text('Rolle'),
+                  subtitle: Text(role),
                 ),
-              ListTile(
-                leading: const Icon(Icons.badge_outlined),
-                title: const Text('Rolle'),
-                subtitle: Text(role),
-              ),
-              ListTile(
-                leading: const Icon(Icons.access_time),
-                title: const Text('Stunden'),
-                subtitle: Text('${user.timeUnits}'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.access_time_filled),
-                title: const Text('Entlastungsstunden'),
-                subtitle: Text('${user.reliefTimeUnits}'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.attach_money_rounded),
-                title: const Text('Guthaben'),
-                subtitle: Text(
-                  userCredit.toString(),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ListTile(
+                  leading: const Icon(Icons.access_time),
+                  title: const Text('Stunden'),
+                  subtitle: Text('${user.timeUnits}'),
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.flag_rounded),
-                title: const Text('Nutzungsbedingungen'),
-                trailing: Icon(
-                  flags.confirmedTermsOfUse
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
-                  color: flags.confirmedTermsOfUse ? Colors.green : Colors.grey,
+                ListTile(
+                  leading: const Icon(Icons.access_time_filled),
+                  title: const Text('Entlastungsstunden'),
+                  subtitle: Text('${user.reliefTimeUnits}'),
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.flag_rounded),
-                title: const Text('Datenschutz'),
-                trailing: Icon(
-                  flags.confirmedPrivacyPolicy
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
-                  color: flags.confirmedPrivacyPolicy
-                      ? Colors.green
-                      : Colors.grey,
+                ListTile(
+                  leading: const Icon(Icons.attach_money_rounded),
+                  title: const Text('Guthaben'),
+                  subtitle: Text(
+                    userCredit.toString(),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.flag_rounded),
-                title: const Text('Passwort geändert'),
-                trailing: Icon(
-                  flags.changedPassword
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
-                  color: flags.changedPassword ? Colors.green : Colors.grey,
+                ListTile(
+                  leading: const Icon(Icons.flag_rounded),
+                  title: const Text('Nutzungsbedingungen'),
+                  trailing: Icon(
+                    flags.confirmedTermsOfUse
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
+                    color: flags.confirmedTermsOfUse
+                        ? style.colors.success
+                        : style.colors.mutedForeground,
+                  ),
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.flag_rounded),
-                title: const Text('Erste Schritte'),
-                trailing: Icon(
-                  flags.madeFirstSteps
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
-                  color: flags.madeFirstSteps ? Colors.green : Colors.grey,
+                ListTile(
+                  leading: const Icon(Icons.flag_rounded),
+                  title: const Text('Datenschutz'),
+                  trailing: Icon(
+                    flags.confirmedPrivacyPolicy
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
+                    color: flags.confirmedPrivacyPolicy
+                        ? style.colors.success
+                        : style.colors.mutedForeground,
+                  ),
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.build_rounded),
-                title: Text(
-                  'Tester: ${flags.isTester ? "Ja" : "Nein"}  |  Admin: ${isAdmin ? "Ja" : "Nein"}',
+                ListTile(
+                  leading: const Icon(Icons.flag_rounded),
+                  title: const Text('Passwort geändert'),
+                  trailing: Icon(
+                    flags.changedPassword
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
+                    color: flags.changedPassword
+                        ? style.colors.success
+                        : style.colors.mutedForeground,
+                  ),
                 ),
-              ),
-              ListTile(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (ctx) => const UserChangePasswordPage(),
-                    ),
-                  );
-                },
-                leading: const Icon(Icons.password_rounded),
-                title: const Text('Passwort ändern'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              _UserDevicesSection(userInfoId: info.id!),
-            ],
+                ListTile(
+                  leading: const Icon(Icons.flag_rounded),
+                  title: const Text('Erste Schritte'),
+                  trailing: Icon(
+                    flags.madeFirstSteps
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
+                    color: flags.madeFirstSteps
+                        ? style.colors.success
+                        : style.colors.mutedForeground,
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.build_rounded),
+                  title: Text(
+                    'Tester: ${flags.isTester ? "Ja" : "Nein"}  |  Admin: ${isAdmin ? "Ja" : "Nein"}',
+                  ),
+                ),
+                ListTile(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (ctx) => const UserChangePasswordScreen(),
+                      ),
+                    );
+                  },
+                  leading: const Icon(Icons.password_rounded),
+                  title: const Text('Passwort ändern'),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+                _UserDevicesSection(userInfoId: info.id!),
+              ],
+            ),
           ),
         ),
       ],
@@ -162,6 +172,7 @@ class _UserDevicesSection extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final userManager = di<UserManager>();
     final usersWithDevices = watchValue((UserManager x) => x.usersWithDevices);
     final devices = usersWithDevices
@@ -182,13 +193,14 @@ class _UserDevicesSection extends WatchingWidget {
       children: [
         const Divider(),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: EdgeInsets.symmetric(
+            horizontal: Style.spacing.lg,
+            vertical: Style.spacing.sm,
+          ),
           child: Text(
             'Geräte / Sitzungen',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: AppColors.backgroundColor,
+            style: context.typography.bodySmall.bold.withColor(
+              style.colors.accent,
             ),
           ),
         ),
@@ -218,18 +230,20 @@ class _UserDevicesSection extends WatchingWidget {
               color: isCurrentDevice
                   ? AppColors.interactiveColor
                   : d.isActive
-                  ? Colors.green
-                  : Colors.grey,
+                  ? style.colors.success
+                  : style.colors.mutedForeground,
             ),
             title: Text(
               d.deviceName.isNotEmpty ? d.deviceName : d.deviceId,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              style: context.typography.bodySmall.w600,
             ),
             subtitle: Text(
               isCurrentDevice
                   ? 'Dieses Gerät · ${d.isActive ? "Aktiv" : "Inaktiv"}'
                   : 'Zuletzt: ${d.lastLogin.formatDateForUser()} · ${d.isActive ? "Aktiv" : "Inaktiv"}',
-              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+              style: context.typography.caption.withColor(
+                style.colors.mutedForeground,
+              ),
             ),
           );
         }),
@@ -318,9 +332,13 @@ class _UserProfileHeaderState extends State<_UserProfileHeader> {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final resolvedUrl = _resolveImageUrl();
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: EdgeInsets.symmetric(
+        vertical: Style.spacing.sm,
+        horizontal: Style.spacing.lg,
+      ),
       child: Row(
         children: [
           GestureDetector(
@@ -329,7 +347,7 @@ class _UserProfileHeaderState extends State<_UserProfileHeader> {
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundColor: AppColors.backgroundColor,
+                  backgroundColor: style.colors.accent,
                   backgroundImage: resolvedUrl != null
                       ? NetworkImage(resolvedUrl)
                       : null,
@@ -337,16 +355,20 @@ class _UserProfileHeaderState extends State<_UserProfileHeader> {
                       ? (_, __) {}
                       : null,
                   child: _uploading
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 24,
                           height: 24,
                           child: CircularProgressIndicator(
-                            color: Colors.white,
+                            color: style.colors.background,
                             strokeWidth: 2,
                           ),
                         )
                       : resolvedUrl == null
-                      ? const Icon(Icons.person, size: 30, color: Colors.white)
+                      ? Icon(
+                          Icons.person,
+                          size: 30,
+                          color: style.colors.background,
+                        )
                       : null,
                 ),
                 if (!_uploading)
@@ -354,37 +376,36 @@ class _UserProfileHeaderState extends State<_UserProfileHeader> {
                     bottom: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: EdgeInsets.all(Style.spacing.xs),
                       decoration: BoxDecoration(
                         color: AppColors.interactiveColor,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.camera_alt,
                         size: 12,
-                        color: Colors.white,
+                        color: style.colors.background,
                       ),
                     ),
                   ),
               ],
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: Style.spacing.lg),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   widget.username,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+                  style: context.typography.title,
                 ),
                 if (widget.fullName.isNotEmpty)
                   Text(
                     widget.fullName,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    style: context.typography.body.withColor(
+                      style.colors.mutedForeground,
+                    ),
                   ),
               ],
             ),

@@ -4,8 +4,8 @@ import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
@@ -23,17 +23,18 @@ export 'widgets/name_field.dart';
 export 'widgets/school_semester_dropdown.dart';
 export 'widgets/start_date_field.dart';
 
-final _log = Logger('NewTimetablePage');
+final _log = Logger('NewTimetableScreen');
 
-class NewTimetablePage extends WatchingWidget {
+class NewTimetableScreen extends WatchingWidget {
   final Timetable? timetable;
 
-  const NewTimetablePage({super.key, this.timetable});
+  const NewTimetableScreen({super.key, this.timetable});
 
   bool get _isEditing => timetable != null;
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final timetableManager = di<TimetableManager>();
     final schoolCalendarManager = di<SchoolCalendarManager>();
 
@@ -109,23 +110,13 @@ class NewTimetablePage extends WatchingWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.backgroundColor,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.schedule, size: 25, color: Colors.white),
-            const Gap(10),
-            Text(
-              _isEditing ? 'Stundenplan bearbeiten' : 'Neuer Stundenplan',
-              style: AppStyles.appBarTextStyle,
-            ),
-          ],
-        ),
+      backgroundColor: style.colors.canvas,
+      appBar: AppHeader(
+        iconData: Icons.schedule,
+        title: _isEditing ? 'Stundenplan bearbeiten' : 'Neuer Stundenplan',
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
@@ -136,7 +127,7 @@ class NewTimetablePage extends WatchingWidget {
                 children: <Widget>[
                   // Name field
                   NameField(controller: nameController),
-                  const Gap(20),
+                  Gap(Style.spacing.xl),
 
                   // School semester dropdown
                   SchoolSemesterDropdown(
@@ -144,21 +135,21 @@ class NewTimetablePage extends WatchingWidget {
                     schoolSemesters:
                         schoolCalendarManager.schoolSemesters.value,
                   ),
-                  const Gap(20),
+                  Gap(Style.spacing.xl),
 
                   // Start date field
                   StartDateField(
                     controller: startDateController,
                     selectedDate: selectedStartDate,
                   ),
-                  const Gap(20),
+                  Gap(Style.spacing.xl),
 
                   // End date field (optional)
                   EndDateField(
                     controller: endDateController,
                     selectedDate: selectedEndDate,
                   ),
-                  const Gap(32),
+                  Gap(Style.spacing.xxl),
 
                   // Action buttons
                   ActionButtons(
@@ -178,7 +169,7 @@ class NewTimetablePage extends WatchingWidget {
                                   ? 'Bitte wählen Sie ein gültiges Schulsemester aus. Falls keine Semester verfügbar sind, erstellen Sie zuerst ein Schulhalbjahr.'
                                   : 'Bitte füllen Sie alle Pflichtfelder aus',
                             ),
-                            backgroundColor: Colors.red,
+                            backgroundColor: style.colors.error,
                           ),
                         );
                         return;
@@ -190,11 +181,11 @@ class NewTimetablePage extends WatchingWidget {
 
                         if (startDate == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
+                            SnackBar(
+                              content: const Text(
                                 'Bitte wählen Sie ein Startdatum aus',
                               ),
-                              backgroundColor: Colors.red,
+                              backgroundColor: style.colors.error,
                             ),
                           );
                           return;

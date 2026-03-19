@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class NameField extends StatelessWidget {
   final TextEditingController controller;
@@ -10,10 +11,13 @@ class NameField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.all(Style.spacing.sm),
         labelText: 'Name *',
         hintText: 'z.B. Mathematik',
-        border: OutlineInputBorder(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Style.radii.small),
+        ),
       ),
       inputFormatters: [LengthLimitingTextInputFormatter(100)],
       validator: (value) {

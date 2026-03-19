@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/spinner.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/manager/set_bulk_support_categories_status_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_page/widgets/scorable_support_category_tree.dart';
@@ -12,13 +12,14 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_prox
 /// Categories that already have a status are indicated with a green dot.
 /// Changes can be made using the GrowthDropdown for each category.
 /// The FAB saves all pending changes at once.
-class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
+class SetBulkSupportCategoriesStatusScreen extends WatchingWidget {
   final PupilProxy pupil;
 
-  const SetBulkSupportCategoriesStatusPage({required this.pupil, super.key});
+  const SetBulkSupportCategoriesStatusScreen({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final manager = createOnce(
       () => SetBuldSupportCategoriesStatusManager(pupil: pupil),
     );
@@ -27,17 +28,17 @@ class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
 
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Colors.white,
+        foregroundColor: style.colors.background,
         centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
+        backgroundColor: style.colors.accent,
         title: Text(
           'Förderung - ${pupil.firstName}',
-          style: AppStyles.appBarTextStyle,
+          style: context.typography.title.withColor(style.colors.background),
         ),
         actions: [
           if (hasPendingChanges)
             IconButton(
-              icon: const Icon(Icons.clear_all, color: Colors.white),
+              icon: Icon(Icons.clear_all, color: style.colors.background),
               tooltip: 'Alle Änderungen verwerfen',
               onPressed: () => manager.clearAllScores(),
             ),
@@ -49,11 +50,11 @@ class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
           constraints: const BoxConstraints(maxWidth: 800),
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(Style.spacing.sm),
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(Style.spacing.sm),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -61,23 +62,19 @@ class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Kategorien bewerten',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: context.typography.title.withColor(style.colors.foreground),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 hasPendingChanges
                                     ? '${pendingScores.length} Änderung${pendingScores.length > 1 ? 'en' : ''} ausstehend'
                                     : 'Bewertungen mit dem Dropdown auswählen',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: hasPendingChanges
-                                      ? AppColors.interactiveColor
-                                      : Colors.grey,
+                                style: context.typography.body.withColor(
+                                  hasPendingChanges
+                                      ? style.colors.interactive
+                                      : style.colors.mutedForeground,
                                 ),
                               ),
                             ],
@@ -90,15 +87,15 @@ class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
                             Container(
                               width: 10,
                               height: 10,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.greenAccent,
+                                color: style.colors.success,
                               ),
                             ),
                             const SizedBox(width: 4),
-                            const Text(
+                            Text(
                               'Bereits bewertet',
-                              style: TextStyle(fontSize: 12),
+                              style: context.typography.bodySmall,
                             ),
                           ],
                         ),
@@ -115,11 +112,11 @@ class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
       ),
       floatingActionButton: hasPendingChanges
           ? FloatingActionButton.extended(
-              backgroundColor: AppColors.backgroundColor,
-              icon: const Icon(Icons.save, color: Colors.white),
+              backgroundColor: style.colors.accent,
+              icon: Icon(Icons.save, color: style.colors.background),
               label: Text(
                 'Speichern (${pendingScores.length})',
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: style.colors.background),
               ),
               onPressed: () => _saveAllChanges(context, manager),
             )
@@ -131,6 +128,7 @@ class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
     BuildContext context,
     SetBuldSupportCategoriesStatusManager manager,
   ) async {
+    final style = Style.of(context);
     final learningSupportManager = di<LearningSupportManager>();
     final pendingScores = manager.pendingScoresList;
 
@@ -140,7 +138,7 @@ class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
+      builder: (context) => Center(child: Spinner(color: style.colors.accent)),
     );
 
     try {
@@ -179,7 +177,7 @@ class SetBulkSupportCategoriesStatusPage extends WatchingWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Fehler beim Speichern: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: style.colors.error,
           ),
         );
       }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -11,13 +11,13 @@ import 'widgets/end_time_field.dart';
 import 'widgets/start_time_field.dart';
 import 'widgets/weekday_dropdown.dart';
 
-final _log = Logger('NewTimetableSlotPage');
+final _log = Logger('NewTimetableSlotScreen');
 
-class NewTimetableSlotPage extends WatchingWidget {
+class NewTimetableSlotScreen extends WatchingWidget {
   final TimetableManager timetableManager;
   final TimetableSlot? timetableSlot;
 
-  const NewTimetableSlotPage({
+  const NewTimetableSlotScreen({
     super.key,
     required this.timetableManager,
     this.timetableSlot,
@@ -25,6 +25,7 @@ class NewTimetableSlotPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final startTimeController = createOnce(
       () => TextEditingController(text: timetableSlot?.startTime ?? ''),
     );
@@ -43,15 +44,16 @@ class NewTimetableSlotPage extends WatchingWidget {
     );
 
     return Scaffold(
+      backgroundColor: style.colors.canvas,
       appBar: AppBar(
         title: Text(
           timetableSlot == null ? 'Neuer Zeitslot' : 'Zeitslot bearbeiten',
         ),
-        backgroundColor: AppColors.interactiveColor,
-        foregroundColor: Colors.white,
+        backgroundColor: style.colors.interactive,
+        foregroundColor: style.colors.background,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
@@ -61,11 +63,11 @@ class NewTimetableSlotPage extends WatchingWidget {
                 // Header
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(Style.spacing.lg),
                   decoration: BoxDecoration(
-                    color: AppColors.cardInCardColor,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.cardInCardBorderColor),
+                    color: style.colors.cardInCard,
+                    borderRadius: BorderRadius.circular(Style.radii.small),
+                    border: Border.all(color: style.colors.cardInCardBorder),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,31 +76,28 @@ class NewTimetableSlotPage extends WatchingWidget {
                         timetableSlot == null
                             ? 'Neuen Zeitslot erstellen'
                             : 'Zeitslot bearbeiten',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: context.typography.title
+                            .withColor(style.colors.foreground),
                       ),
-                      const Gap(8),
+                      Gap(Style.spacing.sm),
                       Text(
                         'Definieren Sie die Zeiten und den Wochentag für diesen Zeitslot.',
-                        style: TextStyle(color: Colors.grey[600]),
+                        style: context.typography.body
+                            .withColor(style.colors.mutedForeground),
                       ),
                       if (timetableSlot == null) ...[
-                        const Gap(8),
+                        Gap(Style.spacing.sm),
                         Text(
                           'Wählen Sie "Alle Wochentage" um denselben Zeitslot für alle Wochentage zu erstellen.',
-                          style: TextStyle(
-                            color: Colors.blue[700],
-                            fontSize: 12,
-                            fontStyle: FontStyle.italic,
-                          ),
+                          style: context.typography.bodySmall
+                              .withColor(style.colors.accent)
+                              .copyWith(fontStyle: FontStyle.italic),
                         ),
                       ],
                     ],
                   ),
                 ),
-                const Gap(20),
+                Gap(Style.spacing.xl),
 
                 // Form
                 Expanded(
@@ -109,11 +108,11 @@ class NewTimetableSlotPage extends WatchingWidget {
                           selectedWeekday: selectedWeekday,
                           selectedWeekdayOption: selectedWeekdayOption,
                         ),
-                        const Gap(16),
+                        Gap(Style.spacing.lg),
                         StartTimeField(controller: startTimeController),
-                        const Gap(16),
+                        Gap(Style.spacing.lg),
                         EndTimeField(controller: endTimeController),
-                        const Gap(32),
+                        Gap(Style.spacing.xxl),
                       ],
                     ),
                   ),
@@ -163,13 +162,14 @@ class NewTimetableSlotPage extends WatchingWidget {
     ValueNotifier<Weekday?> selectedWeekday,
     ValueNotifier<WeekdaySelection?> selectedWeekdayOption,
   ) async {
+    final style = Style.of(context);
     // Validation
 
     if (selectedWeekdayOption.value == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Bitte wählen Sie einen Wochentag aus.'),
-          backgroundColor: AppColors.snackBarErrorColor,
+          backgroundColor: style.colors.error,
         ),
       );
       return;
@@ -179,7 +179,7 @@ class NewTimetableSlotPage extends WatchingWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Bitte geben Sie eine Startzeit ein.'),
-          backgroundColor: AppColors.snackBarErrorColor,
+          backgroundColor: style.colors.error,
         ),
       );
       return;
@@ -189,7 +189,7 @@ class NewTimetableSlotPage extends WatchingWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Bitte geben Sie eine Endzeit ein.'),
-          backgroundColor: AppColors.snackBarErrorColor,
+          backgroundColor: style.colors.error,
         ),
       );
       return;
@@ -215,7 +215,7 @@ class NewTimetableSlotPage extends WatchingWidget {
             content: const Text(
               'Kein Stundenplan ausgewählt. Bitte erstellen Sie zuerst einen Stundenplan.',
             ),
-            backgroundColor: AppColors.snackBarErrorColor,
+            backgroundColor: style.colors.error,
           ),
         );
         return;
@@ -252,7 +252,7 @@ class NewTimetableSlotPage extends WatchingWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('$createdCount Zeitslots erfolgreich erstellt.'),
-                backgroundColor: AppColors.snackBarSuccessColor,
+                backgroundColor: style.colors.success,
               ),
             );
           }
@@ -271,7 +271,7 @@ class NewTimetableSlotPage extends WatchingWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: const Text('Zeitslot erfolgreich erstellt.'),
-                backgroundColor: AppColors.snackBarSuccessColor,
+                backgroundColor: style.colors.success,
               ),
             );
           }
@@ -292,7 +292,7 @@ class NewTimetableSlotPage extends WatchingWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Zeitslot erfolgreich aktualisiert.'),
-              backgroundColor: AppColors.snackBarSuccessColor,
+              backgroundColor: style.colors.success,
             ),
           );
         }
@@ -308,7 +308,7 @@ class NewTimetableSlotPage extends WatchingWidget {
             content: Text(
               'Fehler beim ${timetableSlot == null ? 'Erstellen' : 'Aktualisieren'} des Zeitslots: $e',
             ),
-            backgroundColor: AppColors.snackBarErrorColor,
+            backgroundColor: style.colors.error,
           ),
         );
       }
@@ -317,6 +317,7 @@ class NewTimetableSlotPage extends WatchingWidget {
 
   Future<void> _deleteTimetableSlot(BuildContext context) async {
     if (timetableSlot == null) return;
+    final style = Style.of(context);
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -333,7 +334,7 @@ class NewTimetableSlotPage extends WatchingWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
-              foregroundColor: AppColors.dangerButtonColor,
+              foregroundColor: style.colors.button.destructive,
             ),
             child: const Text('Löschen'),
           ),
@@ -348,7 +349,7 @@ class NewTimetableSlotPage extends WatchingWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Zeitslot erfolgreich gelöscht.'),
-              backgroundColor: AppColors.snackBarSuccessColor,
+              backgroundColor: style.colors.success,
             ),
           );
           Navigator.of(context).pop();
@@ -358,7 +359,7 @@ class NewTimetableSlotPage extends WatchingWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Fehler beim Löschen: $e'),
-              backgroundColor: AppColors.snackBarErrorColor,
+              backgroundColor: style.colors.error,
             ),
           );
         }

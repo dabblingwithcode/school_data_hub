@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_user_filter_category.dart';
@@ -28,7 +28,7 @@ class MatrixUsersFilterChips extends WatchingWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(children: [Text('Kategorie', style: AppStyles.subtitle)]),
+        Row(children: [Text('Kategorie', style: context.typography.subtitle)]),
         const Gap(5),
         Wrap(
           spacing: 8,

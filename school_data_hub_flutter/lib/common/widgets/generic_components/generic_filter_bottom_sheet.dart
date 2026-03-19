@@ -1,42 +1,14 @@
+export 'package:school_data_hub_flutter/common/widgets/generic_components/filter_sheet.dart';
+
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/filter_sheet.dart';
 
-class GenericFilterBottomSheet extends StatelessWidget {
-  final List<Widget> children;
-  const GenericFilterBottomSheet({required this.children, super.key});
+@Deprecated('Use FilterSheet instead')
+typedef GenericFilterBottomSheet = FilterSheet;
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20.0, right: 20, top: 8),
-      child: Column(
-        children: [
-          const FilterHeading(),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(children: [...children]),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
+@Deprecated('Use showFilterSheet instead')
 Future<dynamic> showGenericFilterBottomSheet({
   required BuildContext context,
   required List<Widget> filterList,
-}) {
-  return showModalBottomSheet(
-    constraints: const BoxConstraints(maxWidth: 800),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20.0),
-        topRight: Radius.circular(20.0),
-      ),
-    ),
-    context: context,
-    builder: (_) => GenericFilterBottomSheet(children: filterList),
-  );
-}
+}) =>
+    showFilterSheet(context: context, filterList: filterList);

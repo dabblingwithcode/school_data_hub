@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/qr/qr_utilites.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/features/matrix/logs/presentation/matrix_corporal_logs_page.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/presentation/set_matrix_environment_page/set_matrix_environment_page.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/presentation/set_matrix_environment_screen/set_matrix_environment_screen.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_page/controller/select_matrix_users_list_controller.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 
-class MatrixToolsPage extends WatchingWidget {
-  const MatrixToolsPage({super.key});
+class MatrixToolsScreen extends WatchingWidget {
+  const MatrixToolsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +31,8 @@ class MatrixToolsPage extends WatchingWidget {
         matrixPolicyManagerIsRegistered || matrixSessionIsConfigured;
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: const GenericAppBar(
+      backgroundColor: Style.of(context).colors.canvas,
+      appBar: const AppHeader(
         iconData: Icons.chat_rounded,
         title: 'Matrix',
       ),
@@ -39,7 +40,7 @@ class MatrixToolsPage extends WatchingWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(Style.spacing.lg),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 600),
               child: Wrap(
@@ -66,7 +67,7 @@ class MatrixToolsPage extends WatchingWidget {
                       }
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (_) => const SetMatrixEnvironmentPage(),
+                          builder: (_) => const SetMatrixEnvironmentScreen(),
                         ),
                       );
                     },
@@ -84,7 +85,7 @@ class MatrixToolsPage extends WatchingWidget {
                   if (isConfigured) ...[
                     MainMenuButton(
                       buttonSize: 120,
-                      destinationPage: const MatrixUsersListPage(),
+                      destinationPage: const MatrixUsersListScreen(),
                       buttonIcon: Icon(
                         Icons.people_rounded,
                         size: 36,
@@ -94,7 +95,7 @@ class MatrixToolsPage extends WatchingWidget {
                     ),
                     MainMenuButton(
                       buttonSize: 120,
-                      destinationPage: const SetMatrixEnvironmentPage(),
+                      destinationPage: const SetMatrixEnvironmentScreen(),
                       buttonIcon: Icon(
                         Icons.settings_rounded,
                         size: 36,
@@ -120,7 +121,7 @@ class MatrixToolsPage extends WatchingWidget {
                         if (!context.mounted) return;
                         navigator.push(
                           MaterialPageRoute<void>(
-                            builder: (_) => const MatrixCorporalLogsPage(),
+                            builder: (_) => const MatrixCorporalLogsScreen(),
                           ),
                         );
                       },
@@ -147,7 +148,8 @@ class MatrixToolsPage extends WatchingWidget {
                         if (file != null) {
                           Navigator.of(context).push(
                             MaterialPageRoute<void>(
-                              builder: (_) => PdfViewerPage(pdfGenerator: () async => file),
+                              builder: (_) =>
+                                  PdfViewerScreen(pdfGenerator: () async => file),
                             ),
                           );
                         }
@@ -200,7 +202,7 @@ class MatrixToolsPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const GenericBottomNavBar(),
+      bottomNavigationBar: const ActionBar(),
     );
   }
 }

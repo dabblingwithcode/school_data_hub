@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
@@ -10,6 +11,7 @@ Future<void> changeCreditDialog(BuildContext context, PupilProxy pupil) async {
   return await showDialog(
     context: context,
     builder: (context) {
+      final style = Style.of(context);
       return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
@@ -25,19 +27,19 @@ Future<void> changeCreditDialog(BuildContext context, PupilProxy pupil) async {
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
                       color: credit < 0
-                          ? Colors.red
+                          ? style.colors.error
                           : credit > 0
-                          ? Colors.green
-                          : Colors.black,
+                          ? style.colors.success
+                          : style.colors.foreground,
                     ),
                   ),
                 ),
               ],
             ),
-            title: const Text(
+            title: Text(
               'Guthaben ändern',
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              style: context.typography.title,
             ),
             actions: <Widget>[
               Row(
@@ -45,36 +47,30 @@ Future<void> changeCreditDialog(BuildContext context, PupilProxy pupil) async {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: ElevatedButton(
-                        style: AppStyles.cancelButtonStyle,
+                      padding: EdgeInsets.only(bottom: Style.spacing.md),
+                      child: Button(
+                        variant: ButtonVariant.destructive,
                         onPressed: () {
                           setState(() {
                             credit--;
                           });
                         },
-                        child: const Text(
-                          "-1",
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: "-1",
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: Style.spacing.md),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: ElevatedButton(
-                        style: AppStyles.successButtonStyle,
+                      padding: EdgeInsets.only(bottom: Style.spacing.md),
+                      child: Button(
+                        variant: ButtonVariant.primary,
                         onPressed: () {
                           setState(() {
                             credit++;
                           });
                         },
-                        child: const Text(
-                          "+1",
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: "+1",
                       ),
                     ),
                   ),
@@ -85,56 +81,47 @@ Future<void> changeCreditDialog(BuildContext context, PupilProxy pupil) async {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: ElevatedButton(
-                        style: AppStyles.cancelButtonStyle,
+                      padding: EdgeInsets.only(bottom: Style.spacing.md),
+                      child: Button(
+                        variant: ButtonVariant.destructive,
                         onPressed: () {
                           setState(() {
                             credit = credit - 10;
                           });
                         },
-                        child: const Text(
-                          "-10",
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: "-10",
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: Style.spacing.md),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: ElevatedButton(
-                        style: AppStyles.successButtonStyle,
+                      padding: EdgeInsets.only(bottom: Style.spacing.md),
+                      child: Button(
+                        variant: ButtonVariant.primary,
                         onPressed: () {
                           setState(() {
                             credit = credit + 10;
                           });
                         },
-                        child: const Text(
-                          "+10",
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: "+10",
                       ),
                     ),
                   ),
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: ElevatedButton(
-                  style: AppStyles.actionButtonStyle,
+                padding: EdgeInsets.only(bottom: Style.spacing.md),
+                child: Button(
+                  variant: ButtonVariant.secondary,
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text(
-                    "ABBRECHEN",
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  label: "ABBRECHEN",
                 ),
               ),
-              ElevatedButton(
-                style: AppStyles.successButtonStyle,
+              Button(
+                variant: ButtonVariant.primary,
                 onPressed: () {
                   if (credit != 0) {
                     PupilMutator().updateCredit(
@@ -147,7 +134,7 @@ Future<void> changeCreditDialog(BuildContext context, PupilProxy pupil) async {
                     Navigator.of(context).pop();
                   }
                 },
-                child: const Text("SENDEN", style: AppStyles.buttonTextStyle),
+                label: "SENDEN",
               ),
             ],
           );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart'
     as workbook_enum;
 
@@ -24,7 +25,7 @@ class GradesWidget extends StatelessWidget {
       children: [
         for (int i = 0; i < matchedGrades.length; i++) ...[
           Image.asset(matchedGrades[i].imagePath, width: 25),
-          if (i < matchedGrades.length - 1) const Gap(5),
+          if (i < matchedGrades.length - 1) Gap(Style.spacing.xs),
         ],
       ],
     );

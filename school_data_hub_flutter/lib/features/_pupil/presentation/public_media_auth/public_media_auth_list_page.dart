@@ -3,8 +3,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupil_media_auth_filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -39,8 +39,8 @@ void _onPop(bool didPop, dynamic result) {
   di<FiltersStateManager>().resetFilters();
 }
 
-class PublicMediaAuthListPage extends WatchingWidget {
-  const PublicMediaAuthListPage({super.key});
+class PublicMediaAuthListScreen extends WatchingWidget {
+  const PublicMediaAuthListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +61,8 @@ class PublicMediaAuthListPage extends WatchingWidget {
 
     return PopScope(
       onPopInvokedWithResult: _onPop,
-      child: GenericListPage<PupilProxy>(
-        backgroundColor: AppColors.canvasColor,
+      child: ListScreen<PupilProxy>(
+        backgroundColor: Style.of(context).colors.canvas,
         iconData: Icons.photo_library_rounded,
         title: 'Veröffentlichungseinwilligung',
         sliverAppBarHeight: 110,
@@ -80,7 +80,7 @@ class PublicMediaAuthListPage extends WatchingWidget {
         ),
         filterSheetChildren: const [
           CommonPupilFiltersWidget(),
-          Gap(10),
+          Gap(12),
           PublicMediaAuthFiltersWidget(),
         ],
         itemsListenable: pupilsListenable,

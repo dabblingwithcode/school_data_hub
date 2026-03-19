@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -17,7 +16,7 @@ import 'package:school_data_hub_flutter/features/timetable/presentation/schedule
 import 'package:school_data_hub_flutter/features/timetable/presentation/scheduled_lesson/new_scheduled_lesson_page/widgets/teacher_selection.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 
-class NewScheduledLessonPage extends WatchingWidget {
+class NewScheduledLessonScreen extends WatchingWidget {
   final TimetableManager timetableManager;
   final int? preselectedSlotId;
   final int? editingLessonId;
@@ -25,7 +24,7 @@ class NewScheduledLessonPage extends WatchingWidget {
   final String? initialStartTime; // "HH:MM"
   final Classroom? initialClassroom;
 
-  const NewScheduledLessonPage({
+  const NewScheduledLessonScreen({
     super.key,
     required this.timetableManager,
     this.preselectedSlotId,
@@ -39,6 +38,7 @@ class NewScheduledLessonPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     // Create form key using createOnce
     final formKey = createOnce<GlobalKey<FormState>>(
       () => GlobalKey<FormState>(),
@@ -187,23 +187,24 @@ class NewScheduledLessonPage extends WatchingWidget {
         : null;
 
     return Scaffold(
+      backgroundColor: style.colors.canvas,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: AppColors.backgroundColor,
+        backgroundColor: style.colors.accent,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.schedule, size: 25, color: Colors.white),
-            const Gap(10),
+            Icon(Icons.schedule, size: 25, color: style.colors.background),
+            Gap(Style.spacing.md),
             Text(
               _isEditing ? 'Stunde bearbeiten' : 'Neue Stunde',
-              style: AppStyles.appBarTextStyle,
+              style: context.typography.title.withColor(style.colors.background),
             ),
           ],
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+        padding: EdgeInsets.only(top: Style.spacing.md, left: Style.spacing.md, right: Style.spacing.md),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: Form(
@@ -225,50 +226,45 @@ class NewScheduledLessonPage extends WatchingWidget {
                                 TimetableUtils.getWeekdayName(
                                   di<TimetableManager>().ui.selectedWeekday.value,
                                 ),
-                                style: const TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: context.typography.display.withColor(style.colors.foreground),
                               ),
-                              const Gap(10),
+                              Gap(Style.spacing.md),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     'von: $effectiveStartTime',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: context.typography.body.bold,
                                   ),
-                                  const Gap(10),
+                                  Gap(Style.spacing.md),
                                   if (targetEndTime != null) ...[
                                     Text(
                                       'bis: $targetEndTime',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: context.typography.body.bold,
                                     ),
                                   ],
                                 ],
                               ),
 
-                              const Gap(12),
+                              Gap(Style.spacing.md),
 
                               const Text('Dauer (Min.):'),
-                              const Gap(8),
+                              Gap(Style.spacing.sm),
                               SizedBox(
                                 width: 50,
                                 child: TextFormField(
                                   controller: durationController,
                                   key: const ValueKey('duration_minutes'),
                                   keyboardType: TextInputType.number,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(Style.radii.small),
+                                    ),
                                     isDense: true,
                                     contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 8,
+                                      horizontal: Style.spacing.sm,
+                                      vertical: Style.spacing.sm,
                                     ),
                                   ),
                                   onChanged: (value) {
@@ -281,7 +277,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                               ),
                             ],
                           ),
-                          const Gap(20),
+                          Gap(Style.spacing.xl),
                         ],
                         // Subject selection
                         SubjectDropdown(
@@ -290,7 +286,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                             selectedSubject.value = subject;
                           },
                         ),
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
 
                         // Classroom selection (overlap-based availability when slot is known)
                         ClassroomDropdown(
@@ -303,7 +299,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                           targetEndTime: targetEndTime,
                           excludeLessonId: editingLessonId,
                         ),
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
 
                         // Lesson group selection (overlap-based availability when slot is known)
                         LessonGroupDropdown(
@@ -316,7 +312,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                           targetEndTime: targetEndTime,
                           excludeLessonId: editingLessonId,
                         ),
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
 
                         // Teacher selection (overlap-based filtering)
                         TeacherSelection(
@@ -328,7 +324,7 @@ class NewScheduledLessonPage extends WatchingWidget {
                               timetableManager.data.scheduledLessons.value,
                           excludeLessonId: editingLessonId,
                         ),
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
                       ],
                     ),
                   ),

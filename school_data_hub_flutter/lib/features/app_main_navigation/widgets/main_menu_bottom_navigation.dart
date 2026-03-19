@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/learn_resources_menu_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists_menu_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_page.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/tools_page.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/learn_resources_menu_screen.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/pupil_lists_menu_screen.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/school_lists_menu_screen.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/tools_screen.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_page/settings_page.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
@@ -26,11 +27,11 @@ class MainMenuBottomNavigation extends WatchingStatefulWidget {
 class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation>
     with WidgetsBindingObserver {
   final List<Widget> pages = [
-    const PupilListsMenuPage(),
-    const SchoolListsMenuPage(),
-    const LearnResourcesMenuPage(),
-    const ToolsPage(),
-    const SettingsPage(),
+    const PupilListsMenuScreen(),
+    const SchoolListsMenuScreen(),
+    const LearnResourcesMenuScreen(),
+    const ToolsScreen(),
+    const SettingsScreen(),
   ];
 
   @override
@@ -54,9 +55,6 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() {});
     });
-    // Future<void>.delayed(const Duration(milliseconds: 100), () {
-    //   if (mounted) setState(() {});
-    // });
   }
 
   @override
@@ -111,17 +109,17 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation>
     });
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
+      backgroundColor: Style.of(context).colors.canvas,
       body: LayoutBuilder(
         builder: (context, constraints) {
           return PageView(
             controller: pageViewController,
             children: const <Widget>[
-              PupilListsMenuPage(),
-              SchoolListsMenuPage(),
-              LearnResourcesMenuPage(),
-              ToolsPage(),
-              SettingsPage(),
+              PupilListsMenuScreen(),
+              SchoolListsMenuScreen(),
+              LearnResourcesMenuScreen(),
+              ToolsScreen(),
+              SettingsScreen(),
             ],
             onPageChanged: (index) => bottomNavmanager.setBottomNavPage(index),
           );
@@ -137,7 +135,6 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation>
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeIn,
             );
-            //BottomNavManager().setBottomNavPage(index);
           },
           showSelectedLabels: true,
           currentIndex: tab,
@@ -164,8 +161,6 @@ class _MainMenuBottomNavigationState extends State<MainMenuBottomNavigation>
               label: locale.settings,
             ),
           ],
-
-          //onTap:
         ),
       ),
     );

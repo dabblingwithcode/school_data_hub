@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class SuccessDialog extends StatelessWidget {
   final int newCount;
@@ -35,17 +36,16 @@ class SuccessDialog extends StatelessWidget {
                 ? 'Es wurden $totalCount Schülerdaten übertragen, davon $newCount neue Einträge.'
                 : 'Es wurden $totalCount Schülerdaten erfolgreich übertragen und aktualisiert. Es wurden keine neuen Einträge hinzugefügt.'
             : 'Keine Schülerdaten empfangen.',
+        style: context.typography.body,
       ),
       actions: [
-        ElevatedButton(
+        Button.small(
           onPressed: () {
             Navigator.of(context).pop(); // Close dialog
             Navigator.of(context).pop(); // Close stream page
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.accentColor,
-          ),
-          child: const Text('OK', style: TextStyle(color: Colors.white)),
+          label: 'OK',
+          variant: ButtonVariant.primary,
         ),
       ],
     );

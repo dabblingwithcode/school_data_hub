@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 /// Result of confirming removal of a room from the policy.
 /// [purge] is the checkbox value: whether to also purge the room on the server.
@@ -16,16 +16,17 @@ Future<RemoveRoomFromPolicyResult?> showRemoveRoomFromPolicyDialog(
   return showDialog<RemoveRoomFromPolicyResult>(
     context: context,
     builder: (BuildContext context) {
+      final style = Style.of(context);
       return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: const Text(
+            title: Text(
               'Raum aus der Policy rausnehmen',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: context.typography.subtitle.bold,
             ),
             icon: Icon(
               Icons.question_mark_rounded,
-              color: AppColors.backgroundColor,
+              color: style.colors.accent,
               size: 50,
             ),
             content: Column(
@@ -40,9 +41,9 @@ Future<RemoveRoomFromPolicyResult?> showRemoveRoomFromPolicyDialog(
                 CheckboxListTile(
                   value: purge,
                   onChanged: (value) => setState(() => purge = value ?? false),
-                  title: const Text(
+                  title: Text(
                     'Raum auch purgen (auf Server verlassen und vergessen)',
-                    style: TextStyle(fontSize: 14),
+                    style: context.typography.body,
                   ),
                   contentPadding: EdgeInsets.zero,
                   controlAffinity: ListTileControlAffinity.leading,
@@ -55,30 +56,24 @@ Future<RemoveRoomFromPolicyResult?> showRemoveRoomFromPolicyDialog(
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(5.0),
-                      child: ElevatedButton(
-                        style: AppStyles.cancelButtonStyle,
+                      child: Button(
+                        variant: ButtonVariant.destructive,
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: const Text(
-                          'NEIN',
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: 'NEIN',
                       ),
                     ),
                   ),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(5.0),
-                      child: ElevatedButton(
-                        style: AppStyles.successButtonStyle,
+                      child: Button(
+                        variant: ButtonVariant.primary,
                         onPressed: () {
                           Navigator.of(context).pop((remove: true, purge: purge));
                         },
-                        child: const Text(
-                          'JA',
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: 'JA',
                       ),
                     ),
                   ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/list_tiles/pupil_enrollment_day_card.dart';
@@ -12,6 +12,7 @@ class EnrollmentListTiles extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final seenEnrollmentDates = <DateTime>{};
     final now = DateTime.now();
     final currentSchoolYearStart = DateTime(
@@ -43,9 +44,9 @@ class EnrollmentListTiles extends WatchingWidget {
       children: [
         Row(
           children: [
-            const Text(
+            Text(
               'Unterjährige Anmeldungen',
-              style: TextStyle(color: Colors.black, fontSize: 18),
+              style: context.typography.subtitle,
             ),
             const Gap(10),
             Text(
@@ -53,11 +54,7 @@ class EnrollmentListTiles extends WatchingWidget {
                   .pupilsNotEnrolledOnRegularDate(controller.pupils)
                   .length
                   .toString(),
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+              style: context.typography.subtitle.bold,
             ),
           ],
         ),
@@ -69,18 +66,14 @@ class EnrollmentListTiles extends WatchingWidget {
             children: [
               Row(
                 children: [
-                  const Text(
+                  Text(
                     'im laufenden Schuljahr:',
-                    style: TextStyle(color: Colors.black, fontSize: 18),
+                    style: context.typography.subtitle,
                   ),
                   const Gap(10),
                   Text(
                     currentYearPupils.length.toString(),
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
+                    style: context.typography.subtitle.bold,
                   ),
                 ],
               ),
@@ -117,7 +110,7 @@ class EnrollmentListTiles extends WatchingWidget {
                                 '${pupil.pupilSince.asWeekdayName(context)}, ${pupil.pupilSince.formatDateForUser()}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.backgroundColor,
+                                  color: style.colors.accent,
                                   fontSize: 18,
                                 ),
                               ),
@@ -141,18 +134,14 @@ class EnrollmentListTiles extends WatchingWidget {
             children: [
               Row(
                 children: [
-                  const Text(
+                  Text(
                     'im letzten Schuljahr:',
-                    style: TextStyle(color: Colors.black, fontSize: 18),
+                    style: context.typography.subtitle,
                   ),
                   const Gap(10),
                   Text(
                     pupilsEnrolledLastYearAfterRegulatDate.length.toString(),
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
+                    style: context.typography.subtitle.bold,
                   ),
                 ],
               ),
@@ -189,7 +178,7 @@ class EnrollmentListTiles extends WatchingWidget {
                                 '${pupil.pupilSince.asWeekdayName(context)}, ${pupil.pupilSince.formatDateForUser()}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.backgroundColor,
+                                  color: style.colors.accent,
                                   fontSize: 18,
                                 ),
                               ),

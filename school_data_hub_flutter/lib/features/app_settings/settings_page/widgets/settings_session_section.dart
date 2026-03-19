@@ -5,6 +5,8 @@ import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -24,6 +26,7 @@ class SettingsSessionSection extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     callOnce((BuildContext context) async {
       await di.allReady();
     });
@@ -56,9 +59,9 @@ class SettingsSessionSection extends WatchingWidget {
         context: context,
         builder: (ctx) => StatefulBuilder(
           builder: (ctx, setState) => AlertDialog(
-            title: const Text(
+            title: Text(
               'Farbschema wählen',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: context.typography.title,
             ),
             content: SizedBox(
               width: 360,
@@ -79,7 +82,9 @@ class SettingsSessionSection extends WatchingWidget {
                           title: Row(
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(
+                                  Style.radii.medium,
+                                ),
                                 child: Container(
                                   color: palette.backgroundColor,
                                   width: 20,
@@ -129,198 +134,199 @@ class SettingsSessionSection extends WatchingWidget {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Text(
             locale.session,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.backgroundColor,
-            ),
+            style: context.typography.title,
           ),
         ),
-        Card(
-          color: Colors.white,
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          child: Column(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.home),
-                title: const Text('Instanz:'),
-                subtitle: Text(serverName!.serverName),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => changeEnvironmentDialog(context: context),
-              ),
-              ListTile(
-                leading: const Icon(Icons.color_lens_outlined),
-                title: const Text('Farbschema'),
-                subtitle: Text(currentPalette.displayName),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => openColorSchemePicker(),
-              ),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: Style.spacing.md,
+            vertical: Style.spacing.xs,
+          ),
+          child: CardBox(
+            padding: EdgeInsets.all(Style.spacing.sm),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.home),
+                  title: const Text('Instanz:'),
+                  subtitle: Text(serverName!.serverName),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => changeEnvironmentDialog(context: context),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.color_lens_outlined),
+                  title: const Text('Farbschema'),
+                  subtitle: Text(currentPalette.displayName),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => openColorSchemePicker(),
+                ),
 
-              ListTile(
-                leading: const Icon(Icons.perm_identity_rounded),
-                title: const Text('Id-Datensatz vom:'),
-                subtitle: Text(
-                  '${di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatDateAndTimeForUser() ?? 'Keine Daten'} ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color:
-                        di<EnvManager>().activeEnv?.lastIdentitiesUpdate ==
-                                remoteUpdate ||
-                            remoteUpdate != null &&
-                                di<EnvManager>()
-                                        .activeEnv
-                                        ?.lastIdentitiesUpdate !=
-                                    null &&
-                                (di<EnvManager>()
-                                        .activeEnv
-                                        ?.lastIdentitiesUpdate!
-                                        .isAfter(remoteUpdate) ==
-                                    true)
-                        ? Colors.green
-                        : Colors.red,
+                ListTile(
+                  leading: const Icon(Icons.perm_identity_rounded),
+                  title: const Text('Id-Datensatz vom:'),
+                  subtitle: Text(
+                    '${di<EnvManager>().activeEnv?.lastIdentitiesUpdate?.formatDateAndTimeForUser() ?? 'Keine Daten'} ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color:
+                          di<EnvManager>().activeEnv?.lastIdentitiesUpdate ==
+                                  remoteUpdate ||
+                              remoteUpdate != null &&
+                                  di<EnvManager>()
+                                          .activeEnv
+                                          ?.lastIdentitiesUpdate !=
+                                      null &&
+                                  (di<EnvManager>()
+                                          .activeEnv
+                                          ?.lastIdentitiesUpdate!
+                                          .isAfter(remoteUpdate) ==
+                                      true)
+                          ? style.colors.success
+                          : style.colors.error,
+                    ),
                   ),
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.perm_identity_rounded),
-                title: const Text('Aktuelleste Daten vom:'),
-                subtitle: Text('${remoteUpdate?.formatDateAndTimeForUser()}'),
-              ),
-              ListTile(
-                leading: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.perm_contact_cal_rounded),
-                    Icon(Icons.delete_forever_outlined),
-                  ],
+                ListTile(
+                  leading: const Icon(Icons.perm_identity_rounded),
+                  title: const Text('Aktuelleste Daten vom:'),
+                  subtitle: Text('${remoteUpdate?.formatDateAndTimeForUser()}'),
                 ),
-                title: const Text('gespeicherte Identitäten löschen'),
-                onTap: () async {
-                  final confirm = await confirmationDialog(
-                    context: context,
-                    title: 'Lokale Kinder-Ids löschen',
-                    message: 'Kinder-Ids für diese Instanz löschen?',
-                  );
-                  if (confirm == true && context.mounted) {
-                    PupilIdentityHelper.deletePupilIdentitiesForEnv(
-                      di<EnvManager>().storageKeyForPupilIdentities,
+                ListTile(
+                  leading: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.perm_contact_cal_rounded),
+                      Icon(Icons.delete_forever_outlined),
+                    ],
+                  ),
+                  title: const Text('gespeicherte Identitäten löschen'),
+                  onTap: () async {
+                    final confirm = await confirmationDialog(
+                      context: context,
+                      title: 'Lokale Kinder-Ids löschen',
+                      message: 'Kinder-Ids für diese Instanz löschen?',
                     );
-                    notificationService.showSnackBar(
-                      NotificationType.success,
-                      'Kinder-Ids gelöscht',
-                    );
-                  }
-                },
-              ),
-              ListTile(
-                leading: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.key),
-                    Icon(Icons.delete_forever_outlined),
-                  ],
-                ),
-                title: const Text('Schul-Schlüssel löschen'),
-                subtitle: const Text('Nur Instanz-ID löschen'),
-                onTap: () async {
-                  final confirm = await confirmationDialog(
-                    context: context,
-                    title: 'Instanz-ID-Schlüssel löschen',
-                    message: 'Instanz-ID-Schlüssel löschen?',
-                  );
-                  if (confirm == true && context.mounted) {
-                    _log.warning('[DI] Hang on tight, signing out! ');
-                    await di<EnvManager>().deleteEnv();
-                    di<HubSessionManager>().signOutDevice();
-                    _log.warning(
-                      '[DI] Env deleted, calling [unregisterMaagersDependentOnEnv] from the settings section!',
-                    );
-                    InitManager.dropAllScopes();
-                    notificationService.showSnackBar(
-                      NotificationType.success,
-                      'Instanz-ID-Schlüssel gelöscht',
-                    );
-
-                    await cacheManager.emptyCache();
-                    if (context.mounted) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute<void>(
-                          builder: (ctx) => const Login(),
-                        ),
-                        (route) => false,
+                    if (confirm == true && context.mounted) {
+                      PupilIdentityHelper.deletePupilIdentitiesForEnv(
+                        di<EnvManager>().storageKeyForPupilIdentities,
+                      );
+                      notificationService.showSnackBar(
+                        NotificationType.success,
+                        'Kinder-Ids gelöscht',
                       );
                     }
-                  }
-                },
-              ),
-              ListTile(
-                leading: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.image),
-                    Gap(5),
-                    Icon(Icons.delete_forever_outlined),
-                  ],
+                  },
                 ),
-                title: const Text('Bilder-Cache löschen'),
-                onTap: () async {
-                  bool? confirm = await confirmationDialog(
-                    context: context,
-                    title: 'Bilder-Cache löschen',
-                    message: 'Cached Bilder löschen?',
-                  );
-                  if (confirm == true && context.mounted) {
-                    await cacheManager.emptyCache();
-                    notificationService.showSnackBar(
-                      NotificationType.success,
-                      'der Bilder-Cache wurde gelöscht',
+                ListTile(
+                  leading: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.key),
+                      Icon(Icons.delete_forever_outlined),
+                    ],
+                  ),
+                  title: const Text('Schul-Schlüssel löschen'),
+                  subtitle: const Text('Nur Instanz-ID löschen'),
+                  onTap: () async {
+                    final confirm = await confirmationDialog(
+                      context: context,
+                      title: 'Instanz-ID-Schlüssel löschen',
+                      message: 'Instanz-ID-Schlüssel löschen?',
                     );
-                  }
-                },
-              ),
-              ListTile(
-                leading: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.logout),
-                    Gap(5),
-                    Icon(Icons.delete_forever_outlined),
-                  ],
-                ),
-                title: const Text('Ausloggen und Daten löschen'),
-                subtitle: const Text('App wird zurückgesetzt!'),
-                onTap: () async {
-                  bool? confirm = await confirmationDialog(
-                    context: context,
-                    title: 'Achtung!',
-                    message: 'Ausloggen und alle Daten löschen?',
-                  );
-                  if (confirm == true && context.mounted) {
-                    SessionHelper.logoutAndDeleteAllInstanceData();
-                  }
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Ausloggen'),
-                subtitle: const Text('Daten bleiben erhalten'),
-                onTap: () async {
-                  final confirm = await confirmationDialog(
-                    context: context,
-                    title: 'Ausloggen',
-                    message: 'Wirklich ausloggen?\n\nDaten bleiben erhalten!',
-                  );
-                  if (confirm == true && context.mounted) {
-                    di<HubSessionManager>().signOutDevice();
+                    if (confirm == true && context.mounted) {
+                      _log.warning('[DI] Hang on tight, signing out! ');
+                      await di<EnvManager>().deleteEnv();
+                      di<HubSessionManager>().signOutDevice();
+                      _log.warning(
+                        '[DI] Env deleted, calling [unregisterMaagersDependentOnEnv] from the settings section!',
+                      );
+                      InitManager.dropAllScopes();
+                      notificationService.showSnackBar(
+                        NotificationType.success,
+                        'Instanz-ID-Schlüssel gelöscht',
+                      );
 
-                    notificationService.showSnackBar(
-                      NotificationType.success,
-                      'Erfolgreich ausgeloggt!',
+                      await cacheManager.emptyCache();
+                      if (context.mounted) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute<void>(
+                            builder: (ctx) => const Login(),
+                          ),
+                          (route) => false,
+                        );
+                      }
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.image),
+                      Gap(5),
+                      Icon(Icons.delete_forever_outlined),
+                    ],
+                  ),
+                  title: const Text('Bilder-Cache löschen'),
+                  onTap: () async {
+                    bool? confirm = await confirmationDialog(
+                      context: context,
+                      title: 'Bilder-Cache löschen',
+                      message: 'Cached Bilder löschen?',
                     );
-                  }
-                },
-              ),
-            ],
+                    if (confirm == true && context.mounted) {
+                      await cacheManager.emptyCache();
+                      notificationService.showSnackBar(
+                        NotificationType.success,
+                        'der Bilder-Cache wurde gelöscht',
+                      );
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.logout),
+                      Gap(5),
+                      Icon(Icons.delete_forever_outlined),
+                    ],
+                  ),
+                  title: const Text('Ausloggen und Daten löschen'),
+                  subtitle: const Text('App wird zurückgesetzt!'),
+                  onTap: () async {
+                    bool? confirm = await confirmationDialog(
+                      context: context,
+                      title: 'Achtung!',
+                      message: 'Ausloggen und alle Daten löschen?',
+                    );
+                    if (confirm == true && context.mounted) {
+                      SessionHelper.logoutAndDeleteAllInstanceData();
+                    }
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Ausloggen'),
+                  subtitle: const Text('Daten bleiben erhalten'),
+                  onTap: () async {
+                    final confirm = await confirmationDialog(
+                      context: context,
+                      title: 'Ausloggen',
+                      message: 'Wirklich ausloggen?\n\nDaten bleiben erhalten!',
+                    );
+                    if (confirm == true && context.mounted) {
+                      di<HubSessionManager>().signOutDevice();
+
+                      notificationService.showSnackBar(
+                        NotificationType.success,
+                        'Erfolgreich ausgeloggt!',
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ],

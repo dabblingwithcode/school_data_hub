@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_competence_goals/new_competence_goal_page.dart';
@@ -16,11 +17,11 @@ class PupilLearningContentCompetenceGoals extends WatchingWidget {
     callOnce((_) => di<CompetenceManager>().fetchGoalsForPupil(pupil.pupilId));
     return Column(
       children: [
-        const Row(
+        Row(
           children: [
             Text(
               'Lernziele',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: context.typography.title,
             ),
           ],
         ),

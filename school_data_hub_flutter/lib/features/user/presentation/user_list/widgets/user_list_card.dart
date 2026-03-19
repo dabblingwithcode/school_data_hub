@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tag.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_screen.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart';
 
 class UserListCard extends WatchingWidget {
@@ -17,22 +19,14 @@ class UserListCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tileController = createOnce(() => CustomExpansionTileController());
+    final style = Style.of(context);
+    final tileController = createOnce(() => ExpansionController());
     final u = userWithDevices.user;
     final info = u.userInfo;
     final devices = userWithDevices.userDevices;
 
-    return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 1.0,
-      margin: const EdgeInsets.only(
-        left: 4.0,
-        right: 4.0,
-        top: 4.0,
-        bottom: 4.0,
-      ),
+    return CardBox(
+      padding: EdgeInsets.zero,
       child: Column(
         children: [
           // Header row: avatar, primary info, credit expand trigger
@@ -44,15 +38,18 @@ class UserListCard extends WatchingWidget {
               _UserAvatar(info: info),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 8, right: 8),
+                  padding: EdgeInsets.only(
+                    top: Style.spacing.sm,
+                    right: Style.spacing.sm,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      InkWell(
+                      GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute<void>(
-                              builder: (ctx) => CreateOrEditUserPage(
+                              builder: (ctx) => CreateOrEditUserScreen(
                                 userWithDevices: userWithDevices,
                               ),
                             ),
@@ -60,10 +57,8 @@ class UserListCard extends WatchingWidget {
                         },
                         child: Text(
                           info?.userName ?? 'Unbekannt',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                          style: context.typography.subtitle.bold.withColor(
+                            style.colors.foreground,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -71,34 +66,37 @@ class UserListCard extends WatchingWidget {
                       if (info?.fullName != null && info!.fullName!.isNotEmpty)
                         Text(
                           info.fullName!,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[700],
+                          style: context.typography.body.withColor(
+                            style.colors.mutedForeground,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       const Gap(6),
                       _CompactInfoChips(user: u),
+                      Gap(Style.spacing.md),
                     ],
                   ),
                 ),
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () => tileController.toggle(),
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 12, right: 12),
+                  padding: EdgeInsets.only(
+                    top: Style.spacing.md,
+                    right: Style.spacing.md,
+                  ),
                   child: Column(
                     children: [
                       Text(
                         'Guthaben',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        style: context.typography.caption.withColor(
+                          style.colors.mutedForeground,
+                        ),
                       ),
                       Text(
                         u.credit.toString(),
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.backgroundColor,
+                        style: context.typography.heading.withColor(
+                          style.colors.accent,
                         ),
                       ),
                     ],
@@ -107,14 +105,14 @@ class UserListCard extends WatchingWidget {
               ),
             ],
           ),
-          CustomExpansionTileContent(
+          ExpansionBody(
             title: null,
             tileController: tileController,
             widgetList: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Style.spacing.md,
+                  vertical: Style.spacing.sm,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +145,9 @@ class UserListCard extends WatchingWidget {
                     if (devices.isEmpty)
                       Text(
                         'Keine Geräte',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        style: context.typography.bodySmall.withColor(
+                          style.colors.mutedForeground,
+                        ),
                       )
                     else
                       ...devices.map((d) => _DeviceTile(device: d)),
@@ -176,16 +176,17 @@ class _UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final imageUrl = _resolveImageUrl();
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: EdgeInsets.all(Style.spacing.md),
       child: CircleAvatar(
         radius: 30,
-        backgroundColor: Colors.grey[300],
+        backgroundColor: style.colors.border,
         backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
         onBackgroundImageError: imageUrl != null ? (_, __) {} : null,
         child: imageUrl == null
-            ? const Icon(Icons.person, size: 20, color: Colors.white)
+            ? Icon(Icons.person, size: 20, color: style.colors.background)
             : null,
       ),
     );
@@ -199,53 +200,33 @@ class _CompactInfoChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Wrap(
-      spacing: 8,
-      runSpacing: 4,
+      spacing: Style.spacing.sm,
+      runSpacing: Style.spacing.xs,
       children: [
-        _Chip(label: 'Rolle', value: user.role.name),
+        Tag(label: 'Rolle: ${user.role.name}', color: style.colors.accent),
         if ((user.userInfo?.email ?? '').isNotEmpty)
-          _Chip(label: 'E-Mail', value: user.userInfo?.email ?? ''),
+          Tag(
+            label: 'E-Mail: ${user.userInfo?.email ?? ''}',
+            color: style.colors.accent,
+          ),
         if (user.matrixUserId != null && user.matrixUserId!.isNotEmpty)
-          _Chip(label: 'Matrix', value: user.matrixUserId!),
-        _Chip(label: 'Stunden', value: '${user.timeUnits}'),
-        _Chip(label: 'Entlastung', value: '${user.reliefTimeUnits}'),
+          Tag(
+            label: 'Matrix: ${user.matrixUserId!}',
+            color: style.colors.accent,
+          ),
+        Tag(label: 'Stunden: ${user.timeUnits}', color: style.colors.accent),
+        Tag(
+          label: 'Entlastung: ${user.reliefTimeUnits}',
+          color: style.colors.accent,
+        ),
         if (user.pupilsAuth != null && user.pupilsAuth!.isNotEmpty)
-          _Chip(label: 'Aut. Kinder', value: '${user.pupilsAuth!.length}'),
+          Tag(
+            label: 'Aut. Kinder: ${user.pupilsAuth!.length}',
+            color: style.colors.accent,
+          ),
       ],
-    );
-  }
-}
-
-class _Chip extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _Chip({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '$label: ',
-            style: TextStyle(fontSize: 11, color: Colors.grey[700]),
-          ),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
-        ],
-      ),
     );
   }
 }
@@ -259,10 +240,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-      ),
+      child: Text(title, style: context.typography.body.bold),
     );
   }
 }
@@ -275,8 +253,9 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+      padding: EdgeInsets.only(bottom: Style.spacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -284,10 +263,12 @@ class _InfoRow extends StatelessWidget {
             width: 140,
             child: Text(
               '$label:',
-              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+              style: context.typography.bodySmall.withColor(
+                style.colors.mutedForeground,
+              ),
             ),
           ),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 12))),
+          Expanded(child: Text(value, style: context.typography.bodySmall)),
         ],
       ),
     );
@@ -301,34 +282,33 @@ class _DeviceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final displayName = device.deviceName.isNotEmpty
         ? device.deviceName
         : device.deviceId;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.only(bottom: Style.spacing.sm),
       child: Row(
         children: [
           Icon(
             device.isActive ? Icons.devices : Icons.devices_other,
             size: 20,
-            color: device.isActive ? Colors.green : Colors.grey,
+            color: device.isActive
+                ? style.colors.success
+                : style.colors.mutedForeground,
           ),
           const Gap(8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  displayName,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
+                Text(displayName, style: context.typography.bodySmall.w600),
                 Text(
                   'Zuletzt: ${device.lastLogin.formatDateForUser()} · '
                   '${device.isActive ? "Aktiv" : "Inaktiv"}',
-                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                  style: context.typography.caption.withColor(
+                    style.colors.mutedForeground,
+                  ),
                 ),
               ],
             ),

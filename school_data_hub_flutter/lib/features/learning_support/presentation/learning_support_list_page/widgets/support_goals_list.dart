@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_goal_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -17,20 +18,20 @@ class SupportGoalsList extends WatchingWidget {
     final supportGoals = proxy.supportGoals;
     return Column(
       children: [
-        const Gap(5),
+        Gap(Style.spacing.xs),
 
-        const Row(
+        Row(
           children: [
             Text(
               'Förderziele',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: context.typography.title,
             ),
           ],
         ),
-        const Gap(10),
+        Gap(Style.spacing.md),
         supportGoals.isNotEmpty
             ? ListView.builder(
-                padding: const EdgeInsets.all(0),
+                padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: supportGoals.length,
@@ -41,7 +42,7 @@ class SupportGoalsList extends WatchingWidget {
             : const Column(
                 children: [Text('Noch keine Förderziele festgelegt!')],
               ),
-        const Gap(10),
+        Gap(Style.spacing.md),
       ],
     );
   }

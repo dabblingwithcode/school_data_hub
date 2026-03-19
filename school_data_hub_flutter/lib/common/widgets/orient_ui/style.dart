@@ -11,7 +11,9 @@ ColorTokens get _colorsLight => ColorTokens(
   mutedForeground: const Color(0xFFACAEAF),
   accent: AppColors.backgroundColor,
   accentForeground: const Color(0xFFFAFAFA),
-  surfaceContainer: AppColors.cardInCardColor,
+  surfaceContainer: AppColors.surfaceContainerColor,
+  surfaceSecondaryContainer: AppColors.surfaceSecondaryContainerColor,
+  surfaceWarningContainer: AppColors.surfaceWarningContainerColor,
   button: ButtonColors(
     primary: AppColors.appStyleButtonColor,
     primaryForeground: const Color(0xFFFAFAFA),
@@ -22,14 +24,14 @@ ColorTokens get _colorsLight => ColorTokens(
     link: AppColors.interactiveColor,
     accent: const Color(0xFFF4F4F5),
   ),
-  navigation: NavigationColors(
-    railBackground: const Color(0xFFFAFAFA),
-    railItemBackgroundActive: const Color(0xFFFFFFFF),
-    railItemBackgroundHover: const Color(0xFFF2F2F2),
-    railItemText: const Color(0xFF2A2A2A),
-    bottomBarBackground: const Color(0xFFFFFFFF),
-    bottomBarItemActive: const Color(0xFF121212),
-    bottomBarItemInactive: const Color(0xFFBBBBBB),
+  navigation: const NavigationColors(
+    railBackground: Color(0xFFFAFAFA),
+    railItemBackgroundActive: Color(0xFFFFFFFF),
+    railItemBackgroundHover: Color(0xFFF2F2F2),
+    railItemText: Color(0xFF2A2A2A),
+    bottomBarBackground: Color(0xFFFFFFFF),
+    bottomBarItemActive: Color(0xFF121212),
+    bottomBarItemInactive: Color(0xFFBBBBBB),
   ),
   success: AppColors.successButtonColor,
   error: AppColors.dangerButtonColor,
@@ -47,7 +49,9 @@ ColorTokens get _colorsDark => ColorTokens(
   mutedForeground: const Color(0xFFB2B2B2),
   accent: AppColors.backgroundColor,
   accentForeground: const Color(0xFF18181B),
-  surfaceContainer: const Color(0xFF121212),
+  surfaceContainer: const Color(0xFF1E1E1E),
+  surfaceSecondaryContainer: const Color(0xFF121212),
+  surfaceWarningContainer: const Color(0xFF3D2800),
   button: ButtonColors(
     primary: AppColors.appStyleButtonColor,
     primaryForeground: const Color(0xFFFAFAFA),
@@ -62,14 +66,14 @@ ColorTokens get _colorsDark => ColorTokens(
     link: AppColors.interactiveColor,
     accent: const Color(0xFF27272A),
   ),
-  navigation: NavigationColors(
-    railBackground: const Color(0xFF121212),
-    railItemBackgroundActive: const Color(0xFF2A2A2A),
-    railItemBackgroundHover: const Color(0xFF080808),
-    railItemText: const Color(0xFFFAFAFA),
-    bottomBarBackground: const Color(0xFF121212),
-    bottomBarItemActive: const Color(0xFFFAFAFA),
-    bottomBarItemInactive: const Color(0xFF71717A),
+  navigation: const NavigationColors(
+    railBackground: Color(0xFF121212),
+    railItemBackgroundActive: Color(0xFF2A2A2A),
+    railItemBackgroundHover: Color(0xFF080808),
+    railItemText: Color(0xFFFAFAFA),
+    bottomBarBackground: Color(0xFF121212),
+    bottomBarItemActive: Color(0xFFFAFAFA),
+    bottomBarItemInactive: Color(0xFF71717A),
   ),
   success: AppColors.successButtonColor,
   error: AppColors.dangerButtonColor,
@@ -88,6 +92,15 @@ final DurationTokens _durations = const DurationTokens(
 );
 
 final BreakpointTokens _breakpoints = const BreakpointTokens(desktop: 600);
+
+const SpacingTokens _spacing = SpacingTokens(
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  xxl: 32,
+);
 
 // Typography
 
@@ -152,6 +165,7 @@ class Style extends InheritedWidget {
   static RadiusTokens get radii => _radii;
   static DurationTokens get durations => _durations;
   static BreakpointTokens get breakpoints => _breakpoints;
+  static SpacingTokens get spacing => _spacing;
   TypographyTokens get typography => _buildTypography(colors.foreground);
 
   static Style of(BuildContext context) {
@@ -180,6 +194,8 @@ class ColorTokens {
   final Color accent;
   final Color accentForeground;
   final Color surfaceContainer;
+  final Color surfaceSecondaryContainer;
+  final Color surfaceWarningContainer;
   final ButtonColors button;
   final NavigationColors navigation;
   final Color success;
@@ -196,6 +212,8 @@ class ColorTokens {
     required this.accent,
     required this.accentForeground,
     required this.surfaceContainer,
+    required this.surfaceSecondaryContainer,
+    required this.surfaceWarningContainer,
     required this.button,
     required this.navigation,
     required this.success,
@@ -271,6 +289,39 @@ class DurationTokens {
   });
 }
 
+class SpacingTokens {
+  final double xs;
+  final double sm;
+  final double md;
+  final double lg;
+  final double xl;
+  final double xxl;
+
+  /// Spacing between cards in a list (e.g. ContentSliverList items).
+  final double listCardSpacing;
+
+  /// Spacing between nested cards (card-in-card).
+  final double cardInCardSpacing;
+
+  const SpacingTokens({
+    required this.xs,
+    required this.sm,
+    required this.md,
+    required this.lg,
+    required this.xl,
+    required this.xxl,
+    this.listCardSpacing = 5,
+    this.cardInCardSpacing = 4,
+  });
+
+  /// Convenience: EdgeInsets.all from a spacing value
+  EdgeInsets all(double value) => EdgeInsets.all(value);
+
+  /// Convenience: symmetric EdgeInsets
+  EdgeInsets symmetric({double horizontal = 0, double vertical = 0}) =>
+      EdgeInsets.symmetric(horizontal: horizontal, vertical: vertical);
+}
+
 class BreakpointTokens {
   final double desktop;
 
@@ -302,6 +353,67 @@ class TypographyTokens {
 extension StyleX on BuildContext {
   Style get style => Style.of(this);
   TypographyTokens get typography => Style.of(this).typography;
+}
+
+extension DomainColorsX on ColorTokens {
+  // Attendance
+  Color get attendancePresent => AppColors.presentColor;
+  Color get attendanceMissed => AppColors.missedColor;
+  Color get attendanceLate => AppColors.lateColor;
+  Color get attendanceHome => AppColors.homeColor;
+  Color get attendanceUnexcused => AppColors.unexcusedCheckColor;
+  Color get attendanceContactedQuestion => AppColors.contactedQuestionColor;
+  Color get attendanceContactedSuccess => AppColors.contactedSuccessColor;
+  Color get attendanceContactedCalledBack => AppColors.contactedCalledBackColor;
+  Color get attendanceContactedFailed => AppColors.contactedFailedColor;
+  Color get attendanceGoneHome => AppColors.goneHomeColor;
+
+  // Competence subjects
+  Color get subjectGerman => AppColors.germanColor;
+  Color get subjectMath => AppColors.mathColor;
+  Color get subjectScience => AppColors.scienceColor;
+  Color get subjectEnglish => AppColors.englishColor;
+  Color get subjectArt => AppColors.artColor;
+  Color get subjectMusic => AppColors.musicColor;
+  Color get subjectSport => AppColors.sportColor;
+  Color get subjectReligion => AppColors.religionColor;
+  Color get subjectWorkBehaviour => AppColors.workBehaviourColor;
+  Color get subjectSocial => AppColors.socialColor;
+
+  // Support categories
+  Color get supportKoerperWahrnehmungMotorik =>
+      AppColors.koerperWahrnehmungMotorikColor;
+  Color get supportSozialEmotional => AppColors.sozialEmotionalColor;
+  Color get supportMathematik => AppColors.mathematikColor;
+  Color get supportLernenLeisten => AppColors.lernenLeistenColor;
+  Color get supportDeutsch => AppColors.deutschColor;
+  Color get supportSprache => AppColors.spracheSprechenColor;
+
+  // Growth indicators
+  Color get growth1 => AppColors.growthIconColor1;
+  Color get growth2 => AppColors.growthIconColor2;
+  Color get growth3 => AppColors.growthIconColor3;
+  Color get growth4 => AppColors.growthIconColor4;
+
+  // UI elements
+  Color get cardBackground => AppColors.cardColor;
+  Color get cardInCard => AppColors.cardInCardColor;
+  Color get cardInCardBorder => AppColors.cardInCardBorderColor;
+  Color get canvas => AppColors.canvasColor;
+  Color get selectedCard => AppColors.selectedCardColor;
+  Color get notProcessed => AppColors.notProcessedColor;
+  Color get interactive => AppColors.interactiveColor;
+
+  // Pupil-specific
+  Color get familyLanguageLessons => AppColors.familyLanguageLessonsColor;
+  Color get ogsColor => AppColors.afterSchoolCardeColor;
+  Color get groupColor => AppColors.groupColor;
+  Color get schoolGradeColor => AppColors.schoolGradeColor;
+
+  // Filter chips
+  Color get filterChipSelected => AppColors.filterChipSelectedColor;
+  Color get filterChipUnselected => AppColors.filterChipUnselectedColor;
+  Color get filterChipCheck => AppColors.filterChipSelectedCheckColor;
 }
 
 extension TextStyleX on TextStyle {

@@ -1,31 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:flutter/widgets.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/alert_popup.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 
 void informationDialog(BuildContext context, String title, String text) =>
-    showDialog<bool>(
+    AlertPopup.show(
       context: context,
-      builder: (context) => AlertDialog(
-        icon: Icon(Icons.info, color: AppColors.backgroundColor, size: 50),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        content: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 300),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Text(text, textAlign: TextAlign.center),
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: ElevatedButton(
-              style: AppStyles.successButtonStyle,
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              }, // Add onPressed
-              child: const Text("OK", style: AppStyles.buttonTextStyle),
-            ),
-          ),
-        ],
+      title: title,
+      description: text,
+      action: Button(
+        label: 'OK',
+        onPressed: () => Navigator.of(context).pop(),
+        variant: ButtonVariant.primary,
       ),
     );

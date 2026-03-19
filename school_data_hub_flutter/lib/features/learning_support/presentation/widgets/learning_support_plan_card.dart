@@ -4,10 +4,11 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -33,24 +34,24 @@ class LearningSupportPlanCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tileController = createOnce(() => CustomExpansionTileController());
+    final tileController = createOnce(() => ExpansionController());
 
-    return Card(
-      color: AppColors.cardInCardColor,
-      margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 4.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs, vertical: 4.0),
+      child: CardBox(
+        variant: CardBoxVariant.filledSecondary,
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _PlanHeader(plan: plan),
-            const Gap(8),
+            Gap(Style.spacing.sm),
             _PlanMetadataAndActions(
               plan: plan,
               pupil: pupil,
               tileController: tileController,
             ),
-            CustomExpansionTileContent(
+            ExpansionBody(
               tileController: tileController,
               widgetList: [_PlanDetails(plan: plan)],
             ),
@@ -68,20 +69,21 @@ class _PlanHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Row(
       children: [
         Expanded(
           child: Text(
             'Förderplan Nr. ${plan.number}',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: context.typography.title,
           ),
         ),
         const Spacer(),
-        const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
-        const Gap(4),
+        Icon(Icons.calendar_today, size: 16, color: style.colors.mutedForeground),
+        Gap(Style.spacing.xs),
         Text(
           '${plan.createdAt.day}.${plan.createdAt.month}.${plan.createdAt.year}',
-          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          style: context.typography.subtitle.bold,
         ),
       ],
     );
@@ -91,7 +93,7 @@ class _PlanHeader extends StatelessWidget {
 class _PlanMetadataAndActions extends StatelessWidget {
   final LearningSupportPlan plan;
   final PupilProxy pupil;
-  final CustomExpansionTileController tileController;
+  final ExpansionController tileController;
 
   const _PlanMetadataAndActions({
     required this.plan,
@@ -116,7 +118,7 @@ class _PlanMetadataAndActions extends StatelessWidget {
       if (context.mounted) {
         Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (ctx) => PdfViewerPage(
+            builder: (ctx) => PdfViewerScreen(
               pdfGenerator: () =>
                   LearningSupportPlanPdfGenerator.generateLearningSupportPlanPdf(
                     plan: plan,
@@ -138,13 +140,14 @@ class _PlanMetadataAndActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Row(
       children: [
-        const Icon(Icons.person, size: 16, color: Colors.grey),
-        const Gap(4),
+        Icon(Icons.person, size: 16, color: style.colors.mutedForeground),
+        Gap(Style.spacing.xs),
         Text(
           'Erstellt von: ${plan.createdBy}',
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: context.typography.bodySmall.withColor(style.colors.mutedForeground),
         ),
         const Spacer(),
         if (AuthClearanceHelper.isTutorOrAdmin(pupil)) ...[
@@ -153,9 +156,9 @@ class _PlanMetadataAndActions extends StatelessWidget {
         ],
         _PdfButton(onTap: () => _generatePlanPdf(context)),
         const Gap(6),
-        CustomExpansionTileSwitch(
-          customExpansionTileController: tileController,
-          switchColor: AppColors.interactiveColor,
+        ExpansionHeader(
+          expansionController: tileController,
+          switchColor: style.colors.interactive,
         ),
       ],
     );
@@ -169,18 +172,19 @@ class _EditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final style = Style.of(context);
+    return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(Style.spacing.sm),
         decoration: BoxDecoration(
-          color: AppColors.interactiveColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8.0),
+          color: style.colors.interactive.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(Style.radii.small),
           border: Border.all(
-            color: AppColors.interactiveColor.withValues(alpha: 0.3),
+            color: style.colors.interactive.withValues(alpha: 0.3),
           ),
         ),
-        child: Icon(Icons.edit, size: 20, color: AppColors.interactiveColor),
+        child: Icon(Icons.edit, size: 20, color: style.colors.interactive),
       ),
     );
   }
@@ -193,21 +197,22 @@ class _PdfButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final style = Style.of(context);
+    return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(Style.spacing.sm),
         decoration: BoxDecoration(
-          color: AppColors.accentColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8.0),
+          color: style.colors.accent.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(Style.radii.small),
           border: Border.all(
-            color: AppColors.accentColor.withValues(alpha: 0.3),
+            color: style.colors.accent.withValues(alpha: 0.3),
           ),
         ),
         child: Icon(
           Icons.picture_as_pdf,
           size: 20,
-          color: AppColors.accentColor,
+          color: style.colors.accent,
         ),
       ),
     );
@@ -233,7 +238,7 @@ class _PlanDetails extends StatelessWidget {
         : null;
 
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
+      padding: EdgeInsets.only(top: Style.spacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -276,16 +281,16 @@ class _PlanDetailField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
+      padding: EdgeInsets.only(top: Style.spacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+            style: context.typography.bodySmall.w500,
           ),
           const Gap(2),
-          Text(value, style: const TextStyle(fontSize: 12)),
+          Text(value, style: context.typography.bodySmall),
         ],
       ),
     );

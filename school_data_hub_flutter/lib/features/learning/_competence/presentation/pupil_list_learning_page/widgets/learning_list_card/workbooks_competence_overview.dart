@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart'
@@ -21,6 +22,7 @@ class WorkbooksOverview extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     watch(di<PupilWorkbookManager>());
     final pupilWorkbooks = di<PupilWorkbookManager>().getPupilWorkbooks(
       pupil.pupilId,
@@ -49,31 +51,25 @@ class WorkbooksOverview extends WatchingWidget {
               )
             else
               const Icon(Icons.menu_book_rounded, size: 20),
-            const Gap(4),
+            Gap(Style.spacing.xs),
             Text(
               count.toString(),
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              ),
+              style: context.typography.body.bold.withColor(style.colors.foreground),
             ),
           ],
         ),
       );
-      widgetList.add(const Gap(10));
+      widgetList.add(Gap(Style.spacing.md));
     });
 
     if (widgetList.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.only(bottom: 15.0, right: 10),
+        padding: EdgeInsets.only(bottom: Style.spacing.lg, right: Style.spacing.md),
         child: Text(
           'keine Arbeitshefte erfasst',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.withValues(alpha: 0.7),
-            fontStyle: FontStyle.italic,
-          ),
+          style: context.typography.body.withColor(
+            style.colors.mutedForeground,
+          ).copyWith(fontStyle: FontStyle.italic),
         ),
       );
     }

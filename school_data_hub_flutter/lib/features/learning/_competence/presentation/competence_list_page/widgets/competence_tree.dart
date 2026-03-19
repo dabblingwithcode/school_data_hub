@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/competence_list_page/widgets/common_competence_card.dart';
@@ -92,8 +93,8 @@ class _CompetenceNode extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-      child: InkWell(
+      padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs),
+      child: GestureDetector(
         onLongPress: () async {
           final confirm = await confirmationDialog(
             context: context,

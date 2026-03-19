@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_page/matrix_event_reports_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_screen/matrix_event_reports_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/matrix_rooms_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_page/widgets/room_list_searchbar.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/new_matrix_room_page/new_matrix_room_page.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_page/matrix_users_list_screen.dart';
 
-class MatrixRoomsListPage extends WatchingWidget {
-  const MatrixRoomsListPage({super.key});
+class MatrixRoomsListScreen extends WatchingWidget {
+  const MatrixRoomsListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final matrixPolicyManager = di<MatrixPolicyManager>();
     final matrixPolicyFilterManager = di<MatrixPolicyFilterManager>();
     final pendingChanges = watchValue(
@@ -31,8 +32,8 @@ class MatrixRoomsListPage extends WatchingWidget {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: const GenericAppBar(
+      backgroundColor: style.colors.canvas,
+      appBar: const AppHeader(
         iconData: Icons.meeting_room_rounded,
         title: 'Matrix-Räume',
       ),
@@ -77,7 +78,7 @@ class MatrixRoomsListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: GenericBottomNavBar(
+      bottomNavigationBar: ActionBar(
         actions: [
           if (pendingChanges)
             IconButton(
@@ -91,7 +92,7 @@ class MatrixRoomsListPage extends WatchingWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (ctx) => const NewMatrixRoomPage(),
+                  builder: (ctx) => const NewMatrixRoomScreen(),
                 ),
               );
             },
@@ -110,7 +111,7 @@ class MatrixRoomsListPage extends WatchingWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (ctx) => const MatrixUsersListPage(),
+                  builder: (ctx) => const MatrixUsersListScreen(),
                 ),
               );
             },
@@ -121,7 +122,7 @@ class MatrixRoomsListPage extends WatchingWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (ctx) => const MatrixEventReportsPage(),
+                  builder: (ctx) => const MatrixEventReportsScreen(),
                 ),
               );
             },
@@ -136,7 +137,9 @@ class MatrixRoomsListPage extends WatchingWidget {
             tooltip: 'Filter',
             icon: Icon(
               Icons.filter_list,
-              color: filtersOn ? Colors.deepOrange : Colors.white,
+              color: filtersOn
+                  ? style.colors.error
+                  : style.colors.accentForeground,
               size: 30,
             ),
             onPressed: () => showMatrixRoomsFilterBottomSheet(context),

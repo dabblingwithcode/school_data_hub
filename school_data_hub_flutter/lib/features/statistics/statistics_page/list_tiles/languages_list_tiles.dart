@@ -3,6 +3,8 @@ import 'package:community_charts_flutter/community_charts_flutter.dart'
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/pupil_list_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -41,23 +43,19 @@ class LanguagesListTiles extends WatchingWidget {
       children: [
         Row(
           children: [
-            const Text(
+            Text(
               'Sprachen',
-              style: TextStyle(color: Colors.black, fontSize: 18),
+              style: context.typography.subtitle,
             ),
             const Gap(10),
             Text(
               sortedLanguageOccurrences.length.toString(),
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+              style: context.typography.subtitle.bold,
             ),
           ],
         ),
         const Gap(10),
-        Card(
+        CardBox(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -102,19 +100,12 @@ class LanguagesListTiles extends WatchingWidget {
                               const Gap(10),
                               Text(
                                 '$language:',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 18,
-                                ),
+                                style: context.typography.subtitle,
                               ),
                               const Gap(10),
                               Text(
                                 '$occurrences',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
+                                style: context.typography.subtitle.bold,
                               ),
                             ],
                           ),

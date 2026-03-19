@@ -2,19 +2,21 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 
 class PupilProfileBottomNavBar extends StatelessWidget {
   const PupilProfileBottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return BottomAppBar(
-      padding: const EdgeInsets.only(bottom: 10, right: 10, top: 6),
+      padding: const EdgeInsets.only(bottom: 0, right: 10, top: 6),
       shape: null,
-      color: AppColors.backgroundColor,
+      color: style.colors.accent,
       child: IconTheme(
-        data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+        data: IconThemeData(color: style.colors.background),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: SizedBox(
@@ -22,20 +24,20 @@ class PupilProfileBottomNavBar extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Gap(10),
-                IconButton(
-                  iconSize: 35,
-                  tooltip: 'zurück',
-                  icon: const Icon(Icons.arrow_back),
+                Gap(Style.spacing.md),
+                TappableIcon(
+                  size: 35,
+                  icon: Icon(Icons.arrow_back, color: style.colors.background),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
                 const Spacer(),
-                IconButton(
+                TappableIcon(
+                  size: 35,
                   onPressed: () =>
                       Navigator.popUntil(context, (route) => route.isFirst),
-                  icon: const Icon(Icons.home, size: 35),
+                  icon: Icon(Icons.home, color: style.colors.background),
                 ),
               ],
             ),

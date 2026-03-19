@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 
@@ -48,7 +49,7 @@ showNewEnvKeysDialog(BuildContext context) async {
                   items: HubRunMode.values.map((HubRunMode mode) {
                     return DropdownMenuItem<HubRunMode>(
                       value: mode,
-                      child: Text(mode.name), // Use the enum's name property
+                      child: Text(mode.name),
                     );
                   }).toList(),
                 ),
@@ -56,22 +57,19 @@ showNewEnvKeysDialog(BuildContext context) async {
             ),
             actions: [
               Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: ElevatedButton(
-                  style: AppStyles.cancelButtonStyle,
+                padding: EdgeInsets.all(Style.spacing.xs),
+                child: Button(
+                  variant: ButtonVariant.secondary,
+                  label: 'ABBRECHEN',
                   onPressed: () {
                     Navigator.of(context).pop(null);
-                  }, // Add onPressed
-                  child: const Text(
-                    "ABBRECHEN",
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  },
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: ElevatedButton(
-                  style: AppStyles.successButtonStyle,
+                padding: EdgeInsets.all(Style.spacing.xs),
+                child: Button(
+                  label: 'ERSTELLEN',
                   onPressed: () {
                     if (serverNameController.text.isEmpty ||
                         serverUrlController.text.isEmpty) {
@@ -86,11 +84,7 @@ showNewEnvKeysDialog(BuildContext context) async {
                       serverUrl: serverUrlController.text,
                       hubRunMode: selectedHubRunMode,
                     ));
-                  }, // Add onPressed
-                  child: const Text(
-                    "ERSTELLEN",
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  },
                 ),
               ),
             ],

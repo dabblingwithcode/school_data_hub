@@ -106,6 +106,9 @@ class CompetenceManager {
     _hubSubscription?.cancel();
     _hubSubscription = null;
     _competences.dispose();
+    for (final proxy in _pupilCompetenceGoalsMap.values) {
+      proxy.dispose();
+    }
     _pupilCompetenceGoalsMap.clear();
     _loadedPupilIds.clear();
   }

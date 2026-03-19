@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class RoomCodeField extends StatelessWidget {
   final TextEditingController controller;
@@ -10,7 +10,13 @@ class RoomCodeField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      decoration: AppStyles.textFieldDecoration(labelText: 'Raumcode'),
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.all(Style.spacing.sm),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Style.radii.small),
+        ),
+        labelText: 'Raumcode',
+      ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return 'Bitte geben Sie einen Raumcode ein';

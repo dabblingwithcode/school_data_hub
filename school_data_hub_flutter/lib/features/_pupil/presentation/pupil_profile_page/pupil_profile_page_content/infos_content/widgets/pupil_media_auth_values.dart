@@ -5,7 +5,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/multi_choice.dart';
@@ -41,7 +41,7 @@ class PublicMediaAuthValues extends WatchingWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppColors.cardInCardColor,
+          color: Style.of(context).colors.cardInCard,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -59,7 +59,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.backgroundColor,
+                          color: Style.of(context).colors.accent,
                         ),
                       ),
                       const Gap(4),
@@ -67,13 +67,13 @@ class PublicMediaAuthValues extends WatchingWidget {
                         'Bilder, Videos und Namen in Medien',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.withValues(alpha: 0.7),
+                          color: Style.of(context).colors.mutedForeground.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
                   ),
                 ),
-                InkWell(
+                GestureDetector(
                   onTap: () async {
                     final File? file = await createAndCropImageFile(context);
                     if (file == null) return;
@@ -99,14 +99,12 @@ class PublicMediaAuthValues extends WatchingWidget {
                       'Die Einwilligung wurde geändert!',
                     );
                   },
-                  borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: AppColors.backgroundColor.withValues(alpha: 0.1),
+                      color: Style.of(context).colors.background,
+                          border: Border.all(
+                        color: Style.of(context).colors.accent.withValues(alpha: 0.1),
                         width: 1,
                       ),
                     ),
@@ -119,14 +117,14 @@ class PublicMediaAuthValues extends WatchingWidget {
                             height: 40,
                             width: 40,
                             decoration: BoxDecoration(
-                              color: AppColors.backgroundColor.withValues(
+                              color: Style.of(context).colors.accent.withValues(
                                 alpha: 0.1,
                               ),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Icon(
                               Icons.add_a_photo,
-                              color: AppColors.backgroundColor.withValues(
+                              color: Style.of(context).colors.accent.withValues(
                                 alpha: 0.6,
                               ),
                               size: 20,
@@ -140,18 +138,18 @@ class PublicMediaAuthValues extends WatchingWidget {
 
             // Compact authorization grid
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(Style.spacing.sm),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
+                color: Style.of(context).colors.background,
+                borderRadius: BorderRadius.circular(Style.radii.small),
                 border: Border.all(
-                  color: AppColors.cardInCardBorderColor,
+                  color: Style.of(context).colors.cardInCardBorder,
                   width: 1,
                 ),
               ),
               child: Column(
                 children: [
-                  _buildAuthRow(
+                  _buildAuthRow(context,
                     'Gruppenfotos Presse',
                     publicMediaAuth.groupPicturesInPress,
                     publicMediaAuthDocumentId != null,
@@ -160,7 +158,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                       groupPicturesInPress: value,
                     ),
                   ),
-                  _buildAuthRow(
+                  _buildAuthRow(context,
                     'Gruppenfotos Website',
                     publicMediaAuth.groupPicturesOnWebsite,
                     publicMediaAuthDocumentId != null,
@@ -169,7 +167,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                       groupPicturesOnWebsite: value,
                     ),
                   ),
-                  _buildAuthRow(
+                  _buildAuthRow(context,
                     'Name in Presse',
                     publicMediaAuth.nameInPress,
                     publicMediaAuthDocumentId != null,
@@ -178,7 +176,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                       nameInPress: value,
                     ),
                   ),
-                  _buildAuthRow(
+                  _buildAuthRow(context,
                     'Name auf Website',
                     publicMediaAuth.nameOnWebsite,
                     publicMediaAuthDocumentId != null,
@@ -187,7 +185,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                       nameOnWebsite: value,
                     ),
                   ),
-                  _buildAuthRow(
+                  _buildAuthRow(context,
                     'Porträtfoto Presse',
                     publicMediaAuth.portraitPicturesInPress,
                     publicMediaAuthDocumentId != null,
@@ -196,7 +194,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                       portraitPicturesInPress: value,
                     ),
                   ),
-                  _buildAuthRow(
+                  _buildAuthRow(context,
                     'Porträtfoto Website',
                     publicMediaAuth.portraitPicturesOnWebsite,
                     publicMediaAuthDocumentId != null,
@@ -216,6 +214,7 @@ class PublicMediaAuthValues extends WatchingWidget {
   }
 
   Widget _buildAuthRow(
+    BuildContext context,
     String label,
     bool isAllowed,
     bool hasDocument,
@@ -232,7 +231,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.backgroundColor,
+                  color: Style.of(context).colors.accent,
                 ),
               ),
             ),
@@ -243,8 +242,8 @@ class PublicMediaAuthValues extends WatchingWidget {
                 Container(
                   decoration: BoxDecoration(
                     color: !isAllowed
-                        ? Colors.red.withValues(alpha: 0.1)
-                        : Colors.transparent,
+                        ? Style.of(context).colors.error.withValues(alpha: 0.1)
+                        : const Color(0x00000000),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: MultiChoice(
@@ -260,7 +259,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                 ),
                 Icon(
                   Icons.close,
-                  color: Colors.red.withValues(alpha: 0.7),
+                  color: Style.of(context).colors.error.withValues(alpha: 0.7),
                   size: 16,
                 ),
                 const Gap(8),
@@ -268,8 +267,8 @@ class PublicMediaAuthValues extends WatchingWidget {
                 Container(
                   decoration: BoxDecoration(
                     color: isAllowed
-                        ? Colors.green.withValues(alpha: 0.1)
-                        : Colors.transparent,
+                        ? Style.of(context).colors.success.withValues(alpha: 0.1)
+                        : const Color(0x00000000),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: MultiChoice(
@@ -285,7 +284,7 @@ class PublicMediaAuthValues extends WatchingWidget {
                 ),
                 Icon(
                   Icons.done,
-                  color: Colors.green.withValues(alpha: 0.7),
+                  color: Style.of(context).colors.success.withValues(alpha: 0.7),
                   size: 16,
                 ),
               ],
@@ -296,7 +295,7 @@ class PublicMediaAuthValues extends WatchingWidget {
           Container(
             margin: const EdgeInsets.symmetric(vertical: 4),
             height: 1,
-            color: AppColors.backgroundColor.withValues(alpha: 0.1),
+            color: Style.of(context).colors.accent.withValues(alpha: 0.1),
           ),
       ],
     );

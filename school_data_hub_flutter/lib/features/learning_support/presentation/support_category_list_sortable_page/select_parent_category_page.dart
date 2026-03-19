@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/widgets/selectable_parent_category_tree.dart';
 
@@ -14,17 +13,18 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/s
 ///
 /// Returns the selected parent category ID (or a sentinel value for root)
 /// via [Navigator.pop].
-class SelectParentCategoryPage extends WatchingWidget {
+class SelectParentCategoryScreen extends WatchingWidget {
   /// The categoryId of the category being moved.
   final int movingCategoryId;
 
   /// Sentinel value returned when "root" (no parent) is selected.
   static const int rootSentinel = -1;
 
-  const SelectParentCategoryPage({required this.movingCategoryId, super.key});
+  const SelectParentCategoryScreen({required this.movingCategoryId, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final selectedParentId = createOnce(() => ValueNotifier<int?>(null));
 
     final excludedIds = di<SupportCategoryManager>().getDescendantCategoryIds(
@@ -32,13 +32,14 @@ class SelectParentCategoryPage extends WatchingWidget {
     );
 
     return Scaffold(
+      backgroundColor: style.colors.canvas,
       appBar: AppBar(
-        foregroundColor: Colors.white,
+        foregroundColor: style.colors.background,
         centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: const Text(
+        backgroundColor: style.colors.accent,
+        title: Text(
           'Übergeordnete Kategorie wählen',
-          style: AppStyles.appBarTextStyle,
+          style: context.typography.title.withColor(style.colors.background),
         ),
       ),
       body: Center(
@@ -47,7 +48,7 @@ class SelectParentCategoryPage extends WatchingWidget {
           constraints: const BoxConstraints(maxWidth: 800),
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(Style.spacing.sm),
               child: ValueListenableBuilder<int?>(
                 valueListenable: selectedParentId,
                 builder: (context, selected, _) {
@@ -59,48 +60,40 @@ class SelectParentCategoryPage extends WatchingWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
+                        Padding(
+                          padding: EdgeInsets.all(Style.spacing.sm),
                           child: Text(
                             'Neue übergeordnete Kategorie auswählen:',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: context.typography.title,
                           ),
                         ),
                         // Root option
-                        Card(
-                          color: AppColors.backgroundColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: style.colors.accent,
+                            borderRadius: BorderRadius.circular(Style.radii.medium),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(Style.spacing.sm),
                             child: Row(
                               children: [
                                 Radio<int?>(
                                   value: rootSentinel,
                                   fillColor: WidgetStateProperty.all(
-                                    Colors.white,
+                                    style.colors.background,
                                   ),
                                 ),
-                                const SizedBox(width: 5),
+                                SizedBox(width: Style.spacing.xs),
                                 Expanded(
-                                  child: InkWell(
+                                  child: GestureDetector(
                                     onTap: () {
                                       selectedParentId.value = rootSentinel;
                                     },
-                                    child: const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(vertical: Style.spacing.sm),
                                       child: Text(
                                         'Keine (Hauptkategorie)',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        style: context.typography.subtitle.bold.withColor(style.colors.background),
                                       ),
                                     ),
                                   ),
@@ -109,7 +102,7 @@ class SelectParentCategoryPage extends WatchingWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: Style.spacing.xs),
                         // Category tree
                         SelectableParentCategoryTree(
                           excludedCategoryIds: excludedIds,
@@ -125,8 +118,8 @@ class SelectParentCategoryPage extends WatchingWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.backgroundColor,
-        child: const Icon(Icons.check, color: Colors.white, size: 35),
+        backgroundColor: style.colors.accent,
+        child: Icon(Icons.check, color: style.colors.background, size: 35),
         onPressed: () {
           Navigator.of(context).pop(selectedParentId.value);
         },

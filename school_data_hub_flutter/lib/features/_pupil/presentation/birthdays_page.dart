@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
-class BirthdaysView extends StatelessWidget {
+class BirthdaysScreen extends StatelessWidget {
   final DateTime selectedDate;
   final DateTime? endDate;
   final bool futureBirthdays;
-  const BirthdaysView({
+  const BirthdaysScreen({
     required this.selectedDate,
     this.endDate,
     this.futureBirthdays = false,
@@ -24,6 +24,7 @@ class BirthdaysView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final Set<DateTime> seenBirthdays = {};
     final pupilManager = di<PupilProxyManager>();
     final List<PupilProxy> pupils = pupilManager.getPupilsWithBirthdaySinceDate(
@@ -32,12 +33,15 @@ class BirthdaysView extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
+      backgroundColor: style.colors.canvas,
       appBar: AppBar(
         centerTitle: true,
         automaticallyImplyLeading: false,
-        backgroundColor: AppColors.backgroundColor,
-        title: const Text('Geburtstage', style: AppStyles.appBarTextStyle),
+        backgroundColor: style.colors.accent,
+        title: Text(
+          'Geburtstage',
+          style: context.typography.title.withColor(style.colors.background),
+        ),
       ),
       body: Center(
         child: Column(
@@ -47,11 +51,13 @@ class BirthdaysView extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 800),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: EdgeInsets.symmetric(vertical: Style.spacing.sm),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Style.spacing.sm,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -59,30 +65,24 @@ class BirthdaysView extends StatelessWidget {
                             endDate != null
                                 ? 'Geburtstage vom ${selectedDate.formatDateForUser()} bis ${endDate!.formatDateForUser()}'
                                 : 'Geburtstage seit dem ${selectedDate.formatDateForUser()}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
+                            style: context.typography.title,
                           ),
                           if (pupils.isEmpty)
-                            const Padding(
-                              padding: EdgeInsets.only(top: 100),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 100),
                               child: Center(
                                 child: Text(
                                   'Keine Geburtstage gefunden!',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
+                                  style: context.typography.title.withColor(
+                                    style.colors.mutedForeground,
                                   ),
                                 ),
                               ),
                             ),
                           if (pupils.isNotEmpty)
                             ListView.builder(
-                              padding: const EdgeInsets.only(
-                                top: 10,
-                                bottom: 10,
+                              padding: EdgeInsets.symmetric(
+                                vertical: Style.spacing.md,
                               ),
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -107,26 +107,25 @@ class BirthdaysView extends StatelessWidget {
                                   children: [
                                     !isBirthdayPrinted
                                         ? Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              vertical: 5.0,
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: Style.spacing.xs,
                                             ),
                                             child: Row(
                                               children: [
-                                                const Gap(5),
+                                                Gap(Style.spacing.xs),
                                                 Text(
                                                   '${relevantBirthday.asWeekdayName(context)}, ${relevantBirthday.formatDateForUser()}',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors
-                                                        .backgroundColor,
-                                                    fontSize: 18,
-                                                  ),
+                                                  style: context.typography
+                                                      .title
+                                                      .withColor(
+                                                        style.colors.accent,
+                                                      ),
                                                 ),
                                               ],
                                             ),
                                           )
                                         : const SizedBox.shrink(),
-                                    InkWell(
+                                    GestureDetector(
                                       onTap: () {
                                         di<BottomNavManager>()
                                             .setPupilProfileNavPage(0);
@@ -138,70 +137,76 @@ class BirthdaysView extends StatelessWidget {
                                           ),
                                         );
                                       },
-                                      child: Card(
-                                        color: AppColors.cardInCardColor,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Row(
-                                            children: [
-                                              AvatarWithBadges(
-                                                pupil: listedPupil,
-                                                size: 80,
-                                              ),
-                                              const Gap(10),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    listedPupil.firstName,
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18,
-                                                    ),
+                                      child: CardBox(
+                                        padding: EdgeInsets.all(
+                                          Style.spacing.md,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            AvatarWithBadges(
+                                              pupil: listedPupil,
+                                              size: 80,
+                                            ),
+                                            Gap(Style.spacing.md),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  listedPupil.firstName,
+                                                  style: context
+                                                      .typography
+                                                      .title
+                                                      .withColor(
+                                                        style.colors.foreground,
+                                                      )
+                                                      .bold,
+                                                ),
+                                                Text(
+                                                  listedPupil.lastName,
+                                                  style: context
+                                                      .typography
+                                                      .title
+                                                      .withColor(
+                                                        style.colors.foreground,
+                                                      ),
+                                                ),
+                                              ],
+                                            ),
+                                            const Spacer(),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  listedPupil.age.toString(),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: style
+                                                        .colors
+                                                        .foreground,
+                                                    fontSize: 24,
                                                   ),
-                                                  Text(
-                                                    listedPupil.lastName,
-                                                    style: const TextStyle(
-                                                      fontSize: 18,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Spacer(),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    listedPupil.age.toString(),
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 24,
-                                                    ),
-                                                  ),
-                                                  const Gap(5),
-                                                  const Text(
-                                                    'Jahre alt',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 18,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Gap(20),
-                                            ],
-                                          ),
+                                                ),
+                                                Gap(Style.spacing.xs),
+                                                Text(
+                                                  'Jahre alt',
+                                                  style: context
+                                                      .typography
+                                                      .title
+                                                      .withColor(
+                                                        style.colors.foreground,
+                                                      )
+                                                      .bold,
+                                                ),
+                                              ],
+                                            ),
+                                            Gap(Style.spacing.xl),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                    const Gap(5),
+                                    Gap(Style.spacing.xs),
                                   ],
                                 );
                               },
@@ -217,7 +222,7 @@ class BirthdaysView extends StatelessWidget {
         ),
       ),
 
-      bottomNavigationBar: const GenericBottomNavBar(),
+      bottomNavigationBar: const ActionBar(),
     );
   }
 }

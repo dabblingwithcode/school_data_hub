@@ -3,14 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
-import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_proxy_workbooks_ext.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
-import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/widgets/pupil_workbook_card.dart';
+import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_screen/widgets/pupil_workbook_card.dart';
 
 class PupilLearningContentWorkbooks extends WatchingWidget {
   final PupilProxy pupil;
@@ -26,16 +27,20 @@ class PupilLearningContentWorkbooks extends WatchingWidget {
 
     return Column(
       children: [
-        const Row(
+        Row(
           children: [
             Text(
               'Arbeitshefte',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: context.typography.title,
             ),
           ],
         ),
-        GenericAsyncActionButton(
-          onPressed: () async {
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: Style.spacing.sm),
+          child: Button(
+            variant: ButtonVariant.primary,
+            label: 'NEUES ARBEITSHEFT',
+            onPressed: () async {
             String? isbnString;
             if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
               isbnString = await shortTextfieldDialog(
@@ -80,19 +85,18 @@ class PupilLearningContentWorkbooks extends WatchingWidget {
               'Fehler beim Scannen',
             );
           },
-          title: "NEUES ARBEITSHEFT",
-          buttonType: ButtonType.action,
+          ),
         ),
 
         if (pupilWorkbooks.isNotEmpty) ...[
           ListView.builder(
-            padding: const EdgeInsets.all(0),
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: pupilWorkbooks.length,
             itemBuilder: (context, int index) {
               return ClipRRect(
-                borderRadius: BorderRadius.circular(25.0),
+                borderRadius: BorderRadius.circular(Style.radii.large),
                 child: Column(
                   children: [
                     PupilWorkbookCard(

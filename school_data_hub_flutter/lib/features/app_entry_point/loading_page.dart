@@ -2,40 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_page/logs_page.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 final _envManager = di<EnvManager>();
 
-class LoadingPage extends WatchingStatefulWidget {
-  const LoadingPage({super.key});
+class LoadingScreen extends WatchingStatefulWidget {
+  const LoadingScreen({super.key});
 
   @override
-  LoadingPageState createState() => LoadingPageState();
+  LoadingScreenState createState() => LoadingScreenState();
 }
 
-class LoadingPageState extends State<LoadingPage> {
-  // String actualNotificationMessage = "";
-  // String lastNotificationMessage = "";
+class LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
-    // final NotificationData snackBarData = watchValue(
-    //   (NotificationService x) => x.notification,
-    // );
-    // String newValue = snackBarData.message;
-
-    // if (newValue != actualNotificationMessage) {
-    //   lastNotificationMessage = actualNotificationMessage;
-    //   actualNotificationMessage = newValue;
-    // }
+    final style = Style.of(context);
 
     return Scaffold(
+      backgroundColor: style.colors.canvas,
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(color: AppColors.backgroundColor),
+        decoration: BoxDecoration(color: style.colors.accent),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final double maxContentWidth = constraints.maxWidth >= 600
@@ -43,9 +34,9 @@ class LoadingPageState extends State<LoadingPage> {
                 : constraints.maxWidth;
             return Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 32,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Style.spacing.xl,
+                  vertical: Style.spacing.xxl,
                 ),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: maxContentWidth),
@@ -56,11 +47,11 @@ class LoadingPageState extends State<LoadingPage> {
                       SizedBox(
                         height: 300,
                         width: 300,
-                        child: InkWell(
+                        child: GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
-                                builder: (ctx) => const LogsPage(),
+                                builder: (ctx) => const LogsScreen(),
                               ),
                             );
                           },
@@ -72,56 +63,31 @@ class LoadingPageState extends State<LoadingPage> {
                       Text(
                         locale.schoolDataHub,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
-                        ),
+                        style: context.typography.title.withColor(
+                          style.colors.background,
+                        ).copyWith(fontSize: 30),
                       ),
                       const Gap(15),
                       if (_envManager.activeEnv != null)
                         Text(
                           _envManager.activeEnv!.serverName,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                          style: context.typography.title.withColor(
+                            style.colors.background,
                           ),
                         ),
                       const Gap(40),
-                      const Text(
+                      Text(
                         'Lade Daten...',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                        style: context.typography.title.withColor(
+                          style.colors.background,
+                        ),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      //   child: Text(
-                      //     lastNotificationMessage,
-                      //     textAlign: TextAlign.center,
-                      //     style: const TextStyle(
-                      //       color: Colors.white,
-                      //       fontSize: 18,
-                      //       fontWeight: FontWeight.bold,
-                      //     ),
-                      //   ),
-                      // ),
-                      // const Gap(5),
-                      // Padding(
-                      //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      //   child: Text(
-                      //     actualNotificationMessage,
-                      //     textAlign: TextAlign.center,
-                      //     style: const TextStyle(
-                      //       color: Colors.white,
-                      //       fontSize: 18,
-                      //       fontWeight: FontWeight.bold,
-                      //     ),
-                      //   ),
-                      // ),
                       const Gap(30),
-                      const CircularProgressIndicator(color: Colors.white),
+                      CircularProgressIndicator(
+                        color: style.colors.background,
+                      ),
                     ],
                   ),
                 ),

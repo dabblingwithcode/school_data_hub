@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_page/manager/select_support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_widgets/selectable_support_category_tree.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
-class SelectSupportCategoryPage extends WatchingWidget {
+class SelectSupportCategoryScreen extends WatchingWidget {
   final PupilProxy pupil;
   final String elementType;
 
-  const SelectSupportCategoryPage({
+  const SelectSupportCategoryScreen({
     required this.pupil,
     required this.elementType,
     super.key,
@@ -18,24 +17,23 @@ class SelectSupportCategoryPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final manager = createOnce(() => SelectSupportCategoryManager());
     final selectedCategoryId = watch(manager.selectedCategoryId).value;
 
     return Theme(
       data: ThemeData(
-        unselectedWidgetColor: Colors.white,
+        unselectedWidgetColor: style.colors.background,
         radioTheme: RadioThemeData(
-          fillColor: WidgetStateProperty.all(Colors.white),
-          // overlayColor: MaterialStateProperty.all(Colors.green),
+          fillColor: WidgetStateProperty.all(style.colors.background),
         ),
       ),
       child: Scaffold(
         appBar: AppBar(
-          foregroundColor: Colors.white,
+          foregroundColor: style.colors.background,
           centerTitle: true,
-          backgroundColor: AppColors.backgroundColor,
-          title: const Text('Förderung', style: AppStyles.appBarTextStyle),
-          // automaticallyImplyLeading: false,
+          backgroundColor: style.colors.accent,
+          title: Text('Förderung', style: context.typography.title.withColor(style.colors.background)),
         ),
         body: Center(
           heightFactor: 1,
@@ -43,20 +41,17 @@ class SelectSupportCategoryPage extends WatchingWidget {
             constraints: const BoxConstraints(maxWidth: 800),
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(Style.spacing.sm),
                 child: Column(
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
+                    Padding(
+                      padding: EdgeInsets.all(Style.spacing.sm),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
                             'Bitte eine Kategorie auswählen!',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: context.typography.title.withColor(style.colors.foreground),
                           ),
                         ],
                       ),
@@ -82,8 +77,8 @@ class SelectSupportCategoryPage extends WatchingWidget {
         ),
         floatingActionButton: selectedCategoryId != null
             ? FloatingActionButton(
-                backgroundColor: AppColors.backgroundColor,
-                child: const Icon(Icons.check, color: Colors.white, size: 35),
+                backgroundColor: style.colors.accent,
+                child: Icon(Icons.check, color: style.colors.background, size: 35),
                 onPressed: () {
                   Navigator.of(context).pop(selectedCategoryId);
                 },

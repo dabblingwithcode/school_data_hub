@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/widgets/after_school_care_details.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
 class AfterSchoolCareCard extends WatchingWidget {
@@ -19,19 +20,10 @@ class AfterSchoolCareCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tileController = createOnce(() => CustomExpansionTileController());
+    final tileController = createOnce(() => ExpansionController());
 
-    return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 1.0,
-      margin: const EdgeInsets.only(
-        left: 4.0,
-        right: 4.0,
-        top: 4.0,
-        bottom: 4.0,
-      ),
+    return CardBox(
+      padding: EdgeInsets.all(Style.spacing.sm),
       child: Column(
         children: [
           Row(
@@ -45,13 +37,13 @@ class AfterSchoolCareCard extends WatchingWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Gap(15),
+                    Gap(Style.spacing.lg),
                     Row(
                       children: [
                         Expanded(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: InkWell(
+                            child: GestureDetector(
                               onTap: () {
                                 di<BottomNavManager>().setPupilProfileNavPage(
                                   ProfileNavigationState.afterSchoolCare.value,
@@ -72,15 +64,15 @@ class AfterSchoolCareCard extends WatchingWidget {
                   ],
                 ),
               ),
-              const Gap(20),
+              Gap(Style.spacing.xl),
               _AfterSchoolCareTimeDisplay(
                 pupil: pupil,
                 tileController: tileController,
               ),
-              const Gap(20),
+              Gap(Style.spacing.xl),
             ],
           ),
-          CustomExpansionTileContent(
+          ExpansionBody(
             title: null,
             tileController: tileController,
             widgetList: [AfterSchoolCareDetails(pupil: pupil)],
@@ -99,6 +91,7 @@ class _AfterSchoolCareNameRow extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final firstName =
         watchPropertyValue((m) => m.firstName, target: pupil);
     final lastName =
@@ -110,25 +103,21 @@ class _AfterSchoolCareNameRow extends WatchingWidget {
           overflow: TextOverflow.fade,
           softWrap: false,
           textAlign: TextAlign.left,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          style: context.typography.title.withColor(
+            style.colors.foreground,
+          ).bold,
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Text(
           lastName,
           overflow: TextOverflow.fade,
           softWrap: false,
           textAlign: TextAlign.left,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-            fontSize: 18,
+          style: context.typography.title.withColor(
+            style.colors.foreground,
           ),
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
       ],
     );
   }
@@ -137,7 +126,7 @@ class _AfterSchoolCareNameRow extends WatchingWidget {
 /// Rebuilds only when [SchoolCalendarManager.thisDate] or [pupil.afterSchoolCare] changes.
 class _AfterSchoolCareTimeDisplay extends WatchingWidget {
   final PupilProxy pupil;
-  final CustomExpansionTileController tileController;
+  final ExpansionController tileController;
 
   const _AfterSchoolCareTimeDisplay({
     required this.pupil,
@@ -146,6 +135,7 @@ class _AfterSchoolCareTimeDisplay extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final thisDate =
         watchValue((SchoolCalendarManager x) => x.thisDate);
     watchPropertyValue((m) => m.afterSchoolCare, target: pupil);
@@ -153,11 +143,11 @@ class _AfterSchoolCareTimeDisplay extends WatchingWidget {
     final timeText =
         weekday != null ? (pupil.pickUpTime(weekday) ?? 'keine') : 'keine';
 
-    return InkWell(
+    return GestureDetector(
       onTap: () => tileController.toggle(),
       child: Column(
         children: [
-          const Gap(20),
+          Gap(Style.spacing.xl),
           const Text('Abholzeit'),
           Center(
             child: Text(
@@ -165,7 +155,7 @@ class _AfterSchoolCareTimeDisplay extends WatchingWidget {
               style: TextStyle(
                 fontSize: 23,
                 fontWeight: FontWeight.bold,
-                color: AppColors.backgroundColor,
+                color: style.colors.accent,
               ),
             ),
           ),

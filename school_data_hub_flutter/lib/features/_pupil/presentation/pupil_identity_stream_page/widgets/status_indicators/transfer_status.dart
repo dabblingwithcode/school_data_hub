@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class TransferStatus extends StatelessWidget {
   final bool isTransmitting;
@@ -16,43 +18,38 @@ class TransferStatus extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            if (isTransmitting) ...[
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(width: 16),
-                  Text(
-                    'Übertragung läuft...',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-            ],
-            if (transferCount > 0)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    '$transferCount Übertragung${transferCount == 1 ? '' : 'en'} abgeschlossen',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.green,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
+    final style = Style.of(context);
+
+    return CardBox(
+      child: Column(
+        children: [
+          if (isTransmitting) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(width: 16),
+                Text(
+                  'Übertragung läuft...',
+                  style: context.typography.subtitle,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
           ],
-        ),
+          if (transferCount > 0)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.check_circle, color: style.colors.success, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  '$transferCount Übertragung${transferCount == 1 ? '' : 'en'} abgeschlossen',
+                  style: context.typography.body.w500.withColor(style.colors.success),
+                ),
+              ],
+            ),
+        ],
       ),
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 import '../../domain/matrix_corporal_logs_manager.dart';
 
@@ -35,6 +35,7 @@ class MatrixCorporalLogsFilterBottomSheet extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final manager = di<MatrixCorporalLogsManager>();
     final levelSet = watch(manager.levelFilter).value;
     final message = watch(manager.messageFilter).value;
@@ -54,7 +55,7 @@ class MatrixCorporalLogsFilterBottomSheet extends WatchingWidget {
             children: [
               Row(
                 children: [
-                  const Text('Filter', style: AppStyles.subtitle),
+                  Text('Filter', style: context.typography.subtitle),
                   const Spacer(),
                   if (filtersActive)
                     TextButton.icon(
@@ -73,78 +74,66 @@ class MatrixCorporalLogsFilterBottomSheet extends WatchingWidget {
                 ],
               ),
               const Gap(8),
-              Card(
-                color: AppColors.pupilProfileCardColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Log-Level', style: AppStyles.subtitle),
-                      const Gap(12),
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: _logLevels.map((level) {
-                          final selected =
-                              levelSet != null && levelSet.contains(level);
-                          final color = _colorForLevel(level);
-                          return FilterChip(
-                            label: Text(
-                              level,
-                              style: AppStyles.textLabel.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: selected ? Colors.white : Colors.black87,
-                              ),
+              CardBox(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Log-Level', style: context.typography.subtitle),
+                    const Gap(12),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: _logLevels.map((level) {
+                        final selected =
+                            levelSet != null && levelSet.contains(level);
+                        final color = _colorForLevel(level, style);
+                        return FilterChip(
+                          label: Text(
+                            level,
+                            style: context.typography.bodySmall.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: selected
+                                  ? style.colors.accentForeground
+                                  : style.colors.foreground,
                             ),
-                            selected: selected,
-                            showCheckmark: false,
-                            onSelected: (_) => manager.toggleLevel(level),
-                            backgroundColor: Colors.white,
-                            selectedColor: color,
-                            side: BorderSide(
-                              color: AppColors.cardInCardBorderColor,
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 8,
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
+                          ),
+                          selected: selected,
+                          showCheckmark: false,
+                          onSelected: (_) => manager.toggleLevel(level),
+                          backgroundColor: style.colors.background,
+                          selectedColor: color,
+                          side: BorderSide(
+                            color: style.colors.cardInCardBorder,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 8,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
               ),
               const Gap(12),
-              Card(
-                color: AppColors.pupilProfileCardColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Nachricht', style: AppStyles.subtitle),
-                      const Gap(12),
-                      TextField(
-                        controller: messageController,
-                        decoration: const InputDecoration(
-                          labelText: 'Nachricht enthält',
-                          hintText: 'z.B. Fehler',
-                          prefixIcon: Icon(Icons.message_outlined),
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                        ),
-                        onSubmitted: manager.setMessageFilter,
+              CardBox(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Nachricht', style: context.typography.subtitle),
+                    const Gap(12),
+                    TextField(
+                      controller: messageController,
+                      decoration: const InputDecoration(
+                        labelText: 'Nachricht enthält',
+                        hintText: 'z.B. Fehler',
+                        prefixIcon: Icon(Icons.message_outlined),
+                        border: OutlineInputBorder(),
+                        isDense: true,
                       ),
-                    ],
-                  ),
+                      onSubmitted: manager.setMessageFilter,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -154,21 +143,21 @@ class MatrixCorporalLogsFilterBottomSheet extends WatchingWidget {
     );
   }
 
-  static Color _colorForLevel(String level) {
+  static Color _colorForLevel(String level, Style style) {
     switch (level) {
       case 'error':
       case 'fatal':
       case 'panic':
-        return AppColors.dangerButtonColor;
+        return style.colors.error;
       case 'warning':
-        return AppColors.warningButtonColor;
+        return style.colors.warning;
       case 'info':
-        return Colors.blue.shade700;
+        return style.colors.info;
       case 'debug':
       case 'trace':
-        return Colors.grey.shade700;
+        return style.colors.mutedForeground;
       default:
-        return Colors.green.shade700;
+        return style.colors.success;
     }
   }
 }

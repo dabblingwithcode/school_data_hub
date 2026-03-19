@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_reorderable_list_view.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/reorderable_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/competence_list_sortable_page/widgets/last_child_competence_card_sortable.dart';
 
@@ -108,7 +109,7 @@ class _CommonCompetenceCardSortableState
     } else {
       return Padding(
         key: ValueKey(publicId),
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs),
         child: LastChildCompetenceCardSortable(
           index: index,
           competence: competence,
@@ -121,31 +122,30 @@ class _CommonCompetenceCardSortableState
 
   @override
   Widget build(BuildContext context) {
-    final expansionController = createOnce(
-      () => CustomExpansionTileController(),
-    );
+    final style = Style.of(context);
+    final expansionController = createOnce(() => ExpansionController());
     final isExpanded = watch(expansionController.isExpanded).value;
     final isRoot = widget.competence.parentCompetence == null;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: isRoot ? 3 : 0),
-      child: Card(
-        color: widget.backgroundColor,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Container(
+        decoration: BoxDecoration(
+          color: widget.backgroundColor,
+          borderRadius: BorderRadius.circular(Style.radii.medium),
+        ),
         clipBehavior: Clip.antiAlias,
-        margin: EdgeInsets.zero,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(Style.spacing.sm),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Gap(10),
+                  Gap(Style.spacing.sm),
                   Expanded(
-                    child: InkWell(
+                    child: GestureDetector(
                       onTap: () => widget.navigateToNewOrPatchCompetencePage(
                         competence: widget.competence,
                       ),
@@ -158,37 +158,34 @@ class _CommonCompetenceCardSortableState
                         maxLines: 4,
                         softWrap: true,
                         textAlign: TextAlign.start,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isRoot ? 20 : 16,
-                        ),
+                        style: (isRoot
+                                ? context.typography.title
+                                : context.typography.subtitle.bold)
+                            .withColor(style.colors.background),
                       ),
                     ),
                   ),
                   if (_childOrder.isNotEmpty) ...[
-                    CustomExpansionTileSwitch(
-                      customExpansionTileController: expansionController,
-                    ),
+                    ExpansionHeader(expansionController: expansionController),
                   ],
                   if (isExpanded)
                     const SizedBox(width: 36)
                   else
                     ReorderableDragStartListener(
                       index: widget.index,
-                      child: const Icon(
+                      child: Icon(
                         Icons.drag_handle,
-                        color: Colors.white70,
+                        color: style.colors.background.withValues(alpha: 0.7),
                       ),
                     ),
                 ],
               ),
             ),
             if (_childOrder.isNotEmpty)
-              CustomExpansionTileContent(
+              ExpansionBody(
                 tileController: expansionController,
                 widgetList: [
-                  GenericReorderableListView(
+                  ReorderableList(
                     onReorder: _onReorder,
                     children: [
                       for (int i = 0; i < _childOrder.length; i++)

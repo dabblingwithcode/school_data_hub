@@ -6,8 +6,8 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
@@ -58,7 +58,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
     }
 
     final plansExpansionController = createOnce(
-      () => CustomExpansionTileController(),
+      () => ExpansionController(),
     );
     final hubSessionManager = di<HubSessionManager>();
     final isAdmin = hubSessionManager.isAdmin;
@@ -88,13 +88,12 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  InkWell(
+                  GestureDetector(
                     onTap: () => preschoolRevisionDialog(
                       context,
                       pupil,
                       pupil.preSchoolMedical?.preschoolMedicalStatus,
                     ),
-                    borderRadius: BorderRadius.circular(8),
                     child: Text(
                       PupilProxyHelper.preschoolRevisionPredicate(
                         pupil.preSchoolMedical,
@@ -102,7 +101,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.interactiveColor,
+                        color: Style.of(context).colors.interactive,
                       ),
                     ),
                   ),
@@ -117,7 +116,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                   if (pupil.preSchoolMedical?.preschoolMedicalFiles != null)
                     for (HubDocument file
                         in pupil.preSchoolMedical!.preschoolMedicalFiles!)
-                      InkWell(
+                      GestureDetector(
                         onTap: () async {
                           showDialog<void>(
                             context: context,
@@ -163,7 +162,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                       (pupil.preSchoolMedical?.preschoolMedicalFiles?.length ??
                               0) <
                           4)
-                    InkWell(
+                    GestureDetector(
                       onTap: () async {
                         if (!isAdmin) {
                           di<NotificationManager>().showSnackBar(
@@ -214,7 +213,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.interactiveColor,
+                    color: Style.of(context).colors.interactive,
                   ),
                 ),
                 if (kindergardenInfo != null &&
@@ -225,7 +224,7 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.interactiveColor.withValues(alpha: 0.8),
+                      color: Style.of(context).colors.interactive.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -264,23 +263,22 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
         const Gap(10),
         if (hasActivePlan()) ...[
           ...[
-            InkWell(
+            GestureDetector(
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (ctx) =>
-                        SetBulkSupportCategoriesStatusPage(pupil: pupil),
+                        SetBulkSupportCategoriesStatusScreen(pupil: pupil),
                   ),
                 );
               },
-              borderRadius: BorderRadius.circular(8),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
                 child: Row(
                   children: [
                     Icon(
                       Icons.category_outlined,
-                      color: AppColors.backgroundColor,
+                      color: Style.of(context).colors.accent,
                       size: 22,
                     ),
                     const Gap(8),
@@ -289,14 +287,14 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.backgroundColor,
+                        color: Style.of(context).colors.accent,
                       ),
                     ),
                     const Spacer(),
                     Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
-                      color: AppColors.backgroundColor.withValues(alpha: 0.5),
+                      color: Style.of(context).colors.accent.withValues(alpha: 0.5),
                     ),
                   ],
                 ),

@@ -30,6 +30,6 @@ class SelectCompetenceViewModel extends State<SelectCompetence> {
     competences = watchValue(
       (CompetenceFilterManager x) => x.filteredCompetences,
     );
-    return SelectCompetencePage(this);
+    return SelectCompetenceScreen(this);
   }
 }

@@ -6,10 +6,10 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -17,7 +17,7 @@ import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/dialogues/logout_devices_dialog.dart';
@@ -329,7 +329,8 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
 
   @override
   Widget build(BuildContext context) {
-    final tileController = createOnce(() => CustomExpansionTileController());
+    final style = Style.of(context);
+    final tileController = createOnce(() => ExpansionController());
     final matrixUser = watch<MatrixUser>(widget.matrixUser);
 
     final MatrixUserRelationship? userRelationship =
@@ -346,8 +347,8 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
     //     : Colors.white;
 
     return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
+      color: style.colors.background,
+      surfaceTintColor: style.colors.background,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         // side: BorderSide(color: borderColor, width: 2),
@@ -482,10 +483,8 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                       overflow: TextOverflow.fade,
                                       softWrap: false,
                                       textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
+                                      style: context.typography.subtitle.bold.withColor(
+                                        style.colors.foreground,
                                       ),
                                     )
                                   : Text(
@@ -493,10 +492,8 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                       overflow: TextOverflow.fade,
                                       softWrap: false,
                                       textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
+                                      style: context.typography.subtitle.bold.withColor(
+                                        style.colors.foreground,
                                       ),
                                     ),
                             ),
@@ -517,8 +514,8 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                                     color:
                                         userRelationship?.pupil != null ||
                                             userRelationship?.isParent == true
-                                        ? Colors.green
-                                        : AppColors.backgroundColor,
+                                        ? style.colors.success
+                                        : style.colors.accent,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                   ),
@@ -537,8 +534,8 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                           width: 24,
                           height: 24,
                           color: userRelationship?.isFamily == true
-                              ? Colors.green
-                              : AppColors.backgroundColor,
+                              ? style.colors.success
+                              : style.colors.accent,
                         ),
                         if (userRelationship?.isParent == true) ...[
                           const Gap(6),
@@ -579,7 +576,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                               );
                             }
                           },
-                          icon: const Icon(Icons.delete, color: Colors.red),
+                          icon: Icon(Icons.delete, color: style.colors.error),
                         ),
                         IconButton(
                           icon: const Icon(Icons.copy),
@@ -623,7 +620,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                               }
                               Navigator.of(context).push(
                                 MaterialPageRoute<void>(
-                                  builder: (context) => PdfViewerPage(
+                                  builder: (context) => PdfViewerScreen(
                                     pdfGenerator: () async => file,
                                   ),
                                 ),
@@ -655,7 +652,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                         style: TextStyle(
                           fontSize: 23,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.backgroundColor,
+                          color: style.colors.accent,
                         ),
                       ),
                     ),
@@ -665,7 +662,7 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
               const Gap(10),
             ],
           ),
-          CustomExpansionTileContent(
+          ExpansionBody(
             title: null,
             tileController: tileController,
             widgetList: [

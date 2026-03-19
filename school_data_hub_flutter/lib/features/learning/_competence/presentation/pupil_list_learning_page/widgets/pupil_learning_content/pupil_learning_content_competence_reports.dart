@@ -4,11 +4,12 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
@@ -69,7 +70,7 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (context) => PdfViewerPage(
+                  builder: (context) => PdfViewerScreen(
                     pdfGenerator: () =>
                         CompetenceReportPdfGenerator.generateCompetenceReportPdf(
                           pupil: pupil,
@@ -182,8 +183,9 @@ class _FirstLevelBranchNode extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tileController = createOnce(() => CustomExpansionTileController());
-    final color = AppColors.interactiveColor;
+    final style = Style.of(context);
+    final tileController = createOnce(() => ExpansionController());
+    final color = style.colors.interactive;
 
     // Watch reportsByPupil directly so this widget reacts to stream updates.
     final reportsByPupil = watchValue(
@@ -195,16 +197,15 @@ class _FirstLevelBranchNode extends WatchingWidget {
     final totalChecks = _countChecksUnderBranch(item.publicId, items, checks);
     final initial = item.name.isNotEmpty ? item.name[0].toUpperCase() : '';
 
-    return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
+    return CardBox(
+      variant: CardBoxVariant.filledSecondary,
+      padding: EdgeInsets.zero,
       child: Column(
         children: [
-          InkWell(
+          GestureDetector(
             onTap: () => tileController.toggle(),
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: EdgeInsets.all(Style.spacing.md),
               child: Row(
                 children: [
                   Container(
@@ -217,54 +218,42 @@ class _FirstLevelBranchNode extends WatchingWidget {
                     child: Center(
                       child: Text(
                         initial,
-                        style: TextStyle(
-                          color: AppColors.bestContrastCompetenceFontColor(
-                            color,
-                          ),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                        style: context.typography.title.withColor(
+                          style.colors.background,
                         ),
                       ),
                     ),
                   ),
-                  const Gap(10),
+                  Gap(Style.spacing.md),
                   Expanded(
                     child: Text(
                       item.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
+                      style: context.typography.title.withColor(color),
                     ),
                   ),
-                  const Gap(10),
+                  Gap(Style.spacing.md),
                   Text(
                     totalChecks.toString(),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
+                    style: context.typography.title.withColor(color),
                   ),
-                  const Gap(10),
-                  CustomExpansionTileSwitch(
-                    customExpansionTileController: tileController,
+                  Gap(Style.spacing.md),
+                  ExpansionHeader(
+                    expansionController: tileController,
                     switchColor: color,
                   ),
                 ],
               ),
             ),
           ),
-          CustomExpansionTileContent(
+          ExpansionBody(
             tileController: tileController,
             widgetList: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 4.0,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Style.spacing.sm,
+                  vertical: Style.spacing.xs,
                 ),
                 child: _ReportCheckTree(
                   items: items,
@@ -307,16 +296,13 @@ class _ReportCheckNode extends WatchingWidget {
 
     if (hasChildren) {
       return Padding(
-        padding: const EdgeInsets.only(top: 8.0),
+        padding: EdgeInsets.only(top: Style.spacing.sm),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              item.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
+            Text(item.name, style: context.typography.title),
             Padding(
-              padding: const EdgeInsets.only(left: 8.0),
+              padding: EdgeInsets.only(left: Style.spacing.sm),
               child: _ReportCheckTree(
                 items: allItems,
                 parentId: item.publicId,

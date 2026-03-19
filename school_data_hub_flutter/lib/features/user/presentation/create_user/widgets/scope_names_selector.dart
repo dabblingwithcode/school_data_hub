@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 class ScopeNamesSelector extends WatchingWidget {
@@ -10,6 +13,7 @@ class ScopeNamesSelector extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final watchedScopeNames = watch(scopeNames).value;
     final TextEditingController newScopeNameController = createOnce(
       () => TextEditingController(),
@@ -34,9 +38,9 @@ class ScopeNamesSelector extends WatchingWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Scope Names:',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: context.typography.subtitle.bold,
         ),
         const Gap(5),
         Row(
@@ -53,12 +57,9 @@ class ScopeNamesSelector extends WatchingWidget {
               ),
             ),
             const Gap(10),
-            ElevatedButton(
-              style: AppStyles.actionButtonStyle.copyWith(
-                minimumSize: WidgetStateProperty.all(const Size(0, 50)),
-              ),
+            Button.small(
               onPressed: addScopeName,
-              child: const Text('HINZUFÜGEN', style: AppStyles.buttonTextStyle),
+              label: 'HINZUFÜGEN',
             ),
           ],
         ),
@@ -67,53 +68,44 @@ class ScopeNamesSelector extends WatchingWidget {
           Container(
             constraints: const BoxConstraints(maxHeight: 200),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey, width: 1),
-              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: style.colors.border, width: 1),
+              borderRadius: BorderRadius.circular(Style.radii.small),
             ),
             child: ListView.builder(
               shrinkWrap: true,
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(Style.spacing.sm),
               itemCount: watchedScopeNames.length,
               itemBuilder: (context, index) {
                 final scopeName = watchedScopeNames[index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  padding: EdgeInsets.symmetric(vertical: Style.spacing.xs),
                   child: Row(
                     children: [
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Style.spacing.md,
+                            vertical: Style.spacing.sm,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(4),
+                            color: style.colors.surfaceContainer,
+                            borderRadius:
+                                BorderRadius.circular(Style.radii.small),
                           ),
                           child: Text(
                             scopeName,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: context.typography.body.w500,
                           ),
                         ),
                       ),
                       const Gap(8),
-                      InkWell(
-                        onTap: () => removeScopeName(scopeName),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.red[100],
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Icon(
-                            Icons.close,
-                            size: 18,
-                            color: Colors.red,
-                          ),
+                      TappableIcon(
+                        icon: Icon(
+                          Icons.close,
+                          size: 18,
+                          color: style.colors.error,
                         ),
+                        onPressed: () => removeScopeName(scopeName),
                       ),
                     ],
                   ),

@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 /// Action buttons widget for the lesson form
 class ActionButtons extends StatelessWidget {
@@ -24,42 +25,33 @@ class ActionButtons extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: ElevatedButton(
+              child: Button(
+                label: isEditing ? 'SPEICHERN' : 'ERSTELLEN',
                 onPressed: onSave,
-                style: AppStyles.successButtonStyle,
-
-                child: Text(
-                  isEditing ? 'SPEICHERN' : 'ERSTELLEN',
-                  style: AppStyles.buttonTextStyle,
-                ),
               ),
             ),
-            const SizedBox(width: 16),
+            Gap(Style.spacing.lg),
             Expanded(
-              child: ElevatedButton(
+              child: Button(
+                label: 'ABBRECHEN',
+                variant: ButtonVariant.secondary,
                 onPressed: onCancel,
-                style: AppStyles.cancelButtonStyle,
-
-                child: const Text(
-                  'ABBRECHEN',
-                  style: AppStyles.buttonTextStyle,
-                ),
               ),
             ),
           ],
         ),
         if (isEditing && onDelete != null) ...[
-          const SizedBox(height: 16),
+          Gap(Style.spacing.lg),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: Button(
+              label: 'LÖSCHEN',
+              variant: ButtonVariant.destructive,
               onPressed: onDelete,
-              style: AppStyles.cancelButtonStyle,
-              child: const Text('LÖSCHEN', style: AppStyles.buttonTextStyle),
             ),
           ),
         ],
-        const Gap(20),
+        Gap(Style.spacing.xl),
       ],
     );
   }

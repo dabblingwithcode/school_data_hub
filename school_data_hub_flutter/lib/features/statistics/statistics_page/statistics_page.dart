@@ -1,40 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/list_tiles/enrollment_list_tiles.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/list_tiles/group_list_tiles.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/list_tiles/languages_list_tiles.dart';
 
-class StatisticsPage extends StatelessWidget {
+class StatisticsScreen extends StatelessWidget {
   final StatisticsController controller;
-  const StatisticsPage(this.controller, {super.key});
+  const StatisticsScreen(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: AppColors.canvasColor,
+        backgroundColor: style.colors.canvas,
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          backgroundColor: AppColors.backgroundColor,
+          backgroundColor: style.colors.accent,
           centerTitle: true,
-          title: const Row(
+          title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.bar_chart_rounded, size: 25, color: Colors.white),
-              Gap(10),
-              Text('Statistik', style: AppStyles.appBarTextStyle),
+              Icon(Icons.bar_chart_rounded, size: 25, color: style.colors.accentForeground),
+              const Gap(10),
+              Text(
+                'Statistik',
+                style: TextStyle(
+                  color: style.colors.accentForeground,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
-          bottom: const TabBar(
+          bottom: TabBar(
             isScrollable: true,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            indicatorColor: Colors.white,
-            tabs: [
+            labelColor: style.colors.accentForeground,
+            unselectedLabelColor: style.colors.accentForeground.withValues(alpha: 0.7),
+            indicatorColor: style.colors.accentForeground,
+            tabs: const [
               Tab(text: 'Schulzahlen'),
               Tab(text: 'Sprachen'),
               Tab(text: 'Unterjährige Anmeldungen'),
@@ -75,7 +82,7 @@ class StatisticsPage extends StatelessWidget {
         bottomNavigationBar: BottomAppBar(
           padding: const EdgeInsets.all(10),
           shape: null,
-          color: AppColors.backgroundColor,
+          color: style.colors.accent,
           child: IconTheme(
             data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
             child: ConstrainedBox(

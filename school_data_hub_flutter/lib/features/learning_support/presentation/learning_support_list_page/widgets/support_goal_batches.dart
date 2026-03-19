@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/pupil_proxy_learning_support_ext.dart';
@@ -56,12 +57,12 @@ class SupportGoalBatches extends StatelessWidget {
             const Gap(2),
             Text(
               count.toString(),
-              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              style: context.typography.subtitle.bold,
             ),
           ],
         ),
       );
-      widgetList.add(const Gap(5));
+      widgetList.add(Gap(Style.spacing.xs));
     });
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,

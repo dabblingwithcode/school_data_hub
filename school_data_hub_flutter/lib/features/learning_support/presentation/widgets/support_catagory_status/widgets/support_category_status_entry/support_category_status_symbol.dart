@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 /// Displays a growth icon based on a score (1-4).
@@ -12,13 +12,14 @@ class GrowthIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final validScore = score != null && score! >= 1 && score! <= 4;
     Color growthIconColor = switch (score) {
-      1 => AppColors.growthIconColor1,
-      2 => AppColors.growthIconColor2,
-      3 => AppColors.growthIconColor3,
-      4 => AppColors.growthIconColor4,
-      _ => Colors.grey,
+      1 => style.colors.growth1,
+      2 => style.colors.growth2,
+      3 => style.colors.growth3,
+      4 => style.colors.growth4,
+      _ => style.colors.mutedForeground,
     };
     return SizedBox(
       width: size,
@@ -36,7 +37,7 @@ class GrowthIcon extends StatelessWidget {
                 'assets/images/growth_icons/growth_$score-4.png',
               ),
             )
-          : Icon(Icons.question_mark_rounded, color: Colors.black, size: size),
+          : Icon(Icons.question_mark_rounded, color: style.colors.foreground, size: size),
     );
   }
 }

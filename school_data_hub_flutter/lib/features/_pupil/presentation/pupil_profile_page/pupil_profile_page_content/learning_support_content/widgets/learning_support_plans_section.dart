@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/core/auth/auth_clearance_helper.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
@@ -16,7 +16,7 @@ import 'package:school_data_hub_flutter/features/school_calendar/domain/school_c
 
 class LearningSupportPlansSection extends StatelessWidget {
   final PupilProxy pupil;
-  final CustomExpansionTileController plansExpansionController;
+  final ExpansionController plansExpansionController;
 
   const LearningSupportPlansSection({
     required this.pupil,
@@ -55,13 +55,13 @@ class LearningSupportPlansSection extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColors.backgroundColor,
+                color: Style.of(context).colors.accent,
               ),
             ),
             const Spacer(),
-            CustomExpansionTileSwitch(
-              customExpansionTileController: plansExpansionController,
-              switchColor: AppColors.interactiveColor,
+            ExpansionHeader(
+              expansionController: plansExpansionController,
+              switchColor: Style.of(context).colors.interactive,
             ),
           ],
         ),
@@ -71,30 +71,30 @@ class LearningSupportPlansSection extends StatelessWidget {
         if (activePlan != null)
           LearningSupportPlanCard(plan: activePlan, pupil: pupil)
         else
-          const Padding(
-            padding: EdgeInsets.all(16.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Text(
               'Kein aktiver Förderplan verfügbar',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey,
+                color: Style.of(context).colors.mutedForeground,
                 fontStyle: FontStyle.italic,
               ),
             ),
           ),
 
         // Other plans in expansion tile
-        CustomExpansionTileContent(
+        ExpansionBody(
           tileController: plansExpansionController,
           widgetList: [
             if (otherPlans.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(16.0),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
                   'Keine weiteren Förderpläne verfügbar',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey,
+                    color: Style.of(context).colors.mutedForeground,
                     fontStyle: FontStyle.italic,
                   ),
                 ),

@@ -152,7 +152,7 @@ class MyApp extends WatchingWidget {
         home: !isConnected
             ? const GlobalOverlayHost(
                 phase: AppPhase.unlogged,
-                child: NoConnectionPage(),
+                child: NoConnectionScreen(),
               )
             : envIsReady
             ? FutureBuilder(
@@ -165,7 +165,7 @@ class MyApp extends WatchingWidget {
                     );
                     return GlobalOverlayHost(
                       phase: AppPhase.unlogged,
-                      child: ErrorPage(error: snapshot.error.toString()),
+                      child: ErrorScreen(error: snapshot.error.toString()),
                     );
                   }
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -183,14 +183,14 @@ class MyApp extends WatchingWidget {
                   }
                   return const GlobalOverlayHost(
                     phase: AppPhase.loading,
-                    child: LoadingPage(),
+                    child: LoadingScreen(),
                   );
                 },
               )
             : di<EnvManager>().activeEnv != null
             ? const GlobalOverlayHost(
                 phase: AppPhase.loading,
-                child: LoadingPage(),
+                child: LoadingScreen(),
               )
             : const GlobalOverlayHost(
                 phase: AppPhase.unlogged,

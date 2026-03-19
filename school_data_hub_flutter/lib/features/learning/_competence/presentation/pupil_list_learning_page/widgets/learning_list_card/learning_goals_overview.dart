@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
@@ -46,6 +47,7 @@ class LearningGoalsOverview extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final competenceManager = di<CompetenceManager>();
     callOnce(
       (_) => competenceManager.fetchGoalsForPupil(pupil.pupilId),
@@ -70,17 +72,13 @@ class LearningGoalsOverview extends WatchingWidget {
       final Color competenceColor = CompetenceHelper.getCompetenceColor(rootId);
       widgetList.add(
         Padding(
-          padding: const EdgeInsets.only(bottom: 5.0),
+          padding: EdgeInsets.only(bottom: Style.spacing.xs),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 _getShortName(rootId),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: context.typography.caption.bold.withColor(style.colors.foreground),
               ),
               const Gap(2),
               Container(
@@ -93,12 +91,10 @@ class LearningGoalsOverview extends WatchingWidget {
                 child: Center(
                   child: Text(
                     count.toString(),
-                    style: TextStyle(
-                      color: AppColors.bestContrastCompetenceFontColor(
+                    style: context.typography.body.bold.withColor(
+                      AppColors.bestContrastCompetenceFontColor(
                         competenceColor,
                       ),
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -107,25 +103,23 @@ class LearningGoalsOverview extends WatchingWidget {
           ),
         ),
       );
-      widgetList.add(const Gap(5));
+      widgetList.add(Gap(Style.spacing.xs));
     });
 
     if (widgetList.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.only(bottom: 15.0, right: 10),
+        padding: EdgeInsets.only(bottom: Style.spacing.lg, right: Style.spacing.md),
         child: Text(
           'keine Lernziele erfasst',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.withValues(alpha: 0.7),
-            fontStyle: FontStyle.italic,
-          ),
+          style: context.typography.body.withColor(
+            style.colors.mutedForeground,
+          ).copyWith(fontStyle: FontStyle.italic),
         ),
       );
     }
 
     return Wrap(
-      spacing: 5,
+      spacing: Style.spacing.xs,
       direction: Axis.horizontal,
       alignment: WrapAlignment.end,
       children: widgetList,

@@ -3,8 +3,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -47,10 +47,10 @@ class _SupportLevelHistoryExpansionTileState
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
         decoration: BoxDecoration(
-          color: AppColors.pupilProfileCardColor.withValues(alpha: 0.5),
+          color: Style.of(context).colors.canvas.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: AppColors.backgroundColor.withValues(alpha: 0.1),
+            color: Style.of(context).colors.accent.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -61,7 +61,7 @@ class _SupportLevelHistoryExpansionTileState
               children: [
                 Icon(
                   Icons.layers_outlined,
-                  color: AppColors.backgroundColor.withValues(alpha: 0.7),
+                  color: Style.of(context).colors.accent.withValues(alpha: 0.7),
                   size: 18,
                 ),
                 const Gap(8),
@@ -70,7 +70,7 @@ class _SupportLevelHistoryExpansionTileState
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.backgroundColor,
+                    color: Style.of(context).colors.accent,
                   ),
                 ),
                 const Spacer(),
@@ -78,7 +78,9 @@ class _SupportLevelHistoryExpansionTileState
                   size: 32,
                   icon: Icon(
                     _isExpanded ? Icons.expand_less : Icons.expand_more,
-                    color: AppColors.backgroundColor.withValues(alpha: 0.7),
+                    color: Style.of(
+                      context,
+                    ).colors.accent.withValues(alpha: 0.7),
                   ),
                   onPressed: () {
                     setState(() {
@@ -89,13 +91,12 @@ class _SupportLevelHistoryExpansionTileState
               ],
             ),
             const Gap(6),
-            InkWell(
+            GestureDetector(
               onTap: () => supportLevelDialog(
                 context,
                 pupil,
                 pupil.latestSupportLevel?.level,
               ),
-              borderRadius: BorderRadius.circular(8),
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
@@ -103,15 +104,16 @@ class _SupportLevelHistoryExpansionTileState
                   horizontal: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.interactiveColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  color: Style.of(
+                    context,
+                  ).colors.interactive.withValues(alpha: 0.1),
                 ),
                 child: Text(
                   _supportLevelText(pupil.latestSupportLevel),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.interactiveColor,
+                    color: Style.of(context).colors.interactive,
                   ),
                 ),
               ),
@@ -164,7 +166,7 @@ class SupportLevelHistoryItemCard extends StatelessWidget {
     final hubSessionManager = di<HubSessionManager>();
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
-      child: InkWell(
+      child: GestureDetector(
         onTap: () {
           if (hubSessionManager.isAdmin) {
             supportLevelDialog(
@@ -188,16 +190,18 @@ class SupportLevelHistoryItemCard extends StatelessWidget {
             supportLevelId: supportLevel.id!,
           );
         },
-        borderRadius: BorderRadius.circular(8),
+
         child: Container(
           padding: const EdgeInsets.all(12.0),
           decoration: BoxDecoration(
             color: hubSessionManager.isAdmin
-                ? AppColors.interactiveColor.withValues(alpha: 0.05)
-                : Colors.grey.withValues(alpha: 0.05),
+                ? Style.of(context).colors.interactive.withValues(alpha: 0.05)
+                : Style.of(
+                    context,
+                  ).colors.mutedForeground.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: AppColors.backgroundColor.withValues(alpha: 0.1),
+              color: Style.of(context).colors.accent.withValues(alpha: 0.1),
               width: 1,
             ),
           ),
@@ -209,8 +213,8 @@ class SupportLevelHistoryItemCard extends StatelessWidget {
                 children: [
                   Text(
                     supportLevel.createdAt.formatDateForUser(),
-                    style: const TextStyle(
-                      color: Colors.black87,
+                    style: TextStyle(
+                      color: Style.of(context).colors.foreground,
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                     ),
@@ -219,7 +223,7 @@ class SupportLevelHistoryItemCard extends StatelessWidget {
                   Text(
                     supportLevel.createdBy,
                     style: TextStyle(
-                      color: Colors.grey[600],
+                      color: Style.of(context).colors.mutedForeground,
                       fontWeight: FontWeight.w500,
                       fontSize: 11,
                     ),
@@ -234,7 +238,7 @@ class SupportLevelHistoryItemCard extends StatelessWidget {
                     Text(
                       _supportLevelText(supportLevel.level),
                       style: TextStyle(
-                        color: AppColors.backgroundColor,
+                        color: Style.of(context).colors.accent,
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
@@ -245,9 +249,9 @@ class SupportLevelHistoryItemCard extends StatelessWidget {
                         customEncrypter.decryptString(supportLevel.comment),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
-                          color: Colors.black87,
+                          color: Style.of(context).colors.foreground,
                         ),
                       ),
                     ],

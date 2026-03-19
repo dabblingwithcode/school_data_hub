@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 Future<Map<String, String?>?> goalExamplesDialog(
   BuildContext context,
@@ -9,30 +10,28 @@ Future<Map<String, String?>?> goalExamplesDialog(
   List<SupportGoal> goals,
 ) => showDialog<Map<String, String?>>(
   context: context,
-  builder: (context) => AlertDialog(
-    title: const Text('Beispiele'),
-    backgroundColor: AppColors.canvasColor,
-    content: SizedBox(
-      width: double.maxFinite,
-      height: 400, // Adjust height according to your requirement
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: List.generate(goals.length, (index) {
-            return Card(
-              color: AppColors.cardInCardColor,
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
+  builder: (context) {
+    final style = Style.of(context);
+    return AlertDialog(
+      title: const Text('Beispiele'),
+      backgroundColor: style.colors.canvas,
+      content: SizedBox(
+        width: double.maxFinite,
+        height: 400,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(goals.length, (index) {
+              return CardBox(
+                padding: EdgeInsets.all(Style.spacing.lg),
+                variant: CardBoxVariant.filledSecondary,
                 child: Column(
                   children: [
-                    const Row(
+                    Row(
                       children: [
                         Text(
                           'Ziel:',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: context.typography.body.bold,
                         ),
                       ],
                     ),
@@ -41,15 +40,12 @@ Future<Map<String, String?>?> goalExamplesDialog(
                         Expanded(child: Text(goals[index].description)),
                       ],
                     ),
-                    const Gap(10),
-                    const Row(
+                    Gap(Style.spacing.md),
+                    Row(
                       children: [
                         Text(
                           'Strategien:',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: context.typography.body.bold,
                         ),
                       ],
                     ),
@@ -74,22 +70,23 @@ Future<Map<String, String?>?> goalExamplesDialog(
                     ),
                   ],
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          ),
         ),
       ),
-    ),
-    actions: [
-      TextButton(
-        child: const Text(
-          'OK',
-          style: TextStyle(color: Color.fromRGBO(74, 76, 161, 1)),
+      actions: [
+        TextButton(
+          child: Text(
+            'OK',
+            style: context.typography.body.bold
+                .withColor(style.colors.interactive),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      ),
-    ],
-  ),
+      ],
+    );
+  },
 );

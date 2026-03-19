@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class SchoolSemesterDropdown extends StatelessWidget {
   final ValueNotifier<SchoolSemester?> selectedSemester;
@@ -16,7 +16,13 @@ class SchoolSemesterDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<SchoolSemester>(
       initialValue: selectedSemester.value,
-      decoration: AppStyles.textFieldDecoration(labelText: 'Schulsemester'),
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.all(Style.spacing.sm),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Style.radii.small),
+        ),
+        labelText: 'Schulsemester',
+      ),
       items:
           schoolSemesters.map((semester) {
             return DropdownMenuItem<SchoolSemester>(

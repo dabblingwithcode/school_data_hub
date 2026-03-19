@@ -3,9 +3,9 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/dialogues/change_credit_dialog.dart';
@@ -17,6 +17,7 @@ class PupilProfileCreditContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final credit = watchPropertyValue((x) => x.credit, target: pupil);
     final creditTransactions = watchPropertyValue(
       (x) => x.creditTransactions,
@@ -28,7 +29,7 @@ class PupilProfileCreditContent extends WatchingWidget {
       title: 'Guthaben',
       onTitleTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute<void>(builder: (ctx) => const CreditListPage()),
+          MaterialPageRoute<void>(builder: (ctx) => const CreditListScreen()),
         );
       },
       headerTrailing: Row(
@@ -36,12 +37,12 @@ class PupilProfileCreditContent extends WatchingWidget {
           Text(
             credit.toString(),
             style: TextStyle(
-              color: AppColors.groupColor,
+              color: style.colors.groupColor,
               fontSize: 60,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const Gap(20),
+          Gap(Style.spacing.xl),
         ],
       ),
 
@@ -52,23 +53,20 @@ class PupilProfileCreditContent extends WatchingWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 'Insgesamt verdient:',
-                style: TextStyle(fontSize: 18.0),
+                style: context.typography.title,
                 textAlign: TextAlign.left,
               ),
-              const Gap(5),
+              Gap(Style.spacing.xs),
               Text(
                 pupil.creditEarned.toString(),
-                style: const TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: context.typography.title.bold,
               ),
             ],
           ),
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(Style.spacing.md),
             child: Button(
               variant: ButtonVariant.primary,
               onPressed: () async {
@@ -78,13 +76,13 @@ class PupilProfileCreditContent extends WatchingWidget {
             ),
           ),
 
-          const Gap(10),
+          Gap(Style.spacing.md),
           const PupilProfileContentSectionHeader(
             icon: Icons.history_rounded,
             title: 'Verlauf',
           ),
 
-          const Gap(10),
+          Gap(Style.spacing.md),
           if (creditTransactions != null)
             ListView.builder(
               padding: EdgeInsets.zero,
@@ -97,15 +95,16 @@ class PupilProfileCreditContent extends WatchingWidget {
                 final CreditTransaction tx = pupilCreditHistoryLogs[index];
                 final bool isPositive = tx.amount >= 0;
                 final Color amountColor = isPositive
-                    ? Colors.green.shade700
-                    : Colors.red;
+                    ? style.colors.success
+                    : style.colors.error;
 
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.only(bottom: Style.spacing.sm),
                   child: CardBox(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
+                    variant: CardBoxVariant.filledSecondary,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Style.spacing.lg,
+                      vertical: Style.spacing.md,
                     ),
                     child: Row(
                       children: [
@@ -124,24 +123,20 @@ class PupilProfileCreditContent extends WatchingWidget {
                             size: 20,
                           ),
                         ),
-                        const Gap(12),
+                        Gap(Style.spacing.md),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 DateFormat('dd.MM.yyyy').format(tx.dateTime),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
+                                style: context.typography.subtitle.bold,
                               ),
                               const Gap(2),
                               Text(
                                 tx.sender,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey.shade600,
+                                style: context.typography.bodySmall.withColor(
+                                  style.colors.mutedForeground,
                                 ),
                               ),
                             ],
@@ -149,10 +144,8 @@ class PupilProfileCreditContent extends WatchingWidget {
                         ),
                         Text(
                           '${isPositive ? '+' : ''}${tx.amount}',
-                          style: TextStyle(
-                            color: amountColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                          style: context.typography.title.bold.withColor(
+                            amountColor,
                           ),
                         ),
                       ],

@@ -14,6 +14,11 @@ class TappableIcon extends StatefulWidget {
   final String? tooltip;
   final FocusNode? focusNode;
 
+  /// Override the icon & hover colors. When null, uses `colors.foreground`
+  /// (default) and `colors.surfaceContainer` (hover background).
+  /// Set to a light color when placed on a dark/accent background (e.g. ActionBar).
+  final Color? color;
+
   const TappableIcon({
     super.key,
     required this.icon,
@@ -21,6 +26,7 @@ class TappableIcon extends StatefulWidget {
     this.size = _defaultSize,
     this.tooltip,
     this.focusNode,
+    this.color,
   });
 
   @override
@@ -81,6 +87,10 @@ class _TappableIconState extends State<TappableIcon>
     final Style style = Style.of(context);
     final ColorTokens colors = style.colors;
     final bool isDisabled = widget.onPressed == null;
+    // Resolve icon color: explicit override > inherited IconTheme > foreground
+    final Color resolvedColor = widget.color
+        ?? IconTheme.of(context).color
+        ?? colors.foreground;
 
     Widget result = Semantics(
       button: true,
@@ -146,13 +156,13 @@ class _TappableIconState extends State<TappableIcon>
                   height: widget.size,
                   decoration: BoxDecoration(
                     color: _isHovered
-                        ? colors.surfaceContainer
+                        ? resolvedColor.withValues(alpha: 0.2)
                         : const Color(0x00000000),
                     shape: BoxShape.circle,
                     boxShadow: _isFocused && !isDisabled
                         ? [
                             BoxShadow(
-                              color: colors.foreground.withValues(alpha: 0.2),
+                              color: resolvedColor.withValues(alpha: 0.2),
                               spreadRadius: 2,
                             ),
                           ]
@@ -163,7 +173,7 @@ class _TappableIconState extends State<TappableIcon>
                       data: IconThemeData(
                         color: isDisabled
                             ? colors.mutedForeground
-                            : colors.foreground,
+                            : resolvedColor,
                       ),
                       child: widget.icon,
                     ),

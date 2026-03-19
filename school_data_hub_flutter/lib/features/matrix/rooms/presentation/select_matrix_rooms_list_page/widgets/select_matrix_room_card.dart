@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_page/controller/select_matrix_rooms_list_controller.dart';
@@ -13,6 +13,7 @@ class SelectMatrixRoomCard extends WatchingWidget {
   const SelectMatrixRoomCard(this.controller, this.passedRoom, {super.key});
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     List<MatrixRoom> rooms = watchValue(
       (MatrixPolicyManager x) => x.matrixRooms,
     );
@@ -26,8 +27,8 @@ class SelectMatrixRoomCard extends WatchingWidget {
           controller.isSelectMode ? controller.onCardPress(room.id) : {},
       child: Card(
         color: controller.selectedRooms.contains(room.id)
-            ? AppColors.selectedCardColor
-            : Colors.white,
+            ? style.colors.selectedCard
+            : style.colors.background,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Row(
@@ -41,26 +42,20 @@ class SelectMatrixRoomCard extends WatchingWidget {
                       children: [
                         Text(
                           room.name!,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: context.typography.subtitle.bold,
                         ),
                       ],
                     ),
                     Row(
                       children: [
-                        const Text(
+                        Text(
                           'Schreibrecht ab:',
-                          style: TextStyle(fontSize: 15),
+                          style: context.typography.body,
                         ),
                         const Gap(5),
                         Text(
                           room.eventsDefault!.toString(),
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: context.typography.body.bold,
                         ),
                       ],
                     ),

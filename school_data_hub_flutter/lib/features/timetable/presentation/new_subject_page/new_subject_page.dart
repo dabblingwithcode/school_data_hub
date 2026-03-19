@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/color_picker_field.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/action_buttons.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/description_field.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/widgets/name_field.dart';
 
-class NewSubjectPage extends WatchingWidget {
+class NewSubjectScreen extends WatchingWidget {
   final Subject? subject;
 
-  const NewSubjectPage({super.key, this.subject});
+  const NewSubjectScreen({super.key, this.subject});
 
   bool get _isEditing => subject != null;
 
@@ -34,27 +35,27 @@ class NewSubjectPage extends WatchingWidget {
     final timetableManager = di<TimetableManager>();
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: GenericAppBar(
+      backgroundColor: Style.of(context).colors.canvas,
+      appBar: AppHeader(
         iconData: Icons.subject,
         title: _isEditing ? 'Fach bearbeiten' : 'Neues Fach',
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Fachdetails',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: context.typography.title,
             ),
-            const SizedBox(height: 16),
+            Gap(Style.spacing.lg),
             NameField(controller: nameController),
-            const SizedBox(height: 16),
+            Gap(Style.spacing.lg),
             DescriptionField(controller: descriptionController),
-            const SizedBox(height: 16),
+            Gap(Style.spacing.lg),
             ColorPickerField(selectedColor: selectedColor),
-            const SizedBox(height: 32),
+            Gap(Style.spacing.xxl),
             ActionButtons(
               onSave: () async {
                 if (nameController.text.trim().isEmpty) {

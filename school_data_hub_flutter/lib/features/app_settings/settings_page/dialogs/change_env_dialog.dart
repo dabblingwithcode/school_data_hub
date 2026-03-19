@@ -3,8 +3,9 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/env.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
@@ -13,14 +14,15 @@ final _envManager = di<EnvManager>();
 
 Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
   final log = Logger('ChangeEnvDialog');
+  final style = Style.of(context);
   return showDialog<bool>(
     context: context,
     builder: (BuildContext context) {
       final List<Env> envs = _envManager.envs.values.toList();
       return AlertDialog(
-        title: const Text(
+        title: Text(
           'Instanz auswählen',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: context.typography.title,
         ),
         content: SizedBox(
           height: 200,
@@ -28,7 +30,7 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
           child: ListView.builder(
             itemBuilder: (BuildContext context, int index) {
               return Padding(
-                padding: const EdgeInsets.only(bottom: 5.0),
+                padding: EdgeInsets.only(bottom: Style.spacing.xs),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -78,9 +80,9 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
                     ),
                     const Gap(10),
                     _envManager.activeEnv?.serverName == envs[index].serverName
-                        ? const Icon(
+                        ? Icon(
                             Icons.check,
-                            color: Colors.green,
+                            color: style.colors.success,
                             weight: 20,
                           )
                         : const SizedBox(),
@@ -93,35 +95,31 @@ Future<bool?> changeEnvironmentDialog({required BuildContext context}) async {
         ),
         actions: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: ElevatedButton(
-              style: AppStyles.successButtonStyle,
+            padding: EdgeInsets.all(Style.spacing.xs),
+            child: Button(
+              variant: ButtonVariant.primary,
               onPressed: () async {
                 Navigator.of(context).pop();
                 log.info(
                   '[DI] User wants to add a new environment frpm the dialog: dropping logged in user scope first',
                 );
                 InitManager.dropOnLoggedInUserScope();
-                //  await di<HubSessionManager>().signOutDevice();
                 log.warning(
                   '[DI] User signed out, setting env not ready from the dialog',
                 );
                 _envManager.deactivateEnv();
-              }, // Add onPressed
-              child: const Text(
-                "NEUE INSTANZ",
-                style: AppStyles.buttonTextStyle,
-              ),
+              },
+              label: 'NEUE INSTANZ',
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: ElevatedButton(
-              style: AppStyles.cancelButtonStyle,
+            padding: EdgeInsets.all(Style.spacing.xs),
+            child: Button(
+              variant: ButtonVariant.destructive,
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: const Text("ABBRECHEN", style: AppStyles.buttonTextStyle),
+              label: 'ABBRECHEN',
             ),
           ),
         ],

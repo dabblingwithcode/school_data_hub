@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final String userName;
@@ -21,28 +23,21 @@ class ConfirmationDialog extends StatelessWidget {
           title: const Text('Datenanfrage bestätigen'),
           content: Text(
             'Der Benutzer "$userName" möchte Schülerdaten empfangen. Möchten Sie die Übertragung starten?',
+            style: context.typography.body,
           ),
           actions: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
+                Button.small(
                   onPressed: () => Navigator.of(context).pop(true),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                  ),
-                  child: const Text(
-                    'Bestätigen',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  label: 'Bestätigen',
+                  variant: ButtonVariant.primary,
                 ),
-                ElevatedButton(
+                Button.small(
                   onPressed: () => Navigator.of(context).pop(false),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  child: const Text(
-                    'Ablehnen',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  label: 'Ablehnen',
+                  variant: ButtonVariant.destructive,
                 ),
               ],
             ),
@@ -58,26 +53,21 @@ class ConfirmationDialog extends StatelessWidget {
       title: const Text('Datenanfrage bestätigen'),
       content: Text(
         'Der Benutzer "$userName" möchte Schülerdaten empfangen. Möchten Sie die Übertragung starten?',
+        style: context.typography.body,
       ),
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            ElevatedButton(
+            Button.small(
               onPressed: onConfirm,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-              child: const Text(
-                'Bestätigen',
-                style: TextStyle(color: Colors.white),
-              ),
+              label: 'Bestätigen',
+              variant: ButtonVariant.primary,
             ),
-            ElevatedButton(
+            Button.small(
               onPressed: onReject,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text(
-                'Ablehnen',
-                style: TextStyle(color: Colors.white),
-              ),
+              label: 'Ablehnen',
+              variant: ButtonVariant.destructive,
             ),
           ],
         ),

@@ -9,10 +9,12 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dial
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
@@ -32,17 +34,8 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 1.0,
-      margin: const EdgeInsets.only(
-        left: 4.0,
-        right: 4.0,
-        top: 4.0,
-        bottom: 4.0,
-      ),
+    return CardBox(
+      padding: EdgeInsets.all(Style.spacing.sm),
       child: Column(
         children: [
           Row(
@@ -56,13 +49,13 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Gap(5),
+                    Gap(Style.spacing.xs),
                     Row(
                       children: [
                         Expanded(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: InkWell(
+                            child: GestureDetector(
                               onTap: () {
                                 di<BottomNavManager>().setPupilProfileNavPage(
                                   9,
@@ -82,7 +75,7 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                         ),
                       ],
                     ),
-                    const Gap(5),
+                    Gap(Style.spacing.xs),
                     _MultiPupilCompetenceCheckContent(
                       pupil: passedPupil,
                       groupId: groupId,
@@ -92,7 +85,7 @@ class MultiPupilCompetenceCheckCard extends WatchingWidget {
                   ],
                 ),
               ),
-              const Gap(5),
+              Gap(Style.spacing.xs),
             ],
           ),
         ],
@@ -109,6 +102,7 @@ class _MultiPupilCompetenceNameRow extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final firstName = watchPropertyValue((m) => m.firstName, target: pupil);
     final lastName = watchPropertyValue((m) => m.lastName, target: pupil);
     return Row(
@@ -118,25 +112,17 @@ class _MultiPupilCompetenceNameRow extends WatchingWidget {
           overflow: TextOverflow.fade,
           softWrap: false,
           textAlign: TextAlign.left,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          style: context.typography.title.withColor(style.colors.foreground),
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Text(
           lastName,
           overflow: TextOverflow.fade,
           softWrap: false,
           textAlign: TextAlign.left,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-            fontSize: 18,
-          ),
+          style: context.typography.title.w400.withColor(style.colors.foreground),
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
       ],
     );
   }
@@ -172,7 +158,7 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Gap(5),
+            Gap(Style.spacing.xs),
             competenceCheck != null
                 ? GrowthDropdown(
                     dropdownValue: competenceCheck.score,
@@ -209,7 +195,7 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  InkWell(
+                  GestureDetector(
                     onTap: () async {
                       final File? file = await createAndCropImageFile(context);
                       if (file == null) return;
@@ -218,25 +204,11 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
                         file: file,
                       );
                     },
-                    onLongPress: () async {
-                      // bool? confirm = await confirmationDialog(
-                      //     context: context,
-                      //     title: 'Dokument löschen',
-                      //     message: 'Dokument löschen?');
-                      // if (confirm != true) {
-                      //   return;
-                      // }
-                      // await di<CompetenceManager>()
-                      //     .deleteCompetenceCheckFile(
-                      //         competenceCheck.checkId,
-                      //         competenceCheck.competenceCheckFiles!
-                      //             .first.fileId!,
-                      //         true);
-                    },
+                    onLongPress: () async {},
                     child: SizedBox(
                       height: 70,
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(Style.radii.small),
                         child: Image.asset('assets/document_camera.png'),
                       ),
                     ),
@@ -246,26 +218,17 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
             if (competenceCheck != null &&
                 competenceCheck.documents!.isNotEmpty)
               for (HubDocument file in competenceCheck.documents!) ...<Widget>[
-                const Gap(10),
+                Gap(Style.spacing.md),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    InkWell(
-                      onTap: () async {
-                        // final File? file = await uploadImage(context);
-                        // if (file == null) return;
-                        // await di<CompetenceManager>()
-                        //     .patchCompetenceCheckWithFile(
-                        //         file, competenceCheck.checkId, true);
-                        // di<NotificationService>().showSnackBar(
-                        //     NotificationType.success,
-                        //     'Vorfall geändert!');
-                      },
+                    GestureDetector(
+                      onTap: () async {},
                       onLongPress: () async {
                         bool? confirm = await confirmationDialog(
                           context: context,
-                          title: 'Dokument löschen',
-                          message: 'Dokument löschen?',
+                          title: 'Dokument loeschen',
+                          message: 'Dokument loeschen?',
                         );
                         if (confirm != true) {
                           return;
@@ -288,7 +251,7 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  InkWell(
+                  GestureDetector(
                     onTap: () async {
                       final File? file = await createAndCropImageFile(context);
 
@@ -306,18 +269,18 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
                     child: SizedBox(
                       height: 70,
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(Style.radii.small),
                         child: Image.asset('assets/document_camera.png'),
                       ),
                     ),
                   ),
                 ],
               ),
-            const Gap(5),
+            Gap(Style.spacing.xs),
           ],
         ),
         if (competenceCheck != null) ...[
-          InkWell(
+          GestureDetector(
             onTap: () async {
               if (!SessionHelper.isAuthorized(competenceCheck.createdBy)) {
                 return;
@@ -337,19 +300,16 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.only(left: 10),
+              padding: EdgeInsets.only(left: Style.spacing.md),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text.rich(
                   textAlign: TextAlign.left,
                   TextSpan(
                     children: [
-                      const TextSpan(
+                      TextSpan(
                         text: 'Kommentar: ',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: context.typography.subtitle.bold,
                       ),
                       TextSpan(
                         text:
@@ -365,7 +325,7 @@ class _MultiPupilCompetenceCheckContent extends WatchingWidget {
               ),
             ),
           ),
-          const Gap(10),
+          Gap(Style.spacing.md),
         ],
       ],
     );

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/spinner.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_schoolday_events/domain/schoolday_event_manager.dart';
@@ -489,53 +492,30 @@ class _ChartPageControllerState extends State<ChartPageController> {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: const Color(0xfff2f2f7),
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: const Color.fromRGBO(74, 76, 161, 1),
-          centerTitle: true,
-          title: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.bar_chart_rounded, size: 25, color: Colors.white),
-              SizedBox(width: 10),
-              Text(
-                'Statistik Diagramm',
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-            ],
-          ),
+        backgroundColor: style.colors.canvas,
+        appBar: const AppHeader(
+          iconData: Icons.bar_chart_rounded,
+          title: 'Statistik Diagramm',
         ),
-        body: const Center(child: CircularProgressIndicator()),
+        body: Center(child: Spinner(color: style.colors.accent)),
       );
     }
 
     if (_schooldays.isEmpty) {
       return Scaffold(
-        backgroundColor: const Color(0xfff2f2f7),
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: const Color.fromRGBO(74, 76, 161, 1),
-          centerTitle: true,
-          title: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.bar_chart_rounded, size: 25, color: Colors.white),
-              SizedBox(width: 10),
-              Text(
-                'Statistik Diagramm',
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-            ],
-          ),
+        backgroundColor: style.colors.canvas,
+        appBar: const AppHeader(
+          iconData: Icons.bar_chart_rounded,
+          title: 'Statistik Diagramm',
         ),
         body: const Center(child: Text('Kein Schulhalbjahr gefunden')),
       );
     }
 
-    return ChartPage(
+    return ChartScreen(
       chartData: _chartData,
       eventChartData: _eventChartData,
       attendanceChartData: _attendanceChartData,

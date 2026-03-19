@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 final GlobalKey<FormState> _goalCheckFormKey = GlobalKey<FormState>();
 
@@ -20,6 +20,7 @@ Future<SupportGoalCheck?> supportGoalCheckDialog({
 
       return StatefulBuilder(
         builder: (statefulContext, setState) {
+          final style = Style.of(statefulContext);
           return AlertDialog(
             title: const Text('Neuer Ziel-Check'),
             content: Form(
@@ -31,12 +32,12 @@ Future<SupportGoalCheck?> supportGoalCheckDialog({
                   children: [
                     // Goal info header
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(Style.spacing.md),
                       decoration: BoxDecoration(
-                        color: AppColors.cardInCardColor,
-                        borderRadius: BorderRadius.circular(8),
+                        color: style.colors.cardInCard,
+                        borderRadius: BorderRadius.circular(Style.radii.small),
                         border: Border.all(
-                          color: AppColors.cardInCardBorderColor,
+                          color: style.colors.cardInCardBorder,
                         ),
                       ),
                       child: Column(
@@ -44,32 +45,27 @@ Future<SupportGoalCheck?> supportGoalCheckDialog({
                         children: [
                           Text(
                             'Förderziel:',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
+                            style: statefulContext.typography.bodySmall
+                                .withColor(style.colors.mutedForeground),
                           ),
-                          const Gap(4),
+                          Gap(Style.spacing.xs),
                           Text(
                             goal.description,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: statefulContext.typography.body.bold,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
                     ),
-                    const Gap(16),
+                    Gap(Style.spacing.lg),
 
                     // Score selection
-                    const Text(
+                    Text(
                       'Fortschritt bewerten:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: statefulContext.typography.body.bold,
                     ),
-                    const Gap(8),
+                    Gap(Style.spacing.sm),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -78,19 +74,19 @@ Future<SupportGoalCheck?> supportGoalCheckDialog({
                           isSelected: scoreValue == 1,
                           onTap: () => setState(() => scoreValue = 1),
                         ),
-                        const Gap(8),
+                        Gap(Style.spacing.sm),
                         _ScoreButton(
                           score: 2,
                           isSelected: scoreValue == 2,
                           onTap: () => setState(() => scoreValue = 2),
                         ),
-                        const Gap(8),
+                        Gap(Style.spacing.sm),
                         _ScoreButton(
                           score: 3,
                           isSelected: scoreValue == 3,
                           onTap: () => setState(() => scoreValue = 3),
                         ),
-                        const Gap(8),
+                        Gap(Style.spacing.sm),
                         _ScoreButton(
                           score: 4,
                           isSelected: scoreValue == 4,
@@ -98,28 +94,28 @@ Future<SupportGoalCheck?> supportGoalCheckDialog({
                         ),
                       ],
                     ),
-                    const Gap(16),
+                    Gap(Style.spacing.lg),
 
                     // Comment field
-                    const Text(
+                    Text(
                       'Kommentar:',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: statefulContext.typography.body.bold,
                     ),
-                    const Gap(8),
+                    Gap(Style.spacing.sm),
                     Container(
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.backgroundColor),
-                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: style.colors.accent),
+                        borderRadius: BorderRadius.circular(Style.radii.small),
                       ),
                       child: TextFormField(
                         controller: commentController,
                         maxLines: 4,
                         textAlign: TextAlign.start,
-                        style: const TextStyle(fontSize: 16),
+                        style: statefulContext.typography.subtitle,
                         keyboardType: TextInputType.multiline,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: 'Beobachtungen und Anmerkungen...',
-                          contentPadding: EdgeInsets.all(12),
+                          contentPadding: EdgeInsets.all(Style.spacing.md),
                           border: InputBorder.none,
                         ),
                         validator: (value) {
@@ -137,24 +133,28 @@ Future<SupportGoalCheck?> supportGoalCheckDialog({
             actions: [
               // Cancel button
               Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
-                child: ElevatedButton(
-                  style: AppStyles.cancelButtonStyle,
+                padding: EdgeInsets.only(
+                  left: Style.spacing.lg,
+                  right: Style.spacing.lg,
+                  bottom: Style.spacing.md,
+                ),
+                child: Button(
+                  variant: ButtonVariant.secondary,
                   onPressed: () {
                     Navigator.of(dialogContext).pop(null);
                   },
-                  child: const Text(
-                    'ABBRECHEN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  label: 'ABBRECHEN',
                 ),
               ),
 
               // Confirm button
               Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
-                child: ElevatedButton(
-                  style: AppStyles.successButtonStyle,
+                padding: EdgeInsets.only(
+                  left: Style.spacing.lg,
+                  right: Style.spacing.lg,
+                  bottom: Style.spacing.md,
+                ),
+                child: Button(
                   onPressed: () {
                     if (_goalCheckFormKey.currentState!.validate()) {
                       final check = SupportGoalCheck(
@@ -168,10 +168,7 @@ Future<SupportGoalCheck?> supportGoalCheckDialog({
                       Navigator.of(dialogContext).pop(check);
                     }
                   },
-                  child: const Text(
-                    'SPEICHERN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  label: 'SPEICHERN',
                 ),
               ),
             ],
@@ -196,25 +193,26 @@ class _ScoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(Style.radii.small),
           border: Border.all(
             color: isSelected
-                ? AppColors.successButtonColor
-                : AppColors.cardInCardBorderColor,
+                ? style.colors.success
+                : style.colors.cardInCardBorder,
             width: isSelected ? 3 : 1,
           ),
           color: isSelected
-              ? AppColors.successButtonColor.withValues(alpha: 0.1)
-              : Colors.transparent,
+              ? style.colors.success.withValues(alpha: 0.1)
+              : const Color(0x00000000),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(4),
+          padding: EdgeInsets.all(Style.spacing.xs),
           child: Image.asset(
             'assets/images/growth_icons/growth_$score-4.png',
             fit: BoxFit.contain,

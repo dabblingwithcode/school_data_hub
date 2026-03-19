@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_transactions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
 class CreditListCard extends WatchingWidget {
@@ -17,21 +18,12 @@ class CreditListCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final tileController = createOnce(
-      () => CustomExpansionTileController(),
+      () => ExpansionController(),
       dispose: (tileController) => tileController.dispose(),
     );
 
-    return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 1.0,
-      margin: const EdgeInsets.only(
-        left: 4.0,
-        right: 4.0,
-        top: 4.0,
-        bottom: 4.0,
-      ),
+    return CardBox(
+      padding: EdgeInsets.all(Style.spacing.sm),
       child: Column(
         children: [
           Row(
@@ -45,13 +37,13 @@ class CreditListCard extends WatchingWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Gap(15),
+                    Gap(Style.spacing.lg),
                     Row(
                       children: [
                         Expanded(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: InkWell(
+                            child: GestureDetector(
                               onTap: () {
                                 di<BottomNavManager>().setPupilProfileNavPage(
                                   2,
@@ -70,25 +62,21 @@ class CreditListCard extends WatchingWidget {
                                     overflow: TextOverflow.fade,
                                     softWrap: false,
                                     textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    ),
+                                    style: context.typography.title.withColor(
+                                      Style.of(context).colors.foreground,
+                                    ).bold,
                                   ),
-                                  const Gap(5),
+                                  Gap(Style.spacing.xs),
                                   Text(
                                     pupil.lastName,
                                     overflow: TextOverflow.fade,
                                     softWrap: false,
                                     textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 18,
+                                    style: context.typography.title.withColor(
+                                      Style.of(context).colors.foreground,
                                     ),
                                   ),
-                                  const Gap(5),
+                                  Gap(Style.spacing.xs),
                                 ],
                               ),
                             ),
@@ -96,17 +84,17 @@ class CreditListCard extends WatchingWidget {
                         ),
                       ],
                     ),
-                    const Gap(5),
+                    Gap(Style.spacing.xs),
                     _CreditEarnedRow(pupil: pupil),
                   ],
                 ),
               ),
-              const Gap(20),
+              Gap(Style.spacing.xl),
               _CreditDisplay(pupil: pupil, tileController: tileController),
-              const Gap(20),
+              Gap(Style.spacing.xl),
             ],
           ),
-          CustomExpansionTileContent(
+          ExpansionBody(
             title: null,
             tileController: tileController,
             widgetList: [CreditTransactions(pupil: pupil)],
@@ -137,13 +125,10 @@ class _CreditEarnedRow extends WatchingWidget {
             child: Row(
               children: [
                 const Text('bisjetzt verdient:'),
-                const Gap(10),
+                Gap(Style.spacing.md),
                 Text(
                   creditEarned.toString(),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+                  style: context.typography.title,
                 ),
               ],
             ),
@@ -157,18 +142,19 @@ class _CreditEarnedRow extends WatchingWidget {
 /// Rebuilds only when [pupil.credit] changes.
 class _CreditDisplay extends WatchingWidget {
   final PupilProxy pupil;
-  final CustomExpansionTileController tileController;
+  final ExpansionController tileController;
 
   const _CreditDisplay({required this.pupil, required this.tileController});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final credit = watchPropertyValue((m) => m.credit, target: pupil);
-    return InkWell(
+    return GestureDetector(
       onTap: () => tileController.toggle(),
       child: Column(
         children: [
-          const Gap(20),
+          Gap(Style.spacing.xl),
           const Text('Credit'),
           Center(
             child: Text(
@@ -176,7 +162,7 @@ class _CreditDisplay extends WatchingWidget {
               style: TextStyle(
                 fontSize: 23,
                 fontWeight: FontWeight.bold,
-                color: AppColors.backgroundColor,
+                color: style.colors.accent,
               ),
             ),
           ),

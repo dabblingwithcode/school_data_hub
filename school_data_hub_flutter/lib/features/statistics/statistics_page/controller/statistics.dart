@@ -364,6 +364,6 @@ class StatisticsController extends State<Statistics> {
 
   @override
   Widget build(BuildContext context) {
-    return StatisticsPage(this);
+    return StatisticsScreen(this);
   }
 }

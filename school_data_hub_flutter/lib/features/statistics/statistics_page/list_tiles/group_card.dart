@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/features/_attendance/presentation/widgets/attendance_badges.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 
 Widget statisticsGroupCard(
+  BuildContext context,
   StatisticsController controller,
   List<PupilProxy> group,
 ) {
-  return Card(
+  final style = Style.of(context);
+  return CardBox(
     child: Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -21,30 +24,22 @@ Widget statisticsGroupCard(
               const Gap(5),
               Text(
                 controller.malePupils(group).length.toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
               const Icon(Icons.female_rounded),
               const Gap(5),
               Text(
                 controller.femalePupils(group).length.toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),
           Row(
             children: [
-              const Text(
+              Text(
                 'E1:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
@@ -52,16 +47,12 @@ Widget statisticsGroupCard(
                     .schoolyearInaGivenGroup(group, 'E1')
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
-              const Text(
+              Text(
                 'E2:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
@@ -69,16 +60,12 @@ Widget statisticsGroupCard(
                     .schoolyearInaGivenGroup(group, 'E2')
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
-              const Text(
+              Text(
                 'E3:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
@@ -86,16 +73,12 @@ Widget statisticsGroupCard(
                     .schoolyearInaGivenGroup(group, 'E3')
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
-              const Text(
+              Text(
                 'K3:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
@@ -103,16 +86,12 @@ Widget statisticsGroupCard(
                     .schoolyearInaGivenGroup(group, 'K3')
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
-              const Text(
+              Text(
                 'K4:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
@@ -120,68 +99,52 @@ Widget statisticsGroupCard(
                     .schoolyearInaGivenGroup(group, 'K4')
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),
           const Gap(5),
           Row(
             children: [
-              const Text(
+              Text(
                 'EF',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
-              const Icon(Icons.language, color: Colors.green),
+              Icon(Icons.language, color: style.colors.success),
               const Gap(5),
               Text(
                 controller.pupilsWithLanguageSupport(group).length.toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
-              const Text(
+              Text(
                 'ehem. EF',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
-              const Icon(Icons.language, color: Colors.grey),
+              Icon(Icons.language, color: style.colors.mutedForeground),
               const Gap(10),
               Text(
                 controller.pupilsHadLanguageSupport(group).length.toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),
           const Gap(5),
           Row(
             children: [
-              Icon(Icons.translate_rounded, color: AppColors.backgroundColor),
+              Icon(Icons.translate_rounded, color: style.colors.accent),
 
               const Gap(5),
               Text(
                 controller.pupilsNotSpeakingGerman(group).length.toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
-              const Text(
+              Text(
                 'unterjährig:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
@@ -189,20 +152,16 @@ Widget statisticsGroupCard(
                     .pupilsNotEnrolledOnRegularDate(group)
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),
           const Gap(5),
           Row(
             children: [
-              const Text(
+              Text(
                 'Verbleiber*innen:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
@@ -210,22 +169,18 @@ Widget statisticsGroupCard(
                     .pupilsWithSchoolyearHeldBack(group)
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),
           const Gap(5),
           Row(
             children: [
-              const Icon(Icons.support_rounded, color: Colors.red),
+              Icon(Icons.support_rounded, color: style.colors.error),
               const Gap(10),
-              const Text(
+              Text(
                 '1:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
@@ -233,16 +188,12 @@ Widget statisticsGroupCard(
                     .developmentPlan1InAGivenGroup(group)
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
-              const Text(
+              Text(
                 '2:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
@@ -250,16 +201,12 @@ Widget statisticsGroupCard(
                     .developmentPlan2InAGivenGroup(group)
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
-              const Text(
+              Text(
                 '3:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
@@ -267,39 +214,27 @@ Widget statisticsGroupCard(
                     .developmentPlan3InAGivenGroup(group)
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
-              const Text(
+              Text(
                 'AO-SF:',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.subtitle,
               ),
               const Gap(5),
               Text(
                 controller.specialNeedsInAGivenGroup(group).length.toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),
           const Gap(5),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
                 'schulärztliche Eingangsuntersuchung:',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: context.typography.body.bold,
               ),
             ],
           ),
@@ -312,22 +247,14 @@ Widget statisticsGroupCard(
                     .preschoolRevisionNotAvailable(group)
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
               const Text('o.B.:'),
               const Gap(5),
               Text(
                 controller.preschoolRevisionOk(group).length.toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
               const Text('Förd.:'),
@@ -337,11 +264,7 @@ Widget statisticsGroupCard(
                     .preschoolRevisionSupportInaGivenGroup(group)
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(10),
               const Text('AO-SF:'),
@@ -351,25 +274,17 @@ Widget statisticsGroupCard(
                     .preschoolRevisionSpecialNeedsInaGivenGroup(group)
                     .length
                     .toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),
           const Gap(5),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
                 'Fehlzeiten:',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),
@@ -381,33 +296,21 @@ Widget statisticsGroupCard(
               const Gap(5),
               Text(
                 controller.totalMissedClasses(group).length.toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(5),
               excusedBadge(true),
               const Gap(5),
               Text(
                 controller.totalUnexcusedMissedClasses(group).length.toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(5),
               contactedBadge(1),
               const Gap(5),
               Text(
                 controller.totalContactedMissedClasses(group).length.toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),
@@ -421,11 +324,7 @@ Widget statisticsGroupCard(
               const Gap(5),
               Text(
                 '${controller.averageMissedClassesperPupil(group).toStringAsFixed(2)} Tage',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),
@@ -441,20 +340,12 @@ Widget statisticsGroupCard(
                       controller.averageMissedClassesperPupil(group),
                     )
                     .toStringAsFixed(2),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
               const Gap(5),
-              const Text(
+              Text(
                 '%',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: context.typography.subtitle.bold,
               ),
             ],
           ),

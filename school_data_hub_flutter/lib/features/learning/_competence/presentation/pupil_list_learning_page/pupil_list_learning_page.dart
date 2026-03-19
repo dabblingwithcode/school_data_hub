@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/content_sliver_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/sliver_search_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -18,8 +19,8 @@ import 'package:school_data_hub_flutter/features/learning/_competence/presentati
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/features/learning/services/learning_goals_pdf_generator.dart';
 
-class PupilListLearningPage extends WatchingWidget {
-  const PupilListLearningPage({super.key});
+class PupilListLearningScreen extends WatchingWidget {
+  const PupilListLearningScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +31,8 @@ class PupilListLearningPage extends WatchingWidget {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: const GenericAppBar(
+      backgroundColor: Style.of(context).colors.canvas,
+      appBar: const AppHeader(
         iconData: Icons.lightbulb_rounded,
         title: 'Lernen',
       ),
@@ -42,13 +43,13 @@ class PupilListLearningPage extends WatchingWidget {
             constraints: const BoxConstraints(maxWidth: 700),
             child: CustomScrollView(
               slivers: [
-                GenericSliverAppBarWithSearchWidget(
+                SliverSearchBar(
                   height: 180,
                   searchWidgetWithStatsRow: PupilListLearningSearchBar(
                     filtersOn: filtersOn,
                   ),
                 ),
-                GenericSliverListWithEmptyListCheck(
+                ContentSliverList(
                   itemsListenable: pupilsFilter.filteredPupils,
                   itemBuilder: (_, pupil) => LearningListCard(pupil),
                 ),
@@ -57,12 +58,12 @@ class PupilListLearningPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: GenericBottomNavBar(
+      bottomNavigationBar: ActionBar(
         actions: [
           if (di<HubSessionManager>().isAdmin &&
               selectedContent == SelectedContent.competenceStatuses)
-            IconButton(
-              tooltip: 'Kompetenz hinzufügen',
+            TappableIcon(
+              tooltip: 'Kompetenz hinzufuegen',
               icon: const Icon(Icons.add_a_photo_rounded, size: 30),
               onPressed: () {
                 Navigator.of(context).push(
@@ -75,13 +76,13 @@ class PupilListLearningPage extends WatchingWidget {
 
           if (di<HubSessionManager>().isAdmin &&
               selectedContent == SelectedContent.competenceGoals)
-            IconButton(
+            TappableIcon(
               tooltip: 'PDF drucken',
               icon: const Icon(Icons.print_rounded, size: 30),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (context) => PdfViewerPage(
+                    builder: (context) => PdfViewerScreen(
                       pdfGenerator: () =>
                           LearningGoalsPdfGenerator.generateLearningGoalsPdf(
                             pupils: pupilsFilter.filteredPupils.value,
@@ -93,7 +94,7 @@ class PupilListLearningPage extends WatchingWidget {
                 );
               },
             ),
-          GenericFilterButton(
+          FilterButton(
             isSearchBar: false,
             filtersActive: di<FiltersStateManager>().filtersActive,
             onLongPress: () => di<FiltersStateManager>().resetFilters(),
@@ -101,8 +102,6 @@ class PupilListLearningPage extends WatchingWidget {
           ),
         ],
       ),
-
-      // PupilListLearningBottomNavBar(filtersOn: filtersOn),
     );
   }
 }

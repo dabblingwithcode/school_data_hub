@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 
 /// Displays the full support category hierarchy as a collapsible tree.
 ///
-/// Root categories are color-coded. Branch nodes use [CustomExpansionTileContent]
-/// and [CustomExpansionTileSwitch], leaf nodes render as plain text rows.
+/// Root categories are color-coded. Branch nodes use [ExpansionBody]
+/// and [ExpansionHeader], leaf nodes render as plain text rows.
 class SupportCategoryTree extends StatelessWidget {
   final int? parentId;
   final int indentation;
@@ -82,7 +83,7 @@ class _CategoryNode extends StatelessWidget {
         );
 
     return Padding(
-      padding: EdgeInsets.only(top: 10, left: 5.0 * indentation),
+      padding: EdgeInsets.only(top: Style.spacing.md, left: 5.0 * indentation),
       child: hasChildren
           ? isSingleLeafBranch
                 ? Column(
@@ -120,44 +121,45 @@ class _BranchNode extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = createOnce(() => CustomExpansionTileController());
+    final style = Style.of(context);
+    final controller = createOnce(() => ExpansionController());
     final isRoot = category.parentCategory == null;
 
-    return Card(
-      color: color,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(Style.radii.small),
+      ),
       clipBehavior: Clip.antiAlias,
-      margin: EdgeInsets.zero,
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(Style.spacing.md),
             child: Row(
               children: [
-                const Gap(5),
+                Gap(Style.spacing.xs),
                 Expanded(
-                  child: InkWell(
+                  child: GestureDetector(
                     onTap: () => controller.toggle(),
                     child: Text(
                       category.name,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: style.colors.background,
                         fontWeight: FontWeight.bold,
                         fontSize: isRoot ? 20 : 16,
                       ),
                     ),
                   ),
                 ),
-                CustomExpansionTileSwitch(
-                  customExpansionTileController: controller,
-                  switchColor: Colors.white,
+                ExpansionHeader(
+                  expansionController: controller,
+                  switchColor: style.colors.background,
                 ),
-                const Gap(5),
+                Gap(Style.spacing.xs),
               ],
             ),
           ),
-          CustomExpansionTileContent(
+          ExpansionBody(
             tileController: controller,
             widgetList: [
               SupportCategoryTree(
@@ -181,18 +183,19 @@ class _LeafNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(Style.spacing.sm),
             child: Text(
               category.name,
               textAlign: TextAlign.start,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              style: context.typography.body.withColor(style.colors.background),
               softWrap: true,
             ),
           ),

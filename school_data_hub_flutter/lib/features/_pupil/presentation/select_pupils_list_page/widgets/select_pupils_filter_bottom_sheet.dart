@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
@@ -47,10 +47,6 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
     bool valueSupportAreaGerman = supportAreaFilters[SupportArea.german]!;
     bool valueSupportAreaLanguage = supportAreaFilters[SupportArea.language]!;
     final religionCourseFilters = di<PupilsFilter>().religionCourseFilters;
-    // bool valueSupportAreaTurkish = supportAreaFilters[PupilFilter.turkishClass];
-    // bool valueSupportAreaArabic = supportAreaFilters[PupilFilter.arabicClass]!;
-    // bool valueSupportAreaAlbanian =
-    //     supportAreaFilters[PupilFilter.albanianClass]!;
 
     return Padding(
       padding: const EdgeInsets.only(left: 20.0, right: 20, top: 8),
@@ -59,23 +55,25 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
           children: [
             Row(
               children: [
-                const Text('Filter', style: AppStyles.title),
+                Text('Filter', style: context.typography.title),
                 const Spacer(),
                 IconButton.filled(
                   iconSize: 35,
                   color: Colors.amber,
                   onPressed: () {
                     di<PupilsFilter>().resetFilters();
-
-                    //Navigator.pop(context);
                   },
                   icon: const Icon(Icons.restart_alt_rounded),
                 ),
               ],
             ),
             const CommonPupilFiltersWidget(),
-            const Row(children: [Text('OGS', style: AppStyles.subtitle)]),
-            const Gap(5),
+            Row(
+              children: [
+                Text('OGS', style: context.typography.subtitle),
+              ],
+            ),
+            const Gap(4),
             Wrap(
               spacing: 5,
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -103,10 +101,12 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                 ),
               ],
             ),
-            const Row(
-              children: [Text('Förderebene', style: AppStyles.subtitle)],
+            Row(
+              children: [
+                Text('Förderebene', style: context.typography.subtitle),
+              ],
             ),
-            const Gap(5),
+            const Gap(4),
             Wrap(
               spacing: 5,
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -158,10 +158,12 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                 ),
               ],
             ),
-            const Row(
-              children: [Text('Förderbereich', style: AppStyles.subtitle)],
+            Row(
+              children: [
+                Text('Förderbereich', style: context.typography.subtitle),
+              ],
             ),
-            const Gap(5),
+            const Gap(4),
             Wrap(
               spacing: 5,
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -235,12 +237,15 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                 ),
               ],
             ),
-            const Row(
+            Row(
               children: [
-                Text('Besondere Förderung', style: AppStyles.subtitle),
+                Text(
+                  'Besondere Förderung',
+                  style: context.typography.subtitle,
+                ),
               ],
             ),
-            const Gap(5),
+            const Gap(4),
             Wrap(
               spacing: 5,
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -270,8 +275,12 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                 ),
               ],
             ),
-            const Row(children: [Text('Jahrgang', style: AppStyles.subtitle)]),
-            const Gap(5),
+            Row(
+              children: [
+                Text('Jahrgang', style: context.typography.subtitle),
+              ],
+            ),
+            const Gap(4),
             Wrap(
               spacing: 5,
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -287,7 +296,7 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
                   ),
               ],
             ),
-            const Gap(20),
+            const Gap(24),
           ],
         ),
       ),
@@ -298,10 +307,10 @@ class SelectPupilsFilterBottomSheet extends WatchingWidget {
 Future<void> showSelectPupilsFilterBottomSheet(BuildContext context) async {
   return showModalBottomSheet(
     constraints: const BoxConstraints(maxWidth: 800),
-    shape: const RoundedRectangleBorder(
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20.0),
-        topRight: Radius.circular(20.0),
+        topLeft: Radius.circular(Style.radii.large),
+        topRight: Radius.circular(Style.radii.large),
       ),
     ),
     context: context,

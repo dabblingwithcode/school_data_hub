@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class StreamActionButtons extends StatelessWidget {
   final bool isConnected;
@@ -19,69 +20,34 @@ class StreamActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
+
     return Column(
       children: [
         if (!isConnected)
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: Button(
               onPressed: null, // Disabled since connection starts automatically
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    isProcessing
-                        ? 'Stream startet...'
-                        : 'Verbindung wird aufgebaut...',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
+              loading: true,
+              label: isProcessing
+                  ? 'Stream startet...'
+                  : 'Verbindung wird aufgebaut...',
             ),
           ),
         if (isConnected)
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: hasActiveTransfers ? null : onStopStream,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: hasActiveTransfers
-                    ? Colors.grey
-                    : AppColors.cancelButtonColor,
-                minimumSize: const Size.fromHeight(55),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                hasActiveTransfers
-                    ? 'Transfer läuft - bitte warten'
-                    : 'STREAM BEENDEN',
-                style: const TextStyle(color: Colors.white, fontSize: 17.0),
-              ),
-            ),
+          Button(
+            onPressed: hasActiveTransfers ? null : onStopStream,
+            variant: ButtonVariant.destructive,
+            label: hasActiveTransfers
+                ? 'Transfer läuft - bitte warten'
+                : 'STREAM BEENDEN',
           ),
         if (hasActiveTransfers) ...[
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Stream kann erst beendet werden, wenn alle Übertragungen abgeschlossen sind.',
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            style: context.typography.bodySmall.withColor(style.colors.mutedForeground),
             textAlign: TextAlign.center,
           ),
         ],

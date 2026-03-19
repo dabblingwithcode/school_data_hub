@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -12,7 +13,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_prox
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/special_info_page/widgets/special_info_card_view_model.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 
 class SpecialInfoCard extends WatchingWidget {
@@ -21,17 +22,8 @@ class SpecialInfoCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 1.0,
-      margin: const EdgeInsets.only(
-        left: 4.0,
-        right: 4.0,
-        top: 4.0,
-        bottom: 4.0,
-      ),
+    return CardBox(
+      padding: const EdgeInsets.all(4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +35,7 @@ class SpecialInfoCard extends WatchingWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Gap(15),
+                const Gap(16),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -57,7 +49,7 @@ class SpecialInfoCard extends WatchingWidget {
                               Expanded(
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
-                                  child: InkWell(
+                                  child: GestureDetector(
                                     onTap: () {
                                       di<FiltersStateManager>().resetFilters();
                                       di<BottomNavManager>()
@@ -75,11 +67,11 @@ class SpecialInfoCard extends WatchingWidget {
                               ),
                             ],
                           ),
-                          const Gap(5),
+                          const Gap(4),
                           const Row(
                             children: [
                               Text('Besondere Informationen:'),
-                              Gap(5),
+                              Gap(4),
                             ],
                           ),
                         ],
@@ -87,7 +79,7 @@ class SpecialInfoCard extends WatchingWidget {
                     ),
                   ],
                 ),
-                const Gap(5),
+                const Gap(4),
                 _SpecialInfoContent(pupil: pupil),
               ],
             ),
@@ -115,25 +107,17 @@ class _SpecialInfoNameRow extends WatchingWidget {
           overflow: TextOverflow.fade,
           softWrap: false,
           textAlign: TextAlign.left,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          style: context.typography.subtitle.bold,
         ),
-        const Gap(5),
+        const Gap(4),
         Text(
           lastName,
           overflow: TextOverflow.fade,
           softWrap: false,
           textAlign: TextAlign.left,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-            fontSize: 18,
-          ),
+          style: context.typography.subtitle,
         ),
-        const Gap(5),
+        const Gap(4),
       ],
     );
   }
@@ -147,6 +131,7 @@ class _SpecialInfoContent extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final specialInformation = watchPropertyValue(
       (m) => m.specialInformation,
       target: pupil,
@@ -165,7 +150,7 @@ class _SpecialInfoContent extends WatchingWidget {
         Row(
           children: [
             Flexible(
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () async {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
@@ -207,10 +192,7 @@ class _SpecialInfoContent extends WatchingWidget {
                       overflow: TextOverflow.ellipsis,
                       softWrap: true,
                       maxLines: 3,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                      style: context.typography.subtitle.bold,
                     ),
                   ],
                 ),
@@ -222,7 +204,7 @@ class _SpecialInfoContent extends WatchingWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              InkWell(
+              GestureDetector(
                 onTap: () async {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
@@ -245,20 +227,18 @@ class _SpecialInfoContent extends WatchingWidget {
                 },
                 child: Text(
                   createdBy,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.withValues(alpha: 0.7),
+                  style: context.typography.body.withColor(
+                    style.colors.mutedForeground.withValues(alpha: 0.7),
                   ),
                 ),
               ),
               Text(
                 ', ',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.withValues(alpha: 0.7),
+                style: context.typography.body.withColor(
+                  style.colors.mutedForeground.withValues(alpha: 0.7),
                 ),
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () async {
                   if (!di<HubSessionManager>().isAdmin ||
                       di<HubSessionManager>().userName == pupil.groupTutor) {
@@ -279,13 +259,13 @@ class _SpecialInfoContent extends WatchingWidget {
                       return Theme(
                         data: Theme.of(context).copyWith(
                           colorScheme: ColorScheme.light(
-                            primary: AppColors.backgroundColor,
-                            onPrimary: Colors.white,
-                            onSurface: AppColors.interactiveColor,
+                            primary: style.colors.accent,
+                            onPrimary: style.colors.background,
+                            onSurface: style.colors.interactive,
                           ),
                           textButtonTheme: TextButtonThemeData(
                             style: TextButton.styleFrom(
-                              foregroundColor: AppColors.accentColor,
+                              foregroundColor: style.colors.accent,
                             ),
                           ),
                         ),
@@ -304,13 +284,12 @@ class _SpecialInfoContent extends WatchingWidget {
                 },
                 child: Text(
                   createdAt,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.withValues(alpha: 0.7),
+                  style: context.typography.body.withColor(
+                    style.colors.mutedForeground.withValues(alpha: 0.7),
                   ),
                 ),
               ),
-              const Gap(15),
+              const Gap(16),
             ],
           ),
       ],

@@ -4,22 +4,25 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:terminate_restart/terminate_restart.dart';
 
-final _log = Logger('CheckForUpdatesPage');
+final _log = Logger('CheckForUpdatesScreen');
 
-class ShorebirdCodePushPage extends WatchingStatefulWidget {
-  const ShorebirdCodePushPage({super.key});
+class ShorebirdCodePushScreen extends WatchingStatefulWidget {
+  const ShorebirdCodePushScreen({super.key});
 
   @override
-  State<ShorebirdCodePushPage> createState() => _ShorebirdCodePushPageState();
+  State<ShorebirdCodePushScreen> createState() =>
+      _ShorebirdCodePushScreenState();
 }
 
-class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
+class _ShorebirdCodePushScreenState extends State<ShorebirdCodePushScreen> {
   final _updater = di<ShorebirdUpdateManager>().shorebirdUpdater;
   late final bool _isUpdaterAvailable;
   var _currentTrack = UpdateTrack.stable;
@@ -80,7 +83,11 @@ class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
         const MaterialBanner(
           content: Text('Wird heruntergeladen...'),
           actions: [
-            SizedBox(height: 14, width: 14, child: CircularProgressIndicator()),
+            SizedBox(
+              height: 14,
+              width: 14,
+              child: CircularProgressIndicator(),
+            ),
           ],
         ),
       );
@@ -174,18 +181,18 @@ class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const GenericAppBar(iconData: Icons.update, title: 'OTA Update'),
+      appBar: const AppHeader(iconData: Icons.update, title: 'OTA Update'),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: Style.spacing.lg),
             child: Column(
               children: [
                 if (!_isUpdaterAvailable) const _ShorebirdUnavailable(),
                 const Spacer(),
                 _CurrentPatchVersion(patch: _currentPatch),
-                const SizedBox(height: 12),
+                SizedBox(height: Style.spacing.md),
                 _TrackPicker(
                   currentTrack: _currentTrack,
                   onChanged: (track) {
@@ -193,15 +200,17 @@ class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
                   },
                 ),
                 const Gap(25),
-                ElevatedButton.icon(
-                  onPressed: _isCheckingForUpdates ? null : _checkForUpdate,
+                Button(
+                  onPressed:
+                      _isCheckingForUpdates ? null : _checkForUpdate,
                   icon: _isCheckingForUpdates
                       ? const _LoadingIndicator()
                       : const Icon(Icons.refresh),
-                  label: const Text('Nach Updates suchen'),
+                  label: 'Nach Updates suchen',
                 ),
                 const Gap(12),
-                ElevatedButton(
+                Button(
+                  variant: ButtonVariant.secondary,
                   onPressed: () async {
                     if (defaultTargetPlatform == TargetPlatform.android ||
                         defaultTargetPlatform == TargetPlatform.iOS) {
@@ -220,7 +229,7 @@ class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
                       );
                     }
                   },
-                  child: const Text('App neu starten'),
+                  label: 'App neu starten',
                 ),
                 const Spacer(),
               ],
@@ -229,7 +238,7 @@ class _ShorebirdCodePushPageState extends State<ShorebirdCodePushPage> {
         ),
       ),
 
-      bottomNavigationBar: const GenericBottomNavBar(),
+      bottomNavigationBar: const ActionBar(),
     );
   }
 }
@@ -240,17 +249,15 @@ class _ShorebirdUnavailable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final style = Style.of(context);
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: EdgeInsets.all(Style.spacing.lg),
       child: Center(
         child: Text(
           '''
 OTA Update ist nicht verfügbar.
 Bitte stelle sicher, dass die App mit `shorebird release` generiert wurde und dass sie im Release-Modus läuft.''',
-          style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.error,
-          ),
+          style: context.typography.body.withColor(style.colors.error),
         ),
       ),
     );
@@ -265,7 +272,6 @@ class _CurrentPatchVersion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -273,7 +279,7 @@ class _CurrentPatchVersion extends StatelessWidget {
           const Text('Aktuelle Patch-Version:'),
           Text(
             patch != null ? '${patch!.number}' : 'Kein Patch installiert',
-            style: theme.textTheme.headlineMedium,
+            style: context.typography.heading,
           ),
         ],
       ),

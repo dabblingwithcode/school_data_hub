@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_reorderable_list_view.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/reorderable_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/competence_list_sortable_page/widgets/common_competence_card_sortable.dart';
@@ -97,7 +98,7 @@ class _CompetenceTreeSortableState extends State<CompetenceTreeSortable> {
     } else {
       return Padding(
         key: ValueKey(publicId),
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs),
         child: LastChildCompetenceCardSortable(
           index: index,
           competence: competence,
@@ -110,7 +111,7 @@ class _CompetenceTreeSortableState extends State<CompetenceTreeSortable> {
 
   @override
   Widget build(BuildContext context) {
-    return GenericReorderableListView(
+    return ReorderableList(
       onReorder: _onReorder,
       children: [
         for (int i = 0; i < _rootOrder.length; i++)

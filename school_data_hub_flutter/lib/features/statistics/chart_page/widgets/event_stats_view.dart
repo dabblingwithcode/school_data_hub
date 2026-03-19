@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page.dart';
 
 class EventStatsView extends StatefulWidget {
@@ -90,8 +90,8 @@ class _EventStatsViewState extends State<EventStatsView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Gap(15),
-            const Center(
-              child: Text('Ereignisse nach Schultag', style: AppStyles.title),
+            Center(
+              child: Text('Ereignisse nach Schultag', style: context.typography.title),
             ),
             const Gap(10),
             SizedBox(
@@ -218,8 +218,7 @@ class _EventStatsViewState extends State<EventStatsView> {
             const Gap(8),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 16,
+              style: context.typography.subtitle.copyWith(
                 decoration: isHidden
                     ? TextDecoration.lineThrough
                     : TextDecoration.none,

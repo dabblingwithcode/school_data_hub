@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
@@ -16,16 +17,17 @@ class StartDateField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final schoolCalendarManager = di<SchoolCalendarManager>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Startdatum *',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          style: context.typography.subtitle,
         ),
-        const SizedBox(height: 8),
+        Gap(Style.spacing.sm),
         GestureDetector(
           onTap: () async {
             final DateTime? pickedDate = await _showSchooldayDatePicker(
@@ -40,10 +42,13 @@ class StartDateField extends StatelessWidget {
           },
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            padding: EdgeInsets.symmetric(
+              horizontal: Style.spacing.md,
+              vertical: Style.spacing.lg,
+            ),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: style.colors.border),
+              borderRadius: BorderRadius.circular(Style.radii.small),
             ),
             child: Row(
               children: [
@@ -54,15 +59,15 @@ class StartDateField extends StatelessWidget {
                         : 'Bitte auswählen',
                     style: TextStyle(
                       color: controller.text.isNotEmpty
-                          ? Colors.black
-                          : Colors.grey.shade600,
+                          ? style.colors.foreground
+                          : style.colors.mutedForeground,
                       fontSize: 16,
                     ),
                   ),
                 ),
                 Icon(
                   Icons.calendar_today,
-                  color: AppColors.accentColor,
+                  color: style.colors.accent,
                   size: 20,
                 ),
               ],
@@ -70,11 +75,12 @@ class StartDateField extends StatelessWidget {
           ),
         ),
         if (controller.text.isEmpty)
-          const Padding(
-            padding: EdgeInsets.only(top: 4),
+          Padding(
+            padding: EdgeInsets.only(top: Style.spacing.xs),
             child: Text(
               'Bitte geben Sie ein Startdatum ein',
-              style: TextStyle(color: Colors.red, fontSize: 12),
+              style: context.typography.bodySmall
+                  .withColor(style.colors.error),
             ),
           ),
       ],
@@ -103,6 +109,7 @@ class StartDateField extends StatelessWidget {
     DateTime initialDate,
     SchoolCalendarManager schoolCalendarManager,
   ) async {
+    final style = Style.of(context);
     List<DateTime> availableDates = schoolCalendarManager.availableDates.value;
 
     bool isSelectableSchoolday(DateTime day) {
@@ -138,13 +145,13 @@ class StartDateField extends StatelessWidget {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: AppColors.backgroundColor,
-              onPrimary: const Color.fromARGB(255, 241, 241, 241),
+              primary: style.colors.accent,
+              onPrimary: style.colors.background,
               onSurface: Colors.deepPurple,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: AppColors.accentColor,
+                foregroundColor: style.colors.accent,
               ),
             ),
           ),

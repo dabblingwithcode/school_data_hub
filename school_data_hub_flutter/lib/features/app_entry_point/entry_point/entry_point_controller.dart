@@ -52,6 +52,6 @@ class EntryPointController extends State<EntryPoint> {
 
   @override
   Widget build(BuildContext context) {
-    return EntryPointPage(controller: this);
+    return EntryPointScreen(controller: this);
   }
 }

@@ -84,6 +84,6 @@ class SelectMatrixRoomsListController extends State<SelectMatrixRoomsList> {
     List<MatrixRoom> filteredListedRooms = MatrixRoomHelper.roomsFromRoomIds(
       widget.selectableRooms!,
     ).where((room) => filteredRooms.contains(room)).toList();
-    return SelectMatrixRoomsListPage(this, filteredListedRooms);
+    return SelectMatrixRoomsListScreen(this, filteredListedRooms);
   }
 }

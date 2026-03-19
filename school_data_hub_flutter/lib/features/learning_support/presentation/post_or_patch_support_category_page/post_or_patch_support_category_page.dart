@@ -2,31 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/select_parent_category_page.dart';
 
-class PostOrPatchSupportCategoryPage extends StatefulWidget {
+class PostOrPatchSupportCategoryScreen extends StatefulWidget {
   final SupportCategory? category;
   final int? parentCategoryId;
 
-  const PostOrPatchSupportCategoryPage({
+  const PostOrPatchSupportCategoryScreen({
     super.key,
     this.category,
     this.parentCategoryId,
   });
 
   @override
-  State<PostOrPatchSupportCategoryPage> createState() =>
-      _PostOrPatchSupportCategoryPageState();
+  State<PostOrPatchSupportCategoryScreen> createState() =>
+      _PostOrPatchSupportCategoryScreenState();
 }
 
-class _PostOrPatchSupportCategoryPageState
-    extends State<PostOrPatchSupportCategoryPage> {
+class _PostOrPatchSupportCategoryScreenState
+    extends State<PostOrPatchSupportCategoryScreen> {
   final TextEditingController _nameController = TextEditingController();
   late ValueNotifier<int?> _selectedParentId;
 
@@ -113,13 +113,13 @@ class _PostOrPatchSupportCategoryPageState
   Future<void> _openSelectParent() async {
     final result = await Navigator.of(context).push<int>(
       MaterialPageRoute<int>(
-        builder: (ctx) => SelectParentCategoryPage(
+        builder: (ctx) => SelectParentCategoryScreen(
           movingCategoryId: widget.category?.categoryId ?? -1,
         ),
       ),
     );
     if (result != null && mounted) {
-      if (result == SelectParentCategoryPage.rootSentinel) {
+      if (result == SelectParentCategoryScreen.rootSentinel) {
         _selectedParentId.value = null;
       } else {
         _selectedParentId.value = result;
@@ -130,79 +130,70 @@ class _PostOrPatchSupportCategoryPageState
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Scaffold(
-      appBar: GenericAppBar(
+      appBar: AppHeader(
         iconData: Icons.category_rounded,
         title: widget.category != null
             ? 'Förderkategorie überarbeiten'
             : 'Neue Förderkategorie',
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Name', style: AppStyles.title),
-                const Gap(10),
+                Text('Name', style: context.typography.title),
+                Gap(Style.spacing.md),
                 TextField(
                   controller: _nameController,
-                  decoration: AppStyles.textFieldDecoration(
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(Style.spacing.sm),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Style.radii.small),
+                    ),
                     labelText: 'Name der Kategorie',
                   ),
                 ),
-                const Gap(20),
-                const Text(
+                Gap(Style.spacing.xl),
+                Text(
                   'Übergeordnete Kategorie (optional)',
-                  style: AppStyles.title,
+                  style: context.typography.title,
                 ),
-                const Gap(10),
+                Gap(Style.spacing.md),
                 ValueListenableBuilder<int?>(
                   valueListenable: _selectedParentId,
                   builder: (context, parentId, _) {
                     if (parentId == null) {
-                      return ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          backgroundColor: AppColors.backgroundColor,
-                          minimumSize: const Size.fromHeight(60),
-                        ),
+                      return Button(
                         onPressed: _openSelectParent,
-                        child: const Text(
-                          'KATEGORIE AUSWÄHLEN',
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: 'KATEGORIE AUSWÄHLEN',
                       );
                     }
-                    return InkWell(
+                    return GestureDetector(
                       onTap: _openSelectParent,
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(Style.radii.medium),
                           color: _manager.getCategoryColor(parentId),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(15.0),
+                          padding: EdgeInsets.all(Style.spacing.lg),
                           child: Row(
                             children: [
                               Expanded(
                                 child: Text(
                                   _manager.getSupportCategory(parentId).name,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
+                                  style: context.typography.subtitle.bold.withColor(style.colors.background),
                                 ),
                               ),
-                              const Icon(
+                              Icon(
                                 Icons.edit,
-                                color: Colors.white,
+                                color: style.colors.background,
                                 size: 20,
                               ),
                             ],
@@ -213,35 +204,22 @@ class _PostOrPatchSupportCategoryPageState
                   },
                 ),
                 const Spacer(),
-                ElevatedButton(
-                  style: AppStyles.actionButtonStyle,
+                Button(
                   onPressed: _submit,
-                  child: const Text('SENDEN', style: AppStyles.buttonTextStyle),
+                  label: 'SENDEN',
                 ),
-                const Gap(15),
-                ElevatedButton(
-                  style: AppStyles.cancelButtonStyle,
+                Gap(Style.spacing.lg),
+                Button(
+                  variant: ButtonVariant.secondary,
                   onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'ABBRECHEN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
+                  label: 'ABBRECHEN',
                 ),
                 if (widget.category != null) ...[
-                  const Gap(15),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      backgroundColor: AppColors.dangerButtonColor,
-                      minimumSize: const Size.fromHeight(50),
-                    ),
+                  Gap(Style.spacing.lg),
+                  Button(
+                    variant: ButtonVariant.destructive,
                     onPressed: _deleteCategory,
-                    child: const Text(
-                      'FÖRDERKATEGORIE LÖSCHEN',
-                      style: AppStyles.buttonTextStyle,
-                    ),
+                    label: 'FÖRDERKATEGORIE LÖSCHEN',
                   ),
                 ],
               ],

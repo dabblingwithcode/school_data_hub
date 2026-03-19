@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_overlap_helper.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/lesson_group/new_lesson_group_page/new_lesson_group_page.dart';
@@ -46,6 +47,7 @@ class LessonGroupDropdown extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final lessonGroups = watchValue((TimetableManager m) => m.data.lessonGroups);
     final scheduledLessons = watchValue(
       (TimetableManager m) => m.data.scheduledLessons,
@@ -114,12 +116,12 @@ class LessonGroupDropdown extends WatchingWidget {
             },
           ),
         ),
-        const SizedBox(width: 10),
-        InkWell(
+        SizedBox(width: Style.spacing.md),
+        GestureDetector(
           onTap: () async {
             final result = await Navigator.of(context).push<LessonGroup>(
               MaterialPageRoute<LessonGroup>(
-                builder: (context) => const NewLessonGroupPage(),
+                builder: (context) => const NewLessonGroupScreen(),
               ),
             );
 
@@ -127,7 +129,7 @@ class LessonGroupDropdown extends WatchingWidget {
               onLessonGroupChanged(result);
             }
           },
-          child: const Icon(Icons.add, color: Colors.blue),
+          child: Icon(Icons.add, color: style.colors.accent),
         ),
       ],
     );

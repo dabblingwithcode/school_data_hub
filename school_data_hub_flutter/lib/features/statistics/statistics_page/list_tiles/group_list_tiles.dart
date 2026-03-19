@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
@@ -15,6 +16,7 @@ class GroupListTiles extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final filteredPupils = watchValue(
       (PupilsFilter filter) => filter.filteredPupils,
     );
@@ -30,24 +32,20 @@ class GroupListTiles extends WatchingWidget {
         const Gap(15),
 
         if (filteredPupils.isEmpty)
-          const Text(
+          Text(
             'Keine Schülerinnen und Schüler entsprechen den aktuellen Filtern.',
-            style: TextStyle(color: Colors.black54),
+            style: TextStyle(color: style.colors.mutedForeground),
           )
         else ...[
-          statisticsGroupCard(controller, filteredPupils),
+          statisticsGroupCard(context, controller, filteredPupils),
           const FilterHeading(),
           const Gap(5),
           const CommonPupilFiltersWidget(),
           const Gap(20),
           const Gap(20),
-          const Text(
+          Text(
             'nach Klassen',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: context.typography.subtitle.bold,
           ),
           const Gap(10),
           for (final group in groupedPupils) ...[
@@ -79,32 +77,24 @@ class _TotalSummaryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Text(
+        Text(
           'SuS insgesamt:',
-          style: TextStyle(color: Colors.black, fontSize: 18),
+          style: context.typography.subtitle,
         ),
         const Gap(10),
         Text(
           total.toString(),
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: context.typography.title.bold,
         ),
         const Gap(20),
-        const Text(
+        Text(
           'davon OGS:',
-          style: TextStyle(color: Colors.black, fontSize: 18),
+          style: context.typography.subtitle,
         ),
         const Gap(10),
         Text(
           ogs.toString(),
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: context.typography.title.bold,
         ),
       ],
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_competence_checks/pupil_competence_statuses_list.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/select_competence_page/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/widgets/dialogues/new_competence_check_dialog.dart';
@@ -15,17 +15,18 @@ class PupilLearningContentCompetenceStatuses extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Column(
       children: [
         Row(
           children: [
-            const Gap(5),
-            const Text(
+            Gap(Style.spacing.xs),
+            Text(
               'Status Kompetenzen',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: context.typography.title,
             ),
             const Spacer(),
-            InkWell(
+            GestureDetector(
               onTap: () {
                 final parentContext =
                     context; // Capture context before navigation
@@ -45,20 +46,19 @@ class PupilLearningContentCompetenceStatuses extends StatelessWidget {
                   ),
                 );
               },
-              borderRadius: BorderRadius.circular(8),
               child: Icon(
                 Icons.add_circle_rounded,
-                color: AppColors.backgroundColor,
+                color: style.colors.accent,
                 size: 25,
               ),
             ),
-            const Gap(5),
+            Gap(Style.spacing.xs),
           ],
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
 
         PupilCompetenceStatusesList(pupil: pupil),
-        const Gap(15),
+        Gap(Style.spacing.lg),
       ],
     );
   }

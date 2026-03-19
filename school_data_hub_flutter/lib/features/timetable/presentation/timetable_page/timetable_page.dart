@@ -64,7 +64,7 @@ class TimetablePage extends WatchingWidget {
               await Navigator.push(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (context) => const TimetableSlotListPage(),
+                  builder: (context) => const TimetableSlotListScreen(),
                 ),
               );
               await di<TimetableManager>().refreshData();
@@ -77,7 +77,7 @@ class TimetablePage extends WatchingWidget {
               await Navigator.push(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (context) => const NewTimetablePage(),
+                  builder: (context) => const NewTimetableScreen(),
                 ),
               );
               await di<TimetableManager>().refreshData();
@@ -90,7 +90,7 @@ class TimetablePage extends WatchingWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (context) => const LessonGroupListPage(),
+                  builder: (context) => const LessonGroupListScreen(),
                 ),
               );
             },
@@ -102,7 +102,7 @@ class TimetablePage extends WatchingWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (context) => const ClassroomListPage(),
+                  builder: (context) => const ClassroomListScreen(),
                 ),
               );
             },
@@ -114,7 +114,7 @@ class TimetablePage extends WatchingWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (context) => const SubjectListPage(),
+                  builder: (context) => const SubjectListScreen(),
                 ),
               );
             },
@@ -136,7 +136,7 @@ class TimetablePage extends WatchingWidget {
               }
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (context) => PdfViewerPage(
+                  builder: (context) => PdfViewerScreen(
                     pdfGenerator: () =>
                         TimetablePdfGenerator.generateTimetablePdf(
                           timetableManager: manager,

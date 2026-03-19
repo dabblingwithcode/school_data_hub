@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/subject/subject_list_page/widgets/subject_list_card.dart';
 
 class SubjectList extends StatelessWidget {
@@ -14,21 +16,25 @@ class SubjectList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
+
     if (subjects.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.subject, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            Icon(Icons.subject, size: 64, color: style.colors.mutedForeground),
+            Gap(Style.spacing.lg),
             Text(
               'Keine Fächer verfügbar',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+              style: context.typography.title
+                  .withColor(style.colors.mutedForeground),
             ),
-            SizedBox(height: 8),
+            Gap(Style.spacing.sm),
             Text(
               'Erstellen Sie ein neues Fach',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              style: context.typography.body
+                  .withColor(style.colors.mutedForeground),
             ),
           ],
         ),
@@ -36,12 +42,12 @@ class SubjectList extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(Style.spacing.lg),
       itemCount: subjects.length,
       itemBuilder: (context, index) {
         final subject = subjects[index];
         return Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
+          padding: EdgeInsets.only(bottom: Style.spacing.sm),
           child: SubjectListCard(
             subject: subject,
             onTap: () => onSubjectTap(subject),

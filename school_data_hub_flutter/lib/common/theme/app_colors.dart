@@ -21,7 +21,7 @@ class AppColorPalette {
     required this.pupilProfileBackgroundColor,
     required this.pupilProfileCardColor,
     required this.cardColor,
-    required this.cardInCardColor,
+    required this.surfaceSecondaryContainerColor,
     required this.cardInCardBorderColor,
     required this.notProcessedColor,
     required this.mainMenuCardsColor,
@@ -73,6 +73,7 @@ class AppColorPalette {
     required this.growthIconColor1,
     required this.growthIconColor2,
     required this.growthIconColor3,
+    required this.familyLanguageLessonsColor,
     required this.growthIconColor4,
   });
 
@@ -86,7 +87,7 @@ class AppColorPalette {
   final Color pupilProfileBackgroundColor;
   final Color pupilProfileCardColor;
   final Color cardColor;
-  final Color cardInCardColor;
+  final Color surfaceSecondaryContainerColor;
   final Color cardInCardBorderColor;
   final Color notProcessedColor;
   final Color mainMenuCardsColor;
@@ -138,6 +139,7 @@ class AppColorPalette {
   final Color growthIconColor1;
   final Color growthIconColor2;
   final Color growthIconColor3;
+  final Color familyLanguageLessonsColor;
   final Color growthIconColor4;
 
   /// Computed secondary button color: a subtle tint of the primary button color.
@@ -207,6 +209,7 @@ class AppColorPalette {
     Color? growthIconColor1,
     Color? growthIconColor2,
     Color? growthIconColor3,
+    Color? familyLanguageLessonsColor,
     Color? growthIconColor4,
   }) {
     return AppColorPalette(
@@ -222,7 +225,8 @@ class AppColorPalette {
       pupilProfileCardColor:
           pupilProfileCardColor ?? this.pupilProfileCardColor,
       cardColor: cardColor ?? this.cardColor,
-      cardInCardColor: cardInCardColor ?? this.cardInCardColor,
+      surfaceSecondaryContainerColor:
+          cardInCardColor ?? surfaceSecondaryContainerColor,
       cardInCardBorderColor:
           cardInCardBorderColor ?? this.cardInCardBorderColor,
       notProcessedColor: notProcessedColor ?? this.notProcessedColor,
@@ -288,6 +292,8 @@ class AppColorPalette {
       growthIconColor1: growthIconColor1 ?? this.growthIconColor1,
       growthIconColor2: growthIconColor2 ?? this.growthIconColor2,
       growthIconColor3: growthIconColor3 ?? this.growthIconColor3,
+      familyLanguageLessonsColor:
+          familyLanguageLessonsColor ?? this.familyLanguageLessonsColor,
       growthIconColor4: growthIconColor4 ?? this.growthIconColor4,
     );
   }
@@ -305,7 +311,7 @@ class AppColorPalettes {
     pupilProfileBackgroundColor: Color.fromARGB(255, 215, 215, 235),
     pupilProfileCardColor: Color(0xfff2f2f7),
     cardColor: Color.fromARGB(255, 255, 255, 255),
-    cardInCardColor: Color.fromARGB(255, 248, 248, 255),
+    surfaceSecondaryContainerColor: Color.fromARGB(255, 248, 248, 255),
     cardInCardBorderColor: Color.fromARGB(255, 195, 195, 253),
     notProcessedColor: Color.fromARGB(255, 249, 202, 131),
     mainMenuCardsColor: Color.fromARGB(255, 220, 220, 255),
@@ -362,6 +368,7 @@ class AppColorPalettes {
     growthIconColor1: Color.fromARGB(255, 255, 140, 0),
     growthIconColor2: Color.fromARGB(255, 255, 215, 0),
     growthIconColor3: Color.fromARGB(255, 217, 242, 58),
+    familyLanguageLessonsColor: Color.fromARGB(255, 230, 126, 34),
     growthIconColor4: Color.fromARGB(255, 132, 185, 79),
   );
 
@@ -445,7 +452,14 @@ class AppColors {
       palette.pupilProfileBackgroundColor;
   static Color get pupilProfileCardColor => palette.pupilProfileCardColor;
   static Color get cardColor => palette.cardColor;
-  static Color get cardInCardColor => palette.cardInCardColor;
+  static Color get cardInCardColor => palette.surfaceSecondaryContainerColor;
+
+  // Surface tokens — used by Orient UI style.dart
+  static Color get surfaceContainerColor => palette.cardColor;
+  static Color get surfaceSecondaryContainerColor =>
+      palette.surfaceSecondaryContainerColor;
+  static Color get surfaceWarningContainerColor =>
+      const Color.fromARGB(255, 255, 243, 224);
   static Color get cardInCardBorderColor => palette.cardInCardBorderColor;
   static Color get notProcessedColor => palette.notProcessedColor;
   static Color get mainMenuCardsColor => palette.mainMenuCardsColor;
@@ -502,6 +516,8 @@ class AppColors {
   static Color get musicColor => palette.musicColor;
   static Color get sportColor => palette.sportColor;
   static Color get religionColor => palette.religionColor;
+  static Color get familyLanguageLessonsColor =>
+      palette.familyLanguageLessonsColor;
   static Color get workBehaviourColor => palette.workBehaviourColor;
   static Color get socialColor => palette.socialColor;
 

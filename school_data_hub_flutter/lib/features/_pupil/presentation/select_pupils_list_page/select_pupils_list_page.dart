@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/content_sliver_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/sliver_search_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -16,16 +17,16 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupi
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/widgets/select_pupils_search_bar.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
-class SelectPupilsListPage extends WatchingStatefulWidget {
+class SelectPupilsListScreen extends WatchingStatefulWidget {
   final List<PupilProxy>? selectablePupils;
 
-  const SelectPupilsListPage({required this.selectablePupils, super.key});
+  const SelectPupilsListScreen({required this.selectablePupils, super.key});
 
   @override
-  State<SelectPupilsListPage> createState() => _SelectPupilsListPageState();
+  State<SelectPupilsListScreen> createState() => _SelectPupilsListScreenState();
 }
 
-class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
+class _SelectPupilsListScreenState extends State<SelectPupilsListScreen> {
   List<PupilProxy>? pupils;
   final _selectablePupilsListenable = ValueNotifier<List<PupilProxy>>([]);
 
@@ -92,6 +93,7 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final locale = AppLocalizations.of(context)!;
     final List<PupilProxy> filteredPupils = watchValue(
       (PupilsFilter x) => x.filteredPupils,
@@ -103,8 +105,8 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
     _selectablePupilsListenable.value = selectablePupils;
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: GenericAppBar(
+      backgroundColor: style.colors.canvas,
+      appBar: AppHeader(
         title: locale.selectPupils,
         iconData: Icons.group_add_rounded,
       ),
@@ -116,7 +118,7 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
             child: CustomScrollView(
               slivers: [
                 const SliverGap(5),
-                GenericSliverAppBarWithSearchWidget(
+                SliverSearchBar(
                   height: 110,
                   searchWidgetWithStatsRow: SelectPupilsSearchBar(
                     selectablePupils: selectablePupils,
@@ -125,7 +127,7 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
                     ),
                   ),
                 ),
-                GenericSliverListWithEmptyListCheck(
+                ContentSliverList(
                   itemsListenable: _selectablePupilsListenable,
                   itemBuilder: (_, pupil) => SelectPupilListCard(
                     isSelectMode: isSelectMode,
@@ -139,35 +141,39 @@ class _SelectPupilsListPageState extends State<SelectPupilsListPage> {
           ),
         ),
       ),
-      bottomNavigationBar: GenericBottomNavBar(
+      bottomNavigationBar: ActionBar(
         actions: [
           if (isSelectMode)
-            IconButton(
+            TappableIcon(
               tooltip: 'Abbrechen',
               icon: const Icon(Icons.close, size: 30),
               onPressed: cancelSelect,
             ),
-          IconButton(
+          TappableIcon(
             tooltip: 'alle auswählen',
             icon: Icon(
               Icons.select_all_rounded,
-              color: isSelectAllMode ? Colors.deepOrange : Colors.white,
+              color: isSelectAllMode
+                  ? Colors.deepOrange
+                  : style.colors.background,
               size: 30,
             ),
             onPressed: () => toggleSelectAll(selectablePupils),
           ),
-          IconButton(
+          TappableIcon(
             tooltip: 'Okay',
             icon: Icon(
               Icons.check,
-              color: isSelectMode ? Colors.green : Colors.white,
+              color: isSelectMode
+                  ? style.colors.success
+                  : style.colors.background,
               size: 30,
             ),
             onPressed: () {
               Navigator.pop(context, selectedPupilIds);
             },
           ),
-          GenericFilterButton(
+          FilterButton(
             isSearchBar: false,
             filtersActive: di<FiltersStateManager>().filtersActive,
             onLongPress: () => di<FiltersStateManager>().resetFilters(),

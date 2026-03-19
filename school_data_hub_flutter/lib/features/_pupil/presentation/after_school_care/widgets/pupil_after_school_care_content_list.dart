@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
@@ -13,6 +13,7 @@ List<Widget> pupilAfterSchoolCareContentList(
   PupilProxy pupil,
   BuildContext context,
 ) {
+  final style = Style.of(context);
   final schoolCalendarManager = di<SchoolCalendarManager>();
   final thisDate = schoolCalendarManager.thisDate.value;
   final weekday = dateTimeToAfterSchoolCareWeekday(thisDate);
@@ -21,29 +22,25 @@ List<Widget> pupilAfterSchoolCareContentList(
   return [
     Row(
       children: [
-        const Text('Abholzeit:', style: TextStyle(fontSize: 18.0)),
-        const Gap(10),
+        Text('Abholzeit:', style: context.typography.title),
+        Gap(Style.spacing.md),
         Text(
           pickUpTime ?? 'keine',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: AppColors.backgroundColor,
-          ),
+          style: context.typography.title.withColor(style.colors.accent).bold,
         ),
-        const Gap(5),
-        const Text('Uhr', style: TextStyle(fontSize: 18.0)),
+        Gap(Style.spacing.xs),
+        Text('Uhr', style: context.typography.title),
       ],
     ),
-    const Gap(10),
-    const Row(
+    Gap(Style.spacing.md),
+    Row(
       children: [
-        Text('OGS Infos:', style: TextStyle(fontSize: 18.0)),
-        Gap(5),
+        Text('OGS Infos:', style: context.typography.title),
+        Gap(Style.spacing.xs),
       ],
     ),
-    const Gap(5),
-    InkWell(
+    Gap(Style.spacing.xs),
+    GestureDetector(
       onTap: () async {
         final result = await longTextFieldDialog(
           title: 'OGS Informationen',
@@ -81,23 +78,18 @@ List<Widget> pupilAfterSchoolCareContentList(
                 ? Text(
                     pupil.afterSchoolCareInfo!,
                     softWrap: true,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.backgroundColor,
-                    ),
+                    style: context.typography.title.withColor(
+                      style.colors.accent,
+                    ).bold,
                   )
-                : const Text(
+                : Text(
                     'keine Informationen',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: context.typography.title.bold,
                   ),
           ),
         ],
       ),
     ),
-    const Gap(10),
+    Gap(Style.spacing.md),
   ];
 }

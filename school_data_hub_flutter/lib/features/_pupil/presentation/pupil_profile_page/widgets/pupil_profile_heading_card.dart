@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
 
 class PupilProfileHeadingCard extends WatchingWidget {
   final PupilProxy pupil;
@@ -27,19 +27,21 @@ class PupilProfileHeadingCard extends WatchingWidget {
         final double avatarSize = 40 + (40 * t); // 40 collapsed, 80 expanded
         final double fontSize = 16 + (4 * t); // 16 collapsed, 20 expanded
 
+        final style = Style.of(context);
         return Container(
-          padding: const EdgeInsets.all(10),
+          padding: EdgeInsets.all(Style.spacing.md),
           margin: const EdgeInsets.only(bottom: 5),
           decoration: BoxDecoration(
-            color: AppColors.backgroundColor,
-            borderRadius: BorderRadius.circular(10),
+            color: style.colors.accent,
+            borderRadius: BorderRadius.circular(Style.radii.medium),
           ),
           child: SafeArea(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Gap(Style.spacing.xs),
                 AvatarImage(pupil: pupil, size: avatarSize),
-                const Gap(12),
+                Gap(Style.spacing.md),
                 Expanded(
                   child: ClipRect(
                     child: Column(
@@ -82,6 +84,7 @@ class _PupilNameRow extends WatchingWidget {
   Widget build(BuildContext context) {
     final firstName = watchPropertyValue((m) => m.firstName, target: pupil);
     final lastName = watchPropertyValue((m) => m.lastName, target: pupil);
+    final style = Style.of(context);
     return Row(
       children: [
         Text(
@@ -89,13 +92,13 @@ class _PupilNameRow extends WatchingWidget {
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: style.colors.background,
           ),
         ),
         const Gap(6),
         Text(
           lastName,
-          style: TextStyle(fontSize: fontSize, color: Colors.white),
+          style: TextStyle(fontSize: fontSize, color: style.colors.background),
         ),
         Opacity(
           opacity: ((0.3 - t) / 0.3).clamp(0.0, 1.0),
@@ -123,6 +126,7 @@ class _BadgesRow extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
+    final style = Style.of(context);
     return Row(
       children: [
         // 1. Learning group
@@ -137,14 +141,14 @@ class _BadgesRow extends WatchingWidget {
             width: _badgeSize,
             height: _badgeSize,
             decoration: BoxDecoration(
-              color: AppColors.afterSchoolCardeColor,
+              color: style.colors.ogsColor,
               shape: BoxShape.circle,
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 'OGS',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: style.colors.background,
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
@@ -163,14 +167,14 @@ class _BadgesRow extends WatchingWidget {
                   PupilProxyHelper.hasLanguageSupport(
                     pupil.migrationSupportEnds,
                   )
-                  ? Colors.green
-                  : Colors.grey,
+                  ? style.colors.success
+                  : style.colors.mutedForeground,
               shape: BoxShape.circle,
             ),
-            child: const Center(
+            child: Center(
               child: Icon(
                 Icons.language_rounded,
-                color: Colors.white,
+                color: style.colors.background,
                 size: 18,
               ),
             ),
@@ -183,15 +187,15 @@ class _BadgesRow extends WatchingWidget {
             width: _badgeSize,
             height: _badgeSize,
             decoration: BoxDecoration(
-              color: AppColors.accentColor,
+              color: style.colors.warning,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 'FE\n${pupil.latestSupportLevel!.level}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: style.colors.background,
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   height: 1.1,
@@ -211,15 +215,15 @@ class _BadgesRow extends WatchingWidget {
                   width: _badgeSize,
                   height: _badgeSize,
                   decoration: BoxDecoration(
-                    color: AppColors.groupColor,
+                    color: style.colors.groupColor,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
                     child: Text(
                       need.replaceAll('ESE', 'ES'),
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: style.colors.background,
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
@@ -232,15 +236,15 @@ class _BadgesRow extends WatchingWidget {
         // 7. Special information
         if (pupil.specialInformation != null) ...[
           const Gap(6),
-          InkWell(
+          GestureDetector(
             onTap: () => specialInformationDialog(
               context,
               'Besondere Information',
               pupil.specialInformation!,
             ),
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: style.colors.background,
                 shape: BoxShape.circle,
               ),
               child: const Icon(

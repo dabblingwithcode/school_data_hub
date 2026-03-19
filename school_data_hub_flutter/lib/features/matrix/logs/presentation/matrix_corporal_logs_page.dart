@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/toast.dart';
 
 import '../data/matrix_corporal_log_entry.dart';
 import '../domain/matrix_corporal_logs_manager.dart';
 import 'widgets/matrix_corporal_log_card.dart';
 import 'widgets/matrix_corporal_logs_filter_bottom_sheet.dart';
 
-class MatrixCorporalLogsPage extends WatchingWidget {
-  const MatrixCorporalLogsPage({super.key});
+class MatrixCorporalLogsScreen extends WatchingWidget {
+  const MatrixCorporalLogsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final manager = di<MatrixCorporalLogsManager>();
     callOnce((_) {
       manager.fetchCommand.run();
@@ -31,11 +33,10 @@ class MatrixCorporalLogsPage extends WatchingWidget {
       select: (MatrixCorporalLogsManager m) => m.fetchCommand.errors,
       handler: (context, error, _) {
         if (error == null) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Fehler beim Laden: ${error.error}'),
-            backgroundColor: AppColors.dangerButtonColor,
-          ),
+        Toast.show(
+          context: context,
+          message: 'Fehler beim Laden: ${error.error}',
+          type: ToastType.error,
         );
       },
     );
@@ -44,11 +45,10 @@ class MatrixCorporalLogsPage extends WatchingWidget {
       select: (MatrixCorporalLogsManager m) => m.deleteCommand.errors,
       handler: (context, error, _) {
         if (error == null) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Fehler beim Löschen: ${error.error}'),
-            backgroundColor: AppColors.dangerButtonColor,
-          ),
+        Toast.show(
+          context: context,
+          message: 'Fehler beim Löschen: ${error.error}',
+          type: ToastType.error,
         );
       },
     );
@@ -57,30 +57,29 @@ class MatrixCorporalLogsPage extends WatchingWidget {
       select: (MatrixCorporalLogsManager m) => m.deleteAllCommand.errors,
       handler: (context, error, _) {
         if (error == null) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Fehler beim Löschen aller Einträge: ${error.error}',
-            ),
-            backgroundColor: AppColors.dangerButtonColor,
-          ),
+        Toast.show(
+          context: context,
+          message: 'Fehler beim Löschen aller Einträge: ${error.error}',
+          type: ToastType.error,
         );
       },
     );
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: const GenericAppBar(
+      backgroundColor: style.colors.canvas,
+      appBar: const AppHeader(
         iconData: Icons.article_outlined,
         title: 'Matrix-Corporal-Logs',
       ),
-      bottomNavigationBar: GenericBottomNavBar(
+      bottomNavigationBar: ActionBar(
         actions: [
           IconButton(
             tooltip: 'Filter',
             icon: Icon(
               Icons.filter_list,
-              color: filtersActive ? Colors.deepOrange : Colors.white,
+              color: filtersActive
+                  ? style.colors.warning
+                  : style.colors.accentForeground,
               size: 30,
             ),
             onPressed: () => showMatrixCorporalLogsFilterBottomSheet(context),
@@ -90,7 +89,7 @@ class MatrixCorporalLogsPage extends WatchingWidget {
             tooltip: 'Alle löschen',
             icon: const Icon(Icons.delete_sweep, size: 30),
             onPressed: () => _showDeleteAllDialog(context, manager),
-            color: AppColors.dangerButtonColor,
+            color: style.colors.error,
           ),
         ],
       ),
@@ -152,6 +151,7 @@ void _showDeleteAllDialog(
   BuildContext context,
   MatrixCorporalLogsManager manager,
 ) {
+  final style = Style.of(context);
   showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
@@ -170,7 +170,7 @@ void _showDeleteAllDialog(
             manager.deleteAllCommand.run();
           },
           style: TextButton.styleFrom(
-            foregroundColor: AppColors.dangerButtonColor,
+            foregroundColor: style.colors.error,
           ),
           child: const Text('Alle löschen'),
         ),

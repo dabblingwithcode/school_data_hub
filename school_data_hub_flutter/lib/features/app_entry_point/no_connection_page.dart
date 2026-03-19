@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
-class NoConnectionPage extends StatelessWidget {
-  const NoConnectionPage({super.key});
+class NoConnectionScreen extends StatelessWidget {
+  const NoConnectionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Scaffold(
+      backgroundColor: style.colors.canvas,
       body: Container(
-        decoration: BoxDecoration(color: AppColors.backgroundColor),
-        child: const Center(
+        decoration: BoxDecoration(color: style.colors.accent),
+        child: Center(
           child: SizedBox(
             height: 500,
             width: 600,
@@ -18,27 +20,23 @@ class NoConnectionPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 300,
                   width: 300,
                   child: Image(image: AssetImage('assets/foreground.png')),
                 ),
                 Text(
                   "Schuldaten App",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                  ),
+                  style: context.typography.title.withColor(
+                    style.colors.background,
+                  ).copyWith(fontSize: 30),
                 ),
-                Gap(30),
+                const Gap(30),
                 Text(
                   'Keine Internetverbindung!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: context.typography.title.withColor(
+                    style.colors.background,
+                  ).copyWith(fontSize: 25),
                 ),
               ],
             ),

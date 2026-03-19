@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 
 import '../../data/matrix_corporal_log_entry.dart';
@@ -15,7 +14,8 @@ class MatrixCorporalLogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = _colorForLevel(entry.level);
+    final style = Style.of(context);
+    final borderColor = _colorForLevel(entry.level, style);
 
     void copyToClipboard() {
       final text = '${entry.time}\n${entry.level}\n${entry.message}';
@@ -30,6 +30,7 @@ class MatrixCorporalLogCard extends StatelessWidget {
 
     void handleLongPress() {
       if (onDelete == null) return;
+      final style = Style.of(context);
       showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
@@ -48,7 +49,7 @@ class MatrixCorporalLogCard extends StatelessWidget {
                 onDelete?.call();
               },
               style: TextButton.styleFrom(
-                foregroundColor: AppColors.dangerButtonColor,
+                foregroundColor: style.colors.error,
               ),
               child: const Text('Löschen'),
             ),
@@ -61,7 +62,7 @@ class MatrixCorporalLogCard extends StatelessWidget {
       onLongPress: onDelete != null ? handleLongPress : null,
       borderRadius: BorderRadius.circular(16),
       child: Card(
-        color: AppColors.cardInCardColor,
+        color: style.colors.cardInCard,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: borderColor, width: 2),
@@ -81,9 +82,7 @@ class MatrixCorporalLogCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       entry.message,
-                      style: AppStyles.subtitle.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: context.typography.subtitle.bold,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -93,15 +92,17 @@ class MatrixCorporalLogCard extends StatelessWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.access_time,
                     size: 14,
-                    color: Colors.black54,
+                    color: style.colors.mutedForeground,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     entry.time.formatDateAndTimeForUser(),
-                    style: AppStyles.textLabel.copyWith(color: Colors.black54),
+                    style: context.typography.bodySmall.withColor(
+                      style.colors.mutedForeground,
+                    ),
                   ),
                   const Spacer(),
                   IconButton(
@@ -123,21 +124,21 @@ class MatrixCorporalLogCard extends StatelessWidget {
     );
   }
 
-  static Color _colorForLevel(String level) {
+  static Color _colorForLevel(String level, Style style) {
     switch (level.toLowerCase()) {
       case 'error':
       case 'fatal':
       case 'panic':
-        return AppColors.dangerButtonColor;
+        return style.colors.error;
       case 'warning':
-        return AppColors.warningButtonColor;
+        return style.colors.warning;
       case 'info':
-        return Colors.blue.shade700;
+        return style.colors.info;
       case 'debug':
       case 'trace':
-        return Colors.grey.shade700;
+        return style.colors.mutedForeground;
       default:
-        return Colors.green.shade700;
+        return style.colors.success;
     }
   }
 }
@@ -149,7 +150,8 @@ class _LevelBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = MatrixCorporalLogCard._colorForLevel(level);
+    final style = Style.of(context);
+    final color = MatrixCorporalLogCard._colorForLevel(level, style);
     return DecoratedBox(
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
@@ -159,7 +161,7 @@ class _LevelBadge extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         child: Text(
           level.toUpperCase(),
-          style: AppStyles.textLabel.copyWith(
+          style: context.typography.bodySmall.copyWith(
             color: color,
             fontWeight: FontWeight.bold,
             fontSize: 12,
@@ -177,14 +179,15 @@ class _FieldsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
-            Icon(Icons.data_object, size: 16, color: Colors.black54),
-            SizedBox(width: 6),
-            Text('Fields', style: AppStyles.textLabel),
+            Icon(Icons.data_object, size: 16, color: style.colors.mutedForeground),
+            const SizedBox(width: 6),
+            Text('Fields', style: context.typography.bodySmall),
           ],
         ),
         const Gap(4),
@@ -198,21 +201,21 @@ class _FieldsSection extends StatelessWidget {
                   width: 120,
                   child: Text(
                     e.key,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: style.colors.foreground,
                     ),
                   ),
                 ),
                 Expanded(
                   child: Text(
                     e.value?.toString() ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 12,
-                      color: Colors.black87,
+                      color: style.colors.foreground,
                     ),
                   ),
                 ),

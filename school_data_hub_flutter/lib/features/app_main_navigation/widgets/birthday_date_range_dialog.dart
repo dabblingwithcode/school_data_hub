@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 
 class BirthdayDateRangeDialog extends WatchingWidget {
@@ -10,6 +10,7 @@ class BirthdayDateRangeDialog extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final now = DateTime.now();
     final pastDate = createOnce(() => ValueNotifier<DateTime>(now));
     final futureDate = createOnce(() => ValueNotifier<DateTime>(now));
@@ -19,24 +20,26 @@ class BirthdayDateRangeDialog extends WatchingWidget {
 
     return Dialog(
       constraints: const BoxConstraints(maxWidth: 400),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Style.radii.large),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: EdgeInsets.all(Style.spacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.cake_rounded,
                   size: 20,
-                  color: Color.fromARGB(255, 228, 76, 99),
+                  color: style.colors.error,
                 ),
-                Gap(10),
+                const Gap(10),
                 Text(
                   'Geburtstage',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: context.typography.title,
                 ),
               ],
             ),
@@ -44,8 +47,8 @@ class BirthdayDateRangeDialog extends WatchingWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('von ', style: TextStyle(fontSize: 16)),
-                InkWell(
+                Text('von ', style: context.typography.subtitle),
+                GestureDetector(
                   onTap: () async {
                     final selected = await showDatePicker(
                       context: context,
@@ -58,13 +61,13 @@ class BirthdayDateRangeDialog extends WatchingWidget {
                     }
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Style.spacing.md,
+                      vertical: Style.spacing.sm,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.backgroundColor,
-                      borderRadius: BorderRadius.circular(8),
+                      color: style.colors.accent,
+                      borderRadius: BorderRadius.circular(Style.radii.small),
                     ),
                     child: SizedBox(
                       width: 100,
@@ -73,7 +76,9 @@ class BirthdayDateRangeDialog extends WatchingWidget {
                           pastDateValue.isSameDate(now)
                               ? 'heute'
                               : pastDateValue.formatDateForUser(),
-                          style: AppStyles.buttonTextStyle,
+                          style: context.typography.body.bold.withColor(
+                            style.colors.background,
+                          ),
                         ),
                       ),
                     ),
@@ -85,8 +90,8 @@ class BirthdayDateRangeDialog extends WatchingWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('bis  ', style: TextStyle(fontSize: 16)),
-                InkWell(
+                Text('bis  ', style: context.typography.subtitle),
+                GestureDetector(
                   onTap: () async {
                     final selected = await showDatePicker(
                       context: context,
@@ -99,13 +104,13 @@ class BirthdayDateRangeDialog extends WatchingWidget {
                     }
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Style.spacing.md,
+                      vertical: Style.spacing.sm,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.backgroundColor,
-                      borderRadius: BorderRadius.circular(8),
+                      color: style.colors.accent,
+                      borderRadius: BorderRadius.circular(Style.radii.small),
                     ),
                     child: SizedBox(
                       width: 100,
@@ -114,7 +119,9 @@ class BirthdayDateRangeDialog extends WatchingWidget {
                           futureDateValue.isSameDate(now)
                               ? 'heute'
                               : futureDateValue.formatDateForUser(),
-                          style: AppStyles.buttonTextStyle,
+                          style: context.typography.body.bold.withColor(
+                            style.colors.background,
+                          ),
                         ),
                       ),
                     ),
@@ -123,24 +130,23 @@ class BirthdayDateRangeDialog extends WatchingWidget {
               ],
             ),
             const Gap(20),
-            ElevatedButton(
-              style: AppStyles.successButtonStyle,
+            Button(
+              variant: ButtonVariant.primary,
               onPressed: () {
                 Navigator.of(context).pop((
                   pastDayValue: pastDateValue,
                   futureDayValue: futureDateValue,
                 ));
               },
-              child: const Text('ANZEIGEN', style: AppStyles.buttonTextStyle),
+              label: 'ANZEIGEN',
             ),
-
             const Gap(10),
-            ElevatedButton(
-              style: AppStyles.cancelButtonStyle,
+            Button(
+              variant: ButtonVariant.destructive,
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('ABBRECHEN', style: AppStyles.buttonTextStyle),
+              label: 'ABBRECHEN',
             ),
           ],
         ),

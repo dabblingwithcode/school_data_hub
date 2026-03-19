@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
@@ -46,6 +46,7 @@ Future<int?> selectPowerLevelByIconDialog({
   required String displayName,
   required int currentPowerLevel,
 }) {
+  final style = Style.of(context);
   Widget levelOption({
     required BuildContext context,
     required IconData icon,
@@ -64,12 +65,12 @@ Future<int?> selectPowerLevelByIconDialog({
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(title),
-            Text(subtitle, style: const TextStyle(fontSize: 12)),
+            Text(subtitle, style: context.typography.bodySmall),
           ],
         ),
         style: OutlinedButton.styleFrom(
           side: BorderSide(
-            color: isSelected ? AppColors.backgroundColor : Colors.grey,
+            color: isSelected ? style.colors.accent : style.colors.border,
             width: isSelected ? 2 : 1,
           ),
           alignment: Alignment.centerLeft,
@@ -93,7 +94,7 @@ Future<int?> selectPowerLevelByIconDialog({
             levelOption(
               context: dialogContext,
               icon: Icons.remove_red_eye_outlined,
-              color: AppColors.groupColor,
+              color: style.colors.groupColor,
               title: 'Leserechte',
               subtitle: 'Power Level 0',
               powerLevel: 0,
@@ -102,7 +103,7 @@ Future<int?> selectPowerLevelByIconDialog({
             levelOption(
               context: dialogContext,
               icon: Icons.chat,
-              color: Colors.orange,
+              color: style.colors.warning,
               title: 'Moderation',
               subtitle: 'Power Level 50',
               powerLevel: 50,
@@ -165,9 +166,10 @@ class MatrixUsersInRoomList extends WatchingWidget {
           children: [
             const Gap(5),
             if (matrixUsers.isEmpty)
-              const Text(
+              Text(
                 'Keine Konten in diesem Raum!',
-                style: TextStyle(color: Colors.black, fontSize: 16),
+                style: context.typography.subtitle
+                    .withColor(Style.of(context).colors.foreground),
               ),
           ],
         ),
@@ -178,7 +180,6 @@ class MatrixUsersInRoomList extends WatchingWidget {
           physics: const NeverScrollableScrollPhysics(),
           itemCount: matrixUsers.length,
           itemBuilder: (BuildContext context, int index) {
-            // final List<MatrixUser> matrixUserList = List.from(matrixUsers);
             MatrixUser matrixUser = matrixUsers[index];
             return MatrixUsersInRoomListItem(
               matrixUser: matrixUser,
@@ -202,6 +203,7 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final matrixPolicyManager = di<MatrixPolicyManager>();
     watch(matrixUser);
     final MatrixRoom room = watch(
@@ -256,19 +258,19 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
                               headers: imageHeaders,
                               fit: BoxFit.cover,
                               errorBuilder: (_, __, ___) => Container(
-                                color: Colors.grey.shade300,
+                                color: style.colors.mutedForeground,
                                 alignment: Alignment.center,
                                 child: const Icon(Icons.person, size: 26),
                               ),
                             )
                           : Container(
-                              color: Colors.grey.shade300,
+                              color: style.colors.mutedForeground,
                               alignment: Alignment.center,
                               child: const Icon(Icons.person, size: 26),
                             ),
                     )
                   : Container(
-                      color: Colors.grey.shade300,
+                      color: style.colors.mutedForeground,
                       alignment: Alignment.center,
                       child: const Icon(Icons.person, size: 26),
                     ),
@@ -314,11 +316,8 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
                             matrixUser.displayName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
+                            style: context.typography.subtitle.bold
+                                .withColor(style.colors.foreground),
                           ),
                         ),
                       ),
@@ -358,14 +357,14 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
                           width: 20,
                           height: 20,
                           child: powerLevel >= 50
-                              ? const Icon(
+                              ? Icon(
                                   Icons.chat,
-                                  color: Colors.orange,
+                                  color: style.colors.warning,
                                   size: 20,
                                 )
                               : Icon(
                                   Icons.remove_red_eye_outlined,
-                                  color: AppColors.groupColor,
+                                  color: style.colors.groupColor,
                                   size: 20,
                                 ),
                         ),
@@ -380,10 +379,8 @@ class MatrixUsersInRoomListItem extends WatchingWidget {
                           'ID: ${matrixUser.id ?? '-'}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.black54,
-                            fontSize: 14,
-                          ),
+                          style: context.typography.body
+                              .withColor(style.colors.mutedForeground),
                         ),
                       ),
                       IconButton(

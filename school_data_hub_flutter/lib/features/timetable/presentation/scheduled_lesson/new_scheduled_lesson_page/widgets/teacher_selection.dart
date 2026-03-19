@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_overlap_helper.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
@@ -45,6 +46,7 @@ class TeacherSelection extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final users = watchValue((UserManager m) => m.users);
     final selectedTeachers = watch(selectedTeachersNotifier).value;
 
@@ -64,34 +66,34 @@ class TeacherSelection extends WatchingWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Lehrer *',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          style: context.typography.subtitle,
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: Style.spacing.sm),
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: style.colors.mutedForeground),
+            borderRadius: BorderRadius.circular(Style.radii.small),
           ),
           child: Column(
             children: [
               // Selected teachers
               if (selectedTeachers.isNotEmpty)
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(Style.spacing.md),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Ausgewählte Lehrer:',
-                        style: TextStyle(fontWeight: FontWeight.w500),
+                        style: context.typography.body.w500,
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: Style.spacing.sm),
                       Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
+                        spacing: Style.spacing.sm,
+                        runSpacing: Style.spacing.sm,
                         children: selectedTeachers.asMap().entries.map((entry) {
                           final index = entry.key;
                           final teacher = entry.value;
@@ -122,13 +124,11 @@ class TeacherSelection extends WatchingWidget {
                         }).toList(),
                       ),
                       if (selectedTeachers.length > 1)
-                        const Padding(
-                          padding: EdgeInsets.only(top: 8.0),
+                        Padding(
+                          padding: EdgeInsets.only(top: Style.spacing.sm),
                           child: Text(
-                            'Tipp: Der erste Lehrer wird als Hauptlehrer gesetzt. Verwenden Sie ↑↓ um die Reihenfolge zu ändern.',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
+                            'Tipp: Der erste Lehrer wird als Hauptlehrer gesetzt. Verwenden Sie die Pfeile um die Reihenfolge zu ändern.',
+                            style: context.typography.caption.withColor(style.colors.mutedForeground).copyWith(
                               fontStyle: FontStyle.italic,
                             ),
                           ),
@@ -139,7 +139,7 @@ class TeacherSelection extends WatchingWidget {
               // Teacher dropdown — hidden once the 3-teacher cap is reached.
               if (selectedTeachers.length < 3)
                 Padding(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(Style.spacing.md),
                   child: DropdownButtonFormField<int>(
                     key: Key('teacher_dropdown_$dropdownKeyValue'),
                     initialValue: null,
@@ -170,11 +170,11 @@ class TeacherSelection extends WatchingWidget {
                   ),
                 )
               else
-                const Padding(
-                  padding: EdgeInsets.all(12),
+                Padding(
+                  padding: EdgeInsets.all(Style.spacing.md),
                   child: Text(
                     'Maximale Anzahl von 3 Lehrern erreicht.',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: context.typography.caption.withColor(style.colors.mutedForeground),
                   ),
                 ),
             ],
@@ -221,31 +221,32 @@ class _TeacherChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(Style.radii.large),
         color: isMainTeacher
-            ? Colors.orange.withValues(alpha: 0.1)
+            ? style.colors.warning.withValues(alpha: 0.1)
             : Theme.of(context).chipTheme.backgroundColor,
         border: Border.all(
           color: isMainTeacher
-              ? Colors.orange
-              : Colors.grey.withValues(alpha: 0.3),
+              ? style.colors.warning
+              : style.colors.mutedForeground.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isMainTeacher)
-            const Padding(
-              padding: EdgeInsets.only(left: 8.0),
-              child: Icon(Icons.star, size: 16, color: Colors.orange),
+            Padding(
+              padding: EdgeInsets.only(left: Style.spacing.sm),
+              child: Icon(Icons.star, size: 16, color: style.colors.warning),
             ),
           Padding(
             padding: EdgeInsets.only(
-              left: isMainTeacher ? 4.0 : 12.0,
-              top: 8.0,
-              bottom: 8.0,
+              left: isMainTeacher ? Style.spacing.xs : Style.spacing.md,
+              top: Style.spacing.sm,
+              bottom: Style.spacing.sm,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -259,9 +260,9 @@ class _TeacherChip extends StatelessWidget {
                   ),
                 ),
                 if (isMainTeacher)
-                  const Text(
+                  Text(
                     'Hauptlehrer',
-                    style: TextStyle(fontSize: 10, color: Colors.orange),
+                    style: context.typography.caption.withColor(style.colors.warning),
                   ),
               ],
             ),
@@ -269,28 +270,28 @@ class _TeacherChip extends StatelessWidget {
           // Reorder buttons (only show if more than 1 teacher)
           if (totalTeachers > 1) ...[
             if (onMoveUp != null)
-              InkWell(
+              GestureDetector(
                 onTap: onMoveUp,
-                child: const Padding(
-                  padding: EdgeInsets.all(4.0),
-                  child: Icon(Icons.keyboard_arrow_up, size: 16),
+                child: Padding(
+                  padding: EdgeInsets.all(Style.spacing.xs),
+                  child: const Icon(Icons.keyboard_arrow_up, size: 16),
                 ),
               ),
             if (onMoveDown != null)
-              InkWell(
+              GestureDetector(
                 onTap: onMoveDown,
-                child: const Padding(
-                  padding: EdgeInsets.all(4.0),
-                  child: Icon(Icons.keyboard_arrow_down, size: 16),
+                child: Padding(
+                  padding: EdgeInsets.all(Style.spacing.xs),
+                  child: const Icon(Icons.keyboard_arrow_down, size: 16),
                 ),
               ),
           ],
           // Delete button
-          InkWell(
+          GestureDetector(
             onTap: onRemove,
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.close, size: 16),
+            child: Padding(
+              padding: EdgeInsets.all(Style.spacing.sm),
+              child: const Icon(Icons.close, size: 16),
             ),
           ),
         ],

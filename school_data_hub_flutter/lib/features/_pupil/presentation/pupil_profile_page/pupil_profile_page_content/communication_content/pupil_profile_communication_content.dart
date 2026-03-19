@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -85,10 +85,9 @@ class PupilProfileCommunicationContent extends WatchingWidget {
             valueWidget: communicationPupil == null
                 ? Text(
                     'kein Eintrag - tippen zum Hinzufügen',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: context.typography.body.copyWith(
                       fontStyle: FontStyle.italic,
-                      color: AppColors.interactiveColor,
+                      color: Style.of(context).colors.interactive,
                     ),
                   )
                 : CommunicationValues(communicationSkills: communicationPupil),
@@ -123,10 +122,9 @@ class PupilProfileCommunicationContent extends WatchingWidget {
             valueWidget: tutorInfo?.communicationTutor1 == null
                 ? Text(
                     'kein Eintrag - tippen zum Hinzufügen',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: context.typography.body.copyWith(
                       fontStyle: FontStyle.italic,
-                      color: AppColors.interactiveColor,
+                      color: Style.of(context).colors.interactive,
                     ),
                   )
                 : CommunicationValues(
@@ -164,10 +162,9 @@ class PupilProfileCommunicationContent extends WatchingWidget {
             valueWidget: tutorInfo?.communicationTutor2 == null
                 ? Text(
                     'kein Eintrag - tippen zum Hinzufügen',
-                    style: TextStyle(
-                      fontSize: 14,
+                    style: context.typography.body.copyWith(
                       fontStyle: FontStyle.italic,
-                      color: AppColors.interactiveColor,
+                      color: Style.of(context).colors.interactive,
                     ),
                   )
                 : CommunicationValues(

@@ -3,17 +3,17 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/domain/log_service.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 Future<void> showLogsFilterBottomSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
     constraints: const BoxConstraints(maxWidth: 800),
-    shape: const RoundedRectangleBorder(
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20),
-        topRight: Radius.circular(20),
+        topLeft: Radius.circular(Style.radii.large),
+        topRight: Radius.circular(Style.radii.large),
       ),
     ),
     builder: (_) => const LogsFilterBottomSheet(),
@@ -37,7 +37,12 @@ class LogsFilterBottomSheet extends WatchingWidget {
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+        padding: EdgeInsets.fromLTRB(
+          Style.spacing.xl,
+          Style.spacing.md,
+          Style.spacing.xl,
+          Style.spacing.xl,
+        ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -45,7 +50,7 @@ class LogsFilterBottomSheet extends WatchingWidget {
             children: [
               Row(
                 children: [
-                  const Text('Filter', style: AppStyles.subtitle),
+                  Text('Filter', style: context.typography.subtitle),
                   const Spacer(),
                   if (filtersActive)
                     TextButton.icon(
@@ -53,10 +58,9 @@ class LogsFilterBottomSheet extends WatchingWidget {
                       icon: const Icon(Icons.restart_alt),
                       label: const Text('Zurücksetzen'),
                     ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close),
-                    tooltip: 'Schließen',
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Icon(Icons.close),
                   ),
                 ],
               ),
@@ -103,54 +107,50 @@ class _LogLevelSwitches extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: AppColors.pupilProfileCardColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Log-Level anzeigen', style: AppStyles.subtitle),
-            const Gap(12),
-            Wrap(
-              spacing: 16,
-              runSpacing: 12,
-              children: [
-                _LevelFilterChip(
-                  label: 'Fein',
-                  level: Level.FINE,
-                  isSelected: showFine,
-                  onToggle: onToggle,
-                ),
-                _LevelFilterChip(
-                  label: 'Info',
-                  level: Level.INFO,
-                  isSelected: showInfo,
-                  onToggle: onToggle,
-                ),
-                _LevelFilterChip(
-                  label: 'Warnung',
-                  level: Level.WARNING,
-                  isSelected: showWarning,
-                  onToggle: onToggle,
-                ),
-                _LevelFilterChip(
-                  label: 'Fehler',
-                  level: Level.SEVERE,
-                  isSelected: showSevere,
-                  onToggle: onToggle,
-                ),
-                _LevelFilterChip(
-                  label: 'Kritisch',
-                  level: Level.SHOUT,
-                  isSelected: showShout,
-                  onToggle: onToggle,
-                ),
-              ],
-            ),
-          ],
-        ),
+    return CardBox(
+      padding: EdgeInsets.all(Style.spacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Log-Level anzeigen', style: context.typography.subtitle),
+          const Gap(12),
+          Wrap(
+            spacing: Style.spacing.lg,
+            runSpacing: Style.spacing.md,
+            children: [
+              _LevelFilterChip(
+                label: 'Fein',
+                level: Level.FINE,
+                isSelected: showFine,
+                onToggle: onToggle,
+              ),
+              _LevelFilterChip(
+                label: 'Info',
+                level: Level.INFO,
+                isSelected: showInfo,
+                onToggle: onToggle,
+              ),
+              _LevelFilterChip(
+                label: 'Warnung',
+                level: Level.WARNING,
+                isSelected: showWarning,
+                onToggle: onToggle,
+              ),
+              _LevelFilterChip(
+                label: 'Fehler',
+                level: Level.SEVERE,
+                isSelected: showSevere,
+                onToggle: onToggle,
+              ),
+              _LevelFilterChip(
+                label: 'Kritisch',
+                level: Level.SHOUT,
+                isSelected: showShout,
+                onToggle: onToggle,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -171,26 +171,31 @@ class _LevelFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return FilterChip(
       label: Text(
         label,
-        style: AppStyles.textLabel.copyWith(
-          fontWeight: FontWeight.bold,
-          color: isSelected ? Colors.white : Colors.black87,
+        style: context.typography.bodySmall.bold.withColor(
+          isSelected ? style.colors.background : style.colors.foreground,
         ),
       ),
       avatar: Icon(
         _levelIcon(level),
         size: 18,
-        color: isSelected ? Colors.white : AppColors.cardInCardBorderColor,
+        color: isSelected
+            ? style.colors.background
+            : style.colors.cardInCardBorder,
       ),
       selected: isSelected,
       showCheckmark: false,
       onSelected: (selected) => onToggle(level, selected),
-      backgroundColor: Colors.white,
-      selectedColor: AppColors.accentColor,
-      side: BorderSide(color: AppColors.cardInCardBorderColor),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      backgroundColor: style.colors.background,
+      selectedColor: style.colors.accent,
+      side: BorderSide(color: style.colors.cardInCardBorder),
+      padding: EdgeInsets.symmetric(
+        horizontal: Style.spacing.md,
+        vertical: Style.spacing.sm,
+      ),
     );
   }
 
@@ -221,52 +226,48 @@ class _LoggerFilterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasSelection = selectedLoggers.isNotEmpty;
-    return Card(
-      color: AppColors.pupilProfileCardColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return CardBox(
+      padding: EdgeInsets.all(Style.spacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text('Logger-Quellen', style: context.typography.subtitle),
+              const Spacer(),
+              if (hasSelection)
+                TextButton(
+                  onPressed: onClear,
+                  child: const Text('Alle anzeigen'),
+                ),
+            ],
+          ),
+          const Gap(12),
+          if (loggerNames.isEmpty)
+            Text(
+              'Noch keine Logger-Namen vorhanden',
+              style: context.typography.bodySmall,
+            )
+          else
+            Wrap(
+              spacing: Style.spacing.md,
+              runSpacing: Style.spacing.md,
               children: [
-                const Text('Logger-Quellen', style: AppStyles.subtitle),
-                const Spacer(),
-                if (hasSelection)
-                  TextButton(
-                    onPressed: onClear,
-                    child: const Text('Alle anzeigen'),
+                _LoggerChip(
+                  label: 'Alle',
+                  isSelected: !hasSelection,
+                  onSelected: (_) => onClear(),
+                ),
+                ...loggerNames.map(
+                  (name) => _LoggerChip(
+                    label: name,
+                    isSelected: selectedLoggers.contains(name),
+                    onSelected: (selected) => onToggle(name, selected),
                   ),
+                ),
               ],
             ),
-            const Gap(12),
-            if (loggerNames.isEmpty)
-              const Text(
-                'Noch keine Logger-Namen vorhanden',
-                style: AppStyles.textLabel,
-              )
-            else
-              Wrap(
-                spacing: 12,
-                runSpacing: 10,
-                children: [
-                  _LoggerChip(
-                    label: 'Alle',
-                    isSelected: !hasSelection,
-                    onSelected: (_) => onClear(),
-                  ),
-                  ...loggerNames.map(
-                    (name) => _LoggerChip(
-                      label: name,
-                      isSelected: selectedLoggers.contains(name),
-                      onSelected: (selected) => onToggle(name, selected),
-                    ),
-                  ),
-                ],
-              ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -285,21 +286,24 @@ class _LoggerChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return FilterChip(
       label: Text(
         label,
-        style: AppStyles.textLabel.copyWith(
-          fontWeight: FontWeight.bold,
-          color: isSelected ? Colors.white : Colors.black87,
+        style: context.typography.bodySmall.bold.withColor(
+          isSelected ? style.colors.background : style.colors.foreground,
         ),
       ),
       selected: isSelected,
       showCheckmark: false,
       onSelected: onSelected,
-      backgroundColor: Colors.white,
-      selectedColor: AppColors.accentColor,
-      side: BorderSide(color: AppColors.cardInCardBorderColor),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      backgroundColor: style.colors.background,
+      selectedColor: style.colors.accent,
+      side: BorderSide(color: style.colors.cardInCardBorder),
+      padding: EdgeInsets.symmetric(
+        horizontal: Style.spacing.md,
+        vertical: Style.spacing.sm,
+      ),
     );
   }
 }

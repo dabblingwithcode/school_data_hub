@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/filter_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/competence_list_page/widgets/competence_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/competence_list_sortable_page/widgets/competence_tree_sortable.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/post_or_patch_competence_page/post_or_patch_competence_page.dart';
 
-class SortableCompetenceListPage extends WatchingWidget {
-  const SortableCompetenceListPage({super.key});
+class SortableCompetenceListScreen extends WatchingWidget {
+  const SortableCompetenceListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class SortableCompetenceListPage extends WatchingWidget {
     }) {
       Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (ctx) => PostOrPatchCompetencePage(
+          builder: (ctx) => PostOrPatchCompetenceScreen(
             parentCompetence: competenceId,
             competence: competence,
           ),
@@ -42,18 +44,19 @@ class SortableCompetenceListPage extends WatchingWidget {
     });
 
     return Scaffold(
-      appBar: const GenericAppBar(
+      backgroundColor: Style.of(context).colors.canvas,
+      appBar: const AppHeader(
         iconData: Icons.lightbulb_rounded,
         title: 'Kompetenzreihenfolge ändern',
       ),
       body: RefreshIndicator(
         onRefresh: () async => di<CompetenceManager>().fetchCompetences(),
         child: Padding(
-          padding: const EdgeInsets.only(
-            top: 8.0,
-            left: 10,
-            right: 10,
-            bottom: 10,
+          padding: EdgeInsets.only(
+            top: Style.spacing.sm,
+            left: Style.spacing.sm,
+            right: Style.spacing.sm,
+            bottom: Style.spacing.sm,
           ),
           child: Center(
             child: ConstrainedBox(
@@ -70,34 +73,29 @@ class SortableCompetenceListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: GenericBottomNavBar(
+      bottomNavigationBar: ActionBar(
         actions: [
-          IconButton(
+          TappableIcon(
             tooltip: 'Reihenfolge ändern',
-            icon: const Icon(Icons.sort_rounded),
+            icon: const Icon(Icons.sort_rounded, size: 30),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (ctx) => const SortableCompetenceListPage(),
+                  builder: (ctx) => const SortableCompetenceListScreen(),
                 ),
               );
             },
           ),
-
-          // IconButton(
-          //   tooltip: 'aktualisieren',
-          //   icon: const Icon(Icons.update_rounded),
-          //   onPressed: () {
-          //     di<CompetenceFilterManager>().refreshFilteredCompetences(
-          //       competences,
-          //     );
-          //   },
-          // ),
-          GenericFilterButton(
+          TappableIcon(
+            tooltip: 'übergeordnete Kompetenz erstellen',
+            icon: const Icon(Icons.add_rounded, size: 30),
+            onPressed: () => navigateToNewOrPatchCompetencePage(),
+          ),
+          FilterButton(
             isSearchBar: false,
             filtersActive: di<FiltersStateManager>().filtersActive,
             onLongPress: () => di<FiltersStateManager>().resetFilters(),
-            showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
+            showBottomSheetFunction: (context) => showFilterSheet(
               context: context,
               filterList: [const CompetenceFilters()],
             ),

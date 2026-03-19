@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class StatusIndicators extends StatelessWidget {
   final String label;
@@ -14,6 +14,10 @@ class StatusIndicators extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
+    final activeColor = style.colors.accent;
+    final inactiveColor = style.colors.mutedForeground.withValues(alpha: 0.3);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -23,19 +27,19 @@ class StatusIndicators extends StatelessWidget {
             height: 24,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isActive ? AppColors.accentColor : Colors.grey.shade300,
+              color: isActive ? activeColor : inactiveColor,
             ),
             child:
                 isActive
-                    ? const Icon(Icons.check, color: Colors.white, size: 16)
+                    ? Icon(Icons.check, color: style.colors.background, size: 16)
                     : null,
           ),
           const Gap(16),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 16,
-              color: isActive ? AppColors.accentColor : Colors.black54,
+            style: context.typography.subtitle.withColor(
+              isActive ? activeColor : style.colors.mutedForeground,
+            ).copyWith(
               fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
             ),
           ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
@@ -82,12 +82,13 @@ class GlobalOverlayHost extends WatchingWidget {
 }
 
 Widget _buildHeavyLoadingOverlay(BuildContext context) {
+  final style = Style.of(context);
   return Stack(
     fit: StackFit.expand,
     children: [
-      const ModalBarrier(
+      ModalBarrier(
         dismissible: false,
-        color: Color.fromARGB(108, 0, 0, 0),
+        color: style.colors.foreground.withValues(alpha: 0.42),
       ),
       Material(
         color: Colors.transparent,
@@ -96,16 +97,14 @@ Widget _buildHeavyLoadingOverlay(BuildContext context) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 'Bitte warten...',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                style: context.typography.title.withColor(
+                  style.colors.background,
                 ),
               ),
               const SizedBox(height: 16),
-              CircularProgressIndicator(color: AppColors.interactiveColor),
+              CircularProgressIndicator(color: style.colors.interactive),
             ],
           ),
         ),
@@ -116,10 +115,11 @@ Widget _buildHeavyLoadingOverlay(BuildContext context) {
 
 Widget _buildInstanceLoadingOverlay(BuildContext context) {
   final locale = AppLocalizations.of(context)!;
+  final style = Style.of(context);
   return Stack(
     fit: StackFit.expand,
     children: [
-      ModalBarrier(dismissible: false, color: AppColors.backgroundColor),
+      ModalBarrier(dismissible: false, color: style.colors.accent),
       Material(
         color: Colors.transparent,
         child: Center(
@@ -133,38 +133,34 @@ Widget _buildInstanceLoadingOverlay(BuildContext context) {
               ),
               Text(
                 locale.schoolDataHub,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
+                style: context.typography.title.withColor(
+                  style.colors.background,
+                ).copyWith(fontSize: 30),
               ),
               const Gap(15),
               if (di<EnvManager>().activeEnv != null)
                 Text(
                   di<EnvManager>().activeEnv!.serverName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                  ),
+                  style: context.typography.title.withColor(
+                    style.colors.background,
+                  ).copyWith(fontSize: 22),
                 ),
               const Gap(10),
-              const Text(
+              Text(
                 'Instanzdaten werden geladen!',
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                style: context.typography.title.withColor(
+                  style.colors.background,
+                ),
               ),
               const Gap(5),
-              const Text(
+              Text(
                 'Bitte warten...',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                style: context.typography.title.withColor(
+                  style.colors.background,
                 ),
               ),
               const SizedBox(height: 16),
-              CircularProgressIndicator(color: AppColors.accentColor),
+              CircularProgressIndicator(color: style.colors.button.primary),
             ],
           ),
         ),

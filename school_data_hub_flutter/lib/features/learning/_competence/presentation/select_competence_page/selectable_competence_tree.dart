@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/select_competence_page/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/widgets/competence_grades_widget.dart';
 
 List<Widget> selectableCompetenceTree({
-  //required BuildContext context,
+  required BuildContext context,
   int? parentCompetenceId,
   required double indentation,
   Color? backGroundColor,
   required SelectCompetenceViewModel viewModel,
-  //required String elementType,
 }) {
   List<Widget> competenceWidgets = [];
+  final style = Style.of(context);
 
   List<Competence> competences = viewModel.competences;
   Color competenceBackgroundColor;
@@ -29,57 +30,47 @@ List<Widget> selectableCompetenceTree({
 
     if (competence.parentCompetence == parentCompetenceId) {
       final children = selectableCompetenceTree(
-        //  context: context,
+        context: context,
         parentCompetenceId: competence.publicId,
         indentation: indentation + 15,
         backGroundColor: competenceBackgroundColor,
         viewModel: viewModel,
-        //elementType: elementType
       );
 
       competenceWidgets.add(
         Padding(
-          padding: EdgeInsets.only(top: 10, left: indentation),
+          padding: EdgeInsets.only(top: Style.spacing.sm, left: indentation),
           child: children.isNotEmpty
               ? Wrap(
                   children: [
-                    Card(
-                      color: competenceBackgroundColor,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: competenceBackgroundColor,
+                        borderRadius: BorderRadius.circular(Style.radii.medium),
                       ),
                       clipBehavior: Clip.hardEdge,
-                      margin: EdgeInsets.zero,
                       child: ExpansionTile(
-                        iconColor: Colors.white,
-                        collapsedTextColor: Colors.white,
-                        collapsedIconColor: Colors.white,
-                        textColor: Colors.white,
+                        iconColor: style.colors.background,
+                        collapsedTextColor: style.colors.background,
+                        collapsedIconColor: style.colors.background,
+                        textColor: style.colors.background,
                         maintainState: false,
                         backgroundColor: competenceBackgroundColor,
                         title: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(Style.spacing.sm),
                           child: Column(
                             children: [
                               Row(
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.all(5.0),
+                                    padding: EdgeInsets.all(Style.spacing.xs),
                                     child: Radio<int>(
                                       value: competence.publicId,
                                     ),
-                                    // : const Row(children: [
-                                    //     Gap(7),
-                                    //     Icon(
-                                    //       Icons.support,
-                                    //       color: Colors.white,
-                                    //     )
-                                    //   ]),
                                   ),
-                                  const Gap(5),
+                                  Gap(Style.spacing.xs),
                                   Flexible(
-                                    child: InkWell(
+                                    child: GestureDetector(
                                       onTap: () => viewModel.selectCompetence(
                                         competence.publicId,
                                       ),
@@ -87,32 +78,14 @@ List<Widget> selectableCompetenceTree({
                                         competence.name,
                                         maxLines: 4,
                                         textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                                        style: context.typography.subtitle.bold.withColor(
+                                          style.colors.background,
                                         ),
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              // competence.competenceLevel != null
-                              //     ? Padding(
-                              //         padding:
-                              //             const EdgeInsets.only(left: 45.0),
-                              //         child: Row(
-                              //           mainAxisAlignment:
-                              //               MainAxisAlignment.spaceBetween,
-                              //           children: [
-                              //             Flexible(
-                              //                 child: CompetenceGradesWidget(
-                              //                     competence: competence)),
-                              //             const Gap(10),
-                              //           ],
-                              //         ),
-                              //       )
-                              //     : const SizedBox.shrink(),
                             ],
                           ),
                         ),
@@ -123,25 +96,18 @@ List<Widget> selectableCompetenceTree({
                   ],
                 )
               : Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(Style.spacing.sm),
                   child: Column(
                     children: [
                       Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(5.0),
+                            padding: EdgeInsets.all(Style.spacing.xs),
                             child: Radio<int>(value: competence.publicId),
-                            // : const Row(children: [
-                            //     Gap(7),
-                            //     Icon(
-                            //       Icons.support,
-                            //       color: Colors.white,
-                            //     )
-                            //   ]),
                           ),
-                          const Gap(5),
+                          Gap(Style.spacing.xs),
                           Flexible(
-                            child: InkWell(
+                            child: GestureDetector(
                               onTap: () => viewModel.selectCompetence(
                                 competence.publicId,
                               ),
@@ -149,10 +115,8 @@ List<Widget> selectableCompetenceTree({
                                 competence.name,
                                 maxLines: 4,
                                 textAlign: TextAlign.start,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                style: context.typography.subtitle.bold.withColor(
+                                  style.colors.background,
                                 ),
                               ),
                             ),
@@ -172,7 +136,7 @@ List<Widget> selectableCompetenceTree({
                                           .toString(),
                                     ),
                                   ),
-                                  const Gap(10),
+                                  Gap(Style.spacing.sm),
                                 ],
                               ),
                             )

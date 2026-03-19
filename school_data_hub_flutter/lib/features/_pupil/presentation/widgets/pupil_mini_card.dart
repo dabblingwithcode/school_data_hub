@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 
 class PupilMiniCard extends StatelessWidget {
   final PupilProxy pupil;
@@ -15,13 +15,14 @@ class PupilMiniCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Container(
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.only(top: 5, left: 5, right: 5, bottom: 5),
       decoration: BoxDecoration(
-        color: AppColors.cardInCardColor,
-        border: Border.all(color: AppColors.cardInCardBorderColor, width: 1),
-        borderRadius: BorderRadius.circular(10),
+        color: style.colors.cardInCard,
+        border: Border.all(color: style.colors.cardInCardBorder, width: 1),
+        borderRadius: BorderRadius.circular(Style.radii.medium),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -33,7 +34,11 @@ class PupilMiniCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
-              children: [_buildNameRow(), const Gap(8), _buildBadgesRow()],
+              children: [
+                _buildNameRow(context),
+                const Gap(8),
+                _buildBadgesRow(context),
+              ],
             ),
           ),
         ],
@@ -41,27 +46,32 @@ class PupilMiniCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNameRow() {
+  Widget _buildNameRow(BuildContext context) {
+    final style = Style.of(context);
     return Row(
       children: [
         Text(
           pupil.firstName,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: _fontSize,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: style.colors.foreground,
           ),
         ),
         const Gap(6),
         Text(
           pupil.lastName,
-          style: const TextStyle(fontSize: _fontSize, color: Colors.black),
+          style: TextStyle(
+            fontSize: _fontSize,
+            color: style.colors.foreground,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildBadgesRow() {
+  Widget _buildBadgesRow(BuildContext context) {
+    final style = Style.of(context);
     return Row(
       children: [
         // 1. Learning group
@@ -76,14 +86,14 @@ class PupilMiniCard extends StatelessWidget {
             width: _badgeSize + 4,
             height: _badgeSize + 4,
             decoration: BoxDecoration(
-              color: AppColors.afterSchoolCardeColor,
+              color: style.colors.ogsColor,
               shape: BoxShape.circle,
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 'OGS',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: style.colors.background,
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
@@ -102,14 +112,14 @@ class PupilMiniCard extends StatelessWidget {
                   PupilProxyHelper.hasLanguageSupport(
                     pupil.migrationSupportEnds,
                   )
-                  ? Colors.green
-                  : Colors.grey,
+                  ? style.colors.success
+                  : style.colors.mutedForeground,
               shape: BoxShape.circle,
             ),
-            child: const Center(
+            child: Center(
               child: Icon(
                 Icons.language_rounded,
-                color: Colors.white,
+                color: style.colors.background,
                 size: _badgeSize + 4,
               ),
             ),
@@ -122,15 +132,15 @@ class PupilMiniCard extends StatelessWidget {
             width: _badgeSize + 4,
             height: _badgeSize + 4,
             decoration: BoxDecoration(
-              color: AppColors.accentColor,
+              color: style.colors.accent,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 'FE\n${pupil.latestSupportLevel!.level}',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: style.colors.background,
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   height: 1.1,
@@ -150,15 +160,15 @@ class PupilMiniCard extends StatelessWidget {
                   width: _badgeSize + 4,
                   height: _badgeSize + 4,
                   decoration: BoxDecoration(
-                    color: AppColors.groupColor,
+                    color: style.colors.groupColor,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
                     child: Text(
                       need.replaceAll('ESE', 'ES'),
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: style.colors.background,
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
@@ -172,7 +182,7 @@ class PupilMiniCard extends StatelessWidget {
         if (pupil.specialInformation != null) ...[
           const Gap(6),
           Builder(
-            builder: (context) => InkWell(
+            builder: (context) => GestureDetector(
               onTap: () => specialInformationDialog(
                 context,
                 'Besondere Information',

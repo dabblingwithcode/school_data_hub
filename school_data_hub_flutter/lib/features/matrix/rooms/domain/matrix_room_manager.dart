@@ -31,6 +31,9 @@ class MatrixRoomManager {
   }
 
   void dispose() {
+    for (final room in _matrixRooms.value) {
+      room.dispose();
+    }
     _matrixRooms.dispose();
     _compulsoryRooms.dispose();
   }

@@ -5,7 +5,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
@@ -32,7 +32,7 @@ class AvatarAuthValues extends WatchingWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppColors.cardInCardColor,
+          color: Style.of(context).colors.cardInCard,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -42,13 +42,13 @@ class AvatarAuthValues extends WatchingWidget {
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: avatarAuth != null
-                    ? Colors.green.withValues(alpha: 0.1)
-                    : Colors.red.withValues(alpha: 0.1),
+                    ? Style.of(context).colors.success.withValues(alpha: 0.1)
+                    : Style.of(context).colors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Icon(
                 avatarAuth != null ? Icons.verified : Icons.cancel,
-                color: avatarAuth != null ? Colors.green : Colors.red,
+                color: avatarAuth != null ? Style.of(context).colors.success : Style.of(context).colors.error,
                 size: 20,
               ),
             ),
@@ -64,7 +64,7 @@ class AvatarAuthValues extends WatchingWidget {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.backgroundColor,
+                      color: Style.of(context).colors.accent,
                     ),
                   ),
                   const Gap(4),
@@ -75,8 +75,8 @@ class AvatarAuthValues extends WatchingWidget {
                     style: TextStyle(
                       fontSize: 12,
                       color: avatarAuth != null
-                          ? Colors.green.withValues(alpha: 0.8)
-                          : Colors.red.withValues(alpha: 0.8),
+                          ? Style.of(context).colors.success.withValues(alpha: 0.8)
+                          : Style.of(context).colors.error.withValues(alpha: 0.8),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -85,7 +85,7 @@ class AvatarAuthValues extends WatchingWidget {
             ),
 
             // Document Image
-            InkWell(
+            GestureDetector(
               onTap: () async {
                 final File? file = await createAndCropImageFile(context);
                 if (file == null) return;
@@ -115,14 +115,12 @@ class AvatarAuthValues extends WatchingWidget {
                   'Die Einwilligung wurde geändert!',
                 );
               },
-              borderRadius: BorderRadius.circular(8),
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: AppColors.backgroundColor.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: AppColors.backgroundColor.withValues(alpha: 0.1),
+                  color: Style.of(context).colors.accent.withValues(alpha: 0.05),
+                      border: Border.all(
+                    color: Style.of(context).colors.accent.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -135,14 +133,14 @@ class AvatarAuthValues extends WatchingWidget {
                         height: 50,
                         width: 50,
                         decoration: BoxDecoration(
-                          color: AppColors.backgroundColor.withValues(
+                          color: Style.of(context).colors.accent.withValues(
                             alpha: 0.1,
                           ),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Icon(
                           Icons.add_a_photo,
-                          color: AppColors.backgroundColor.withValues(
+                          color: Style.of(context).colors.accent.withValues(
                             alpha: 0.6,
                           ),
                           size: 24,

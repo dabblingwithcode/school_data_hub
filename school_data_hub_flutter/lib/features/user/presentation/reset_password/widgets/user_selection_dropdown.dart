@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/picker.dart';
 
 class UserSelectionDropdown extends StatelessWidget {
   final User? selectedUser;
@@ -16,31 +16,13 @@ class UserSelectionDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.backgroundColor, width: 2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<User>(
-          value: selectedUser,
-          hint: const Text('Benutzer auswählen...'),
-          isExpanded: true,
-          items:
-              users.map((User user) {
-                return DropdownMenuItem<User>(
-                  value: user,
-                  child: Text(
-                    '${user.userInfo?.fullName ?? 'Unbekannt'} (${user.userInfo?.userName ?? 'N/A'})',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                );
-              }).toList(),
-          onChanged: onUserChanged,
-        ),
-      ),
+    return Picker<User>(
+      label: 'Benutzer auswählen',
+      value: selectedUser,
+      items: users,
+      itemLabel: (user) =>
+          '${user.userInfo?.fullName ?? 'Unbekannt'} (${user.userInfo?.userName ?? 'N/A'})',
+      onChanged: (user) => onUserChanged(user),
     );
   }
 }

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goal_batches.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/support_goals_list.dart';
@@ -22,84 +23,78 @@ class LearningSupportCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tileController = createOnce(() => CustomExpansionTileController());
+    final tileController = createOnce(() => ExpansionController());
 
-    return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 1.0,
-      margin: const EdgeInsets.only(
-        left: 4.0,
-        right: 4.0,
-        top: 4.0,
-        bottom: 4.0,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AvatarWithBadges(pupil: pupil, size: 80),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Gap(10),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: InkWell(
-                              onTap: () {
-                                di<BottomNavManager>().setPupilProfileNavPage(
-                                  ProfileNavigationState.learningSupport.value,
-                                );
-                                Navigator.of(context).push<void>(
-                                  MaterialPageRoute<void>(
-                                    builder: (ctx) =>
-                                        PupilProfilePage(pupil: pupil),
-                                  ),
-                                );
-                              },
-                              child: _LearningSupportNameRow(pupil: pupil),
+    return Padding(
+      padding: EdgeInsets.all(Style.spacing.xs),
+      child: CardBox(
+        padding: EdgeInsets.all(Style.spacing.sm),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AvatarWithBadges(pupil: pupil, size: 80),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Gap(Style.spacing.md),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: GestureDetector(
+                                onTap: () {
+                                  di<BottomNavManager>().setPupilProfileNavPage(
+                                    ProfileNavigationState.learningSupport.value,
+                                  );
+                                  Navigator.of(context).push<void>(
+                                    MaterialPageRoute<void>(
+                                      builder: (ctx) =>
+                                          PupilProfilePage(pupil: pupil),
+                                    ),
+                                  );
+                                },
+                                child: _LearningSupportNameRow(pupil: pupil),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    _MigrationSupportEndsRow(pupil: pupil),
-                    const Gap(15),
-                    _SupportGoalBatchesRow(
-                      pupil: pupil,
-                      tileController: tileController,
-                    ),
-                  ],
+                        ],
+                      ),
+                      _MigrationSupportEndsRow(pupil: pupil),
+                      Gap(Style.spacing.lg),
+                      _SupportGoalBatchesRow(
+                        pupil: pupil,
+                        tileController: tileController,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const Gap(8),
-              _SupportLevelDisplay(
-                pupil: pupil,
-                tileController: tileController,
-              ),
-              const Gap(15),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(5),
-            child: CustomExpansionTileContent(
-              title: null,
-              tileController: tileController,
-              widgetList: [SupportGoalsList(pupil: pupil)],
+                Gap(Style.spacing.sm),
+                _SupportLevelDisplay(
+                  pupil: pupil,
+                  tileController: tileController,
+                ),
+                Gap(Style.spacing.lg),
+              ],
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.all(Style.spacing.xs),
+              child: ExpansionBody(
+                title: null,
+                tileController: tileController,
+                widgetList: [SupportGoalsList(pupil: pupil)],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -122,25 +117,17 @@ class _LearningSupportNameRow extends WatchingWidget {
           overflow: TextOverflow.fade,
           softWrap: false,
           textAlign: TextAlign.left,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
+          style: context.typography.title,
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Text(
           lastName,
           overflow: TextOverflow.fade,
           softWrap: false,
           textAlign: TextAlign.left,
-          style: const TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-            fontSize: 18,
-          ),
+          style: context.typography.title.w400,
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
       ],
     );
   }
@@ -180,7 +167,7 @@ class _MigrationSupportEndsRow extends WatchingWidget {
 /// Rebuilds only when [pupil.supportCategoryStatuses] changes.
 class _SupportGoalBatchesRow extends WatchingWidget {
   final PupilProxy pupil;
-  final CustomExpansionTileController tileController;
+  final ExpansionController tileController;
 
   const _SupportGoalBatchesRow({
     required this.pupil,
@@ -198,7 +185,7 @@ class _SupportGoalBatchesRow extends WatchingWidget {
     }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: InkWell(
+      child: GestureDetector(
         onTap: () => tileController.toggle(),
         child: SupportGoalBatches(pupil: pupil),
       ),
@@ -210,7 +197,7 @@ class _SupportGoalBatchesRow extends WatchingWidget {
 /// [pupil.specialNeeds], or current semester changes.
 class _SupportLevelDisplay extends WatchingWidget {
   final PupilProxy pupil;
-  final CustomExpansionTileController tileController;
+  final ExpansionController tileController;
 
   const _SupportLevelDisplay({
     required this.pupil,
@@ -219,6 +206,7 @@ class _SupportLevelDisplay extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final latestSupportLevel = watchPropertyValue(
       (m) => m.latestSupportLevel,
       target: pupil,
@@ -245,10 +233,10 @@ class _SupportLevelDisplay extends WatchingWidget {
         learningSupportPlans.isNotEmpty &&
         learningSupportPlans.last.schoolSemester?.id == currentSemester?.id;
     final levelColor = isCurrentSemester
-        ? AppColors.successButtonColor
+        ? style.colors.success
         : (latestSupportLevel != null && latestSupportLevel.level != 0)
-        ? AppColors.cancelButtonColor
-        : AppColors.backgroundColor;
+        ? style.colors.error
+        : style.colors.accent;
     final specialNeedsText = specialNeeds != null && specialNeeds.isNotEmpty
         ? (specialNeeds.length >= 2
               ? '${specialNeeds.first} ${specialNeeds.last}'
@@ -257,13 +245,13 @@ class _SupportLevelDisplay extends WatchingWidget {
               : specialNeeds.first)
         : '';
 
-    return InkWell(
+    return GestureDetector(
       onTap: () => tileController.toggle(),
       onLongPress: () =>
           supportLevelDialog(context, pupil, latestSupportLevel?.level),
       child: Column(
         children: [
-          const Gap(20),
+          Gap(Style.spacing.xl),
           const Text('Ebene'),
           Center(
             child: Text(
@@ -280,7 +268,7 @@ class _SupportLevelDisplay extends WatchingWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
-              color: AppColors.groupColor,
+              color: style.colors.groupColor,
             ),
           ),
         ],

@@ -5,7 +5,7 @@ import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/buttons_switches/round_button_switch.dart';
+import 'package:school_data_hub_flutter/common/widgets/buttons_switches/icon_toggle.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/filters/school_list_filter_manager.dart';
@@ -72,7 +72,7 @@ class SchoolListsPage extends WatchingWidget {
                         ),
                       ),
                       const Spacer(),
-                      RoundButtonSwitch(
+                      IconToggle(
                         icon: Icons.school_rounded,
                         isActive:
                             filterState[SchoolListFilter.publicLists] ?? false,
@@ -85,7 +85,7 @@ class SchoolListsPage extends WatchingWidget {
                         iconSize: 20,
                       ),
                       const Gap(5),
-                      RoundButtonSwitch(
+                      IconToggle(
                         icon: Icons.person_rounded,
                         isActive:
                             filterState[SchoolListFilter.myLists] ?? false,
@@ -98,7 +98,7 @@ class SchoolListsPage extends WatchingWidget {
                         iconSize: 20,
                       ),
                       const Gap(5),
-                      RoundButtonSwitch(
+                      IconToggle(
                         icon: Icons.people_rounded,
                         isActive:
                             filterState[SchoolListFilter.otherLists] ?? false,

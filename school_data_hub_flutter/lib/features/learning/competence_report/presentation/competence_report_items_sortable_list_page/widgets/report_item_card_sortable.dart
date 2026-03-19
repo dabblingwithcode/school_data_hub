@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_reorderable_list_view.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/reorderable_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_items_sortable_list_page/widgets/report_item_leaf_card_sortable.dart';
 
@@ -99,7 +100,7 @@ class _ReportItemCardSortableState extends State<ReportItemCardSortable> {
     } else {
       return Padding(
         key: ValueKey(publicId),
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs),
         child: ReportItemLeafCardSortable(
           index: index,
           item: item,
@@ -111,81 +112,78 @@ class _ReportItemCardSortableState extends State<ReportItemCardSortable> {
 
   @override
   Widget build(BuildContext context) {
-    final expansionController = createOnce(
-      () => CustomExpansionTileController(),
-    );
+    final expansionController = createOnce(() => ExpansionController());
     final isExpanded = watch(expansionController.isExpanded).value;
     final isRoot = widget.item.parentItem == null;
+    final style = Style.of(context);
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: isRoot ? 3 : 0),
-      child: Card(
-        color: AppColors.backgroundColor,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        clipBehavior: Clip.antiAlias,
-        margin: EdgeInsets.zero,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Gap(10),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () =>
-                          widget.navigateToPostOrPatch(item: widget.item),
-                      onLongPress: () => widget.navigateToPostOrPatch(
-                        parentItemId: widget.item.publicId,
-                      ),
-                      child: Text(
-                        widget.item.name,
-                        maxLines: 4,
-                        softWrap: true,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: isRoot ? 20 : 16,
+      child: CardBox(
+        padding: EdgeInsets.zero,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: style.colors.accent,
+            borderRadius: BorderRadius.circular(Style.radii.medium),
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(Style.spacing.md),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Gap(Style.spacing.md),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () =>
+                            widget.navigateToPostOrPatch(item: widget.item),
+                        onLongPress: () => widget.navigateToPostOrPatch(
+                          parentItemId: widget.item.publicId,
+                        ),
+                        child: Text(
+                          widget.item.name,
+                          maxLines: 4,
+                          softWrap: true,
+                          textAlign: TextAlign.start,
+                          style: isRoot
+                              ? context.typography.title.withColor(style.colors.background)
+                              : context.typography.subtitle.bold.withColor(style.colors.background),
                         ),
                       ),
                     ),
-                  ),
-                  if (_childOrder.isNotEmpty) ...[
-                    CustomExpansionTileSwitch(
-                      customExpansionTileController: expansionController,
+                    if (_childOrder.isNotEmpty) ...[
+                      ExpansionHeader(expansionController: expansionController),
+                    ],
+                    if (isExpanded)
+                      const SizedBox(width: 36)
+                    else
+                      ReorderableDragStartListener(
+                        index: widget.index,
+                        child: Icon(
+                          Icons.drag_handle,
+                          color: style.colors.background.withValues(alpha: 0.7),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (_childOrder.isNotEmpty)
+                ExpansionBody(
+                  tileController: expansionController,
+                  widgetList: [
+                    ReorderableList(
+                      onReorder: _onReorder,
+                      children: [
+                        for (int i = 0; i < _childOrder.length; i++)
+                          _buildChildItem(i, _childOrder[i]),
+                      ],
                     ),
                   ],
-                  if (isExpanded)
-                    const SizedBox(width: 36)
-                  else
-                    ReorderableDragStartListener(
-                      index: widget.index,
-                      child: const Icon(
-                        Icons.drag_handle,
-                        color: Colors.white70,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            if (_childOrder.isNotEmpty)
-              CustomExpansionTileContent(
-                tileController: expansionController,
-                widgetList: [
-                  GenericReorderableListView(
-                    onReorder: _onReorder,
-                    children: [
-                      for (int i = 0; i < _childOrder.length; i++)
-                        _buildChildItem(i, _childOrder[i]),
-                    ],
-                  ),
-                ],
-              ),
-          ],
+                ),
+            ],
+          ),
         ),
       ),
     );

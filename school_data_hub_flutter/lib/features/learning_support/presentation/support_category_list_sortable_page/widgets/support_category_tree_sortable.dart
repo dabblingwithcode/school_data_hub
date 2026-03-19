@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_reorderable_list_view.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/reorderable_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/widgets/support_category_card_sortable.dart';
@@ -91,7 +92,7 @@ class _SupportCategoryTreeSortableState
     } else {
       return Padding(
         key: ValueKey('root_$categoryId'),
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs),
         child: SupportCategoryLeafCardSortable(
           index: index,
           category: category,
@@ -102,7 +103,7 @@ class _SupportCategoryTreeSortableState
 
   @override
   Widget build(BuildContext context) {
-    return GenericReorderableListView(
+    return ReorderableList(
       onReorder: _onReorder,
       children: [
         for (int i = 0; i < _rootOrder.length; i++)

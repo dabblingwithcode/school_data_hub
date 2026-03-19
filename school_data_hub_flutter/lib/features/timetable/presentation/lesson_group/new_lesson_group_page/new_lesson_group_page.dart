@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/lesson_group/new_lesson_group_page/widgets/action_buttons.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/lesson_group/new_lesson_group_page/widgets/color_picker_field.dart';
@@ -17,16 +16,17 @@ export 'widgets/color_picker_field.dart';
 export 'widgets/name_field.dart';
 export 'widgets/pupil_management_section.dart';
 
-class NewLessonGroupPage extends WatchingWidget {
+class NewLessonGroupScreen extends WatchingWidget {
   final LessonGroup? lessonGroup;
 
-  const NewLessonGroupPage({super.key, this.lessonGroup});
+  const NewLessonGroupScreen({super.key, this.lessonGroup});
 
   bool get _isEditing => lessonGroup != null;
 
   @override
   Widget build(BuildContext context) {
     final timetableManager = di<TimetableManager>();
+    final style = Style.of(context);
 
     // Create form key using createOnce
     final formKey = createOnce<GlobalKey<FormState>>(
@@ -63,23 +63,24 @@ class NewLessonGroupPage extends WatchingWidget {
     });
 
     return Scaffold(
+      backgroundColor: style.colors.canvas,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: AppColors.backgroundColor,
+        backgroundColor: style.colors.accent,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.group, size: 25, color: Colors.white),
-            const Gap(10),
+            Icon(Icons.group, size: 25, color: style.colors.background),
+            Gap(Style.spacing.md),
             Text(
               _isEditing ? 'Lerngruppe bearbeiten' : 'Neue Lerngruppe',
-              style: AppStyles.appBarTextStyle,
+              style: context.typography.title.withColor(style.colors.background),
             ),
           ],
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
@@ -91,7 +92,7 @@ class NewLessonGroupPage extends WatchingWidget {
                   children: <Widget>[
                     // Name field
                     NameField(controller: nameController),
-                    const Gap(20),
+                    Gap(Style.spacing.xl),
 
                     // Color picker field
                     ColorPickerField(
@@ -100,7 +101,7 @@ class NewLessonGroupPage extends WatchingWidget {
                         selectedColor.value = newColor;
                       },
                     ),
-                    const Gap(20),
+                    Gap(Style.spacing.xl),
 
                     // Pupil Management Section
                     PupilManagementSection(
@@ -111,7 +112,7 @@ class NewLessonGroupPage extends WatchingWidget {
                         selectedPupilIds.value = newPupilIds;
                       },
                     ),
-                    const Gap(32),
+                    Gap(Style.spacing.xxl),
 
                     // Action buttons
                     ActionButtons(

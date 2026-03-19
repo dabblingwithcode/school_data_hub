@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot/new_timetable_slot_page/new_timetable_slot_page.dart';
 
@@ -17,21 +18,25 @@ class TimetableSlotList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
+
     if (timetableSlots.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.schedule, size: 64, color: Colors.grey),
-            Gap(16),
+            Icon(Icons.schedule, size: 64, color: style.colors.mutedForeground),
+            Gap(Style.spacing.lg),
             Text(
               'Keine Zeitslots verfügbar',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+              style: context.typography.subtitle
+                  .withColor(style.colors.mutedForeground),
             ),
-            Gap(8),
+            Gap(Style.spacing.sm),
             Text(
               'Erstellen Sie Zeitslots um Unterrichtszeiten zu definieren',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              style: context.typography.body
+                  .withColor(style.colors.mutedForeground),
               textAlign: TextAlign.center,
             ),
           ],
@@ -57,44 +62,44 @@ class TimetableSlotList extends StatelessWidget {
         // Sort slots by start time
         slotsForDay.sort((a, b) => a.startTime.compareTo(b.startTime));
 
-        return Card(
-          margin: const EdgeInsets.only(bottom: 16),
-          child: ExpansionTile(
-            title: Row(
-              children: [
-                Icon(
-                  _getWeekdayIcon(weekday),
-                  color: _getWeekdayColor(weekday),
-                ),
-                const Gap(8),
-                Text(
-                  _getWeekdayName(weekday),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const Gap(8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
+        return Padding(
+          padding: EdgeInsets.only(bottom: Style.spacing.lg),
+          child: CardBox(
+            child: ExpansionTile(
+              title: Row(
+                children: [
+                  Icon(
+                    _getWeekdayIcon(weekday),
+                    color: _getWeekdayColor(weekday, style),
                   ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[100],
-                    borderRadius: BorderRadius.circular(12),
+                  Gap(Style.spacing.sm),
+                  Text(
+                    _getWeekdayName(weekday),
+                    style: context.typography.body.bold,
                   ),
-                  child: Text(
-                    '${slotsForDay.length} Slots',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.blue[800],
-                      fontWeight: FontWeight.w500,
+                  Gap(Style.spacing.sm),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Style.spacing.sm,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: style.colors.accent.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(Style.radii.medium),
+                    ),
+                    child: Text(
+                      '${slotsForDay.length} Slots',
+                      style: context.typography.bodySmall
+                          .withColor(style.colors.accent)
+                          .w500,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
+              children: slotsForDay
+                  .map((slot) => _buildSlotTile(context, slot))
+                  .toList(),
             ),
-            children: slotsForDay
-                .map((slot) => _buildSlotTile(context, slot))
-                .toList(),
           ),
         );
       },
@@ -102,30 +107,32 @@ class TimetableSlotList extends StatelessWidget {
   }
 
   Widget _buildSlotTile(BuildContext context, TimetableSlot slot) {
+    final style = Style.of(context);
+
     return ListTile(
       leading: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: Colors.green[100],
-          borderRadius: BorderRadius.circular(8),
+          color: style.colors.success.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(Style.radii.small),
         ),
-        child: Icon(Icons.access_time, color: Colors.green[700], size: 20),
+        child: Icon(Icons.access_time, color: style.colors.success, size: 20),
       ),
       title: Text(
         '${slot.startTime} - ${slot.endTime}',
-        style: const TextStyle(fontWeight: FontWeight.w500),
+        style: context.typography.body.w500,
       ),
       subtitle: Text('Slot ID: ${slot.id}'),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: const Icon(Icons.edit, color: Colors.blue),
+            icon: Icon(Icons.edit, color: style.colors.accent),
             onPressed: () => _editSlot(context, slot),
           ),
           IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
+            icon: Icon(Icons.delete, color: style.colors.error),
             onPressed: () => _deleteSlot(context, slot),
           ),
         ],
@@ -136,7 +143,7 @@ class TimetableSlotList extends StatelessWidget {
   void _editSlot(BuildContext context, TimetableSlot slot) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => NewTimetableSlotPage(
+        builder: (_) => NewTimetableSlotScreen(
           timetableManager: timetableManager,
           timetableSlot: slot,
         ),
@@ -145,6 +152,8 @@ class TimetableSlotList extends StatelessWidget {
   }
 
   void _deleteSlot(BuildContext context, TimetableSlot slot) {
+    final style = Style.of(context);
+
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -166,7 +175,7 @@ class TimetableSlotList extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: const Text('Zeitslot erfolgreich gelöscht.'),
-                      backgroundColor: AppColors.snackBarSuccessColor,
+                      backgroundColor: style.colors.success,
                     ),
                   );
                 }
@@ -175,13 +184,14 @@ class TimetableSlotList extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('Fehler beim Löschen: $e'),
-                      backgroundColor: AppColors.snackBarErrorColor,
+                      backgroundColor: style.colors.error,
                     ),
                   );
                 }
               }
             },
-            child: const Text('Löschen', style: TextStyle(color: Colors.red)),
+            child: Text('Löschen',
+                style: TextStyle(color: style.colors.error)),
           ),
         ],
       ),
@@ -203,18 +213,18 @@ class TimetableSlotList extends StatelessWidget {
     }
   }
 
-  Color _getWeekdayColor(Weekday weekday) {
+  Color _getWeekdayColor(Weekday weekday, Style style) {
     switch (weekday) {
       case Weekday.monday:
-        return Colors.red;
+        return style.colors.error;
       case Weekday.tuesday:
-        return Colors.orange;
+        return style.colors.warning;
       case Weekday.wednesday:
-        return Colors.yellow[700]!;
+        return style.colors.warning;
       case Weekday.thursday:
-        return Colors.green;
+        return style.colors.success;
       case Weekday.friday:
-        return Colors.blue;
+        return style.colors.accent;
     }
   }
 

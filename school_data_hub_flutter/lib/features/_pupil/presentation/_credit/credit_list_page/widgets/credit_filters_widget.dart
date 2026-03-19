@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 
 /// Credit-specific filter content (sort chips). Use inside
-/// [GenericFilterBottomSheet](children: [CommonPupilFiltersWidget(), CreditFiltersWidget()]).
+/// filter sheet with [CommonPupilFiltersWidget(), CreditFiltersWidget()].
 class CreditFiltersWidget extends WatchingWidget {
   const CreditFiltersWidget({super.key});
 
@@ -17,7 +17,7 @@ class CreditFiltersWidget extends WatchingWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Row(children: [Text('Sortieren', style: AppStyles.subtitle)]),
+        Row(children: [Text('Sortieren', style: context.typography.subtitle)]),
         const Gap(5),
         Wrap(
           spacing: 5,
@@ -62,7 +62,7 @@ class CreditFiltersWidget extends WatchingWidget {
             ),
           ],
         ),
-        const Gap(20),
+        Gap(Style.spacing.xl),
       ],
     );
   }

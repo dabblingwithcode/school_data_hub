@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/select_competence_page/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_page/widgets/learning_support_list_filter_bottom_sheet.dart';
 import 'package:flutter_it/flutter_it.dart';
@@ -16,12 +16,12 @@ class PupilMatrixContactsListBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         height: 60,
-        //padding: const EdgeInsets.all(15),
         shape: null,
-        color: AppColors.backgroundColor,
+        color: style.colors.accent,
         child: IconTheme(
           data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
           child: Row(
@@ -48,7 +48,9 @@ class PupilMatrixContactsListBottomNavBar extends StatelessWidget {
                 onLongPress: () => di<FiltersStateManager>().resetFilters(),
                 child: Icon(
                   Icons.filter_list,
-                  color: filtersOn ? Colors.deepOrange : Colors.white,
+                  color: filtersOn
+                      ? style.colors.warning
+                      : style.colors.background,
                   size: 30,
                 ),
               ),

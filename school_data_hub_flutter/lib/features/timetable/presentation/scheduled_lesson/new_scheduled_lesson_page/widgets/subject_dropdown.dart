@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_page/new_subject_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_utils.dart';
@@ -18,6 +19,7 @@ class SubjectDropdown extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final subjects = watchValue((TimetableManager m) => m.data.subjects);
 
     // Map the selected subject (possibly from a different instance) to the
@@ -52,7 +54,7 @@ class SubjectDropdown extends WatchingWidget {
                         shape: BoxShape.circle,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: Style.spacing.sm),
                     Text(subject.name),
                   ],
                 ),
@@ -67,12 +69,12 @@ class SubjectDropdown extends WatchingWidget {
             },
           ),
         ),
-        const SizedBox(width: 10),
-        InkWell(
+        SizedBox(width: Style.spacing.md),
+        GestureDetector(
           onTap: () async {
             final result = await Navigator.of(context).push<Subject>(
               MaterialPageRoute<Subject>(
-                builder: (context) => const NewSubjectPage(),
+                builder: (context) => const NewSubjectScreen(),
               ),
             );
 
@@ -80,7 +82,7 @@ class SubjectDropdown extends WatchingWidget {
               onSubjectChanged(result);
             }
           },
-          child: const Icon(Icons.add, color: Colors.blue),
+          child: Icon(Icons.add, color: style.colors.accent),
         ),
       ],
     );

@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class ActionButtons extends StatelessWidget {
   final bool isEditing;
@@ -20,28 +21,22 @@ class ActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ElevatedButton(
-          style: AppStyles.successButtonStyle,
+        Button(
           onPressed: onSave,
-          child: Text(
-            isEditing ? 'AKTUALISIEREN' : 'ERSTELLEN',
-            style: AppStyles.buttonTextStyle,
-          ),
+          label: isEditing ? 'AKTUALISIEREN' : 'ERSTELLEN',
         ),
-        const Gap(15),
-        ElevatedButton(
-          style: AppStyles.cancelButtonStyle,
+        Gap(Style.spacing.lg),
+        Button(
           onPressed: onCancel,
-          child: const Text('ABBRECHEN', style: AppStyles.buttonTextStyle),
+          label: 'ABBRECHEN',
+          variant: ButtonVariant.secondary,
         ),
         if (isEditing && onDelete != null) ...[
-          const Gap(15),
-          ElevatedButton(
-            style: AppStyles.cancelButtonStyle.copyWith(
-              backgroundColor: WidgetStateProperty.all(Colors.red),
-            ),
+          Gap(Style.spacing.lg),
+          Button(
             onPressed: onDelete,
-            child: const Text('LÖSCHEN', style: AppStyles.buttonTextStyle),
+            label: 'LÖSCHEN',
+            variant: ButtonVariant.destructive,
           ),
         ],
       ],

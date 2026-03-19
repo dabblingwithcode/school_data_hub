@@ -3,7 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/widgets/select_pupils_filter_bottom_sheet.dart';
@@ -24,6 +24,7 @@ class SelectPupilsSearchBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final locale = AppLocalizations.of(context)!;
     bool filtersOn = watchValue((FiltersStateManager x) => x.filtersActive);
 
@@ -46,12 +47,12 @@ class SelectPupilsSearchBar extends WatchingWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.canvasColor,
-        borderRadius: BorderRadius.circular(5.0),
+        color: style.colors.canvas,
+        borderRadius: BorderRadius.circular(Style.radii.small),
       ),
       child: Column(
         children: [
-          const Gap(5),
+          const Gap(4),
           Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10.0),
             child: Row(
@@ -59,32 +60,24 @@ class SelectPupilsSearchBar extends WatchingWidget {
               children: [
                 Text(
                   locale.shown,
-                  style: const TextStyle(color: Colors.black, fontSize: 13),
+                  style: context.typography.bodySmall,
                 ),
-                const Gap(10),
+                const Gap(12),
                 Text(
                   selectablePupils.length.toString(),
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
+                  style: context.typography.title,
                 ),
-                const Gap(15),
+                const Gap(16),
                 Text(
                   locale.selected,
-                  style: const TextStyle(color: Colors.black, fontSize: 13),
+                  style: context.typography.bodySmall,
                 ),
-                const Gap(5),
+                const Gap(4),
                 Text(
                   selectedPupils == null
                       ? '0'
                       : selectedPupils!.length.toString(),
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
+                  style: context.typography.title,
                 ),
               ],
             ),
@@ -101,14 +94,14 @@ class SelectPupilsSearchBar extends WatchingWidget {
                   return Chip(
                     label: Text(
                       filter.displayName,
-                      style: const TextStyle(fontSize: 12),
+                      style: context.typography.bodySmall,
                     ),
-                    backgroundColor: AppColors.interactiveColor,
-                    labelStyle: const TextStyle(color: Colors.white),
-                    deleteIcon: const Icon(
+                    backgroundColor: style.colors.interactive,
+                    labelStyle: TextStyle(color: style.colors.background),
+                    deleteIcon: Icon(
                       Icons.close,
                       size: 16,
-                      color: Colors.white,
+                      color: style.colors.background,
                     ),
                     onDeleted: () {
                       filter.toggle(false);
@@ -135,15 +128,16 @@ class SelectPupilsSearchBar extends WatchingWidget {
                     onResetFilters: _pupilsFilter.resetFilters,
                   ),
                 ),
-                InkWell(
+                GestureDetector(
                   onTap: () => showSelectPupilsFilterBottomSheet(context),
                   onLongPress: () => _pupilsFilter.resetFilters(),
-                  // onPressed: () => showBottomSheetFilters(context),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Icon(
                       Icons.filter_list,
-                      color: filtersOn ? Colors.deepOrange : Colors.grey,
+                      color: filtersOn
+                          ? Colors.deepOrange
+                          : style.colors.mutedForeground,
                       size: 30,
                     ),
                   ),

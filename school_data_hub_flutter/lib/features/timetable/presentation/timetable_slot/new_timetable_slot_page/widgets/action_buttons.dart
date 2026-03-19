@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class ActionButtons extends StatelessWidget {
   final VoidCallback onSave;
@@ -18,44 +19,22 @@ class ActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.successButtonColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-            onPressed: onSave,
-            child: const Text('SPEICHERN'),
-          ),
+        Button(
+          label: 'SPEICHERN',
+          onPressed: onSave,
         ),
-        const Gap(15),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.cancelButtonColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
-            onPressed: onCancel,
-            child: const Text('ABBRECHEN'),
-          ),
+        Gap(Style.spacing.lg),
+        Button(
+          label: 'ABBRECHEN',
+          variant: ButtonVariant.secondary,
+          onPressed: onCancel,
         ),
         if (onDelete != null) ...[
-          const Gap(15),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.dangerButtonColor,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              onPressed: onDelete,
-              child: const Text('LÖSCHEN'),
-            ),
+          Gap(Style.spacing.lg),
+          Button(
+            label: 'LÖSCHEN',
+            variant: ButtonVariant.destructive,
+            onPressed: onDelete,
           ),
         ],
       ],

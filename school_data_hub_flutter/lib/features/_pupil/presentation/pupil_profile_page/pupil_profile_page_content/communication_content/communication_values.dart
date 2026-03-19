@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 
@@ -24,9 +24,8 @@ class CommunicationValues extends StatelessWidget {
                 PupilProxyHelper.communicationPredicate(
                   communicationSkills?.understanding,
                 ),
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.interactiveColor,
+                style: context.typography.subtitle.withColor(
+                  Style.of(context).colors.interactive,
                 ),
               ),
             ],
@@ -41,9 +40,8 @@ class CommunicationValues extends StatelessWidget {
                 PupilProxyHelper.communicationPredicate(
                   communicationSkills?.speaking,
                 ),
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.interactiveColor,
+                style: context.typography.subtitle.withColor(
+                  Style.of(context).colors.interactive,
                 ),
               ),
             ],
@@ -58,9 +56,8 @@ class CommunicationValues extends StatelessWidget {
                 PupilProxyHelper.communicationPredicate(
                   communicationSkills?.reading,
                 ),
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.interactiveColor,
+                style: context.typography.subtitle.withColor(
+                  Style.of(context).colors.interactive,
                 ),
               ),
             ],
@@ -72,7 +69,9 @@ class CommunicationValues extends StatelessWidget {
               children: [
                 Text(
                   'Erstellt von ${communicationSkills!.createdBy} am ${communicationSkills!.createdAt.formatDateForUser()}',
-                  style: const TextStyle(fontSize: 12.0, color: Colors.grey),
+                  style: context.typography.bodySmall.withColor(
+                    Style.of(context).colors.mutedForeground,
+                  ),
                 ),
               ],
             ),

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_room_edit_screen/matrix_room_edit_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_room_edit_page/matrix_room_edit_page.dart';
 
 List<String> _toMediaThumbnailUrls({
   required String? avatarUrl,
@@ -65,7 +65,7 @@ Future<int?> selectPowerLevelByIconDialog({
         style: OutlinedButton.styleFrom(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           side: BorderSide(
-            color: isSelected ? AppColors.backgroundColor : Colors.grey,
+            color: isSelected ? Style.of(context).colors.accent : Colors.grey,
             width: isSelected ? 2 : 1,
           ),
           alignment: Alignment.centerLeft,
@@ -89,7 +89,7 @@ Future<int?> selectPowerLevelByIconDialog({
             levelOption(
               context: dialogContext,
               icon: Icons.remove_red_eye_outlined,
-              color: AppColors.groupColor,
+              color: Style.of(context).colors.groupColor,
               title: 'Leserechte',
               subtitle: 'Power Level 0',
               powerLevel: 0,
@@ -251,7 +251,7 @@ class MatrixUserRoomsListItem extends WatchingWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 builder: (ctx) =>
-                                    MatrixRoomEditPage(room: matrixRoom),
+                                    MatrixRoomEditScreen(room: matrixRoom),
                               ),
                             );
                           },
@@ -322,7 +322,7 @@ class MatrixUserRoomsListItem extends WatchingWidget {
                               : powerLevel >= 0
                               ? Icon(
                                   Icons.remove_red_eye_outlined,
-                                  color: AppColors.groupColor,
+                                  color: Style.of(context).colors.groupColor,
                                   size: 20,
                                 )
                               : const SizedBox.shrink(),

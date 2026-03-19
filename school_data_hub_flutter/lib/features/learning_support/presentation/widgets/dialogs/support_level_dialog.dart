@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -36,6 +36,7 @@ Future<void> supportLevelDialog(
           : '';
       return StatefulBuilder(
         builder: (context, setState) {
+          final style = Style.of(context);
           final hubSessionManager = di<HubSessionManager>();
           final notificationService = di<NotificationManager>();
           return AlertDialog(
@@ -44,25 +45,22 @@ Future<void> supportLevelDialog(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(Style.spacing.sm),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<int>(
                         onTap: () {
                           FocusManager.instance.primaryFocus!.unfocus();
                         },
                         value: dialogDropdownValue,
-                        items: const [
+                        items: [
                           DropdownMenuItem(
                             value: 0,
                             child: Center(
                               child: Text(
                                 "Förderebene 0",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
+                                style: context.typography.title
+                                    .withColor(style.colors.foreground),
                               ),
                             ),
                           ),
@@ -72,11 +70,8 @@ Future<void> supportLevelDialog(
                               child: Text(
                                 "Förderebene 1",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
+                                style: context.typography.title
+                                    .withColor(style.colors.foreground),
                               ),
                             ),
                           ),
@@ -86,11 +81,8 @@ Future<void> supportLevelDialog(
                               child: Text(
                                 "Förderebene 2",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
+                                style: context.typography.title
+                                    .withColor(style.colors.foreground),
                               ),
                             ),
                           ),
@@ -100,11 +92,8 @@ Future<void> supportLevelDialog(
                               child: Text(
                                 "Förderebene 3",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
+                                style: context.typography.title
+                                    .withColor(style.colors.foreground),
                               ),
                             ),
                           ),
@@ -114,11 +103,8 @@ Future<void> supportLevelDialog(
                               child: Text(
                                 "Regenbogenförderung",
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
+                                style: context.typography.title
+                                    .withColor(style.colors.foreground),
                               ),
                             ),
                           ),
@@ -131,7 +117,7 @@ Future<void> supportLevelDialog(
                       ),
                     ),
                   ),
-                  const Gap(10),
+                  Gap(Style.spacing.md),
                   GestureDetector(
                     onTap: () async {
                       final DateTime? picked = await showDatePicker(
@@ -148,14 +134,11 @@ Future<void> supportLevelDialog(
                     },
                     child: Text(
                       selectedDate.formatDateForUser(),
-                      style: TextStyle(
-                        color: AppColors.backgroundColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+                      style: context.typography.title
+                          .withColor(style.colors.accent),
                     ),
                   ),
-                  const Gap(10),
+                  Gap(Style.spacing.md),
                   TextFormField(
                     initialValue: textValue,
                     onChanged: (newTextValue) {
@@ -163,15 +146,12 @@ Future<void> supportLevelDialog(
                         textValue = newTextValue;
                       });
                     },
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Kommentar',
-                      labelStyle: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+                      labelStyle: context.typography.title
+                          .withColor(style.colors.foreground),
                       border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
+                        borderSide: BorderSide(color: style.colors.foreground),
                       ),
                     ),
                   ),
@@ -183,15 +163,12 @@ Future<void> supportLevelDialog(
             ),
             actions: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: InkWell(
+                padding: EdgeInsets.all(Style.spacing.lg),
+                child: GestureDetector(
                   child: Text(
                     'ABBRECHEN',
-                    style: TextStyle(
-                      color: AppColors.accentColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: context.typography.title
+                        .withColor(style.colors.accent),
                   ),
                   onTap: () async {
                     Navigator.of(context).pop();
@@ -199,15 +176,12 @@ Future<void> supportLevelDialog(
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: InkWell(
+                padding: EdgeInsets.all(Style.spacing.lg),
+                child: GestureDetector(
                   child: Text(
                     'OK',
-                    style: TextStyle(
-                      color: AppColors.accentColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: context.typography.title
+                        .withColor(style.colors.accent),
                   ),
                   onTap: () async {
                     if (textValue.isEmpty) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
@@ -12,10 +12,10 @@ import 'package:school_data_hub_flutter/features/matrix/users/presentation/selec
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/widgets/select_pupils_filter_bottom_sheet.dart';
 
-class SelectMatrixUsersListPage extends WatchingWidget {
+class SelectMatrixUsersListScreen extends WatchingWidget {
   final SelectMatrixUsersListController controller;
   final List<MatrixUser> filteredPupilsInLIst;
-  const SelectMatrixUsersListPage(
+  const SelectMatrixUsersListScreen(
     this.controller,
     this.filteredPupilsInLIst, {
     super.key,
@@ -23,6 +23,7 @@ class SelectMatrixUsersListPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final filtersOn = watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
     final List<MatrixUser> filteredUsers = watchValue(
       (MatrixPolicyFilterManager x) => x.filteredMatrixUsers,
@@ -31,25 +32,10 @@ class SelectMatrixUsersListPage extends WatchingWidget {
         .where((user) => controller.users!.contains(user))
         .toList();
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: AppBar(
-        leading: controller.isSelectMode
-            ? IconButton(
-                onPressed: () {
-                  controller.cancelSelect();
-                },
-                icon: const Icon(Icons.close),
-              )
-            : null,
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundColor,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Konten auswählen', style: AppStyles.appBarTextStyle),
-          ],
-        ),
+      backgroundColor: style.colors.canvas,
+      appBar: const AppHeader(
+        iconData: Icons.chat_rounded,
+        title: 'Konten auswählen',
       ),
       body: RefreshIndicator(
         onRefresh: () async => di<PupilProxyManager>().fetchAllPupils(),
@@ -83,13 +69,13 @@ class SelectMatrixUsersListPage extends WatchingWidget {
                     ),
                   ),
                   selectableUsers.isEmpty
-                      ? const SliverToBoxAdapter(
+                      ? SliverToBoxAdapter(
                           child: Center(
                             child: Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 'Keine Ergebnisse',
-                                style: TextStyle(fontSize: 18),
+                                style: context.typography.subtitle,
                               ),
                             ),
                           ),
@@ -124,8 +110,8 @@ class SelectMatrixUsersListPage extends WatchingWidget {
             icon: Icon(
               Icons.select_all_rounded,
               color: controller.isSelectAllMode
-                  ? Colors.deepOrange
-                  : Colors.white,
+                  ? style.colors.warning
+                  : style.colors.background,
               size: 30,
             ),
             onPressed: controller.toggleSelectAll,
@@ -134,7 +120,9 @@ class SelectMatrixUsersListPage extends WatchingWidget {
             tooltip: 'Okay',
             icon: Icon(
               Icons.check,
-              color: controller.isSelectMode ? Colors.green : Colors.white,
+              color: controller.isSelectMode
+                  ? style.colors.success
+                  : style.colors.background,
               size: 30,
             ),
             onPressed: () =>
@@ -144,14 +132,14 @@ class SelectMatrixUsersListPage extends WatchingWidget {
               controller.selectedUsers.isNotEmpty)
             IconButton(
               tooltip: 'Bulk-Credentials generieren',
-              icon: const Icon(Icons.print, color: Colors.orange, size: 30),
+              icon: Icon(Icons.print, color: style.colors.warning, size: 30),
               onPressed: () => controller.generateBulkCredentials(context),
             ),
           IconButton(
             tooltip: 'Filter',
             icon: Icon(
               Icons.filter_list,
-              color: filtersOn ? Colors.deepOrange : Colors.white,
+              color: filtersOn ? style.colors.warning : style.colors.background,
               size: 30,
             ),
             onPressed: () =>

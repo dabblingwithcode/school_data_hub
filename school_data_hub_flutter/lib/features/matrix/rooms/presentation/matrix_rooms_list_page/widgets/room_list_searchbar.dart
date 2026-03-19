@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/matrix_search_text_field.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
@@ -17,10 +17,11 @@ class RoomListSearchBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     bool filtersOn = watchValue((MatrixPolicyFilterManager x) => x.filtersOn);
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.canvasColor,
+        color: style.colors.canvas,
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
@@ -34,16 +35,13 @@ class RoomListSearchBar extends WatchingWidget {
                 children: [
                   Icon(
                     Icons.meeting_room_rounded,
-                    color: AppColors.backgroundColor,
+                    color: style.colors.accent,
                   ),
                   const Gap(10),
                   Text(
                     matrixRooms.length.toString(),
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+                    style: context.typography.title
+                        .withColor(style.colors.foreground),
                   ),
                 ],
               ),
@@ -69,7 +67,9 @@ class RoomListSearchBar extends WatchingWidget {
                     padding: const EdgeInsets.all(10.0),
                     child: Icon(
                       Icons.filter_list,
-                      color: filtersOn ? Colors.deepOrange : Colors.grey,
+                      color: filtersOn
+                          ? style.colors.error
+                          : style.colors.mutedForeground,
                       size: 30,
                     ),
                   ),

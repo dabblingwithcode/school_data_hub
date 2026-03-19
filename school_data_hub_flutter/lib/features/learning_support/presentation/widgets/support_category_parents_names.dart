@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_category_badge.dart';
 
@@ -39,11 +40,7 @@ class CategoryTreeAncestors extends StatelessWidget {
         ancestorNames.add(
           Text(
             currentCategory.name,
-            style: const TextStyle(
-              //color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
+            style: context.typography.body.bold,
           ),
         );
       }
@@ -59,11 +56,7 @@ class CategoryTreeAncestors extends StatelessWidget {
     ancestorNames.add(
       Text(
         currentCategory.name,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-          color: categoryColor,
-        ),
+        style: context.typography.title.withColor(categoryColor),
       ),
     );
 
@@ -71,7 +64,7 @@ class CategoryTreeAncestors extends StatelessWidget {
       children: [
         if (showBadge == true) ...[
           SupportCategoryBadge(categoryId: categoryId, size: 40.0),
-          const Gap(10),
+          Gap(Style.spacing.md),
         ],
 
         Expanded(

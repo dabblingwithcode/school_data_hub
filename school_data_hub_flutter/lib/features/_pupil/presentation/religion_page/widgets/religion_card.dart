@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 class ReligionCard extends WatchingWidget {
@@ -15,17 +17,8 @@ class ReligionCard extends WatchingWidget {
   Widget build(BuildContext context) {
     final filterStateManager = di<FiltersStateManager>();
     final mainMenuBottomNavManager = di<BottomNavManager>();
-    return Card(
-      color: Colors.white,
-      surfaceTintColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 1.0,
-      margin: const EdgeInsets.only(
-        left: 4.0,
-        right: 4.0,
-        top: 4.0,
-        bottom: 4.0,
-      ),
+    return CardBox(
+      padding: const EdgeInsets.all(4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +30,7 @@ class ReligionCard extends WatchingWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Gap(15),
+                const Gap(16),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -51,7 +44,7 @@ class ReligionCard extends WatchingWidget {
                               Expanded(
                                 child: SingleChildScrollView(
                                   scrollDirection: Axis.horizontal,
-                                  child: InkWell(
+                                  child: GestureDetector(
                                     onTap: () {
                                       filterStateManager.resetFilters();
                                       mainMenuBottomNavManager
@@ -70,25 +63,17 @@ class ReligionCard extends WatchingWidget {
                                           overflow: TextOverflow.fade,
                                           softWrap: false,
                                           textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                          ),
+                                          style: context.typography.subtitle.bold,
                                         ),
-                                        const Gap(5),
+                                        const Gap(4),
                                         Text(
                                           pupil.lastName,
                                           overflow: TextOverflow.fade,
                                           softWrap: false,
                                           textAlign: TextAlign.left,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 18,
-                                          ),
+                                          style: context.typography.subtitle,
                                         ),
-                                        const Gap(5),
+                                        const Gap(4),
                                       ],
                                     ),
                                   ),
@@ -101,19 +86,16 @@ class ReligionCard extends WatchingWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Text('Religion:'),
-                              const Gap(10),
+                              const Gap(12),
                               Flexible(
-                                child: InkWell(
+                                child: GestureDetector(
                                   onTap: () {},
                                   child: Text(
                                     pupil.religion ?? 'keine Angabe',
                                     overflow: TextOverflow.ellipsis,
                                     softWrap: true,
                                     maxLines: 3,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
+                                    style: context.typography.subtitle.bold,
                                   ),
                                 ),
                               ),
@@ -124,28 +106,25 @@ class ReligionCard extends WatchingWidget {
                     ),
                   ],
                 ),
-                const Gap(5),
+                const Gap(4),
                 Row(
                   children: [
                     const Text('Angemeldet seit:'),
-                    const Gap(10),
+                    const Gap(12),
                     Text(
                       pupil.religionLessonsSince != null
                           ? pupil.religionLessonsSince!.formatDateForUser()
                           : 'keine Angabe',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                      style: context.typography.subtitle.bold,
                     ),
                   ],
                 ),
                 if (pupil.religionLessonsCancelledAt != null) ...[
-                  const Gap(5),
+                  const Gap(4),
                   Row(
                     children: [
                       const Text('Abgemeldet am:'),
-                      const Gap(10),
+                      const Gap(12),
                       Text(
                         pupil.religionLessonsCancelledAt!.formatDateForUser(),
                       ),

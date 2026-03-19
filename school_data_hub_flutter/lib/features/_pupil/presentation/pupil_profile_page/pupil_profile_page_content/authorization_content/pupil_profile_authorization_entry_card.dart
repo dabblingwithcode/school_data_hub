@@ -5,14 +5,14 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/custom_checkbox_either_or.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/encrypted_document_image.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_authorizations/domain/authorization_manager.dart';
-import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorization_pupils_page/authorization_pupils_page.dart';
+import 'package:school_data_hub_flutter/features/_authorizations/presentation/authorization_pupils_screen/authorization_pupils_screen.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 class PupilProfileAuthorizationCard extends WatchingWidget {
@@ -49,12 +49,12 @@ class PupilProfileAuthorizationCard extends WatchingWidget {
                     Expanded(
                       child: Column(
                         children: [
-                          InkWell(
+                          GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute<void>(
                                   builder: (ctx) =>
-                                      AuthorizationPupilsPage(authorization),
+                                      AuthorizationPupilsScreen(authorization),
                                 ),
                               );
                             },
@@ -84,10 +84,8 @@ class PupilProfileAuthorizationCard extends WatchingWidget {
                                     scrollDirection: Axis.horizontal,
                                     child: Text(
                                       authorization.name,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.interactiveColor,
+                                      style: context.typography.title.bold.withColor(
+                                        Style.of(context).colors.interactive,
                                       ),
                                     ),
                                   ),
@@ -101,7 +99,7 @@ class PupilProfileAuthorizationCard extends WatchingWidget {
                               Flexible(
                                 child: Text(
                                   authorization.description,
-                                  style: const TextStyle(fontSize: 15),
+                                  style: context.typography.body,
                                 ),
                               ),
                               const Gap(5),
@@ -113,7 +111,7 @@ class PupilProfileAuthorizationCard extends WatchingWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        InkWell(
+                        GestureDetector(
                           onTap: () async {
                             final File? file = await createAndCropImageFile(
                               context,
@@ -164,26 +162,20 @@ class PupilProfileAuthorizationCard extends WatchingWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Text(
+                    Text(
                       'Kommentar',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: context.typography.body.bold,
                     ),
                     const Spacer(),
                     //- TO-DO BACKEND: model needs a modifedBy field
                     if (pupilAuthorization.createdBy != null)
                       Text(
                         pupilAuthorization.createdBy!,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: context.typography.title.bold,
                       ),
 
                     const Gap(15),
-                    const Icon(Icons.close, color: Colors.red),
+                    Icon(Icons.close, color: Style.of(context).colors.error),
                     CustomCheckboxEitherOr(
                       representedBoolValue: false, // Red/negative checkbox
                       currentStatus: pupilAuthorization.status,
@@ -197,7 +189,7 @@ class PupilProfileAuthorizationCard extends WatchingWidget {
                       },
                     ),
                     const Gap(10),
-                    const Icon(Icons.done, color: Colors.green),
+                    Icon(Icons.done, color: Style.of(context).colors.success),
                     CustomCheckboxEitherOr(
                       representedBoolValue: true, // Green/positive checkbox
                       currentStatus: pupilAuthorization.status,
@@ -211,8 +203,8 @@ class PupilProfileAuthorizationCard extends WatchingWidget {
                     ),
                   ],
                 ),
-                const Gap(5),
-                InkWell(
+                Gap(Style.spacing.xs),
+                GestureDetector(
                   onTap: () async {
                     final result = await longTextFieldDialog(
                       title: 'Kommentar',
@@ -238,12 +230,9 @@ class PupilProfileAuthorizationCard extends WatchingWidget {
                         textAlign: TextAlign.left,
                         TextSpan(
                           children: [
-                            const TextSpan(
+                            TextSpan(
                               text: 'Kommentar: ',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: context.typography.subtitle.bold,
                             ),
                             TextSpan(
                               text:

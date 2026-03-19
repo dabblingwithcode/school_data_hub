@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_documents_section.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
@@ -34,10 +35,10 @@ class SupportGoalCard extends WatchingWidget {
   Widget build(BuildContext context) {
     watch(pupil);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: EdgeInsets.only(bottom: Style.spacing.sm),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(25.0),
-        child: InkWell(
+        borderRadius: BorderRadius.circular(Style.radii.large),
+        child: GestureDetector(
           onLongPress: () async {
             final bool? delete = await confirmationDialog(
               context: context,
@@ -53,25 +54,23 @@ class SupportGoalCard extends WatchingWidget {
             }
             return;
           },
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            color: AppColors.cardInCardColor,
+          child: CardBox(
+            variant: CardBoxVariant.filledSecondary,
+            padding: EdgeInsets.zero,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Gap(5),
+                Gap(Style.spacing.xs),
                 if (showCategoryBadge)
                   _CategoryBadgeRow(pupil: pupil, goalIndex: goalIndex),
-                const Gap(5),
+                Gap(Style.spacing.xs),
                 _GoalDescriptionRow(pupil: pupil, goalIndex: goalIndex),
                 _StrategiesSection(pupil: pupil, goalIndex: goalIndex),
-                const Gap(5),
+                Gap(Style.spacing.xs),
                 _CreatedByRow(pupil: pupil, goalIndex: goalIndex),
-                const Gap(10),
+                Gap(Style.spacing.md),
                 _GoalChecksSection(pupil: pupil, goalIndex: goalIndex),
-                const Gap(10),
+                Gap(Style.spacing.md),
               ],
             ),
           ),
@@ -89,25 +88,26 @@ class _CategoryBadgeRow extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
+    final style = Style.of(context);
     final learningSupportManager = di<SupportCategoryManager>();
     final goal = pupil.supportGoals[goalIndex];
     final categoryId = goal.supportCategoryId;
 
     return Row(
       children: [
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Padding(
-          padding: const EdgeInsets.only(
-            top: 8.0,
-            bottom: 8,
-            left: 10,
-            right: 10,
+          padding: EdgeInsets.only(
+            top: Style.spacing.sm,
+            bottom: Style.spacing.sm,
+            left: Style.spacing.md,
+            right: Style.spacing.md,
           ),
           child: SupportCategoryBadge(categoryId: categoryId, size: 40),
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Expanded(
-          child: InkWell(
+          child: GestureDetector(
             onTap: () {
               final statuses =
                   pupil.supportCategoryStatuses
@@ -118,7 +118,7 @@ class _CategoryBadgeRow extends WatchingWidget {
                 context: context,
                 builder: (context) => Dialog(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+                    borderRadius: BorderRadius.circular(Style.radii.large),
                   ),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(
@@ -126,7 +126,7 @@ class _CategoryBadgeRow extends WatchingWidget {
                       maxHeight: 600,
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(Style.spacing.lg),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,7 +134,7 @@ class _CategoryBadgeRow extends WatchingWidget {
                           Row(
                             children: [
                               SupportCategoryBadge(categoryId: categoryId),
-                              const Gap(10),
+                              Gap(Style.spacing.md),
                               Flexible(
                                 child: Text(
                                   learningSupportManager
@@ -142,23 +142,20 @@ class _CategoryBadgeRow extends WatchingWidget {
                                       .name,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: context.typography.title,
                                 ),
                               ),
                             ],
                           ),
                           const Divider(),
                           if (statuses.isEmpty)
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: Style.spacing.lg),
                               child: Text(
                                 'Keine Status vorhanden',
-                                style: TextStyle(
+                                style: context.typography.body.copyWith(
                                   fontStyle: FontStyle.italic,
-                                  color: Colors.grey,
+                                  color: style.colors.mutedForeground,
                                 ),
                               ),
                             )
@@ -186,16 +183,14 @@ class _CategoryBadgeRow extends WatchingWidget {
               learningSupportManager.getSupportCategory(categoryId).name,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.interactiveColor,
+              style: context.typography.subtitle.bold.withColor(
+                style.colors.interactive,
               ),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 5, right: 10.0),
+          padding: EdgeInsets.only(left: Style.spacing.xs, right: Style.spacing.md),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -220,14 +215,15 @@ class _GoalDescriptionRow extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
+    final style = Style.of(context);
     final goal = pupil.supportGoals[goalIndex];
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Gap(15),
+        Gap(Style.spacing.lg),
         Expanded(
-          child: InkWell(
+          child: GestureDetector(
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
@@ -245,10 +241,8 @@ class _GoalDescriptionRow extends WatchingWidget {
               goal.description,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueGrey,
+              style: context.typography.title.withColor(
+                style.colors.mutedForeground,
               ),
             ),
           ),
@@ -271,20 +265,20 @@ class _CreatedByRow extends WatchingWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        const Text('Erstellt von:', style: TextStyle(fontSize: 12)),
-        const Gap(5),
+        Text('Erstellt von:', style: context.typography.bodySmall),
+        Gap(Style.spacing.xs),
         Text(
           goal.createdBy,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          style: context.typography.bodySmall.bold,
         ),
-        const Gap(5),
-        const Text('am', style: TextStyle(fontSize: 12)),
-        const Gap(5),
+        Gap(Style.spacing.xs),
+        Text('am', style: context.typography.bodySmall),
+        Gap(Style.spacing.xs),
         Text(
           goal.createdAt.toLocal().formatDateForUser(),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          style: context.typography.bodySmall.bold,
         ),
-        const Gap(10),
+        Gap(Style.spacing.md),
       ],
     );
   }
@@ -298,41 +292,41 @@ class _StrategiesSection extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
-    final tileController = createOnce(() => CustomExpansionTileController());
+    final tileController = createOnce(() => ExpansionController());
     final isExpanded = watch(tileController.isExpanded).value;
     final strategies = pupil.supportGoals[goalIndex].strategies;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InkWell(
+        GestureDetector(
           onTap: () => tileController.toggle(),
           child: Row(
             children: [
-              const Gap(15),
-              const Text(
+              Gap(Style.spacing.lg),
+              Text(
                 'Strategien',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                style: context.typography.body.bold,
               ),
               const Spacer(),
               Icon(
                 isExpanded ? Icons.expand_less : Icons.expand_more,
                 size: 30,
               ),
-              const Gap(10),
+              Gap(Style.spacing.md),
             ],
           ),
         ),
-        CustomExpansionTileContent(
+        ExpansionBody(
           tileController: tileController,
           widgetList: [
             Row(
               children: [
-                const Gap(15),
+                Gap(Style.spacing.lg),
                 Flexible(
-                  child: Text(strategies, style: const TextStyle(fontSize: 16)),
+                  child: Text(strategies, style: context.typography.subtitle),
                 ),
-                const Gap(10),
+                Gap(Style.spacing.md),
               ],
             ),
           ],
@@ -344,7 +338,7 @@ class _StrategiesSection extends WatchingWidget {
 
 /// Section displaying existing goal checks and a button to add new ones.
 ///
-/// Uses [CustomExpansionTileContent] to make the checks list collapsible.
+/// Uses [ExpansionBody] to make the checks list collapsible.
 /// The title row is always visible and acts as an expansion toggle.
 class _GoalChecksSection extends WatchingWidget {
   final PupilProxy pupil;
@@ -355,7 +349,8 @@ class _GoalChecksSection extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
-    final tileController = createOnce(() => CustomExpansionTileController());
+    final style = Style.of(context);
+    final tileController = createOnce(() => ExpansionController());
     final isExpanded = watch(tileController.isExpanded).value;
     final learningSupportManager = di<LearningSupportManager>();
     final goal = pupil.supportGoals[goalIndex];
@@ -364,7 +359,7 @@ class _GoalChecksSection extends WatchingWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InkWell(
+        GestureDetector(
           onTap: () => tileController.toggle(),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -373,27 +368,26 @@ class _GoalChecksSection extends WatchingWidget {
                 goalChecks.isEmpty
                     ? 'keine Ziel-Checks'
                     : '${goalChecks.length} Ziel-Checks  |  zuletzt am ${goalChecks.last.createdAt.toLocal().formatDateForUser()}',
-                style: TextStyle(
-                  fontSize: 12,
+                style: context.typography.bodySmall.copyWith(
                   fontWeight: goalChecks.isEmpty
                       ? FontWeight.normal
                       : FontWeight.bold,
                   color: goalChecks.isEmpty
-                      ? Colors.grey[400]
-                      : AppColors.interactiveColor,
+                      ? style.colors.mutedForeground
+                      : style.colors.interactive,
                 ),
               ),
-              const Gap(5),
+              Gap(Style.spacing.xs),
               Icon(
                 isExpanded ? Icons.expand_less : Icons.expand_more,
                 size: 30,
               ),
-              const Gap(10),
+              Gap(Style.spacing.md),
             ],
           ),
         ),
-        const Gap(8),
-        CustomExpansionTileContent(
+        Gap(Style.spacing.sm),
+        ExpansionBody(
           tileController: tileController,
           widgetList: [
             GenericAsyncActionButton(
@@ -415,15 +409,15 @@ class _GoalChecksSection extends WatchingWidget {
               buttonType: ButtonType.action,
             ),
 
-            const Gap(5),
+            Gap(Style.spacing.xs),
             if (goalChecks.isEmpty) ...[
-              const Padding(
-                padding: EdgeInsets.only(top: 15, left: 15, bottom: 8),
+              Padding(
+                padding: EdgeInsets.only(top: Style.spacing.lg, left: Style.spacing.lg, bottom: Style.spacing.sm),
                 child: Text(
                   'Noch keine Checks vorhanden',
-                  style: TextStyle(
+                  style: context.typography.body.copyWith(
                     fontStyle: FontStyle.italic,
-                    color: Colors.grey,
+                    color: style.colors.mutedForeground,
                   ),
                 ),
               ),
@@ -456,11 +450,12 @@ class _GoalCheckEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final learningSupportManager = di<LearningSupportManager>();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      child: InkWell(
+      padding: EdgeInsets.symmetric(horizontal: Style.spacing.md, vertical: Style.spacing.xs),
+      child: GestureDetector(
         onLongPress: () async {
           final delete = await confirmationDialog(
             context: context,
@@ -476,11 +471,11 @@ class _GoalCheckEntry extends StatelessWidget {
           }
         },
         child: Container(
-          padding: const EdgeInsets.all(10),
+          padding: EdgeInsets.all(Style.spacing.md),
           decoration: BoxDecoration(
-            color: AppColors.cardInCardColor,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.cardInCardBorderColor),
+            color: style.colors.cardInCard,
+            borderRadius: BorderRadius.circular(Style.radii.small),
+            border: Border.all(color: style.colors.cardInCardBorder),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,7 +484,7 @@ class _GoalCheckEntry extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Score icon
-                  const Gap(10),
+                  Gap(Style.spacing.md),
                   // Comment and metadata
                   Expanded(
                     child: Column(
@@ -497,26 +492,25 @@ class _GoalCheckEntry extends StatelessWidget {
                       children: [
                         Text(
                           check.comment,
-                          style: const TextStyle(fontSize: 14),
+                          style: context.typography.body,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const Gap(4),
+                        Gap(Style.spacing.xs),
                         Text(
                           '${check.createdBy} - ${check.createdAt.toLocal().formatDateForUser()}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
+                          style: context.typography.bodySmall.withColor(
+                            style.colors.mutedForeground,
                           ),
                         ),
                       ],
                     ),
                   ),
                   GrowthIcon(score: check.score, size: 40),
-                  const Gap(4),
+                  Gap(Style.spacing.xs),
                 ],
               ),
-              const Gap(8),
+              Gap(Style.spacing.sm),
               HubDocumentsSectionWidget(
                 documents: check.documents ?? [],
                 withSpacerToButtons: true,

@@ -122,7 +122,7 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
     final padding = widget._isSmall
         ? const EdgeInsets.symmetric(horizontal: 12)
         : const EdgeInsets.symmetric(horizontal: 16);
-    final fontSize = widget._isSmall ? 14.0 : 16.0;
+    final fontSize = widget._isSmall ? 14.0 : 18.0;
     final iconSize = widget._isSmall ? 18.0 : 20.0;
     final iconSpacing = widget._isSmall ? 6.0 : 8.0;
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_utils.dart';
 
 class LessonGroupListCard extends StatelessWidget {
@@ -16,8 +18,10 @@ class LessonGroupListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+    final style = Style.of(context);
+    return CardBox(
+      padding: EdgeInsets.all(Style.spacing.sm),
+      onTap: onEdit,
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: lessonGroup.color != null
@@ -27,8 +31,8 @@ class LessonGroupListCard extends StatelessWidget {
             lessonGroup.name.isNotEmpty
                 ? lessonGroup.name[0].toUpperCase()
                 : '?',
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: style.colors.background,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -39,24 +43,23 @@ class LessonGroupListCard extends StatelessWidget {
         ),
         subtitle: Text(
           'Mitglieder: ${lessonGroup.memberships?.length ?? 0}',
-          style: TextStyle(color: Colors.grey.shade600),
+          style: TextStyle(color: style.colors.mutedForeground),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blue),
+              icon: Icon(Icons.edit, color: style.colors.accent),
               onPressed: onEdit,
               tooltip: 'Bearbeiten',
             ),
             IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
+              icon: Icon(Icons.delete, color: style.colors.error),
               onPressed: onDelete,
               tooltip: 'Löschen',
             ),
           ],
         ),
-        onTap: onEdit,
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
@@ -12,7 +12,7 @@ class ReligionFilterBottomSheet extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     return const Column(
-      children: [CommonPupilFiltersWidget(), Gap(10), ReligionFiltersSection()],
+      children: [CommonPupilFiltersWidget(), Gap(12), ReligionFiltersSection()],
     );
   }
 }
@@ -26,8 +26,12 @@ class ReligionFiltersSection extends WatchingWidget {
 
     return Column(
       children: [
-        const Row(children: [Text('Religion', style: AppStyles.subtitle)]),
-        const Gap(5),
+        Row(
+          children: [
+            Text('Religion', style: context.typography.subtitle),
+          ],
+        ),
+        const Gap(4),
         Wrap(
           spacing: 5,
           crossAxisAlignment: WrapCrossAlignment.center,

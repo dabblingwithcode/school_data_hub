@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/attendance_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/book_lending_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/chart_page_bottom_bar.dart';
@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/c
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/event_stats_view.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_page/widgets/pupil_stats_view.dart';
 
-class ChartPage extends WatchingWidget {
+class ChartScreen extends WatchingWidget {
   final Map<
     DateTime,
     ({
@@ -41,7 +41,7 @@ class ChartPage extends WatchingWidget {
   creditTransactionsChartData;
   final List<Schoolday> schooldays;
 
-  const ChartPage({
+  const ChartScreen({
     super.key,
     required this.chartData,
     required this.eventChartData,
@@ -59,6 +59,7 @@ class ChartPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final selectedIndex = createOnce<ValueNotifier<int>>(
       () => ValueNotifier<int>(0),
     );
@@ -66,19 +67,19 @@ class ChartPage extends WatchingWidget {
 
     if (schooldays.isEmpty) {
       return Scaffold(
-        backgroundColor: AppColors.canvasColor,
-        appBar: const GenericAppBar(
+        backgroundColor: style.colors.canvas,
+        appBar: const AppHeader(
           iconData: Icons.bar_chart_rounded,
           title: 'Statistik Diagramm',
         ),
         body: const Center(child: Text('Keine Daten verfügbar')),
-        bottomNavigationBar: const GenericBottomNavBar(),
+        bottomNavigationBar: const ActionBar(),
       );
     }
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: const GenericAppBar(
+      backgroundColor: style.colors.canvas,
+      appBar: const AppHeader(
         iconData: Icons.bar_chart_rounded,
         title: 'Statistik Diagramm',
       ),

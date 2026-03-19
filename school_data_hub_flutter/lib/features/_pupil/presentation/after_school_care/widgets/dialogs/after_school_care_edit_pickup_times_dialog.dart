@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
@@ -62,25 +63,25 @@ Future<void> afterSchoolCareEditPickUpTimesDialog(
                   mondayTimeController,
                   mondayModalityController,
                 ),
-                const Gap(10),
+                Gap(Style.spacing.md),
                 _buildDayRow(
                   'Dienstag',
                   tuesdayTimeController,
                   tuesdayModalityController,
                 ),
-                const Gap(10),
+                Gap(Style.spacing.md),
                 _buildDayRow(
                   'Mittwoch',
                   wednesdayTimeController,
                   wednesdayModalityController,
                 ),
-                const Gap(10),
+                Gap(Style.spacing.md),
                 _buildDayRow(
                   'Donnerstag',
                   thursdayTimeController,
                   thursdayModalityController,
                 ),
-                const Gap(10),
+                Gap(Style.spacing.md),
                 _buildDayRow(
                   'Freitag',
                   fridayTimeController,
@@ -97,8 +98,8 @@ Future<void> afterSchoolCareEditPickUpTimesDialog(
             },
             child: const Text('ABBRECHEN'),
           ),
-          ElevatedButton(
-            style: AppStyles.successButtonStyle,
+          Button(
+            variant: ButtonVariant.primary,
             onPressed: () async {
               if (!formKey.currentState!.validate()) {
                 return;
@@ -153,7 +154,7 @@ Future<void> afterSchoolCareEditPickUpTimesDialog(
                 Navigator.of(dialogContext).pop();
               }
             },
-            child: const Text('SPEICHERN', style: AppStyles.buttonTextStyle),
+            label: 'SPEICHERN',
           ),
         ],
       );
@@ -192,7 +193,7 @@ Widget _buildDayRow(
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
       ),
-      const Gap(10),
+      Gap(Style.spacing.md),
       Expanded(
         flex: 2,
         child: TextFormField(
@@ -216,7 +217,7 @@ Widget _buildDayRow(
           },
         ),
       ),
-      const Gap(10),
+      Gap(Style.spacing.md),
       Expanded(
         flex: 3,
         child: TextFormField(

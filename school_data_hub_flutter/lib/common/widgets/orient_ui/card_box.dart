@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'style.dart';
 
-enum CardBoxVariant { bordered, filled }
+enum CardBoxVariant { bordered, filled, filledSecondary, filledWarning }
 
 class CardBox extends StatelessWidget {
   final Widget child;
@@ -29,6 +29,14 @@ class CardBox extends StatelessWidget {
       ),
       CardBoxVariant.filled => BoxDecoration(
         color: colors.surfaceContainer,
+        borderRadius: BorderRadius.circular(Style.radii.medium),
+      ),
+      CardBoxVariant.filledSecondary => BoxDecoration(
+        color: colors.surfaceSecondaryContainer,
+        borderRadius: BorderRadius.circular(Style.radii.medium),
+      ),
+      CardBoxVariant.filledWarning => BoxDecoration(
+        color: colors.surfaceWarningContainer,
         borderRadius: BorderRadius.circular(Style.radii.medium),
       ),
     };

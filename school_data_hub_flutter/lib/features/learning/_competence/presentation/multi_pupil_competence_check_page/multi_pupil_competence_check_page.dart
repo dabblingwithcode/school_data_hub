@@ -3,31 +3,34 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/generate_uuid.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_button.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_list.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_sliver_search_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/filter_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/content_sliver_list.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/sliver_search_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/search_row.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/filter_sheet.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_search_bar_with_stats.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/credit_list_search_bar_stats.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/multi_pupil_competence_check_page/widgets/competence_parents_names_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/multi_pupil_competence_check_page/widgets/multi_pupil_competence_check_card.dart';
 
-class MultiPupilCompetenceCheckPage extends WatchingWidget {
+class MultiPupilCompetenceCheckScreen extends WatchingWidget {
   final Competence competence;
 
-  const MultiPupilCompetenceCheckPage({required this.competence, super.key});
+  const MultiPupilCompetenceCheckScreen({required this.competence, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
+
     // Create local observables once - auto-disposed when widget is destroyed
     final groupCheckNameController = createOnce(() => TextEditingController());
     final groupCheckNameNotifier = createOnce(() => ValueNotifier<String>(''));
@@ -50,8 +53,8 @@ class MultiPupilCompetenceCheckPage extends WatchingWidget {
     competenceFilteredPupilsListenable.value = competenceFilteredPupils;
 
     return Scaffold(
-      backgroundColor: AppColors.canvasColor,
-      appBar: const GenericAppBar(
+      backgroundColor: style.colors.canvas,
+      appBar: const AppHeader(
         title: 'Kompetenz dokumentieren',
         iconData: Icons.group_add_rounded,
       ),
@@ -63,16 +66,16 @@ class MultiPupilCompetenceCheckPage extends WatchingWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(5.0),
+                  padding: EdgeInsets.all(Style.spacing.xs),
                   child: Container(
                     decoration: BoxDecoration(
                       color: CompetenceHelper.getCompetenceColor(
                         competence.publicId,
                       ),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(Style.radii.medium),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(5.0),
+                      padding: EdgeInsets.all(Style.spacing.xs),
                       child: Row(
                         children: [
                           Expanded(
@@ -81,6 +84,7 @@ class MultiPupilCompetenceCheckPage extends WatchingWidget {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 ...competenceTreeAncestorsNames(
+                                  context: context,
                                   competenceId: competence.publicId,
                                   categoryColor:
                                       CompetenceHelper.getCompetenceColor(
@@ -96,9 +100,9 @@ class MultiPupilCompetenceCheckPage extends WatchingWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10.0,
-                    vertical: 5.0,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Style.spacing.md,
+                    vertical: Style.spacing.xs,
                   ),
                   child: TextField(
                     controller: groupCheckNameController,
@@ -107,27 +111,26 @@ class MultiPupilCompetenceCheckPage extends WatchingWidget {
                     },
                     decoration: InputDecoration(
                       labelText: 'Gruppenname (optional)',
-                      hintText: 'z.B. Mathetest, Leseübung...',
+                      hintText: 'z.B. Mathetest, Leseuebung...',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(Style.radii.small),
                       ),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: style.colors.background,
                     ),
                   ),
                 ),
                 Expanded(
                   child: CustomScrollView(
                     slivers: [
-                      // const SliverGap(5),
-                      GenericSliverAppBarWithSearchWidget(
+                      SliverSearchBar(
                         height: 110,
-                        searchWidgetWithStatsRow: GenericListSearchBarWithStats(
+                        searchWidgetWithStatsRow: SearchRow(
                           statsWidget: CreditListSearchBarStats(
                             filteredPupils: competenceFilteredPupilsListenable,
                           ),
                           searchType: SearchType.pupil,
-                          hintText: 'Schüler/in suchen',
+                          hintText: 'Schueler/in suchen',
                           refreshFunction: pupilsFilter.refresh,
                           onChanged: (value) =>
                               pupilsFilter.textFilter.setFilterText(value),
@@ -135,13 +138,13 @@ class MultiPupilCompetenceCheckPage extends WatchingWidget {
                           filtersActive: filterStateManager.filtersActive,
                           onResetFilters: filterStateManager.resetFilters,
                           showFilterBottomSheet: (context) =>
-                              showGenericFilterBottomSheet(
+                              showFilterSheet(
                                 context: context,
                                 filterList: [const CommonPupilFiltersWidget()],
                               ),
                         ),
                       ),
-                      GenericSliverListWithEmptyListCheck(
+                      ContentSliverList(
                         itemsListenable: competenceFilteredPupilsListenable,
                         itemBuilder: (_, pupil) =>
                             MultiPupilCompetenceCheckCard(
@@ -161,27 +164,27 @@ class MultiPupilCompetenceCheckPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: GenericBottomNavBar(
+      bottomNavigationBar: ActionBar(
         actions: [
-          IconButton(
+          TappableIcon(
             onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context);
             },
             icon: const Icon(Icons.check, size: 30),
+            tooltip: 'Fertig',
           ),
-          GenericFilterButton(
+          FilterButton(
             isSearchBar: false,
             filtersActive: di<FiltersStateManager>().filtersActive,
             onLongPress: () => di<FiltersStateManager>().resetFilters(),
-            showBottomSheetFunction: (context) => showGenericFilterBottomSheet(
+            showBottomSheetFunction: (context) => showFilterSheet(
               context: context,
               filterList: [const CommonPupilFiltersWidget()],
             ),
           ),
         ],
       ),
-      // const MultiPupilCompetenceCheckPageBottomNavBar(),
     );
   }
 

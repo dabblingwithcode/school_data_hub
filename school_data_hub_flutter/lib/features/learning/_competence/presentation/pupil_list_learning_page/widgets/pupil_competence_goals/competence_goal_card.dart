@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_documents_section.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
@@ -25,18 +26,20 @@ class CompetenceGoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(25.0),
-      child: Card(
-        child: InkWell(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) =>
-                    NewCompetenceGoalPage(existingGoal: pupilGoal),
-              ),
-            );
-          },
+      borderRadius: BorderRadius.circular(Style.radii.large),
+      child: CardBox(
+        padding: EdgeInsets.all(Style.spacing.sm),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (context) =>
+                  NewCompetenceGoalPage(existingGoal: pupilGoal),
+            ),
+          );
+        },
+        child: GestureDetector(
           onLongPress: () async {
             final isAuthorized =
                 di<HubSessionManager>().isAdmin ||
@@ -59,174 +62,160 @@ class CompetenceGoalCard extends StatelessWidget {
               di<CompetenceManager>().deleteCompetenceGoal(pupilGoal.publicId);
             }
           },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.0),
-                    color: CompetenceHelper.getCompetenceColor(
-                      pupilGoal.competenceId,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          di<CompetenceManager>()
-                              .findRootCompetenceById(pupilGoal.competenceId)
-                              .name,
-                          style: const TextStyle(
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(Style.spacing.xs),
+                  color: CompetenceHelper.getCompetenceColor(
+                    pupilGoal.competenceId,
                   ),
                 ),
-                const Gap(5),
-                Row(
-                  children: [
-                    GrowthDropdown(
-                      dropdownValue: pupilGoal.score ?? 0,
-                      onChangedFunction: (value) {
-                        di<CompetenceManager>().updateCompetenceGoal(
-                          publicId: pupilGoal.publicId,
-                          score: (value: value),
-                        );
-                      },
-                    ),
-                    const Gap(10),
-                    Flexible(
-                      child: Text(
-                        di<CompetenceManager>()
-                            .findCompetenceById(pupilGoal.competenceId)
-                            .name,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const Gap(5),
-                Row(
-                  children: [
-                    const Text('Ziel:'),
-                    const Gap(10),
-                    Flexible(
-                      child: Text(
-                        pupilGoal.description,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                if (pupilGoal.strategies != null &&
-                    pupilGoal.strategies!.isNotEmpty) ...[
-                  const Gap(5),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: Style.spacing.xs),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Strategien:',
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                      const Gap(10),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            for (
-                              int i = 0;
-                              i < pupilGoal.strategies!.length;
-                              i++
-                            )
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 4.0),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      '• ',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        pupilGoal.strategies![i],
-                                        style: const TextStyle(fontSize: 15),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
+                      Text(
+                        di<CompetenceManager>()
+                            .findRootCompetenceById(pupilGoal.competenceId)
+                            .name,
+                        style: context.typography.title.withColor(
+                          style.colors.background,
                         ),
                       ),
                     ],
                   ),
-                ],
-                const Gap(10),
-                Row(
-                  children: [
-                    const Text('Erstellt von:'),
-                    const Gap(10),
-                    Text(
-                      pupilGoal.createdBy,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Gap(Style.spacing.xs),
+              Row(
+                children: [
+                  GrowthDropdown(
+                    dropdownValue: pupilGoal.score ?? 0,
+                    onChangedFunction: (value) {
+                      di<CompetenceManager>().updateCompetenceGoal(
+                        publicId: pupilGoal.publicId,
+                        score: (value: value),
+                      );
+                    },
+                  ),
+                  Gap(Style.spacing.md),
+                  Flexible(
+                    child: Text(
+                      di<CompetenceManager>()
+                          .findCompetenceById(pupilGoal.competenceId)
+                          .name,
+                      style: context.typography.subtitle.bold,
                     ),
-                    const Gap(15),
-                    const Text('am'),
-                    const Gap(10),
+                  ),
+                ],
+              ),
+              Gap(Style.spacing.xs),
+              Row(
+                children: [
+                  const Text('Ziel:'),
+                  Gap(Style.spacing.md),
+                  Flexible(
+                    child: Text(
+                      pupilGoal.description,
+                      style: context.typography.subtitle.bold,
+                    ),
+                  ),
+                ],
+              ),
+              if (pupilGoal.strategies != null &&
+                  pupilGoal.strategies!.isNotEmpty) ...[
+                Gap(Style.spacing.xs),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      pupilGoal.createdAt.formatDateForUser(),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      'Strategien:',
+                      style: context.typography.body.w500,
+                    ),
+                    Gap(Style.spacing.md),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (
+                            int i = 0;
+                            i < pupilGoal.strategies!.length;
+                            i++
+                          )
+                            Padding(
+                              padding: EdgeInsets.only(bottom: Style.spacing.xs),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '• ',
+                                    style: context.typography.subtitle.bold,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      pupilGoal.strategies![i],
+                                      style: context.typography.body,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                const Gap(5),
-                _AchievedAtRow(pupilGoal: pupilGoal),
-                const Gap(10),
-                HubDocumentsSectionWidget(
-                  documents: pupilGoal.documents,
-                  withSpacerToButtons: true,
-                  title: 'Dokumente:',
-                  onImageFileCaptured: (file) async {
-                    if (file == null) return;
-                    await di<CompetenceManager>().addFileToCompetenceGoal(
-                      publicId: pupilGoal.publicId,
-                      file: file,
-                    );
-                  },
-                  onAudioFileRecorded: (file, fileInfo) async {
-                    if (file == null) return;
-                    await di<CompetenceManager>().addFileToCompetenceGoal(
-                      publicId: pupilGoal.publicId,
-                      file: file,
-                      fileInfo: fileInfo,
-                    );
-                  },
-                  onDeleteDocument: (documentId) async {
-                    await di<CompetenceManager>().removeFileFromCompetenceGoal(
-                      publicId: pupilGoal.publicId,
-                      documentId: documentId,
-                    );
-                  },
-                ),
               ],
-            ),
+              Gap(Style.spacing.md),
+              Row(
+                children: [
+                  const Text('Erstellt von:'),
+                  Gap(Style.spacing.md),
+                  Text(
+                    pupilGoal.createdBy,
+                    style: context.typography.body.bold,
+                  ),
+                  Gap(Style.spacing.lg),
+                  const Text('am'),
+                  Gap(Style.spacing.md),
+                  Text(
+                    pupilGoal.createdAt.formatDateForUser(),
+                    style: context.typography.body.bold,
+                  ),
+                ],
+              ),
+              Gap(Style.spacing.xs),
+              _AchievedAtRow(pupilGoal: pupilGoal),
+              Gap(Style.spacing.md),
+              HubDocumentsSectionWidget(
+                documents: pupilGoal.documents,
+                withSpacerToButtons: true,
+                title: 'Dokumente:',
+                onImageFileCaptured: (file) async {
+                  if (file == null) return;
+                  await di<CompetenceManager>().addFileToCompetenceGoal(
+                    publicId: pupilGoal.publicId,
+                    file: file,
+                  );
+                },
+                onAudioFileRecorded: (file, fileInfo) async {
+                  if (file == null) return;
+                  await di<CompetenceManager>().addFileToCompetenceGoal(
+                    publicId: pupilGoal.publicId,
+                    file: file,
+                    fileInfo: fileInfo,
+                  );
+                },
+                onDeleteDocument: (documentId) async {
+                  await di<CompetenceManager>().removeFileFromCompetenceGoal(
+                    publicId: pupilGoal.publicId,
+                    documentId: documentId,
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),
@@ -247,7 +236,8 @@ class _AchievedAtRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final style = Style.of(context);
+    return GestureDetector(
       onTap: () async {
         final picked = await showDatePicker(
           context: context,
@@ -262,24 +252,22 @@ class _AchievedAtRow extends StatelessWidget {
           achievedAt: (value: picked),
         );
       },
-      borderRadius: BorderRadius.circular(8),
       child: Row(
         children: [
           Icon(
             _isAchieved ? Icons.check_circle : Icons.radio_button_unchecked,
-            color: _isAchieved ? Colors.green : Colors.grey,
+            color: _isAchieved ? style.colors.success : style.colors.mutedForeground,
             size: 22,
           ),
-          const Gap(8),
+          Gap(Style.spacing.sm),
           if (_isAchieved) const Text('Erreicht am:'),
-          const Gap(10),
+          Gap(Style.spacing.md),
           Text(
             _isAchieved
                 ? pupilGoal.achievedAt!.formatDateForUser()
                 : 'Als erreicht markieren',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: _isAchieved ? Colors.green : AppColors.interactiveColor,
+            style: context.typography.body.bold.withColor(
+              _isAchieved ? style.colors.success : style.colors.interactive,
             ),
           ),
         ],

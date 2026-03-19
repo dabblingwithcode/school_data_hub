@@ -46,6 +46,9 @@ class BookManager {
   void dispose() {
     _hubSubscription?.cancel();
     _hubSubscription = null;
+    for (final proxy in _libraryBookProxies.value) {
+      proxy.dispose();
+    }
     _libraryBookProxies.dispose();
     _isbnLibraryBooksMap.dispose();
     _locations.dispose();

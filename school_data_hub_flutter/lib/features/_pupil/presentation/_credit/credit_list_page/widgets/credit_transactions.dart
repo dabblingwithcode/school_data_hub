@@ -3,8 +3,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/widgets/dialogues/change_credit_dialog.dart';
 
@@ -14,6 +14,7 @@ class CreditTransactions extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final creditTransactions = watchPropertyValue(
       (m) => m.creditTransactions,
       target: pupil,
@@ -31,52 +32,49 @@ class CreditTransactions extends WatchingWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               'Insgesamt verdient:',
-              style: TextStyle(fontSize: 18.0),
+              style: context.typography.title,
               textAlign: TextAlign.left,
             ),
-            const Gap(5),
+            Gap(Style.spacing.xs),
             Text(
               pupil.creditEarned.toString(),
-              style: const TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
+              style: context.typography.title.bold,
             ),
           ],
         ),
-        const Gap(10),
-        const Row(
+        Gap(Style.spacing.md),
+        Row(
           children: [
             Padding(
-              padding: EdgeInsets.only(left: 22),
+              padding: EdgeInsets.only(left: Style.spacing.xl),
               child: Text(
                 'Verlauf',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                style: context.typography.title.withColor(
+                  style.colors.foreground,
                 ),
               ),
             ),
           ],
         ),
-        const Gap(10),
+        Gap(Style.spacing.md),
         creditTransactions == null
-            ? const Padding(
-                padding: EdgeInsets.only(left: 22),
+            ? Padding(
+                padding: EdgeInsets.only(left: Style.spacing.xl),
                 child: Text(
                   'Keine Transaktionen gefunden',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                  style: context.typography.title.withColor(
+                    style.colors.foreground,
                   ),
                 ),
               )
             : ListView.builder(
-                padding: const EdgeInsets.only(left: 20, top: 5, bottom: 15),
+                padding: EdgeInsets.only(
+                  left: Style.spacing.xl,
+                  top: Style.spacing.xs,
+                  bottom: Style.spacing.lg,
+                ),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: creditTransactions.length,
@@ -91,7 +89,7 @@ class CreditTransactions extends WatchingWidget {
                       pupilCreditHistoryLogs[index];
 
                   return Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: EdgeInsets.all(Style.spacing.xs),
                     child: GestureDetector(
                       onTap: () {
                         //- TO-DO: change missed class function
@@ -101,7 +99,7 @@ class CreditTransactions extends WatchingWidget {
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
+                          padding: EdgeInsets.only(bottom: Style.spacing.md),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -109,34 +107,30 @@ class CreditTransactions extends WatchingWidget {
                                 DateFormat(
                                   'dd.MM.yyyy',
                                 ).format(creditHistoryLog.dateTime).toString(),
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                                style: context.typography.title.withColor(
+                                  style.colors.foreground,
                                 ),
                               ),
-                              const Gap(10),
+                              Gap(Style.spacing.md),
                               const Text('Betrag:'),
-                              const Gap(10),
+                              Gap(Style.spacing.md),
                               Text(
                                 creditHistoryLog.amount.toString(),
                                 style: TextStyle(
                                   color: creditHistoryLog.amount < 0
-                                      ? Colors.red
-                                      : AppColors.groupColor,
+                                      ? style.colors.error
+                                      : style.colors.groupColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
                                 ),
                               ),
-                              const Gap(10),
+                              Gap(Style.spacing.md),
                               const Text('von:'),
-                              const Gap(10),
+                              Gap(Style.spacing.md),
                               Text(
                                 creditHistoryLog.sender,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                                style: context.typography.title.withColor(
+                                  style.colors.foreground,
                                 ),
                               ),
                             ],

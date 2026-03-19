@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/controller/new_learning_support_plan_controller.dart';
 
-class NewLearningSupportPlanPage extends WatchingWidget {
+class NewLearningSupportPlanScreen extends WatchingWidget {
   final NewLearningSupportPlanController controller;
 
-  const NewLearningSupportPlanPage(this.controller, {super.key});
+  const NewLearningSupportPlanScreen(this.controller, {super.key});
 
   String _getSupportLevelDescription(int level) {
     switch (level) {
@@ -28,17 +28,18 @@ class NewLearningSupportPlanPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final currentSemester = watch(controller.semesterInfoNotifier).value;
     final isValid = watch(controller.isValidNotifier).value;
 
     return Theme(
       data: ThemeData(
-        unselectedWidgetColor: Colors.white,
-        focusColor: AppColors.backgroundColor,
+        unselectedWidgetColor: style.colors.background,
+        focusColor: style.colors.accent,
       ),
       child: Scaffold(
-        backgroundColor: AppColors.canvasColor,
-        appBar: GenericAppBar(
+        backgroundColor: style.colors.canvas,
+        appBar: AppHeader(
           iconData: Icons.support_rounded,
           title: controller.isEditing
               ? 'Förderplan bearbeiten'
@@ -51,22 +52,22 @@ class NewLearningSupportPlanPage extends WatchingWidget {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(Style.spacing.lg),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            const Gap(8),
+                            Gap(Style.spacing.sm),
                             Expanded(
                               child: Text(
                                 currentSemester,
-                                style: AppStyles.title,
+                                style: context.typography.title,
                               ),
                             ),
                           ],
                         ),
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
                         // Pupil Information Card
                         _PupilInformationCard(
                           pupil: controller.pupil,
@@ -74,24 +75,24 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                               controller.groupTutorDisplayName,
                         ),
 
-                        const Gap(15),
+                        Gap(Style.spacing.lg),
                         // Support Level Display (Read-only)
-                        const Text('Förderebene', style: AppStyles.title),
-                        const Gap(10),
+                        Text('Förderebene', style: context.typography.title),
+                        Gap(Style.spacing.md),
                         Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10.0),
+                            color: style.colors.background,
+                            borderRadius: BorderRadius.circular(Style.radii.medium),
                             border: Border.all(
-                              color: AppColors.backgroundColor.withValues(
+                              color: style.colors.accent.withValues(
                                 alpha: 0.3,
                               ),
                               width: 2,
                             ),
                           ),
                           child: Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: EdgeInsets.all(Style.spacing.md),
                             child: Row(
                               children: [
                                 const Gap(6),
@@ -100,10 +101,10 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.interactiveColor,
+                                    color: style.colors.interactive,
                                   ),
                                 ),
-                                const Gap(10),
+                                Gap(Style.spacing.md),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -117,12 +118,9 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                      const Text(
+                                      Text(
                                         'Aktuelle Förderebene des Schülers',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
+                                        style: context.typography.bodySmall.withColor(style.colors.mutedForeground),
                                       ),
                                     ],
                                   ),
@@ -132,67 +130,62 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           ),
                         ),
 
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
 
                         // Number Field
-                        const Text('Plan-Nummer *', style: AppStyles.title),
-                        const Gap(10),
+                        Text('Plan-Nummer *', style: context.typography.title),
+                        Gap(Style.spacing.md),
                         TextField(
                           controller: controller.numberController,
                           keyboardType: TextInputType.number,
-                          decoration: AppStyles.textFieldDecoration(
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(Style.spacing.sm),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(Style.radii.small),
+                            ),
                             labelText: 'Plan-Nummer',
                           ),
                           onChanged: (_) => controller.validateForm(),
                         ),
-                        const Gap(20),
-
-                        // Plan ID Field
-                        // const Text('Plan-Bezeichnung *', style: AppStyles.title),
-                        // const Gap(10),
-                        // TextField(
-                        //   controller: controller.planIdController,
-                        //   readOnly: controller.isEditing,
-                        //   decoration: AppStyles.textFieldDecoration(
-                        //     labelText: 'z.B. Förderplan 2024/1 - Max Mustermann',
-                        //   ),
-                        //   onChanged: (_) => controller.validateForm(),
-                        // ),
-                        // const Gap(20),
+                        Gap(Style.spacing.xl),
 
                         // Special Needs Teacher Field
-                        const Text('Sonderpädagog*in', style: AppStyles.title),
-                        const Gap(10),
+                        Text('Sonderpädagog*in', style: context.typography.title),
+                        Gap(Style.spacing.md),
                         TextField(
                           controller: controller.specialNeedsTeacherController,
-                          decoration: AppStyles.textFieldDecoration(
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(Style.spacing.sm),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(Style.radii.small),
+                            ),
                             labelText: '(kann später ausgefüllt werden)',
                           ),
                           onChanged: (_) => controller.validateForm(),
                         ),
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
 
                         // Social Pedagogue Field
-                        const Text('Sozialpädagoge', style: AppStyles.title),
-                        const Gap(10),
+                        Text('Sozialpädagoge', style: context.typography.title),
+                        Gap(Style.spacing.md),
                         TextField(
                           controller: controller.socialPedagogueController,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(10),
+                            contentPadding: EdgeInsets.all(Style.spacing.sm),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: AppColors.backgroundColor,
+                                color: style.colors.accent,
                                 width: 2,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: AppColors.backgroundColor,
+                                color: style.colors.accent,
                                 width: 2,
                               ),
                             ),
                             labelStyle: TextStyle(
-                              color: AppColors.backgroundColor,
+                              color: style.colors.accent,
                             ),
                             labelText: 'Sozialpädagoge',
                             hintText:
@@ -200,34 +193,34 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           ),
                         ),
 
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
 
                         // Professionals Involved Field
-                        const Text(
+                        Text(
                           'Beteiligte Fachkräfte',
-                          style: AppStyles.title,
+                          style: context.typography.title,
                         ),
-                        const Gap(10),
+                        Gap(Style.spacing.md),
                         TextField(
                           controller:
                               controller.proffesionalsInvolvedController,
                           maxLines: 3,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(10),
+                            contentPadding: EdgeInsets.all(Style.spacing.sm),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: AppColors.backgroundColor,
+                                color: style.colors.accent,
                                 width: 2,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: AppColors.backgroundColor,
+                                color: style.colors.accent,
                                 width: 2,
                               ),
                             ),
                             labelStyle: TextStyle(
-                              color: AppColors.backgroundColor,
+                              color: style.colors.accent,
                             ),
                             labelText: '(Kann später ausgefüllt werden)',
                             hintText:
@@ -235,33 +228,33 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           ),
                         ),
 
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
 
                         // Strengths Description Field
-                        const Text(
+                        Text(
                           'Stärkenbeschreibung',
-                          style: AppStyles.title,
+                          style: context.typography.title,
                         ),
-                        const Gap(10),
+                        Gap(Style.spacing.md),
                         TextField(
                           controller: controller.strengthsDescriptionController,
                           maxLines: 4,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(10),
+                            contentPadding: EdgeInsets.all(Style.spacing.sm),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: AppColors.backgroundColor,
+                                color: style.colors.accent,
                                 width: 2,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: AppColors.backgroundColor,
+                                color: style.colors.accent,
                                 width: 2,
                               ),
                             ),
                             labelStyle: TextStyle(
-                              color: AppColors.backgroundColor,
+                              color: style.colors.accent,
                             ),
                             labelText: 'Stärkenbeschreibung',
                             hintText:
@@ -269,90 +262,90 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                           ),
                         ),
 
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
 
                         // Problems Description Field
-                        const Text(
+                        Text(
                           'Problembeschreibung',
-                          style: AppStyles.title,
+                          style: context.typography.title,
                         ),
-                        const Gap(10),
+                        Gap(Style.spacing.md),
                         TextField(
                           controller: controller.problemsDescriptionController,
                           maxLines: 4,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(10),
+                            contentPadding: EdgeInsets.all(Style.spacing.sm),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: AppColors.backgroundColor,
+                                color: style.colors.accent,
                                 width: 2,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: AppColors.backgroundColor,
+                                color: style.colors.accent,
                                 width: 2,
                               ),
                             ),
                             labelStyle: TextStyle(
-                              color: AppColors.backgroundColor,
+                              color: style.colors.accent,
                             ),
                             labelText: 'Problembeschreibung',
                             hintText:
                                 'Beschreibung der Probleme und Herausforderungen (Kann später ausgefüllt werden)',
                           ),
                         ),
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
 
                         // Comment Field
-                        const Text(
+                        Text(
                           'Ergänzende Hinweise und Absprachen',
-                          style: AppStyles.title,
+                          style: context.typography.title,
                         ),
-                        const Gap(10),
+                        Gap(Style.spacing.md),
                         TextField(
                           controller: controller.commentController,
                           maxLines: 4,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(10),
+                            contentPadding: EdgeInsets.all(Style.spacing.sm),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: AppColors.backgroundColor,
+                                color: style.colors.accent,
                                 width: 2,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: AppColors.backgroundColor,
+                                color: style.colors.accent,
                                 width: 2,
                               ),
                             ),
                             labelStyle: TextStyle(
-                              color: AppColors.backgroundColor,
+                              color: style.colors.accent,
                             ),
                             labelText: 'Hinweise und Absprachen',
                             hintText:
                                 'Zusätzliche Bemerkungen zum Förderplan (Kann später ausgefüllt werden)',
                           ),
                         ),
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
                       ],
                     ),
                   ),
                 ),
                 // Action Buttons - Fixed at bottom
                 Container(
-                  padding: const EdgeInsets.only(
-                    left: 16.0,
-                    bottom: 16.0,
-                    right: 16.0,
-                    top: 8.0,
+                  padding: EdgeInsets.only(
+                    left: Style.spacing.lg,
+                    bottom: Style.spacing.lg,
+                    right: Style.spacing.lg,
+                    top: Style.spacing.sm,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.canvasColor,
+                    color: style.colors.canvas,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withValues(alpha: 0.2),
+                        color: style.colors.mutedForeground.withValues(alpha: 0.2),
                         spreadRadius: 1,
                         blurRadius: 5,
                         offset: const Offset(0, -3),
@@ -362,42 +355,17 @@ class NewLearningSupportPlanPage extends WatchingWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: isValid
-                              ? AppStyles.actionButtonStyle
-                              : ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey,
-                                  textStyle: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  minimumSize: const Size.fromHeight(50),
-                                ),
-                          onPressed: isValid ? controller.savePlan : null,
-                          child: Text(
-                            controller.isEditing
-                                ? 'FÖRDERPLAN SPEICHERN'
-                                : 'FÖRDERPLAN ERSTELLEN',
-                            style: AppStyles.buttonTextStyle,
-                          ),
-                        ),
+                      Button(
+                        onPressed: isValid ? controller.savePlan : null,
+                        label: controller.isEditing
+                            ? 'FÖRDERPLAN SPEICHERN'
+                            : 'FÖRDERPLAN ERSTELLEN',
                       ),
-                      const Gap(10),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: AppStyles.cancelButtonStyle,
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text(
-                            'ABBRECHEN',
-                            style: AppStyles.buttonTextStyle,
-                          ),
-                        ),
+                      Gap(Style.spacing.md),
+                      Button(
+                        variant: ButtonVariant.secondary,
+                        onPressed: () => Navigator.of(context).pop(),
+                        label: 'ABBRECHEN',
                       ),
                     ],
                   ),
@@ -422,18 +390,19 @@ class _PupilInformationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final schulbesuchsjahr = PupilProxyHelper.calculateSchulbesuchsjahr(pupil);
     final lernjahr = PupilProxyHelper.calculateLernjahr(pupil);
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(Style.spacing.lg),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
+        color: style.colors.background,
+        borderRadius: BorderRadius.circular(Style.radii.medium),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2),
+            color: style.colors.mutedForeground.withValues(alpha: 0.2),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -443,32 +412,32 @@ class _PupilInformationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Name des Kindes', style: AppStyles.textLabel),
-          const Gap(8),
+          Text('Name des Kindes', style: context.typography.bodySmall.withColor(style.colors.mutedForeground)),
+          Gap(Style.spacing.sm),
           Text(
             '${pupil.firstName} ${pupil.lastName}',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            style: context.typography.title,
           ),
-          const Gap(12),
+          Gap(Style.spacing.md),
           _PupilBasicInfoRow(pupil: pupil, schulbesuchsjahr: schulbesuchsjahr),
-          const Gap(5),
+          Gap(Style.spacing.xs),
           _PupilInfoField(
             icon: Icons.calendar_today_outlined,
             label: 'Schulbesuchsjahr',
             value: schulbesuchsjahr.toString(),
           ),
           if (groupTutorDisplayName != null) ...[
-            const Gap(8),
+            Gap(Style.spacing.sm),
             _PupilInfoField(
               icon: Icons.person_outline,
               label: 'Klassenlehrer*in',
               value: groupTutorDisplayName!,
             ),
           ],
-          const Gap(8),
+          Gap(Style.spacing.sm),
           _PupilLanguageInfo(pupil: pupil, lernjahr: lernjahr),
           if (pupil.specialNeeds != null && pupil.specialNeeds!.isNotEmpty) ...[
-            const Gap(8),
+            Gap(Style.spacing.sm),
             _PupilSpecialNeedsInfo(specialNeeds: pupil.specialNeeds!),
           ],
         ],
@@ -524,18 +493,19 @@ class _PupilInfoField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Row(
       children: [
-        Icon(icon, size: 16, color: Colors.grey),
-        const Gap(5),
+        Icon(icon, size: 16, color: style.colors.mutedForeground),
+        Gap(Style.spacing.xs),
         Text(
           '$label: ',
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
+          style: context.typography.body.withColor(style.colors.mutedForeground),
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Text(
           value,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          style: context.typography.body.w500,
         ),
       ],
     );
@@ -559,7 +529,7 @@ class _PupilLanguageInfo extends StatelessWidget {
           value: pupil.language,
         ),
         if (lernjahr != null) ...[
-          const Gap(4),
+          Gap(Style.spacing.xs),
           _PupilInfoField(
             icon: Icons.school_outlined,
             label: 'Lernjahr Deutsch',
@@ -578,6 +548,7 @@ class _PupilSpecialNeedsInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     // Special needs format: "CODE1*CODE2" (e.g., "LE*ES")
 
     final code1 = specialNeeds.isNotEmpty ? specialNeeds[0] : '';
@@ -586,42 +557,28 @@ class _PupilSpecialNeedsInfo extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
-            Icon(Icons.accessibility_new, size: 16, color: Colors.grey),
-            Gap(6),
+            Icon(Icons.accessibility_new, size: 16, color: style.colors.mutedForeground),
+            const Gap(6),
             Text(
               'Förderschwerpunkt(e)',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
+              style: context.typography.body.bold.withColor(style.colors.mutedForeground),
             ),
           ],
         ),
-        const Gap(8),
+        Gap(Style.spacing.sm),
         Row(
           children: [
             if (code1.isNotEmpty) ...[
               Text(
                 code1,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.interactiveColor,
-                  letterSpacing: 1.2,
-                ),
+                style: context.typography.subtitle.bold.withColor(style.colors.interactive),
               ),
               if (code2.isNotEmpty)
                 Text(
                   code2,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.interactiveColor,
-                    letterSpacing: 1.2,
-                  ),
+                  style: context.typography.subtitle.bold.withColor(style.colors.interactive),
                 ),
             ],
           ],

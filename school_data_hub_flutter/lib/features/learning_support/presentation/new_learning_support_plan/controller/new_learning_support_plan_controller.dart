@@ -232,7 +232,7 @@ class NewLearningSupportPlanController extends State<NewLearningSupportPlan> {
 
   @override
   Widget build(BuildContext context) {
-    return NewLearningSupportPlanPage(this);
+    return NewLearningSupportPlanScreen(this);
   }
 
   @override

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/custom_checkbox_either_or.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
@@ -40,7 +40,7 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
     final schoolList = schoolListManager.getSchoolListById(
       pupilListEntry.schoolListId,
     );
-    return InkWell(
+    return GestureDetector(
       onLongPress: () async {
         final confirm = await confirmationDialog(
           context: context,
@@ -58,10 +58,10 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
           ),
         );
       },
-      child: Card(
-        color: AppColors.cardInCardColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Style.of(context).colors.cardInCard,
+          borderRadius: BorderRadius.circular(Style.radii.medium),
         ),
         child: Padding(
           padding: const EdgeInsets.only(
@@ -79,7 +79,7 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        InkWell(
+                        GestureDetector(
                           onTap: () {
                             Navigator.of(context).push<void>(
                               MaterialPageRoute<void>(
@@ -90,10 +90,8 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                           },
                           child: Text(
                             schoolList.name,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.interactiveColor,
+                            style: context.typography.title.bold.withColor(
+                              Style.of(context).colors.interactive,
                             ),
                           ),
                         ),
@@ -101,7 +99,7 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                         Text(
                           maxLines: 2,
                           schoolList.description,
-                          style: const TextStyle(fontSize: 15),
+                          style: context.typography.body,
                         ),
                       ],
                     ),
@@ -113,7 +111,7 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.close, color: Colors.red[400]),
+                          Icon(Icons.close, color: Style.of(context).colors.error),
                           CustomCheckboxEitherOr(
                             representedBoolValue:
                                 false, // Red/negative checkbox
@@ -130,7 +128,7 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                       const Gap(10),
                       Row(
                         children: [
-                          Icon(Icons.done, color: Colors.green[400]),
+                          Icon(Icons.done, color: Style.of(context).colors.success),
                           CustomCheckboxEitherOr(
                             representedBoolValue:
                                 true, // Green/positive checkbox
@@ -149,7 +147,7 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                 ],
               ),
               const Gap(5),
-              InkWell(
+              GestureDetector(
                 onTap: () async {
                   final result = await longTextFieldDialog(
                     title: 'Kommentar',
@@ -174,12 +172,9 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                       textAlign: TextAlign.left,
                       TextSpan(
                         children: [
-                          const TextSpan(
+                          TextSpan(
                             text: 'Kommentar: ',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: context.typography.subtitle.bold,
                           ),
                           TextSpan(
                             text:

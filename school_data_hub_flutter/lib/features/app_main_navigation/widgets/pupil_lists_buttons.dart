@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/attendance_list_page.dart';
-import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_page/missed_schooldays_pupil_list_page.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_screen/attendance_list_screen.dart';
+import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_schooldays_pupil_list_screen/missed_schooldays_pupil_list_screen.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_list_page/credit_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/after_school_care/after_school_care_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/birthdays_page.dart';
@@ -11,7 +11,7 @@ import 'package:school_data_hub_flutter/features/_pupil/presentation/family_lang
 import 'package:school_data_hub_flutter/features/_pupil/presentation/public_media_auth/public_media_auth_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/religion_page/religion_list_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/special_info_page/special_info_list_page.dart';
-import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
+import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_screen/schoolday_event_list_screen.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/birthday_date_range_dialog.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/pupil_list_learning_page.dart';
@@ -34,7 +34,7 @@ class PupilListButtons extends WatchingWidget {
       alignment: WrapAlignment.center,
       children: [
         MainMenuButton(
-          destinationPage: const SchooldayEventListPage(),
+          destinationPage: const SchooldayEventListScreen(),
           buttonIcon: Icon(
             Icons.warning_rounded,
             size: 50,
@@ -43,7 +43,7 @@ class PupilListButtons extends WatchingWidget {
           buttonText: locale.schooldayEvents,
         ),
         MainMenuButton(
-          destinationPage: const MissedSchooldaysPupilListPage(),
+          destinationPage: const MissedSchooldaysPupilListScreen(),
           buttonIcon: Icon(
             Icons.calendar_month_rounded,
             size: 50,
@@ -52,7 +52,7 @@ class PupilListButtons extends WatchingWidget {
           buttonText: locale.missedSchooldays,
         ),
         MainMenuButton(
-          destinationPage: const AttendanceListPage(),
+          destinationPage: const AttendanceListScreen(),
           buttonIcon: Icon(
             Icons.event_available_rounded,
             size: 50,
@@ -61,7 +61,7 @@ class PupilListButtons extends WatchingWidget {
           buttonText: locale.attendance,
         ),
         MainMenuButton(
-          destinationPage: const CreditListPage(),
+          destinationPage: const CreditListScreen(),
           buttonIcon: Icon(
             Icons.attach_money_rounded,
             size: 50,
@@ -71,7 +71,7 @@ class PupilListButtons extends WatchingWidget {
         ),
         if (isReady)
           MainMenuButton(
-            destinationPage: const PupilListLearningPage(),
+            destinationPage: const PupilListLearningScreen(),
             buttonIcon: Icon(
               Icons.lightbulb,
               size: 50,
@@ -80,7 +80,7 @@ class PupilListButtons extends WatchingWidget {
             buttonText: locale.learningLists,
           ),
         MainMenuButton(
-          destinationPage: const LearningSupportListPage(),
+          destinationPage: const LearningSupportListScreen(),
           buttonIcon: Icon(
             Icons.support_rounded,
             size: 50,
@@ -89,7 +89,7 @@ class PupilListButtons extends WatchingWidget {
           buttonText: locale.supportLists,
         ),
         MainMenuButton(
-          destinationPage: const SpecialInfoListPage(),
+          destinationPage: const SpecialInfoListScreen(),
           buttonIcon: Icon(
             Icons.emergency_rounded,
             size: 50,
@@ -98,7 +98,7 @@ class PupilListButtons extends WatchingWidget {
           buttonText: locale.specialInfo,
         ),
         MainMenuButton(
-          destinationPage: const ReligionListPage(),
+          destinationPage: const ReligionListScreen(),
           buttonIcon: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -118,7 +118,7 @@ class PupilListButtons extends WatchingWidget {
           buttonText: 'Reli-Unterricht',
         ),
         MainMenuButton(
-          destinationPage: const FamilyLanguageLessonsListPage(),
+          destinationPage: const FamilyLanguageLessonsListScreen(),
           buttonIcon: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -133,7 +133,7 @@ class PupilListButtons extends WatchingWidget {
           buttonText: 'HSU',
         ),
         MainMenuButton(
-          destinationPage: const AfterSchoolListPage(),
+          destinationPage: const AfterSchoolListScreen(),
           buttonIcon: Text(
             locale.allDayCare,
             style: TextStyle(
@@ -145,7 +145,7 @@ class PupilListButtons extends WatchingWidget {
           buttonText: locale.allDayCare,
         ),
         MainMenuButton(
-          destinationPage: const PublicMediaAuthListPage(),
+          destinationPage: const PublicMediaAuthListScreen(),
           buttonIcon: Icon(
             Icons.shield,
             size: 50,
@@ -154,7 +154,7 @@ class PupilListButtons extends WatchingWidget {
           buttonText: 'Einwilligung\nVeröffentlichungen',
         ),
         MainMenuButton(
-          destinationPage: const PupilsMatrixContactsListPage(),
+          destinationPage: const PupilsMatrixContactsListScreen(),
           buttonIcon: Icon(
             Icons.group,
             size: 50,
@@ -175,7 +175,7 @@ class PupilListButtons extends WatchingWidget {
             if (context.mounted) {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (ctx) => BirthdaysView(
+                  builder: (ctx) => BirthdaysScreen(
                     selectedDate: result.pastDayValue,
                     endDate: result.futureDayValue,
                   ),

@@ -9,9 +9,9 @@
 // import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 // import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/landing_bottom_nav_bar.dart';
 // import 'package:school_data_hub_flutter/core/session/serverpod_connectivity_monitor.dart';
-// import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_page/attendance_list_page.dart';
+// import 'package:school_data_hub_flutter/features/_attendance/presentation/attendance_screen/attendance_list_screen.dart';
 // import 'package:school_data_hub_flutter/features/_attendance/presentation/missed_classes_pupil_list_page/missed_classes_pupil_list_page.dart';
-// import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_page/schoolday_event_list_page.dart';
+// import 'package:school_data_hub_flutter/features/_schoolday_events/presentation/schoolday_event_list_screen/schoolday_event_list_screen.dart';
 // import 'package:school_data_hub_flutter/features/app_entry_point/entry_point/entry_point_controller.dart';
 // import 'package:school_data_hub_flutter/features/app_entry_point/error_page.dart';
 // import 'package:school_data_hub_flutter/features/app_entry_point/loading_page.dart';
@@ -55,8 +55,8 @@
 // import 'package:school_data_hub_flutter/features/_pupil/presentation/special_info_page/special_info_list_page.dart';
 // import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_set_avatar.dart';
 // import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_page/edit_school_data_page.dart';
-// import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/new_school_semester_page.dart';
-// import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_page/schooldays_calendar_page/schooldays_calendar_page.dart';
+// import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_screen/new_school_semester_screen.dart';
+// import 'package:school_data_hub_flutter/features/school_calendar/presentation/schooldays_calendar_screen/schooldays_calendar_screen.dart';
 // import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_page/school_lists_page.dart';
 // import 'package:school_data_hub_flutter/features/statistics/chart_page/chart_page_controller.dart';
 // import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
@@ -69,10 +69,10 @@
 // import 'package:school_data_hub_flutter/features/timetable/presentation/subject_list_page/subject_list_page.dart';
 // import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_page/timetable_page.dart';
 // import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot_list_page/timetable_slot_list_page.dart';
-// import 'package:school_data_hub_flutter/features/user/presentation/change_password/change_password_page.dart';
-// import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_page.dart';
-// import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_page.dart';
-// import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_page.dart';
+// import 'package:school_data_hub_flutter/features/user/presentation/change_password/change_password_screen.dart';
+// import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_screen.dart';
+// import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_screen.dart';
+// import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_screen.dart';
 // import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_page/controller/workbook_list_view_model.dart';
 // import 'package:flutter_it/flutter_it.dart';
 
@@ -237,7 +237,7 @@
 //         ),
 //         GoRoute(
 //           path: '/timetable/slots',
-//           builder: (context, state) => const TimetableSlotListPage(),
+//           builder: (context, state) => const TimetableSlotListScreen(),
 //         ),
 //         GoRoute(
 //           path: '/timetable/groups',
@@ -303,15 +303,15 @@
 //         ),
 //         GoRoute(
 //           path: '/admin/create-user',
-//           builder: (context, state) => const CreateOrEditUserPage(),
+//           builder: (context, state) => const CreateOrEditUserScreen(),
 //         ),
 //         GoRoute(
 //           path: '/admin/users',
-//           builder: (context, state) => const UserListPage(),
+//           builder: (context, state) => const UserListScreen(),
 //         ),
 //         GoRoute(
 //           path: '/admin/reset-password',
-//           builder: (context, state) => const ResetUserPasswordPage(),
+//           builder: (context, state) => const ResetUserPasswordScreen(),
 //         ),
 //         GoRoute(
 //           path: '/admin/matrix/set-environment',
@@ -319,16 +319,16 @@
 //         ),
 //         GoRoute(
 //           path: '/admin/calendar',
-//           builder: (context, state) => const SchooldaysCalendarPage(),
+//           builder: (context, state) => const SchooldaysCalendarScreen(),
 //         ),
 //         GoRoute(
 //           path: '/admin/new-semester',
-//           builder: (context, state) => const NewSchoolSemesterPage(),
+//           builder: (context, state) => const NewSchoolSemesterScreen(),
 //         ),
 //         // Learning Resources
 //         GoRoute(
 //           path: '/learning/competences',
-//           builder: (context, state) => const CompetenceListPage(),
+//           builder: (context, state) => const CompetenceListScreen(),
 //         ),
 //         GoRoute(
 //           path: '/learning/categories',
@@ -414,7 +414,7 @@
 //         ),
 //         GoRoute(
 //           path: '/pupil/schoolday-events',
-//           builder: (context, state) => const SchooldayEventListPage(),
+//           builder: (context, state) => const SchooldayEventListScreen(),
 //         ),
 //         GoRoute(
 //           path: '/pupil/missed-schooldays',
@@ -422,7 +422,7 @@
 //         ),
 //         GoRoute(
 //           path: '/pupil/attendance',
-//           builder: (context, state) => const AttendanceListPage(),
+//           builder: (context, state) => const AttendanceListScreen(),
 //         ),
 //         GoRoute(
 //           path: '/pupil/credit',
@@ -470,7 +470,7 @@
 //         ),
 //         GoRoute(
 //           path: '/settings/change-password',
-//           builder: (context, state) => const UserChangePasswordPage(),
+//           builder: (context, state) => const UserChangePasswordScreen(),
 //         ),
 //         GoRoute(
 //           path: '/pupil/:id',

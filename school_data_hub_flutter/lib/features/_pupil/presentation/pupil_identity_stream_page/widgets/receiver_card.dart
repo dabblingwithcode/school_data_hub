@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 enum ReceiverStatus { requested, confirmed, transferring, completed, rejected }
 
@@ -20,74 +23,65 @@ class ReceiverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    receiverName,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+    final style = Style.of(context);
+
+    return CardBox(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  receiverName,
+                  style: context.typography.subtitle.bold,
                 ),
-                _buildStatusIcon(),
+              ),
+              _buildStatusIcon(style),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _buildStatusText(),
+            style: context.typography.body,
+          ),
+          if (status == ReceiverStatus.requested) ...[
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Button.small(
+                  onPressed: isAnyTransferInProgress ? null : onConfirm,
+                  label: 'Bestätigen',
+                  variant: ButtonVariant.primary,
+                  icon: Icon(Icons.check, color: style.colors.background),
+                ),
+                Button.small(
+                  onPressed: isAnyTransferInProgress ? null : onReject,
+                  label: 'Ablehnen',
+                  variant: ButtonVariant.destructive,
+                  icon: Icon(Icons.close, color: style.colors.background),
+                ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(_buildStatusText()),
-            if (status == ReceiverStatus.requested) ...[
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: isAnyTransferInProgress ? null : onConfirm,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                    ),
-                    child: const Text(
-                      'Bestätigen',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: isAnyTransferInProgress ? null : onReject,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    child: const Text(
-                      'Ablehnen',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ],
           ],
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildStatusIcon() {
+  Widget _buildStatusIcon(Style style) {
     switch (status) {
       case ReceiverStatus.requested:
-        return const Icon(Icons.help_outline, color: Colors.orange);
+        return Icon(Icons.help_outline, color: style.colors.warning);
       case ReceiverStatus.confirmed:
-        return const Icon(Icons.check_circle, color: Colors.green);
+        return Icon(Icons.check_circle, color: style.colors.success);
       case ReceiverStatus.transferring:
         return const CircularProgressIndicator();
       case ReceiverStatus.completed:
-        return const Icon(Icons.done_all, color: Colors.blue);
+        return Icon(Icons.done_all, color: style.colors.info);
       case ReceiverStatus.rejected:
-        return const Icon(Icons.block, color: Colors.red);
+        return Icon(Icons.block, color: style.colors.error);
     }
   }
 

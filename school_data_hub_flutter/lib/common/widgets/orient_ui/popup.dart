@@ -270,7 +270,7 @@ class _CloseIconPainter extends CustomPainter {
   }
 }
 
-class _PopupRoute extends PageRouteBuilder {
+class _PopupRoute extends PageRouteBuilder<void> {
   final String? title;
   final Widget child;
 

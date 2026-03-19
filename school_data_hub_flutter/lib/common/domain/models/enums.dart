@@ -1,1 +1,1 @@
-enum SearchType { pupil, room, matrixUser, list, authorization, workbook }
+enum SearchType { pupil, room, matrixUser, list, authorization, workbook, user }

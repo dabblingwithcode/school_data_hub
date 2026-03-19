@@ -40,5 +40,5 @@ class _CompetenceReportItemListScopeState
   }
 
   @override
-  Widget build(BuildContext context) => const CompetenceReportItemListPage();
+  Widget build(BuildContext context) => const CompetenceReportItemListScreen();
 }

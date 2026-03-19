@@ -155,7 +155,7 @@ class UserManager {
       // Preserve existing devices, update user data
       list[index] = list[index].copyWith(user: user);
     } else {
-      list.add(UserWithDevices(user: user, devices: []));
+      list.add(UserWithDevices(user: user, userDevices: []));
     }
     list.sort(
       (a, b) => (a.user.userInfo?.userName ?? '').compareTo(

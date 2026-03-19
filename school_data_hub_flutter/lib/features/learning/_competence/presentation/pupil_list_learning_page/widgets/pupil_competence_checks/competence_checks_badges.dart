@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/enums.dart';
@@ -43,17 +44,6 @@ class CompetenceChecksBadges extends StatelessWidget {
   final PupilProxy pupil;
   const CompetenceChecksBadges({super.key, required this.pupil});
 
-  static const TextStyle _competenceNameStyle = TextStyle(
-    color: Colors.black,
-    fontSize: 11,
-    fontWeight: FontWeight.bold,
-  );
-
-  static const TextStyle _countBaseStyle = TextStyle(
-    fontSize: 15,
-    fontWeight: FontWeight.bold,
-  );
-
   @override
   Widget build(BuildContext context) {
     // Use cached competenceBadgeCounts from PupilProxy
@@ -64,13 +54,15 @@ class CompetenceChecksBadges extends StatelessWidget {
       Color competenceColor = CompetenceHelper.getCompetenceColor(competenceId);
       widgetList.add(
         Padding(
-          padding: const EdgeInsets.only(bottom: 5.0),
+          padding: EdgeInsets.only(bottom: Style.spacing.xs),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 getRootCompetenceShortName(competenceId),
-                style: _competenceNameStyle,
+                style: context.typography.caption.bold.withColor(
+                  Style.of(context).colors.foreground,
+                ),
               ),
               const Gap(2),
               Container(
@@ -83,8 +75,8 @@ class CompetenceChecksBadges extends StatelessWidget {
                 child: Center(
                   child: Text(
                     count.toString(),
-                    style: _countBaseStyle.copyWith(
-                      color: AppColors.bestContrastCompetenceFontColor(
+                    style: context.typography.body.bold.withColor(
+                      AppColors.bestContrastCompetenceFontColor(
                         competenceColor,
                       ),
                     ),
@@ -95,10 +87,10 @@ class CompetenceChecksBadges extends StatelessWidget {
           ),
         ),
       );
-      widgetList.add(const Gap(5));
+      widgetList.add(Gap(Style.spacing.xs));
     });
     return Wrap(
-      spacing: 5,
+      spacing: Style.spacing.xs,
       direction: Axis.horizontal,
       alignment: WrapAlignment.end,
       children: [...widgetList],

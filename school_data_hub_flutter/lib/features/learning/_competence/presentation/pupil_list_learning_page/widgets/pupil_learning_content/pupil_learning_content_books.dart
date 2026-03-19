@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
@@ -24,11 +25,11 @@ class PupilLearningContentBooks extends WatchingWidget {
     );
     return Column(
       children: [
-        const Row(
+        Row(
           children: [
             Text(
               'Bücher',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: context.typography.title,
             ),
           ],
         ),
@@ -71,15 +72,15 @@ class PupilLearningContentBooks extends WatchingWidget {
         ),
 
         if (pupilBookLendings.isNotEmpty) ...[
-          const Gap(10),
+          Gap(Style.spacing.md),
           ListView.builder(
-            padding: const EdgeInsets.all(0),
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: pupilBookLendings.length,
             itemBuilder: (context, int index) {
               return ClipRRect(
-                borderRadius: BorderRadius.circular(25.0),
+                borderRadius: BorderRadius.circular(Style.radii.large),
                 child: Column(
                   children: [
                     PupilBookLendingCard(
@@ -92,7 +93,7 @@ class PupilLearningContentBooks extends WatchingWidget {
             },
           ),
         ],
-        const Gap(5),
+        Gap(Style.spacing.xs),
       ],
     );
   }

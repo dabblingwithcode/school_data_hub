@@ -2,30 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 
-class PostOrPatchCompetencePage extends StatefulWidget {
+class PostOrPatchCompetenceScreen extends StatefulWidget {
   final int? parentCompetence;
   final Competence? competence;
 
-  const PostOrPatchCompetencePage({
+  const PostOrPatchCompetenceScreen({
     super.key,
     this.competence,
     this.parentCompetence,
   });
 
   @override
-  PostOrPatchCompetencePageState createState() =>
-      PostOrPatchCompetencePageState();
+  PostOrPatchCompetenceScreenState createState() =>
+      PostOrPatchCompetenceScreenState();
 }
 
-class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
+class PostOrPatchCompetenceScreenState extends State<PostOrPatchCompetenceScreen> {
   late String competenceLevel;
   final TextEditingController nameFieldController = TextEditingController();
 
@@ -127,14 +127,15 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
     bool gradeK4 = competenceLevelContainsGrade(SchoolGrade.K4.name);
 
     return Scaffold(
-      appBar: GenericAppBar(
+      backgroundColor: Style.of(context).colors.canvas,
+      appBar: AppHeader(
         iconData: Icons.edit_document,
         title: widget.competence != null
             ? 'Kompetenz überarbeiten'
             : 'Neue Kompetenz',
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
@@ -144,30 +145,31 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
                 if (widget.parentCompetence != null)
                   Text(
                     'Übergeordnete Kompetenz: ${_competenceManager.findCompetenceById(widget.parentCompetence!).name}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: context.typography.title,
                   ),
-                const Text(
+                Text(
                   'Kompetenz',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: context.typography.title,
                 ),
-                const Gap(10),
+                Gap(Style.spacing.sm),
                 TextField(
                   minLines: 1,
                   maxLines: 2,
                   controller: nameFieldController,
-                  decoration: AppStyles.textFieldDecoration(
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(Style.spacing.sm),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Style.radii.small),
+                    ),
                     labelText: 'Name der Kompetenz',
                   ),
                 ),
-                const Gap(10),
-                const Text(
+                Gap(Style.spacing.sm),
+                Text(
                   'Kompetenzstufe',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: context.typography.title,
                 ),
-                const Gap(10),
+                Gap(Style.spacing.sm),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -253,51 +255,42 @@ class PostOrPatchCompetencePageState extends State<PostOrPatchCompetencePage> {
                     ),
                   ],
                 ),
-                const Gap(20),
+                Gap(Style.spacing.xl),
                 TextField(
                   minLines: 2,
                   maxLines: 3,
                   controller: indicatorsFieldController,
-                  decoration: AppStyles.textFieldDecoration(
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(Style.spacing.sm),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Style.radii.small),
+                    ),
                     labelText: 'Indikatoren',
                   ),
                 ),
                 const Spacer(),
-                ElevatedButton(
-                  style: AppStyles.actionButtonStyle,
+                Button(
+                  label: 'SENDEN',
                   onPressed: () {
                     widget.competence == null
                         ? postNewCompetence()
                         : patchCompetence();
                   },
-                  child: const Text('SENDEN', style: AppStyles.buttonTextStyle),
                 ),
-                const Gap(15),
-                ElevatedButton(
-                  style: AppStyles.cancelButtonStyle,
+                Gap(Style.spacing.lg),
+                Button(
+                  label: 'ABBRECHEN',
+                  variant: ButtonVariant.secondary,
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text(
-                    'ABBRECHEN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
                 ),
                 if (widget.competence != null) ...[
-                  const Gap(15),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      backgroundColor: AppColors.dangerButtonColor,
-                      minimumSize: const Size.fromHeight(50),
-                    ),
+                  Gap(Style.spacing.lg),
+                  Button(
+                    label: 'KOMPETENZ LÖSCHEN',
+                    variant: ButtonVariant.destructive,
                     onPressed: deleteCompetence,
-                    child: const Text(
-                      'KOMPETENZ LÖSCHEN',
-                      style: AppStyles.buttonTextStyle,
-                    ),
                   ),
                 ],
               ],

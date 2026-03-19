@@ -9,7 +9,7 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_prox
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_page/select_pupils_list_page.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/avatar.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/domain/school_list_manager.dart';
 
 class NewSchoolListPage extends WatchingWidget {
@@ -284,7 +284,7 @@ class NewSchoolListPage extends WatchingWidget {
                     final List<int> selectedPupilIds =
                         await Navigator.of(context).push(
                           MaterialPageRoute<List<int>>(
-                            builder: (ctx) => SelectPupilsListPage(
+                            builder: (ctx) => SelectPupilsListScreen(
                               selectablePupils: pupilManager.getPupilsNotListed(
                                 pupilIdsValue.toList(),
                               ),

@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 Widget getCompetenceCheckSymbol({
@@ -78,9 +79,16 @@ Widget getLastCompetenceCheckSymbol(PupilProxy pupil, int competenceId) {
     return const SizedBox(width: 50, child: Icon(Icons.question_mark_rounded));
   }
 
-  return const SizedBox(
-    width: 50,
-    child: Icon(Icons.question_mark_rounded, color: Colors.purple),
+  return Builder(
+    builder: (context) {
+      return SizedBox(
+        width: 50,
+        child: Icon(
+          Icons.question_mark_rounded,
+          color: Style.of(context).colors.mutedForeground,
+        ),
+      );
+    },
   );
 }
 
@@ -112,14 +120,28 @@ Widget getCompetenceReportCheckSymbol(PupilProxy pupil, int competenceId) {
           child: Image.asset('assets/images/growth_icons/growth_4-4.png'),
         );
     }
-    return const SizedBox(
-      width: 50,
-      child: Icon(Icons.question_mark_rounded, color: Colors.black),
+    return Builder(
+      builder: (context) {
+        return SizedBox(
+          width: 50,
+          child: Icon(
+            Icons.question_mark_rounded,
+            color: Style.of(context).colors.foreground,
+          ),
+        );
+      },
     );
   }
 
-  return const SizedBox(
-    width: 50,
-    child: Icon(Icons.question_mark_rounded, color: Colors.black),
+  return Builder(
+    builder: (context) {
+      return SizedBox(
+        width: 50,
+        child: Icon(
+          Icons.question_mark_rounded,
+          color: Style.of(context).colors.foreground,
+        ),
+      );
+    },
   );
 }

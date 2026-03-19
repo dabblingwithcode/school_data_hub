@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
@@ -32,14 +31,6 @@ class LearningSupportManager {
   final _hubSessionManager = di<HubSessionManager>();
 
   final _notificationService = di<NotificationManager>();
-
-  //- OBSERVABLES -//
-
-  final _learningSupportPlans =
-      ValueNotifier<Map<int, List<LearningSupportPlan>>>({});
-
-  ValueListenable<Map<int, List<LearningSupportPlan>>>
-  get learningSupportPlans => _learningSupportPlans;
 
   // -- Support goal state (per-pupil, lazy-loaded) --
   final Map<int, PupilSupportGoalsProxy> _pupilSupportGoalsMap = {};
@@ -121,7 +112,9 @@ class LearningSupportManager {
   void dispose() {
     _hubSubscription?.cancel();
     _hubSubscription = null;
-    _learningSupportPlans.dispose();
+    for (final proxy in _pupilSupportGoalsMap.values) {
+      proxy.dispose();
+    }
     _pupilSupportGoalsMap.clear();
     _loadedPupilIds.clear();
   }
@@ -149,9 +142,8 @@ class LearningSupportManager {
       return;
     }
 
-    final pupilLearningSupportPlans =
-        _learningSupportPlans.value[pupilId] ?? [];
-    final existingPlan = pupilLearningSupportPlans.firstWhereOrNull(
+    final pupil = _pupilManager.getPupilByPupilId(pupilId);
+    final existingPlan = pupil?.learningSupportPlans?.firstWhereOrNull(
       (p) => p.schoolSemesterId == currentSemester.id,
     );
     if (existingPlan != null) {
@@ -195,11 +187,6 @@ class LearningSupportManager {
       );
       return;
     }
-    final plansToUpdate = _learningSupportPlans.value;
-    plansToUpdate[pupilId] = [...pupilLearningSupportPlans, plan];
-
-    _learningSupportPlans.value = plansToUpdate;
-
     await _pupilManager.updatePupilData(pupilId);
 
     _notificationService.showSnackBar(
@@ -269,10 +256,6 @@ class LearningSupportManager {
               plan.schoolSemesterId ==
               _schoolCalendarManager.currentSemester.value!.id,
         );
-  }
-
-  List<LearningSupportPlan> getLearningSupportPlans(int pupilId) {
-    return _learningSupportPlans.value[pupilId] ?? [];
   }
 
   Future<void> postSupportCategoryStatus({

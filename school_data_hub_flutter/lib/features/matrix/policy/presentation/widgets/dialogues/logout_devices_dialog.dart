@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 Future<bool?> logoutDevicesDialog(BuildContext context) async {
+  final style = Style.of(context);
   return await showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
         icon: Icon(
           Icons.warning_rounded,
-          color: AppColors.dangerButtonColor,
+          color: style.colors.error,
           size: 50,
         ),
-        title: const Text(
+        title: Text(
           'Alle Geräte abmelden?',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: context.typography.title,
         ),
-        content: const SizedBox(
+        content: SizedBox(
           width: 300,
           child: Text(
             'Sollen alle Geräte mit diesem Konto abgemeldet werden?\nWenn die Zugangsdaten verloren und keine bekannten Geräte angemeldet sind, solten Sie "Ja" wählen!',
+            style: context.typography.body,
           ),
         ),
         actions: <Widget>[
@@ -28,24 +30,23 @@ Future<bool?> logoutDevicesDialog(BuildContext context) async {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: ElevatedButton(
-                    style: AppStyles.actionButtonStyle,
+                  child: Button.small(
+                    variant: ButtonVariant.secondary,
                     onPressed: () {
                       Navigator.of(context).pop(false);
-                    }, // Add onPressed
-                    child: const Text("NEIN", style: AppStyles.buttonTextStyle),
+                    },
+                    label: 'NEIN',
                   ),
                 ),
               ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: ElevatedButton(
-                    style: AppStyles.actionButtonStyle,
+                  child: Button.small(
                     onPressed: () {
                       Navigator.of(context).pop(true);
-                    }, // Add onPressed
-                    child: const Text("JA", style: AppStyles.buttonTextStyle),
+                    },
+                    label: 'JA',
                   ),
                 ),
               ),
@@ -53,12 +54,12 @@ Future<bool?> logoutDevicesDialog(BuildContext context) async {
           ),
           Padding(
             padding: const EdgeInsets.all(5.0),
-            child: ElevatedButton(
-              style: AppStyles.cancelButtonStyle,
+            child: Button.small(
+              variant: ButtonVariant.destructive,
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text("ABBRECHEN", style: AppStyles.buttonTextStyle),
+              label: 'ABBRECHEN',
             ),
           ),
         ],

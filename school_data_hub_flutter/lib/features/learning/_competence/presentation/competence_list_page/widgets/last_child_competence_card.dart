@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/widgets/competence_grades_widget.dart';
 
 class LastChildCompetenceCard extends StatelessWidget {
@@ -15,78 +17,75 @@ class LastChildCompetenceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    final style = Style.of(context);
+    return CardBox(
+      padding: EdgeInsets.all(Style.spacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Flexible(
+                child: GestureDetector(
+                  onTap: () => navigateToNewOrPatchCompetencePage(
+                    competence: competence,
+                  ),
+                  onLongPress: () => navigateToNewOrPatchCompetencePage(
+                    competenceId: competence.publicId,
+                  ),
+                  child: Text(
+                    competence.name,
+                    textAlign: TextAlign.start,
+                    style: context.typography.subtitle.bold.withColor(
+                      style.colors.foreground,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Gap(Style.spacing.sm),
+          if (competence.indicators != null &&
+              competence.indicators!.isNotEmpty) ...[
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Flexible(
-                  child: InkWell(
-                    onTap: () => navigateToNewOrPatchCompetencePage(
-                      competence: competence,
-                    ),
-                    onLongPress: () => navigateToNewOrPatchCompetencePage(
-                      competenceId: competence.publicId,
-                    ),
-                    child: Text(
-                      competence.name,
-                      textAlign: TextAlign.start,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                Text(
+                  'Indikatoren:',
+                  style: context.typography.body.bold.copyWith(
+                    fontStyle: FontStyle.italic,
+                    color: style.colors.foreground,
                   ),
                 ),
               ],
             ),
-            const Gap(10),
-            if (competence.indicators != null &&
-                competence.indicators!.isNotEmpty) ...[
-              const Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Indikatoren:',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ),
-              const Gap(5),
-              Text(
-                competence.indicators!.join(),
-                textAlign: TextAlign.start,
-                style: const TextStyle(color: Colors.black, fontSize: 15),
-              ),
-            ],
-            competence.level != null
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: GradesWidget(
-                            stringWithGrades: competence.level!.join(),
-                          ),
-                        ),
-                        const Gap(10),
-                      ],
-                    ),
-                  )
-                : const SizedBox.shrink(),
+            Gap(Style.spacing.xs),
+            Text(
+              competence.indicators!.join(),
+              textAlign: TextAlign.start,
+              style: context.typography.body.withColor(style.colors.foreground),
+            ),
           ],
-        ),
+          competence.level != null
+              ? Padding(
+                  padding: EdgeInsets.only(
+                    top: Style.spacing.sm,
+                    bottom: Style.spacing.sm,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: GradesWidget(
+                          stringWithGrades: competence.level!.join(),
+                        ),
+                      ),
+                      Gap(Style.spacing.sm),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ],
       ),
     );
   }

@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_helper.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-
-const _categoryTextStyle = TextStyle(
-  color: Colors.white,
-  fontSize: 16,
-  fontWeight: FontWeight.bold,
-);
 
 /// A recursive category tree with radio buttons for selecting a new parent
 /// category. Excludes [excludedCategoryIds] to prevent circular references.
@@ -81,7 +76,7 @@ class _CategoryNode extends StatelessWidget {
     );
 
     return Padding(
-      padding: EdgeInsets.only(top: 10, left: indentation),
+      padding: EdgeInsets.only(top: Style.spacing.md, left: indentation),
       child: hasChildren
           ? _BranchNode(
               category: category,
@@ -116,17 +111,18 @@ class _BranchNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: color,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    final style = Style.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(Style.radii.medium),
+      ),
       clipBehavior: Clip.hardEdge,
-      margin: EdgeInsets.zero,
       child: ExpansionTile(
-        iconColor: Colors.white,
-        collapsedTextColor: Colors.white,
-        collapsedIconColor: Colors.white,
-        textColor: Colors.white,
+        iconColor: style.colors.background,
+        collapsedTextColor: style.colors.background,
+        collapsedIconColor: style.colors.background,
+        textColor: style.colors.background,
         maintainState: false,
         backgroundColor: color,
         collapsedBackgroundColor: color,
@@ -134,20 +130,20 @@ class _BranchNode extends StatelessWidget {
           children: [
             Radio<int?>(
               value: category.categoryId,
-              fillColor: WidgetStateProperty.all(Colors.white),
+              fillColor: WidgetStateProperty.all(style.colors.background),
             ),
-            const Gap(5),
+            Gap(Style.spacing.xs),
             Expanded(
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   selectedParentId.value = category.categoryId;
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: EdgeInsets.symmetric(vertical: Style.spacing.sm),
                   child: Text(
                     category.name,
                     maxLines: 3,
-                    style: _categoryTextStyle,
+                    style: context.typography.subtitle.bold.withColor(style.colors.background),
                   ),
                 ),
               ),
@@ -181,22 +177,23 @@ class _LeafNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: color,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      margin: EdgeInsets.zero,
+    final style = Style.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(Style.radii.medium),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(Style.spacing.sm),
         child: Row(
           children: [
             Radio<int?>(
               value: category.categoryId,
-              fillColor: WidgetStateProperty.all(Colors.white),
+              fillColor: WidgetStateProperty.all(style.colors.background),
             ),
-            const Gap(5),
+            Gap(Style.spacing.xs),
             Flexible(
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () {
                   selectedParentId.value = category.categoryId;
                 },
@@ -204,7 +201,7 @@ class _LeafNode extends StatelessWidget {
                   category.name,
                   maxLines: 4,
                   textAlign: TextAlign.start,
-                  style: _categoryTextStyle,
+                  style: context.typography.subtitle.bold.withColor(style.colors.background),
                 ),
               ),
             ),

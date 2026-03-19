@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/env/models/enums.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -11,6 +11,7 @@ class PupilListLearningContentNavBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final selectedContent = watchValue(
       (LearningContentSelection s) => s.selectedContent,
     );
@@ -29,11 +30,11 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                         selectedContent == SelectedContent.competenceStatuses,
                     icon: Icon(
                       Icons.lightbulb,
-                      color: AppColors.interactiveColor,
+                      color: style.colors.interactive,
                     ),
                     selectedIcon: Icon(
                       Icons.lightbulb,
-                      color: AppColors.accentColor,
+                      color: style.colors.accent,
                     ),
                     onPressed: () {
                       if (selectedContent !=
@@ -48,12 +49,10 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                   ),
                   Text(
                     'Lernspuren',
-                    style: TextStyle(
-                      color:
-                          selectedContent == SelectedContent.competenceStatuses
-                          ? AppColors.accentColor
-                          : AppColors.interactiveColor,
-                      fontSize: 12,
+                    style: context.typography.bodySmall.withColor(
+                      selectedContent == SelectedContent.competenceStatuses
+                          ? style.colors.accent
+                          : style.colors.interactive,
                     ),
                   ),
                 ],
@@ -67,11 +66,11 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                         selectedContent == SelectedContent.competenceGoals,
                     icon: Icon(
                       Icons.emoji_nature_rounded,
-                      color: AppColors.interactiveColor,
+                      color: style.colors.interactive,
                     ),
                     selectedIcon: Icon(
                       Icons.emoji_nature_rounded,
-                      color: AppColors.accentColor,
+                      color: style.colors.accent,
                     ),
                     onPressed: () {
                       if (selectedContent != SelectedContent.competenceGoals) {
@@ -85,11 +84,10 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                   ),
                   Text(
                     'Ziele',
-                    style: TextStyle(
-                      color: selectedContent == SelectedContent.competenceGoals
-                          ? AppColors.accentColor
-                          : AppColors.interactiveColor,
-                      fontSize: 12,
+                    style: context.typography.bodySmall.withColor(
+                      selectedContent == SelectedContent.competenceGoals
+                          ? style.colors.accent
+                          : style.colors.interactive,
                     ),
                   ),
                 ],
@@ -102,11 +100,11 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                     isSelected: selectedContent == SelectedContent.workbooks,
                     icon: Icon(
                       Icons.note_alt,
-                      color: AppColors.interactiveColor,
+                      color: style.colors.interactive,
                     ),
                     selectedIcon: Icon(
                       Icons.note_alt,
-                      color: AppColors.accentColor,
+                      color: style.colors.accent,
                     ),
                     onPressed: () {
                       if (selectedContent != SelectedContent.workbooks) {
@@ -120,11 +118,10 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                   ),
                   Text(
                     'Arbeitshefte',
-                    style: TextStyle(
-                      color: selectedContent == SelectedContent.workbooks
-                          ? AppColors.accentColor
-                          : AppColors.interactiveColor,
-                      fontSize: 12,
+                    style: context.typography.bodySmall.withColor(
+                      selectedContent == SelectedContent.workbooks
+                          ? style.colors.accent
+                          : style.colors.interactive,
                     ),
                   ),
                 ],
@@ -134,8 +131,8 @@ class PupilListLearningContentNavBar extends WatchingWidget {
               children: [
                 IconButton(
                   isSelected: selectedContent == SelectedContent.books,
-                  icon: Icon(Icons.book, color: AppColors.interactiveColor),
-                  selectedIcon: Icon(Icons.book, color: AppColors.accentColor),
+                  icon: Icon(Icons.book, color: style.colors.interactive),
+                  selectedIcon: Icon(Icons.book, color: style.colors.accent),
                   onPressed: () {
                     if (selectedContent != SelectedContent.books) {
                       di<LearningContentSelection>().setSelectedContent(
@@ -147,12 +144,11 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                   },
                 ),
                 Text(
-                  'Bücher',
-                  style: TextStyle(
-                    color: selectedContent == SelectedContent.books
-                        ? AppColors.accentColor
-                        : AppColors.interactiveColor,
-                    fontSize: 12,
+                  'Buecher',
+                  style: context.typography.bodySmall.withColor(
+                    selectedContent == SelectedContent.books
+                        ? style.colors.accent
+                        : style.colors.interactive,
                   ),
                 ),
               ],
@@ -165,11 +161,11 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                       selectedContent == SelectedContent.competenceReports,
                   icon: Icon(
                     Icons.assignment,
-                    color: AppColors.interactiveColor,
+                    color: style.colors.interactive,
                   ),
                   selectedIcon: Icon(
                     Icons.assignment,
-                    color: AppColors.accentColor,
+                    color: style.colors.accent,
                   ),
                   onPressed: () {
                     if (selectedContent != SelectedContent.competenceReports) {
@@ -183,11 +179,10 @@ class PupilListLearningContentNavBar extends WatchingWidget {
                 ),
                 Text(
                   'Zeugnisse',
-                  style: TextStyle(
-                    color: selectedContent == SelectedContent.competenceReports
-                        ? AppColors.accentColor
-                        : AppColors.interactiveColor,
-                    fontSize: 12,
+                  style: context.typography.bodySmall.withColor(
+                    selectedContent == SelectedContent.competenceReports
+                        ? style.colors.accent
+                        : style.colors.interactive,
                   ),
                 ),
               ],

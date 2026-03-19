@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
@@ -21,6 +22,7 @@ Future<void> supportCategoryStatusDialog(
       int categoryStatusValue = 1;
       return StatefulBuilder(
         builder: (statefulContext, setState) {
+          final style = Style.of(statefulContext);
           return AlertDialog(
             content: Form(
               key: _categoryStatusKey,
@@ -29,30 +31,30 @@ Future<void> supportCategoryStatusDialog(
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.backgroundColor),
-                      borderRadius: BorderRadius.circular(5.0),
+                      border: Border.all(color: style.colors.accent),
+                      borderRadius: BorderRadius.circular(Style.spacing.xs),
                     ),
                     width: 300,
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(Style.spacing.sm),
                       child: TextField(
                         maxLines: 3,
                         textAlign: TextAlign.start,
-                        style: const TextStyle(fontSize: 17),
+                        style: context.typography.subtitle,
                         keyboardType: TextInputType.multiline,
                         controller: _textEditingController,
                         decoration: null,
                       ),
                     ),
                   ),
-                  const Gap(10),
+                  Gap(Style.spacing.md),
                   Row(
                     children: [
-                      const Text(
+                      Text(
                         'Eine Stufe auswählen:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: context.typography.body.bold,
                       ),
-                      const Gap(10),
+                      Gap(Style.spacing.md),
                       Padding(
                         padding: const EdgeInsets.only(right: 5.0),
                         child: GrowthDropdown(
@@ -72,40 +74,27 @@ Future<void> supportCategoryStatusDialog(
             title: const Text('Neuer Kategoriestatus'),
             actions: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                  bottom: 10.0,
+                padding: EdgeInsets.only(
+                  left: Style.spacing.lg,
+                  right: Style.spacing.lg,
+                  bottom: Style.spacing.md,
                 ),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.dangerButtonColor,
-                    minimumSize: const Size.fromHeight(50),
-                  ),
+                child: Button(
+                  variant: ButtonVariant.destructive,
                   onPressed: () {
                     _textEditingController.clear();
                     Navigator.of(parentContext).pop();
                   },
-                  child: const Text(
-                    "ABBRECHEN",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17.0,
-                    ),
-                  ),
+                  label: 'ABBRECHEN',
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                  bottom: 10.0,
+                padding: EdgeInsets.only(
+                  left: Style.spacing.lg,
+                  right: Style.spacing.lg,
+                  bottom: Style.spacing.md,
                 ),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    minimumSize: const Size.fromHeight(50),
-                  ),
+                child: Button(
                   onPressed: () async {
                     if (_categoryStatusKey.currentState!.validate()) {
                       await di<LearningSupportManager>()
@@ -121,14 +110,7 @@ Future<void> supportCategoryStatusDialog(
                       }
                     }
                   },
-                  child: const Text(
-                    "OKAY",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17.0,
-                      color: Colors.white,
-                    ),
-                  ),
+                  label: 'OKAY',
                 ),
               ),
             ],

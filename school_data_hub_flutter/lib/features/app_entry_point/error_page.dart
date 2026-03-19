@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
-class ErrorPage extends StatelessWidget {
+class ErrorScreen extends StatelessWidget {
   final String error;
-  const ErrorPage({required this.error, super.key});
+  const ErrorScreen({required this.error, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Scaffold(
+      backgroundColor: style.colors.canvas,
       body: Container(
-        decoration: BoxDecoration(color: AppColors.backgroundColor),
+        decoration: BoxDecoration(color: style.colors.accent),
         child: Center(
           child: SizedBox(
             height: 600,
@@ -25,22 +27,18 @@ class ErrorPage extends StatelessWidget {
                   width: 300,
                   child: Image(image: AssetImage('assets/foreground.png')),
                 ),
-                const Text(
+                Text(
                   "Schuldaten App",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                  ),
+                  style: context.typography.title.withColor(
+                    style.colors.background,
+                  ).copyWith(fontSize: 30),
                 ),
                 const Gap(30),
                 Text(
                   "Ein Fehler ist aufgetreten!",
-                  style: TextStyle(
-                    color: AppColors.accentColor,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: context.typography.title.withColor(
+                    style.colors.error,
+                  ).copyWith(fontSize: 22),
                 ),
                 const Gap(20),
                 Row(
@@ -51,16 +49,15 @@ class ErrorPage extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 15.0),
                           child: Text(
                             error,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
+                            style: context.typography.title.withColor(
+                              style.colors.background,
                             ),
                           ),
                         ),
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.copy, color: Colors.white),
+                      icon: Icon(Icons.copy, color: style.colors.background),
                       onPressed: () {
                         Clipboard.setData(ClipboardData(text: error));
                         ScaffoldMessenger.of(context).showSnackBar(

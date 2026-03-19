@@ -1,16 +1,9 @@
-import 'package:flutter/material.dart';
+export 'package:school_data_hub_flutter/common/widgets/generic_components/show_sheet.dart';
 
+import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/show_sheet.dart';
+
+@Deprecated('Use showSheet instead')
 Future<void> showGenericBottomSheet(
-    BuildContext parentContext, Widget bottomSheet) {
-  return showModalBottomSheet(
-    constraints: const BoxConstraints(maxWidth: 800),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(20.0),
-        topRight: Radius.circular(20.0),
-      ),
-    ),
-    context: parentContext,
-    builder: (_) => bottomSheet,
-  );
-}
+    BuildContext parentContext, Widget bottomSheet) =>
+    showSheet(parentContext, bottomSheet);

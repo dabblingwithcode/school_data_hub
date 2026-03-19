@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/picker.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class LanguageDialogDropdown extends StatelessWidget {
   final int value;
@@ -42,10 +43,8 @@ class LanguageDialogDropdown extends StatelessWidget {
               Text(
                 "$label: ",
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                style: context.typography.title.bold.withColor(
+                  Style.of(context).colors.foreground,
                 ),
               ),
             ],

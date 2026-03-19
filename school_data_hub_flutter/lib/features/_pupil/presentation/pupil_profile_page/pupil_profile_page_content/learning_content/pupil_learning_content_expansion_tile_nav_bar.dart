@@ -40,7 +40,7 @@ class PupilLearningContentExpansionTileNavBar extends WatchingWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (_) => PupilCompetenceReportPage(pupil: pupil),
+                    builder: (_) => PupilCompetenceReportScreen(pupil: pupil),
                   ),
                 );
               },

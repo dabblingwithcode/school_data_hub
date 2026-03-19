@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
@@ -12,34 +12,35 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/w
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 
-class NewSupportCategoryStatusPage extends StatelessWidget {
+class NewSupportCategoryStatusScreen extends StatelessWidget {
   final NewSupportCategoryStatusController controller;
-  const NewSupportCategoryStatusPage(this.controller, {super.key});
+  const NewSupportCategoryStatusScreen(this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final pupilManager = di<PupilProxyManager>();
     final learningSupportPlanManager = di<LearningSupportManager>();
     final supportCategoryManager = di<SupportCategoryManager>();
     return Theme(
       data: ThemeData(
-        unselectedWidgetColor: Colors.white,
-        focusColor: AppColors.backgroundColor,
+        unselectedWidgetColor: style.colors.background,
+        focusColor: style.colors.accent,
       ),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
           centerTitle: true,
-          backgroundColor: AppColors.backgroundColor,
+          backgroundColor: style.colors.accent,
           title: Text(
             controller.widget.appBarTitle,
-            style: AppStyles.appBarTextStyle,
+            style: context.typography.title.withColor(style.colors.background),
           ),
         ),
         body: Center(
           heightFactor: 1,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(Style.spacing.md),
             child: Column(
               children: [
                 SingleChildScrollView(
@@ -49,35 +50,24 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        const Row(
+                        Row(
                           children: [
                             Text(
                               'Förderkategorie',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: context.typography.title.withColor(style.colors.foreground),
                             ),
                           ],
                         ),
-                        const Gap(5),
+                        Gap(Style.spacing.xs),
                         controller.goalCategoryId == null ||
                                 controller.goalCategoryId == 0
-                            ? ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  backgroundColor: AppColors.backgroundColor,
-                                  minimumSize: const Size.fromHeight(60),
-                                ),
+                            ? Button(
                                 onPressed: () async {
                                   final int? categoryId =
                                       await Navigator.of(context).push(
                                         MaterialPageRoute<int>(
                                           builder: (ctx) =>
-                                              SelectSupportCategoryPage(
+                                              SelectSupportCategoryScreen(
                                                 pupil: pupilManager
                                                     .getPupilByPupilId(
                                                       controller.widget.pupilId,
@@ -93,17 +83,14 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                   }
                                   controller.setGoalCategoryId(categoryId);
                                 },
-                                child: const Text(
-                                  'KATEGORIE AUSWÄHLEN',
-                                  style: AppStyles.buttonTextStyle,
-                                ),
+                                label: 'KATEGORIE AUSWÄHLEN',
                               )
                             : CategoryTreeAncestors(
                                 showBadge: true,
                                 categoryId: controller.goalCategoryId!,
                               ),
 
-                        const Gap(5),
+                        Gap(Style.spacing.xs),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -113,15 +100,11 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                       controller.isEditMode)
                                   ? 'Förderziel'
                                   : 'Beobachtungen',
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: context.typography.title.withColor(style.colors.foreground),
                             ),
                           ],
                         ),
-                        const Gap(5),
+                        Gap(Style.spacing.xs),
                         if (controller.widget.appBarTitle ==
                                 'Neues Förderziel' ||
                             controller.isEditMode) ...[
@@ -130,30 +113,34 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                             maxLines: 3,
                             controller:
                                 controller.descriptionTextFieldController,
-                            decoration: AppStyles.textFieldDecoration(
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(Style.spacing.sm),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(Style.radii.small),
+                              ),
                               labelText: 'Beschreibung des Zieles',
                             ),
                           ),
-                          const Gap(20),
-                          const Row(
+                          Gap(Style.spacing.xl),
+                          Row(
                             children: [
                               Text(
                                 'Strategien',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: context.typography.title.withColor(style.colors.foreground),
                               ),
                             ],
                           ),
-                          const Gap(10),
+                          Gap(Style.spacing.md),
                         ],
                         TextField(
                           minLines: 4,
                           maxLines: 4,
                           controller: controller.strategiesTextField2Controller,
-                          decoration: AppStyles.textFieldDecoration(
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.all(Style.spacing.sm),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(Style.radii.small),
+                            ),
                             labelText:
                                 (controller.widget.appBarTitle ==
                                         'Neues Förderziel' ||
@@ -162,7 +149,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 : 'Beschreibung des Ist-Zustandes',
                           ),
                         ),
-                        const Gap(20),
+                        Gap(Style.spacing.xl),
                         if (controller.widget.appBarTitle !=
                                 'Neues Förderziel' &&
                             !controller.isEditMode)
@@ -173,7 +160,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 'Ist-Zustand:',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              const Gap(10),
+                              Gap(Style.spacing.md),
                               Padding(
                                 padding: const EdgeInsets.only(right: 5.0),
                                 child: GrowthDropdown(
@@ -205,8 +192,7 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                               controller.goalCategoryId!,
                             )
                             .isNotEmpty) ...<Widget>[
-                          ElevatedButton(
-                            style: AppStyles.actionButtonStyle,
+                          Button(
                             onPressed: () async {
                               final Map<String, String?>? result =
                                   await goalExamplesDialog(
@@ -224,15 +210,11 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                                 );
                               }
                             },
-                            child: const Text(
-                              'BEISPIELE',
-                              style: AppStyles.buttonTextStyle,
-                            ),
+                            label: 'BEISPIELE',
                           ),
-                          const Gap(15),
+                          Gap(Style.spacing.lg),
                         ],
-                      ElevatedButton(
-                        style: AppStyles.successButtonStyle,
+                      Button(
                         onPressed: () {
                           if (controller.isEditMode) {
                             controller.updateCategoryGoal();
@@ -252,21 +234,15 @@ class NewSupportCategoryStatusPage extends StatelessWidget {
                           }
                           Navigator.pop(context);
                         },
-                        child: Text(
-                          controller.isEditMode ? 'SPEICHERN' : 'SENDEN',
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: controller.isEditMode ? 'SPEICHERN' : 'SENDEN',
                       ),
-                      const Gap(15),
-                      ElevatedButton(
-                        style: AppStyles.cancelButtonStyle,
+                      Gap(Style.spacing.lg),
+                      Button(
+                        variant: ButtonVariant.secondary,
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: const Text(
-                          'ABBRECHEN',
-                          style: AppStyles.buttonTextStyle,
-                        ),
+                        label: 'ABBRECHEN',
                       ),
                     ],
                   ),

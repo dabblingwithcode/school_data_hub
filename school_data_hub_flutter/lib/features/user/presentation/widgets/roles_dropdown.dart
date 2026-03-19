@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/picker.dart';
 
 /// Display labels for [Role] in the UI (German).
 const Map<Role, String> _roleLabels = {
@@ -26,58 +27,14 @@ class RolesDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        border: Border.all(color: colorScheme.outline),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: DropdownButton<Role>(
-        value: selectedRole,
-        hint: Text(
-          'Rolle auswählen',
-          style: TextStyle(
-            color: colorScheme.onSurface.withValues(alpha: 0.6),
-            fontSize: 16,
-          ),
-        ),
-        dropdownColor: colorScheme.surface,
-        icon: Icon(
-          Icons.arrow_drop_down,
-          color: colorScheme.onSurface,
-          size: 24,
-        ),
-        elevation: 8,
-        style: TextStyle(
-          color: colorScheme.onSurface,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-        underline: const SizedBox.shrink(),
-        onChanged: (Role? newValue) {
-          changeRole(newValue);
-        },
-        items: Role.values.map<DropdownMenuItem<Role>>((Role role) {
-          return DropdownMenuItem<Role>(
-            value: role,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-              child: Text(
-                _roleLabels[role] ?? role.name,
-                style: TextStyle(
-                  color: colorScheme.onSurface,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
+    return Picker<Role>(
+      label: 'Rolle auswählen',
+      value: selectedRole,
+      items: Role.values,
+      itemLabel: (role) => _roleLabels[role] ?? role.name,
+      onChanged: (Role newValue) {
+        changeRole(newValue);
+      },
     );
   }
 }

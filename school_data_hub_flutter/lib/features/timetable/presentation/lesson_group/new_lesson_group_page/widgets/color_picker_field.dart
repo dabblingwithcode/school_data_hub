@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 /// Color picker widget for selecting lesson group colors
 class ColorPickerField extends StatelessWidget {
@@ -28,24 +30,25 @@ class ColorPickerField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Farbe',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          style: context.typography.subtitle,
         ),
-        const SizedBox(height: 8),
+        Gap(Style.spacing.sm),
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: style.colors.borderSubtle),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Column(
             children: [
               // Current color display
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(Style.spacing.lg),
                 child: Row(
                   children: [
                     Container(
@@ -53,23 +56,22 @@ class ColorPickerField extends StatelessWidget {
                       height: 40,
                       decoration: BoxDecoration(
                         color: _parseColor(selectedColor),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(Style.radii.small),
+                        border: Border.all(color: style.colors.borderSubtle),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    Gap(Style.spacing.md),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Aktuelle Farbe',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: context.typography.bodySmall.withColor(style.colors.mutedForeground),
                           ),
                           Text(
                             selectedColor.toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 14,
+                            style: context.typography.body.copyWith(
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -81,10 +83,10 @@ class ColorPickerField extends StatelessWidget {
               ),
               // Color grid
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(Style.spacing.lg),
                 child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: Style.spacing.sm,
+                  runSpacing: Style.spacing.sm,
                   children:
                       _predefinedColors.map((color) {
                         final isSelected = color == selectedColor;
@@ -95,20 +97,20 @@ class ColorPickerField extends StatelessWidget {
                             height: 48,
                             decoration: BoxDecoration(
                               color: _parseColor(color),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(Style.radii.small),
                               border: Border.all(
                                 color:
                                     isSelected
-                                        ? Colors.blue
-                                        : Colors.grey.shade300,
+                                        ? style.colors.accent
+                                        : style.colors.borderSubtle,
                                 width: isSelected ? 3 : 1,
                               ),
                             ),
                             child:
                                 isSelected
-                                    ? const Icon(
+                                    ? Icon(
                                       Icons.check,
-                                      color: Colors.white,
+                                      color: style.colors.background,
                                       size: 20,
                                     )
                                     : null,

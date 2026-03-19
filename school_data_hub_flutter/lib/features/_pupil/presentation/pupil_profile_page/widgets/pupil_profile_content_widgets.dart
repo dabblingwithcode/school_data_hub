@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class PupilProfileContentSectionHeader extends StatelessWidget {
@@ -15,11 +14,12 @@ class PupilProfileContentSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Row(
       children: [
-        const Gap(10),
-        Icon(icon, color: AppColors.groupColor, size: 28),
-        const Gap(5),
+        Gap(Style.spacing.md),
+        Icon(icon, color: style.colors.groupColor, size: 28),
+        Gap(Style.spacing.xs),
         Text(title, style: context.style.typography.title),
       ],
     );
@@ -52,24 +52,24 @@ class PupilProfileContentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Container(
         padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.white,
+          borderRadius: BorderRadius.circular(Style.radii.medium),
+          color: style.colors.background,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Gap(5),
+            Gap(Style.spacing.xs),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                InkWell(
+                GestureDetector(
                   onTap: onTitleTap,
-                  borderRadius: BorderRadius.circular(8),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: 4.0,
@@ -80,7 +80,7 @@ class PupilProfileContentCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Icon(icon, color: iconColor, size: 30),
-                        const Gap(10),
+                        Gap(Style.spacing.md),
                         Text(
                           title,
                           style: context.style.typography.heading.copyWith(
@@ -97,7 +97,7 @@ class PupilProfileContentCard extends StatelessWidget {
                 ],
               ],
             ),
-            const Gap(12),
+            Gap(Style.spacing.md),
             child,
           ],
         ),
@@ -131,14 +131,14 @@ class PupilProfileContentRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Padding(
       padding: const EdgeInsets.only(left: 5.0, right: 5, bottom: 5),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         decoration: BoxDecoration(
-          color: AppColors.cardInCardColor,
-          borderRadius: BorderRadius.circular(8),
-          // border: Border.all(color: AppColors.cardInCardBorderColor, width: 1),
+          color: style.colors.cardInCard,
+          borderRadius: BorderRadius.circular(Style.radii.small),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,47 +149,42 @@ class PupilProfileContentRow extends StatelessWidget {
                 children: [
                   Icon(
                     icon,
-                    color: AppColors.backgroundColor.withValues(alpha: 0.7),
+                    color: style.colors.accent.withValues(alpha: 0.7),
                     size: 18,
                   ),
-                  const Gap(8),
+                  Gap(Style.spacing.sm),
                   Text(
                     '$label:',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.backgroundColor,
+                    style: context.typography.body.w500.withColor(
+                      style.colors.accent,
                     ),
                   ),
 
                   const Gap(6),
                   Expanded(
-                    child: InkWell(
+                    child: GestureDetector(
                       onTap: onTap,
                       onLongPress: onLongPress,
-                      borderRadius: BorderRadius.circular(8),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 12,
+                        padding: EdgeInsets.symmetric(
+                          vertical: Style.spacing.sm,
+                          horizontal: Style.spacing.md,
                         ),
                         decoration: BoxDecoration(
                           color: onTap != null
                               ? const Color.fromARGB(255, 213, 219, 236)
-                              : Colors.white,
+                              : style.colors.background,
 
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(Style.radii.small),
                         ),
                         child:
                             valueWidget ??
                             Text(
                               value!,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: onTap != null
-                                    ? AppColors.interactiveColor
-                                    : Colors.black87,
+                              style: context.typography.body.w600.withColor(
+                                onTap != null
+                                    ? style.colors.interactive
+                                    : style.colors.foreground,
                               ),
                             ),
                       ),
@@ -212,7 +207,8 @@ class PupilProfileContentRow extends StatelessWidget {
 // bottom.  Each widget mirrors PupilProfileContentRow's inner layout.
 // ---------------------------------------------------------------------------
 
-Widget _sectionRowContent({
+Widget _sectionRowContent(
+  BuildContext context, {
   IconData? icon,
   required String label,
   String? value,
@@ -221,48 +217,45 @@ Widget _sectionRowContent({
   VoidCallback? onLongPress,
   Widget? actionButton,
 }) {
+  final style = Style.of(context);
   return Padding(
     padding: const EdgeInsets.all(5.0),
     child: Row(
       children: [
         Icon(
           icon,
-          color: AppColors.backgroundColor.withValues(alpha: 0.7),
+          color: style.colors.accent.withValues(alpha: 0.7),
           size: 18,
         ),
-        const Gap(8),
+        Gap(Style.spacing.sm),
         Text(
           '$label:',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.backgroundColor,
-          ),
+          style: context.typography.body.w500.withColor(style.colors.accent),
         ),
         const Gap(6),
         Expanded(
-          child: InkWell(
+          child: GestureDetector(
             onTap: onTap,
             onLongPress: onLongPress,
-            borderRadius: BorderRadius.circular(8),
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              padding: EdgeInsets.symmetric(
+                vertical: Style.spacing.sm,
+                horizontal: Style.spacing.md,
+              ),
               decoration: BoxDecoration(
                 color: onTap != null
                     ? const Color.fromARGB(255, 255, 216, 137)
-                    : Colors.white,
-                borderRadius: BorderRadius.circular(8),
+                    : style.colors.background,
+                borderRadius: BorderRadius.circular(Style.radii.small),
               ),
               child:
                   valueWidget ??
                   Text(
                     value!,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: onTap != null
-                          ? AppColors.interactiveColor
-                          : Colors.black87,
+                    style: context.typography.body.w600.withColor(
+                      onTap != null
+                          ? style.colors.interactive
+                          : style.colors.foreground,
                     ),
                   ),
             ),
@@ -274,11 +267,12 @@ Widget _sectionRowContent({
   );
 }
 
-Widget _separator() {
+Widget _separator(BuildContext context) {
+  final style = Style.of(context);
   return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 10),
+    margin: EdgeInsets.symmetric(horizontal: Style.spacing.md),
     height: 1,
-    color: AppColors.backgroundColor.withValues(alpha: 0.08),
+    color: style.colors.accent.withValues(alpha: 0.08),
   );
 }
 
@@ -307,20 +301,22 @@ class PupilProfileContentSectionStart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Padding(
       padding: const EdgeInsets.only(left: 5.0, right: 5),
       child: Container(
         padding: const EdgeInsets.only(left: 5, right: 5, top: 5),
         decoration: BoxDecoration(
-          color: AppColors.cardInCardColor,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(8),
-            topRight: Radius.circular(8),
+          color: style.colors.cardInCard,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(Style.radii.small),
+            topRight: Radius.circular(Style.radii.small),
           ),
         ),
         child: Column(
           children: [
             _sectionRowContent(
+              context,
               icon: icon,
               label: label,
               value: value,
@@ -329,8 +325,8 @@ class PupilProfileContentSectionStart extends StatelessWidget {
               onLongPress: onLongPress,
               actionButton: actionButton,
             ),
-            const Gap(5),
-            _separator(),
+            Gap(Style.spacing.xs),
+            _separator(context),
           ],
         ),
       ),
@@ -363,14 +359,16 @@ class PupilProfileContentSectionInside extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Padding(
       padding: const EdgeInsets.only(left: 5.0, right: 5),
       child: Container(
         padding: const EdgeInsets.only(left: 5, right: 5, top: 5),
-        color: AppColors.cardInCardColor,
+        color: style.colors.cardInCard,
         child: Column(
           children: [
             _sectionRowContent(
+              context,
               icon: icon,
               label: label,
               value: value,
@@ -379,8 +377,8 @@ class PupilProfileContentSectionInside extends StatelessWidget {
               onLongPress: onLongPress,
               actionButton: actionButton,
             ),
-            const Gap(5),
-            _separator(),
+            Gap(Style.spacing.xs),
+            _separator(context),
           ],
         ),
       ),
@@ -413,18 +411,20 @@ class PupilProfileContentSectionEnd extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Padding(
       padding: const EdgeInsets.only(left: 5.0, right: 5, bottom: 5),
       child: Container(
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-          color: AppColors.cardInCardColor,
-          borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(8),
-            bottomRight: Radius.circular(8),
+          color: style.colors.cardInCard,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(Style.radii.small),
+            bottomRight: Radius.circular(Style.radii.small),
           ),
         ),
         child: _sectionRowContent(
+          context,
           icon: icon,
           label: label,
           value: value,
@@ -463,13 +463,14 @@ class PupilProfileContentTwoRows extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Padding(
       padding: const EdgeInsets.only(left: 5.0, right: 5, bottom: 5),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
         decoration: BoxDecoration(
-          color: AppColors.cardInCardColor,
-          borderRadius: BorderRadius.circular(8),
+          color: style.colors.cardInCard,
+          borderRadius: BorderRadius.circular(Style.radii.small),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -480,16 +481,14 @@ class PupilProfileContentTwoRows extends StatelessWidget {
                 children: [
                   Icon(
                     icon,
-                    color: AppColors.backgroundColor.withValues(alpha: 0.7),
+                    color: style.colors.accent.withValues(alpha: 0.7),
                     size: 18,
                   ),
-                  const Gap(8),
+                  Gap(Style.spacing.sm),
                   Text(
                     '$label:',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.backgroundColor,
+                    style: context.typography.body.w500.withColor(
+                      style.colors.accent,
                     ),
                   ),
                   if (actionButton != null) ...[const Spacer(), actionButton!],
@@ -499,31 +498,29 @@ class PupilProfileContentTwoRows extends StatelessWidget {
             const Gap(6),
             Padding(
               padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
-              child: InkWell(
+              child: GestureDetector(
                 onTap: onTap,
                 onLongPress: onLongPress,
-                borderRadius: BorderRadius.circular(8),
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 12,
+                  padding: EdgeInsets.symmetric(
+                    vertical: Style.spacing.sm,
+                    horizontal: Style.spacing.md,
                   ),
                   decoration: BoxDecoration(
-                    color: onTap != null ? Colors.white : Colors.transparent,
-
-                    borderRadius: BorderRadius.circular(8),
+                    color: onTap != null
+                        ? style.colors.background
+                        : const Color(0x00000000),
+                    borderRadius: BorderRadius.circular(Style.radii.small),
                   ),
                   child:
                       valueWidget ??
                       Text(
                         value!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: onTap != null
-                              ? AppColors.interactiveColor
-                              : Colors.black87,
+                        style: context.typography.body.w600.withColor(
+                          onTap != null
+                              ? style.colors.interactive
+                              : style.colors.foreground,
                         ),
                       ),
                 ),

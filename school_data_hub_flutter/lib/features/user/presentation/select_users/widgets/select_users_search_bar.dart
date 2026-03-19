@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 class SelectUsersSearchBar extends WatchingWidget {
@@ -16,101 +16,91 @@ class SelectUsersSearchBar extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.canvasColor,
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      child: IntrinsicHeight(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 5.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+    final style = Style.of(context);
+    return IntrinsicHeight(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              left: Style.spacing.sm,
+              right: Style.spacing.sm,
+              top: Style.spacing.xs,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Verfügbare Benutzer: ${selectableUsers.length}',
+                      style: context.typography.subtitle.bold
+                          .withColor(style.colors.foreground),
+                    ),
+                  ],
+                ),
+                const Gap(3),
+                if (selectedUsers.isNotEmpty)
                   Row(
                     children: [
                       Text(
-                        'Verfügbare Benutzer: ${selectableUsers.length}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+                        'Ausgewählt: ${selectedUsers.length}',
+                        style: context.typography.body.bold
+                            .withColor(style.colors.accent),
                       ),
                     ],
                   ),
-                  const Gap(3),
-                  if (selectedUsers.isNotEmpty)
-                    Row(
-                      children: [
-                        Text(
-                          'Ausgewählt: ${selectedUsers.length}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.backgroundColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
+              ],
             ),
-            if (selectedUsers.isNotEmpty) ...[
-              const Gap(3),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                child: SizedBox(
-                  height: 35,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: selectedUsers.length,
-                    itemBuilder: (context, index) {
-                      final user = selectedUsers[index];
-                      return Container(
-                        margin: const EdgeInsets.only(right: 4.0),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 6.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.backgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              user.role == Role.admin
-                                  ? Icons.admin_panel_settings
-                                  : Icons.person,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                            const Gap(5),
-                            Text(
-                              user.userInfo?.userName ?? 'Unknown',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+          ),
+          if (selectedUsers.isNotEmpty) ...[
+            const Gap(3),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs),
+              child: SizedBox(
+                height: 35,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: selectedUsers.length,
+                  itemBuilder: (context, index) {
+                    final user = selectedUsers[index];
+                    return Container(
+                      margin: EdgeInsets.only(right: Style.spacing.xs),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Style.spacing.md,
+                        vertical: 6.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: style.colors.accent,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            user.role == Role.admin
+                                ? Icons.admin_panel_settings
+                                : Icons.person,
+                            color: style.colors.background,
+                            size: 16,
+                          ),
+                          const Gap(5),
+                          Text(
+                            user.userInfo?.userName ?? 'Unknown',
+                            style: context.typography.bodySmall.bold
+                                .withColor(style.colors.background),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
-            ],
-            const Gap(3),
+            ),
           ],
-        ),
+          const Gap(3),
+        ],
       ),
     );
   }

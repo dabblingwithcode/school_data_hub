@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 
 class RejectionDialog extends StatelessWidget {
   final bool wasAutoRejected;
@@ -28,13 +29,13 @@ class RejectionDialog extends StatelessWidget {
             : 'Der Sender hat Ihre Anfrage abgelehnt.',
       ),
       actions: [
-        ElevatedButton(
+        Button.small(
           onPressed: () {
             Navigator.of(context).pop(); // Close dialog
             Navigator.of(context).pop(); // Close stream page
           },
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          child: const Text('OK', style: TextStyle(color: Colors.white)),
+          label: 'OK',
+          variant: ButtonVariant.destructive,
         ),
       ],
     );

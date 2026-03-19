@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 
@@ -14,7 +14,7 @@ import 'package:school_data_hub_flutter/features/learning/_competence/domain/com
 /// null.
 /// **Edit mode**: pass [existingGoal] (pupilId / competenceId are taken from
 /// the goal).
-class NewCompetenceGoalPage extends StatefulWidget {
+class NewCompetenceGoalScreen extends StatefulWidget {
   /// Required when creating a new goal. Ignored in edit mode.
   final int? pupilId;
 
@@ -24,7 +24,7 @@ class NewCompetenceGoalPage extends StatefulWidget {
   /// When non-null the page opens in edit mode.
   final CompetenceGoal? existingGoal;
 
-  const NewCompetenceGoalPage({
+  const NewCompetenceGoalScreen({
     this.pupilId,
     this.competenceId,
     this.existingGoal,
@@ -35,10 +35,10 @@ class NewCompetenceGoalPage extends StatefulWidget {
        );
 
   @override
-  State<NewCompetenceGoalPage> createState() => _NewCompetenceGoalPageState();
+  State<NewCompetenceGoalScreen> createState() => _NewCompetenceGoalScreenState();
 }
 
-class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
+class _NewCompetenceGoalScreenState extends State<NewCompetenceGoalScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _strategiesController = TextEditingController();
@@ -118,6 +118,7 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final competence = _competence;
     if (competence == null) {
       return Scaffold(
@@ -129,33 +130,33 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
     }
 
     return Scaffold(
-      appBar: GenericAppBar(
+      appBar: AppHeader(
         iconData: Icons.emoji_nature_rounded,
         title: _isEditMode ? 'Lernziel bearbeiten' : 'Neues Lernziel',
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              const Text(
+              Text(
                 'Ausgewählte Kompetenz:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: context.typography.subtitle.bold,
               ),
-              const Gap(5),
+              Gap(Style.spacing.xs),
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(Style.spacing.md),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: AppColors.cardInCardColor,
+                  borderRadius: BorderRadius.circular(Style.radii.small),
+                  color: style.colors.cardInCard,
                 ),
                 child: Text(
                   competence.name,
-                  style: const TextStyle(fontSize: 16),
+                  style: context.typography.subtitle,
                 ),
               ),
-              const Gap(20),
+              Gap(Style.spacing.xl),
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
@@ -167,12 +168,12 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
                     : null,
                 maxLines: 3,
               ),
-              const Gap(20),
-              const Text(
+              Gap(Style.spacing.xl),
+              Text(
                 'Strategien:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: context.typography.subtitle.bold,
               ),
-              const Gap(8),
+              Gap(Style.spacing.sm),
               Row(
                 children: [
                   Expanded(
@@ -185,19 +186,19 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
                       onFieldSubmitted: (_) => _addStrategy(),
                     ),
                   ),
-                  const Gap(8),
+                  Gap(Style.spacing.sm),
                   IconButton(
                     icon: const Icon(Icons.add_circle, size: 32),
                     onPressed: _addStrategy,
                   ),
                 ],
               ),
-              const Gap(10),
+              Gap(Style.spacing.md),
               if (_strategies.isNotEmpty)
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: style.colors.mutedForeground),
+                    borderRadius: BorderRadius.circular(Style.radii.small),
                   ),
                   child: ListView.builder(
                     shrinkWrap: true,
@@ -207,11 +208,11 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
                       return ListTile(
                         leading: Text(
                           '${index + 1}.',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: context.typography.body.bold,
                         ),
                         title: Text(_strategies[index]),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
+                          icon: Icon(Icons.delete, color: style.colors.error),
                           onPressed: () => _removeStrategy(index),
                         ),
                         dense: true,
@@ -220,13 +221,13 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
                   ),
                 ),
               if (_isEditMode) ...[
-                const Gap(20),
-                const Text(
+                Gap(Style.spacing.xl),
+                Text(
                   'Erreicht am:',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: context.typography.subtitle.bold,
                 ),
-                const Gap(8),
-                InkWell(
+                Gap(Style.spacing.sm),
+                GestureDetector(
                   onTap: () async {
                     final picked = await showDatePicker(
                       context: context,
@@ -240,19 +241,18 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
                       });
                     }
                   },
-                  borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 16,
+                    padding: EdgeInsets.symmetric(
+                      vertical: Style.spacing.md,
+                      horizontal: Style.spacing.lg,
                     ),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: _isAchieved
-                            ? Colors.green
-                            : Colors.grey.shade400,
+                            ? style.colors.success
+                            : style.colors.mutedForeground,
                       ),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(Style.radii.small),
                     ),
                     child: Row(
                       children: [
@@ -260,25 +260,23 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
                           _isAchieved
                               ? Icons.check_circle
                               : Icons.radio_button_unchecked,
-                          color: _isAchieved ? Colors.green : Colors.grey,
+                          color: _isAchieved ? style.colors.success : style.colors.mutedForeground,
                         ),
-                        const Gap(12),
+                        Gap(Style.spacing.md),
                         Text(
                           _isAchieved
                               ? _achievedAt!.formatDateForUser()
                               : 'Nicht erreicht - Tippen zum Setzen',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: _isAchieved
-                                ? Colors.green
-                                : AppColors.interactiveColor,
+                          style: context.typography.subtitle.bold.withColor(
+                            _isAchieved
+                                ? style.colors.success
+                                : style.colors.interactive,
                           ),
                         ),
                         const Spacer(),
                         if (_isAchieved)
                           IconButton(
-                            icon: const Icon(Icons.clear, color: Colors.red),
+                            icon: Icon(Icons.clear, color: style.colors.error),
                             tooltip: 'Datum entfernen',
                             onPressed: () {
                               setState(() {
@@ -295,28 +293,21 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
               Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(
-                      style: AppStyles.successButtonStyle,
+                    child: Button(
+                      label: _isEditMode ? 'SPEICHERN' : 'LERNZIEL ERSTELLEN',
                       onPressed: _save,
-                      child: Text(
-                        _isEditMode ? 'SPEICHERN' : 'LERNZIEL ERSTELLEN',
-                        style: AppStyles.buttonTextStyle,
-                      ),
                     ),
                   ),
                 ],
               ),
-              const Gap(10),
+              Gap(Style.spacing.md),
               Row(
                 children: [
                   Expanded(
-                    child: ElevatedButton(
-                      style: AppStyles.cancelButtonStyle,
+                    child: Button(
+                      variant: ButtonVariant.secondary,
+                      label: 'ABBRECHEN',
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text(
-                        'ABBRECHEN',
-                        style: AppStyles.buttonTextStyle,
-                      ),
                     ),
                   ),
                 ],
@@ -328,3 +319,6 @@ class _NewCompetenceGoalPageState extends State<NewCompetenceGoalPage> {
     );
   }
 }
+
+/// Keep the old name as a typedef for backward compatibility.
+typedef NewCompetenceGoalPage = NewCompetenceGoalScreen;

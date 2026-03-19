@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/pupil_profile_page_content/pupil_profile_page_content.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_bottom_navbar.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_heading_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_page/widgets/pupil_profile_navigation.dart';
 
-class PupilProfilePage extends StatelessWidget {
+/// Keep old name available so external call-sites compile without changes.
+typedef PupilProfilePage = PupilProfileScreen;
+
+class PupilProfileScreen extends StatelessWidget {
   final PupilProxy pupil;
 
-  const PupilProfilePage({required this.pupil, super.key});
+  const PupilProfileScreen({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Scaffold(
-      backgroundColor: AppColors.pupilProfileBackgroundColor,
+      backgroundColor: style.colors.canvas,
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -40,7 +44,7 @@ class PupilProfilePage extends StatelessWidget {
                         scrolledUnderElevation: null,
                         automaticallyImplyLeading: false,
                         leading: null,
-                        backgroundColor: Colors.transparent,
+                        backgroundColor: const Color(0x00000000),
                         toolbarHeight: 60,
                         expandedHeight: 105,
                         stretch: false,

@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot/new_timetable_slot_page/new_timetable_slot_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot/timetable_slot_list_page/widgets/timetable_slot_list.dart';
 
-class TimetableSlotListPage extends WatchingWidget {
-  const TimetableSlotListPage({super.key});
+class TimetableSlotListScreen extends WatchingWidget {
+  const TimetableSlotListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     // Watch the timetable slots
     final timetableManager = di<TimetableManager>();
     final timetableSlots = watch(timetableManager.data.timetableSlots);
@@ -21,11 +24,11 @@ class TimetableSlotListPage extends WatchingWidget {
       // Check if there's an active timetable
       if (timetableManager.data.timetable.value == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
+          SnackBar(
+            content: const Text(
               'Kein Stundenplan ausgewählt. Bitte erstellen Sie zuerst einen Stundenplan.',
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: style.colors.error,
           ),
         );
         return;
@@ -34,7 +37,7 @@ class TimetableSlotListPage extends WatchingWidget {
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (context) =>
-              NewTimetableSlotPage(timetableManager: timetableManager),
+              NewTimetableSlotScreen(timetableManager: timetableManager),
         ),
       );
       // Refresh data after returning from the new slot page
@@ -42,12 +45,13 @@ class TimetableSlotListPage extends WatchingWidget {
     }
 
     return Scaffold(
-      appBar: const GenericAppBar(
+      backgroundColor: style.colors.canvas,
+      appBar: const AppHeader(
         iconData: Icons.schedule,
         title: 'Zeitslots verwalten',
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
@@ -55,54 +59,48 @@ class TimetableSlotListPage extends WatchingWidget {
               children: [
                 // Header with info
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(Style.spacing.lg),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(8),
+                    color: style.colors.borderSubtle,
+                    borderRadius: BorderRadius.circular(Style.radii.small),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.info_outline, color: Colors.blue[600]),
-                          const Gap(8),
+                          Icon(Icons.info_outline, color: style.colors.accent),
+                          Gap(Style.spacing.sm),
                           Expanded(
                             child: Text(
                               'Zeitslots definieren die verfügbaren Unterrichtszeiten für jeden Wochentag.',
-                              style: TextStyle(
-                                color: Colors.blue[800],
-                                fontSize: 14,
-                              ),
+                              style: context.typography.body
+                                  .withColor(style.colors.accent),
                             ),
                           ),
                         ],
                       ),
                       if (activeTimetable.value != null) ...[
-                        const Gap(8),
+                        Gap(Style.spacing.sm),
                         Text(
                           'Aktiver Stundenplan: ${activeTimetable.value!.name}',
-                          style: TextStyle(
-                            color: Colors.green[700],
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: context.typography.bodySmall
+                              .withColor(style.colors.success)
+                              .bold,
                         ),
                       ] else ...[
-                        const Gap(8),
+                        Gap(Style.spacing.sm),
                         Text(
                           'Kein aktiver Stundenplan verfügbar',
-                          style: TextStyle(
-                            color: Colors.red[700],
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: context.typography.bodySmall
+                              .withColor(style.colors.error)
+                              .bold,
                         ),
                       ],
                     ],
                   ),
                 ),
-                const Gap(20),
+                Gap(Style.spacing.xl),
 
                 // Timetable slots list
                 Expanded(
@@ -116,10 +114,10 @@ class TimetableSlotListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: GenericBottomNavBar(
+      bottomNavigationBar: ActionBar(
         actions: [
           if (activeTimetable.value != null)
-            IconButton(
+            TappableIcon(
               tooltip: 'Neuen Zeitslot erstellen',
               icon: const Icon(Icons.add, size: 30),
               onPressed: () => navigateToNewTimetableSlot(context),

@@ -150,7 +150,8 @@ class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
           _log.info('Navigating to BulkPdfViewPage with file: ${pdfFile.path}');
           Navigator.of(context).push(
             MaterialPageRoute<void>(
-              builder: (context) => PdfViewerPage(pdfGenerator: () async => pdfFile),
+              builder: (context) =>
+                  PdfViewerScreen(pdfGenerator: () async => pdfFile),
             ),
           );
         }
@@ -179,6 +180,6 @@ class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
 
   @override
   Widget build(BuildContext context) {
-    return SelectMatrixUsersListPage(this, users ?? []);
+    return SelectMatrixUsersListScreen(this, users ?? []);
   }
 }

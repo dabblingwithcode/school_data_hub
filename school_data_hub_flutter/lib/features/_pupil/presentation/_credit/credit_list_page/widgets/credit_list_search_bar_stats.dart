@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/_credit/credit_helper_functions.dart';
 
@@ -16,60 +16,51 @@ class CreditListSearchBarStats extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final pupils = watch(filteredPupils).value;
     watch(Listenable.merge(pupils));
 
     return Padding(
-      padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+      padding: EdgeInsets.symmetric(horizontal: Style.spacing.md),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.people_alt_rounded, color: AppColors.backgroundColor),
-            const Gap(10),
+            Icon(Icons.people_alt_rounded, color: style.colors.accent),
+            Gap(Style.spacing.md),
             Text(
               pupils.length.toString(),
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+              style: context.typography.title.withColor(
+                style.colors.foreground,
               ),
             ),
-            const Gap(10),
+            Gap(Style.spacing.md),
             Text(
               'BIP:',
-              style: TextStyle(
-                fontSize: 13,
-                color: AppColors.backgroundColor,
-                fontWeight: FontWeight.bold,
-              ),
+              style: context.typography.caption.withColor(
+                style.colors.accent,
+              ).bold,
             ),
-            const Gap(10),
+            Gap(Style.spacing.md),
             Text(
               CreditHelper.totalGeneratedCredit(pupils).toString(),
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+              style: context.typography.title.withColor(
+                style.colors.foreground,
               ),
             ),
-            const Gap(10),
+            Gap(Style.spacing.md),
             Text(
               'in Umlauf: ',
-              style: TextStyle(
-                fontSize: 13,
-                color: AppColors.backgroundColor,
-                fontWeight: FontWeight.bold,
-              ),
+              style: context.typography.caption.withColor(
+                style.colors.accent,
+              ).bold,
             ),
-            const Gap(10),
+            Gap(Style.spacing.md),
             Text(
               CreditHelper.totalFluidCredit(pupils).toString(),
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+              style: context.typography.title.withColor(
+                style.colors.foreground,
               ),
             ),
           ],

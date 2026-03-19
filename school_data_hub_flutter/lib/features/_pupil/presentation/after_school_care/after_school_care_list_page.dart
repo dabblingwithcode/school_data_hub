@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -31,8 +31,8 @@ List<PupilProxy> _afterSchoolCareFilter(List<PupilProxy> pupils) {
   return filteredPupils;
 }
 
-class AfterSchoolListPage extends WatchingWidget {
-  const AfterSchoolListPage({super.key});
+class AfterSchoolListScreen extends WatchingWidget {
+  const AfterSchoolListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +44,8 @@ class AfterSchoolListPage extends WatchingWidget {
         createOnce(() => ValueNotifier<List<PupilProxy>>([]));
     ogsPupilsListenable.value = ogsPupils;
 
-    return GenericListPage<PupilProxy>(
-      backgroundColor: AppColors.canvasColor,
+    return ListScreen<PupilProxy>(
+      backgroundColor: Style.of(context).colors.canvas,
       iconData: Icons.restaurant_menu_rounded,
       title: 'OGS Infos',
       sliverAppBarHeight: 105,

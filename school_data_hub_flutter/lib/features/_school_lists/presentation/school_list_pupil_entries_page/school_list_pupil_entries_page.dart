@@ -21,7 +21,7 @@ import 'package:school_data_hub_flutter/features/_school_lists/presentation/scho
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
 import 'package:school_data_hub_flutter/features/_school_lists/services/school_list_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_page.dart';
+import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_screen.dart';
 
 class SchoolListPupilEntriesPage extends WatchingWidget {
   final SchoolList schoolList;
@@ -123,7 +123,7 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
               final List<User>? selectedUsers = await Navigator.of(context)
                   .push(
                     MaterialPageRoute<List<User>>(
-                      builder: (ctx) => SelectUsersPage(
+                      builder: (ctx) => SelectUsersScreen(
                         selectableUsers: users
                             .where(
                               (user) =>
@@ -157,7 +157,7 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
             final List<int> selectedPupilIds =
                 await Navigator.of(context).push(
                   MaterialPageRoute<List<int>>(
-                    builder: (ctx) => SelectPupilsListPage(
+                    builder: (ctx) => SelectPupilsListScreen(
                       selectablePupils: di<PupilProxyManager>()
                           .getPupilsNotListed(
                             pupilsInList.value
@@ -184,7 +184,7 @@ class SchoolListPupilEntriesPage extends WatchingWidget {
           onPressed: () async {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (ctx) => PdfViewerPage(
+                builder: (ctx) => PdfViewerScreen(
                   pdfGenerator: () =>
                       SchoolListPdfGenerator.generateSchoolListPdf(
                         schoolList: schoolList,

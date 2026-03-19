@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:flutter_it/flutter_it.dart';
 
 List<Widget> competenceTreeAncestorsNames({
+  required BuildContext context,
   required int competenceId,
   required Color categoryColor,
 }) {
+  final style = Style.of(context);
   // Create an empty list to store ancestors
   List<Widget> ancestors = [];
 
@@ -26,21 +29,18 @@ List<Widget> competenceTreeAncestorsNames({
       ancestors.add(
         Row(
           children: [
-            const Gap(10),
+            Gap(Style.spacing.md),
             Flexible(
               child: Text(
                 di<CompetenceManager>()
                     .findRootCompetenceById(competenceId)
                     .name,
-                style: const TextStyle(
-                  overflow: TextOverflow.fade,
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: context.typography.body.bold.withColor(
+                  style.colors.background,
+                ).copyWith(overflow: TextOverflow.fade),
               ),
             ),
-            const Gap(10),
+            Gap(Style.spacing.md),
           ],
         ),
       );
@@ -52,18 +52,16 @@ List<Widget> competenceTreeAncestorsNames({
         ancestors.add(
           Row(
             children: [
-              const Gap(10),
+              Gap(Style.spacing.md),
               Flexible(
                 child: Text(
                   currentCompetence.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                  style: context.typography.body.bold.withColor(
+                    style.colors.background,
                   ),
                 ),
               ),
-              const Gap(10),
+              Gap(Style.spacing.md),
             ],
           ),
         );
@@ -80,22 +78,20 @@ List<Widget> competenceTreeAncestorsNames({
   ancestors.add(
     Row(
       children: [
-        const Gap(10),
+        Gap(Style.spacing.md),
         Flexible(
           child: Text(
             currentCompetence.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 17,
+            style: context.typography.subtitle.bold.withColor(
+              style.colors.background,
             ),
           ),
         ),
-        const Gap(10),
+        Gap(Style.spacing.md),
       ],
     ),
   );
 
-  ancestors.add(const Gap(5));
+  ancestors.add(Gap(Style.spacing.xs));
   return ancestors;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_page/pupil_identity_stream_page.dart';
 
@@ -15,9 +16,9 @@ Future<void> showConnectionCodeDialog(BuildContext context) async {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               'Gib den Verbindungscode ein, den du vom Sender erhalten hast.',
-              style: TextStyle(fontSize: 14),
+              style: context.typography.body,
             ),
             const Gap(16),
             TextField(
@@ -43,7 +44,7 @@ Future<void> showConnectionCodeDialog(BuildContext context) async {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (context) => PupilIdentityStreamPage(
+                    builder: (context) => PupilIdentityStreamScreen(
                       role: PupilIdentityStreamRole.receiver,
                       encryptedData: null,
                       importedChannelName: code,

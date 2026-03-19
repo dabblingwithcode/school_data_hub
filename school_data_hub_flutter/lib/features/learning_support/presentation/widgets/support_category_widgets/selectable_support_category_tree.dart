@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -95,7 +96,7 @@ class _CategoryNode extends StatelessWidget {
     );
 
     return Padding(
-      padding: EdgeInsets.only(top: 10, left: indentation),
+      padding: EdgeInsets.only(top: Style.spacing.md, left: indentation),
       child: hasChildren
           ? _BranchNode(
               category: category,
@@ -136,12 +137,13 @@ class _BranchNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: color,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    // Domain-specific color: use Container with BoxDecoration instead of CardBox
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(Style.radii.medium),
+      ),
       clipBehavior: Clip.hardEdge,
-      margin: EdgeInsets.zero,
       child: ExpansionTile(
         iconColor: Colors.white,
         collapsedTextColor: Colors.white,
@@ -153,12 +155,12 @@ class _BranchNode extends StatelessWidget {
         title: Row(
           children: [
             Radio<int>(value: category.categoryId),
-            const Gap(5),
+            Gap(Style.spacing.xs),
             Expanded(
-              child: InkWell(
+              child: GestureDetector(
                 onTap: () => manager.selectCategory(category.categoryId),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  padding: EdgeInsets.symmetric(vertical: Style.spacing.sm),
                   child: Text(
                     category.name,
                     maxLines: 3,
@@ -203,16 +205,16 @@ class _LeafNode extends StatelessWidget {
     final isAdmin = di<HubSessionManager>().isAdmin;
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(Style.spacing.sm),
       child: Row(
         children: [
           Padding(
-            padding: const EdgeInsets.all(5.0),
+            padding: EdgeInsets.all(Style.spacing.xs),
             child: Radio<int>(value: category.categoryId),
           ),
-          const Gap(5),
+          Gap(Style.spacing.xs),
           Flexible(
-            child: InkWell(
+            child: GestureDetector(
               onTap: () => manager.selectCategory(category.categoryId),
               onLongPress: isAdmin
                   ? () => _handleAdminLongPress(context)

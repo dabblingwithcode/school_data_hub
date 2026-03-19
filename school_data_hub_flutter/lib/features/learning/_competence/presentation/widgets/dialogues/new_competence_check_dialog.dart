@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
@@ -22,6 +22,7 @@ Future<void> newCompetenceCheckDialog({
     context: parentContext,
     builder: (context) {
       int competenceCheckStatusValue = 0;
+      final style = Style.of(context);
       return StatefulBuilder(
         builder: (statefulContext, setState) {
           void onChangedFunction(int newValue) {
@@ -38,30 +39,30 @@ Future<void> newCompetenceCheckDialog({
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.backgroundColor),
-                      borderRadius: BorderRadius.circular(5.0),
+                      border: Border.all(color: style.colors.accent),
+                      borderRadius: BorderRadius.circular(Style.radii.small),
                     ),
                     width: 300,
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(Style.spacing.sm),
                       child: TextField(
                         maxLines: 3,
                         textAlign: TextAlign.start,
-                        style: const TextStyle(fontSize: 17),
+                        style: context.typography.subtitle,
                         keyboardType: TextInputType.multiline,
                         controller: _textEditingController,
                         decoration: null,
                       ),
                     ),
                   ),
-                  const Gap(10),
+                  Gap(Style.spacing.sm),
                   Row(
                     children: [
-                      const Text(
+                      Text(
                         'Eine Stufe auswählen:',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: context.typography.body.bold,
                       ),
-                      const Gap(10),
+                      Gap(Style.spacing.sm),
                       GrowthDropdown(
                         dropdownValue: competenceCheckStatusValue,
                         onChangedFunction: onChangedFunction,
@@ -74,23 +75,20 @@ Future<void> newCompetenceCheckDialog({
             title: const Text('Neuer Kompetenzcheck'),
             actions: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: ElevatedButton(
-                  style: AppStyles.cancelButtonStyle,
+                padding: EdgeInsets.only(bottom: Style.spacing.sm),
+                child: Button(
+                  label: 'ABBRECHEN',
+                  variant: ButtonVariant.secondary,
                   onPressed: () {
                     _textEditingController.clear();
                     Navigator.of(parentContext).pop();
                   },
-                  child: const Text(
-                    "ABBRECHEN",
-                    style: AppStyles.buttonTextStyle,
-                  ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: ElevatedButton(
-                  style: AppStyles.successButtonStyle,
+                padding: EdgeInsets.only(bottom: Style.spacing.sm),
+                child: Button(
+                  label: 'SENDEN',
                   onPressed: () async {
                     if (_competenceStatusKey.currentState!.validate()) {
                       await di<CompetenceManager>().postCompetenceCheck(
@@ -107,7 +105,6 @@ Future<void> newCompetenceCheckDialog({
                       }
                     }
                   },
-                  child: const Text("SENDEN", style: AppStyles.buttonTextStyle),
                 ),
               ),
             ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class UserFilterBottomSheet extends StatelessWidget {
   final Role? selectedRole;
@@ -16,22 +17,23 @@ class UserFilterBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(Style.spacing.lg),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Benutzer filtern',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: context.typography.title,
           ),
           const Gap(12),
-          const Text('Rolle'),
+          Text('Rolle', style: context.typography.body),
           const Gap(8),
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: Style.spacing.sm,
+            runSpacing: Style.spacing.sm,
             children: [
               ChoiceChip(
                 label: const Text('Alle'),
@@ -50,11 +52,22 @@ class UserFilterBottomSheet extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              TextButton(onPressed: onReset, child: const Text('Zurücksetzen')),
+              GestureDetector(
+                onTap: onReset,
+                child: Text(
+                  'Zurücksetzen',
+                  style: context.typography.body
+                      .withColor(style.colors.button.link),
+                ),
+              ),
               const Gap(8),
-              FilledButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Fertig'),
+              GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Text(
+                  'Fertig',
+                  style: context.typography.body.bold
+                      .withColor(style.colors.accent),
+                ),
               ),
             ],
           ),

@@ -3,7 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_page.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_dialog.dart';
@@ -24,7 +24,7 @@ import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_pol
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/dialogues/logout_devices_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_page/new_matrix_user_page.dart';
+import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_screen/new_matrix_user_screen.dart';
 
 class PupilProfileInfosContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -64,7 +64,7 @@ class PupilProfileInfosContent extends WatchingWidget {
             title: 'Besondere Infos',
           ),
           const Gap(8),
-          InkWell(
+          GestureDetector(
             onTap: () async {
               if (!di<HubSessionManager>().isAdmin ||
                   di<HubSessionManager>().userName == pupil.groupTutor) {
@@ -126,7 +126,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.cardInCardColor,
+                  color: Style.of(context).colors.cardInCard,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -141,8 +141,8 @@ class PupilProfileInfosContent extends WatchingWidget {
                             ? FontWeight.w500
                             : FontWeight.normal,
                         color: specialInfo != null
-                            ? AppColors.backgroundColor
-                            : AppColors.interactiveColor,
+                            ? Style.of(context).colors.accent
+                            : Style.of(context).colors.interactive,
                         fontStyle: specialInfo == null
                             ? FontStyle.italic
                             : FontStyle.normal,
@@ -158,7 +158,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                             'Erstellt von $specialInfoCreatedBy am $specialInfoCreatedAt',
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppColors.backgroundColor.withValues(
+                              color: Style.of(context).colors.accent.withValues(
                                 alpha: 0.6,
                               ),
                             ),
@@ -248,7 +248,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                       if (context.mounted) {
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
-                            builder: (ctx) => NewMatrixUserPage(
+                            builder: (ctx) => NewMatrixUserScreen(
                               pupil: pupil,
                               matrixId: MatrixPolicyHelper.generateMatrixId(
                                 isParent: false,
@@ -263,7 +263,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                     icon: Icon(
                       Icons.add_circle_rounded,
                       size: 24,
-                      color: AppColors.interactiveColor,
+                      color: Style.of(context).colors.interactive,
                     ),
                   )
                 : TappableIcon(
@@ -303,7 +303,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute<void>(
                               builder: (context) =>
-                                  PdfViewerPage(pdfGenerator: () async => file),
+                                  PdfViewerScreen(pdfGenerator: () async => file),
                             ),
                           );
                         }
@@ -312,7 +312,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                     icon: Icon(
                       Icons.qr_code_2_rounded,
                       size: 24,
-                      color: AppColors.backgroundColor,
+                      color: Style.of(context).colors.accent,
                     ),
                   ),
           ),
@@ -361,7 +361,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                       }
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
-                          builder: (ctx) => NewMatrixUserPage(
+                          builder: (ctx) => NewMatrixUserScreen(
                             pupil: pupil,
                             matrixId: MatrixPolicyHelper.generateMatrixId(
                               isParent: true,
@@ -377,7 +377,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                     icon: Icon(
                       Icons.add_circle_rounded,
                       size: 24,
-                      color: AppColors.interactiveColor,
+                      color: Style.of(context).colors.interactive,
                     ),
                   )
                 : TappableIcon(
@@ -410,7 +410,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute<void>(
                               builder: (context) =>
-                                  PdfViewerPage(pdfGenerator: () async => file),
+                                  PdfViewerScreen(pdfGenerator: () async => file),
                             ),
                           );
                         }
@@ -419,7 +419,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                     icon: Icon(
                       Icons.qr_code_2_rounded,
                       size: 24,
-                      color: AppColors.backgroundColor,
+                      color: Style.of(context).colors.accent,
                     ),
                   ),
           ),
@@ -457,7 +457,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                 children: [
                   Icon(
                     Icons.info_outline,
-                    color: Colors.grey.withValues(alpha: 0.6),
+                    color: Style.of(context).colors.mutedForeground.withValues(alpha: 0.6),
                     size: 24,
                   ),
                   const Gap(12),
@@ -465,7 +465,7 @@ class PupilProfileInfosContent extends WatchingWidget {
                     'Keine Geschwister erfasst',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey.withValues(alpha: 0.7),
+                      color: Style.of(context).colors.mutedForeground.withValues(alpha: 0.7),
                       fontStyle: FontStyle.italic,
                     ),
                   ),

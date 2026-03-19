@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
@@ -23,33 +24,27 @@ class AfterSchoolCareDetails extends WatchingWidget {
     );
 
     if (afterSchoolCare == null) {
+      final style = Style.of(context);
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Card(
-            color: Colors.grey[100],
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: Colors.grey[300]!),
-            ),
-            child: const Padding(
-              padding: EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.info_outline, size: 48, color: Colors.grey),
-                  Gap(12),
-                  Text(
-                    'Keine OGS Daten vorhanden',
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
+          padding: EdgeInsets.all(Style.spacing.xl),
+          child: CardBox(
+            variant: CardBoxVariant.bordered,
+            padding: EdgeInsets.all(Style.spacing.xl),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  size: 48,
+                  color: style.colors.mutedForeground,
+                ),
+                Gap(Style.spacing.md),
+                Text(
+                  'Keine OGS Daten vorhanden',
+                  style: context.typography.subtitle,
+                ),
+              ],
             ),
           ),
         ),
@@ -60,9 +55,9 @@ class AfterSchoolCareDetails extends WatchingWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _EmergencyCareCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
-        const Gap(10),
+        Gap(Style.spacing.md),
         _PickUpTimesCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
-        const Gap(10),
+        Gap(Style.spacing.md),
         _OgsInfoCard(pupil: pupil, afterSchoolCare: afterSchoolCare),
       ],
     );
@@ -105,79 +100,74 @@ class _PickUpTimesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final pickUpTimes = afterSchoolCare.pickUpTimes;
 
-    return Card(
-      color: AppColors.cardInCardColor,
-
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.backgroundColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.access_time,
-                    size: 20,
-                    color: AppColors.backgroundColor,
-                  ),
+    return CardBox(
+      variant: CardBoxVariant.filledSecondary,
+      padding: EdgeInsets.all(Style.spacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(Style.spacing.sm),
+                decoration: BoxDecoration(
+                  color: style.colors.accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(Style.radii.small),
                 ),
-                const Gap(12),
-                const Text(
-                  'Abholzeiten',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                child: Icon(
+                  Icons.access_time,
+                  size: 20,
+                  color: style.colors.accent,
                 ),
-              ],
-            ),
-            const Gap(16),
-            _PickUpTimeRow(
-              day: 'Montag',
-              pickUpInfo: pickUpTimes?.monday,
-              pupil: pupil,
-              weekday: AfterSchoolCareWeekday.monday,
-            ),
-            const Divider(height: 24),
-            _PickUpTimeRow(
-              day: 'Dienstag',
-              pickUpInfo: pickUpTimes?.tuesday,
-              pupil: pupil,
-              weekday: AfterSchoolCareWeekday.tuesday,
-            ),
-            const Divider(height: 24),
-            _PickUpTimeRow(
-              day: 'Mittwoch',
-              pickUpInfo: pickUpTimes?.wednesday,
-              pupil: pupil,
-              weekday: AfterSchoolCareWeekday.wednesday,
-            ),
-            const Divider(height: 24),
-            _PickUpTimeRow(
-              day: 'Donnerstag',
-              pickUpInfo: pickUpTimes?.thursday,
-              pupil: pupil,
-              weekday: AfterSchoolCareWeekday.thursday,
-            ),
-            const Divider(height: 24),
-            _PickUpTimeRow(
-              day: 'Freitag',
-              pickUpInfo: pickUpTimes?.friday,
-              pupil: pupil,
-              weekday: AfterSchoolCareWeekday.friday,
-            ),
-          ],
-        ),
+              ),
+              Gap(Style.spacing.md),
+              Text(
+                'Abholzeiten',
+                style: context.typography.title.withColor(
+                  style.colors.foreground,
+                ),
+              ),
+            ],
+          ),
+          Gap(Style.spacing.lg),
+          _PickUpTimeRow(
+            day: 'Montag',
+            pickUpInfo: pickUpTimes?.monday,
+            pupil: pupil,
+            weekday: AfterSchoolCareWeekday.monday,
+          ),
+          const Divider(height: 24),
+          _PickUpTimeRow(
+            day: 'Dienstag',
+            pickUpInfo: pickUpTimes?.tuesday,
+            pupil: pupil,
+            weekday: AfterSchoolCareWeekday.tuesday,
+          ),
+          const Divider(height: 24),
+          _PickUpTimeRow(
+            day: 'Mittwoch',
+            pickUpInfo: pickUpTimes?.wednesday,
+            pupil: pupil,
+            weekday: AfterSchoolCareWeekday.wednesday,
+          ),
+          const Divider(height: 24),
+          _PickUpTimeRow(
+            day: 'Donnerstag',
+            pickUpInfo: pickUpTimes?.thursday,
+            pupil: pupil,
+            weekday: AfterSchoolCareWeekday.thursday,
+          ),
+          const Divider(height: 24),
+          _PickUpTimeRow(
+            day: 'Freitag',
+            pickUpInfo: pickUpTimes?.friday,
+            pupil: pupil,
+            weekday: AfterSchoolCareWeekday.friday,
+          ),
+        ],
       ),
     );
   }
@@ -208,14 +198,12 @@ class _PickUpTimeRow extends StatelessWidget {
               width: 90,
               child: Text(
                 day,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                style: context.typography.body.bold.withColor(
+                  Style.of(context).colors.foreground,
                 ),
               ),
             ),
-            const Gap(12),
+            Gap(Style.spacing.md),
             Expanded(
               child: _TimeSelector(
                 pickUpInfo: pickUpInfo,
@@ -225,7 +213,7 @@ class _PickUpTimeRow extends StatelessWidget {
             ),
           ],
         ),
-        const Gap(8),
+        Gap(Style.spacing.sm),
         Padding(
           padding: const EdgeInsets.only(left: 102),
           child: _ModalitySelector(
@@ -285,22 +273,25 @@ class _TimeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final hasTime = pickUpInfo?.time != null && pickUpInfo!.time.isNotEmpty;
 
-    return InkWell(
+    return GestureDetector(
       onTap: () => _selectTime(context),
-      borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: EdgeInsets.symmetric(
+          horizontal: Style.spacing.md,
+          vertical: Style.spacing.sm,
+        ),
         decoration: BoxDecoration(
           color: hasTime
-              ? AppColors.backgroundColor.withValues(alpha: 0.1)
-              : Colors.grey.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(8),
+              ? style.colors.accent.withValues(alpha: 0.1)
+              : style.colors.mutedForeground.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(Style.radii.small),
           border: Border.all(
             color: hasTime
-                ? AppColors.backgroundColor.withValues(alpha: 0.3)
-                : Colors.grey[300]!,
+                ? style.colors.accent.withValues(alpha: 0.3)
+                : style.colors.border,
           ),
         ),
         child: Row(
@@ -309,15 +300,19 @@ class _TimeSelector extends StatelessWidget {
             Icon(
               Icons.schedule,
               size: 18,
-              color: hasTime ? AppColors.backgroundColor : Colors.grey[600],
+              color: hasTime
+                  ? style.colors.accent
+                  : style.colors.mutedForeground,
             ),
-            const Gap(8),
+            Gap(Style.spacing.sm),
             Text(
               hasTime ? '${pickUpInfo!.time} Uhr' : 'Nicht gesetzt',
               style: TextStyle(
                 fontSize: hasTime ? 16 : 14,
                 fontWeight: hasTime ? FontWeight.w600 : FontWeight.normal,
-                color: hasTime ? AppColors.backgroundColor : Colors.grey[600],
+                color: hasTime
+                    ? style.colors.accent
+                    : style.colors.mutedForeground,
                 fontStyle: hasTime ? FontStyle.normal : FontStyle.italic,
               ),
             ),
@@ -354,21 +349,25 @@ class _ModalitySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final currentModalityEnum = _modalityStringToEnum(pickUpInfo?.modality);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: EdgeInsets.symmetric(
+        horizontal: Style.spacing.md,
+        vertical: Style.spacing.xs,
+      ),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[300]!),
+        color: style.colors.background,
+        borderRadius: BorderRadius.circular(Style.radii.small),
+        border: Border.all(color: style.colors.border),
       ),
       child: DropdownButton<AfterSchoolCarePickUpModality>(
         value: currentModalityEnum,
         isDense: true,
         isExpanded: true,
         underline: Container(),
-        icon: Icon(Icons.arrow_drop_down, color: Colors.grey[700]),
+        icon: Icon(Icons.arrow_drop_down, color: style.colors.mutedForeground),
         items: AfterSchoolCarePickUpModality.values.map((modality) {
           return DropdownMenuItem<AfterSchoolCarePickUpModality>(
             value: modality,
@@ -378,10 +377,10 @@ class _ModalitySelector extends StatelessWidget {
                   _getModalityIcon(modality),
                   size: 16,
                   color: modality == AfterSchoolCarePickUpModality.notSet
-                      ? Colors.grey
-                      : Colors.black54,
+                      ? style.colors.mutedForeground
+                      : style.colors.foreground,
                 ),
-                const Gap(8),
+                Gap(Style.spacing.sm),
                 Expanded(
                   child: Text(
                     modality.value,
@@ -393,8 +392,8 @@ class _ModalitySelector extends StatelessWidget {
                           ? FontStyle.italic
                           : FontStyle.normal,
                       color: modality == AfterSchoolCarePickUpModality.notSet
-                          ? Colors.grey
-                          : Colors.black87,
+                          ? style.colors.mutedForeground
+                          : style.colors.foreground,
                     ),
                   ),
                 ),
@@ -469,87 +468,84 @@ class _OgsInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final hasInfo =
         afterSchoolCare.afterSchoolCareInfo != null &&
         afterSchoolCare.afterSchoolCareInfo!.isNotEmpty;
 
-    return Card(
-      color: AppColors.cardInCardColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: () => _editInfo(context),
+    return CardBox(
+      variant: CardBoxVariant.filledSecondary,
+      onTap: () => _editInfo(context),
+      padding: EdgeInsets.all(Style.spacing.lg),
+      child: GestureDetector(
         onLongPress: () => _deleteInfo(context),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: hasInfo
-                          ? AppColors.backgroundColor.withValues(alpha: 0.1)
-                          : Colors.grey.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      Icons.info_outline,
-                      size: 20,
-                      color: hasInfo ? AppColors.backgroundColor : Colors.grey,
-                    ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(Style.spacing.sm),
+                  decoration: BoxDecoration(
+                    color: hasInfo
+                        ? style.colors.accent.withValues(alpha: 0.1)
+                        : style.colors.mutedForeground.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(Style.radii.small),
                   ),
-                  const Gap(12),
-                  const Expanded(
-                    child: Text(
-                      'OGS Informationen',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
-                  Icon(Icons.edit, size: 20, color: AppColors.backgroundColor),
-                ],
-              ),
-              const Gap(12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: hasInfo ? Colors.grey[50] : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey[300]!),
-                ),
-                child: Text(
-                  hasInfo
-                      ? afterSchoolCare.afterSchoolCareInfo!
-                      : 'Keine Informationen vorhanden',
-                  style: TextStyle(
-                    fontSize: hasInfo ? 15 : 14,
-                    fontWeight: hasInfo ? FontWeight.normal : FontWeight.normal,
-                    color: hasInfo ? Colors.black87 : Colors.grey[600],
-                    fontStyle: hasInfo ? FontStyle.normal : FontStyle.italic,
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 20,
+                    color: hasInfo
+                        ? style.colors.accent
+                        : style.colors.mutedForeground,
                   ),
                 ),
-              ),
-              if (hasInfo)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
+                Gap(Style.spacing.md),
+                Expanded(
                   child: Text(
-                    'Lang drücken zum Löschen',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontStyle: FontStyle.italic,
+                    'OGS Informationen',
+                    style: context.typography.title.withColor(
+                      style.colors.foreground,
                     ),
                   ),
                 ),
-            ],
-          ),
+                Icon(Icons.edit, size: 20, color: style.colors.accent),
+              ],
+            ),
+            Gap(Style.spacing.md),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(Style.spacing.md),
+              decoration: BoxDecoration(
+                color: style.colors.background,
+                borderRadius: BorderRadius.circular(Style.radii.small),
+                border: Border.all(color: style.colors.border),
+              ),
+              child: Text(
+                hasInfo
+                    ? afterSchoolCare.afterSchoolCareInfo!
+                    : 'Keine Informationen vorhanden',
+                style: TextStyle(
+                  fontSize: hasInfo ? 15 : 14,
+                  fontWeight: FontWeight.normal,
+                  color: hasInfo
+                      ? style.colors.foreground
+                      : style.colors.mutedForeground,
+                  fontStyle: hasInfo ? FontStyle.normal : FontStyle.italic,
+                ),
+              ),
+            ),
+            if (hasInfo)
+              Padding(
+                padding: EdgeInsets.only(top: Style.spacing.sm),
+                child: Text(
+                  'Lang drücken zum Löschen',
+                  style: context.typography.bodySmall
+                      .withColor(style.colors.mutedForeground)
+                      .copyWith(fontStyle: FontStyle.italic),
+                ),
+              ),
+          ],
         ),
       ),
     );

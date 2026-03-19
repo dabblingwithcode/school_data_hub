@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/post_or_patch_support_category_page/post_or_patch_support_category_page.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_page/widgets/support_category_tree.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_page/sortable_support_category_list_page.dart';
 
-class CategoryListPage extends WatchingWidget {
-  const CategoryListPage({super.key});
+class CategoryListScreen extends WatchingWidget {
+  const CategoryListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Watch supportCategories so the page rebuilds when order/parent changes
     watchValue((SupportCategoryManager m) => m.supportCategories);
     return Scaffold(
-      appBar: const GenericAppBar(
+      appBar: const AppHeader(
         iconData: Icons.category,
         title: 'Förderkategorien',
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Padding(
-          padding: const EdgeInsets.only(
-            top: 8.0,
-            left: 10,
-            right: 10,
-            bottom: 10,
+          padding: EdgeInsets.only(
+            top: Style.spacing.sm,
+            left: Style.spacing.md,
+            right: Style.spacing.md,
+            bottom: Style.spacing.md,
           ),
           child: Center(
             child: ConstrainedBox(
@@ -40,15 +42,15 @@ class CategoryListPage extends WatchingWidget {
           ),
         ),
       ),
-      bottomNavigationBar: GenericBottomNavBar(
+      bottomNavigationBar: ActionBar(
         actions: [
-          IconButton(
-            tooltip: 'Neue Kategorie',
+          TappableIcon(
             icon: const Icon(Icons.add, size: 30),
+            tooltip: 'Neue Kategorie',
             onPressed: () {
               Navigator.of(context).push<void>(
                 MaterialPageRoute<void>(
-                  builder: (ctx) => const PostOrPatchSupportCategoryPage(
+                  builder: (ctx) => const PostOrPatchSupportCategoryScreen(
                     category: null,
                     parentCategoryId: null,
                   ),
@@ -56,13 +58,13 @@ class CategoryListPage extends WatchingWidget {
               );
             },
           ),
-          IconButton(
+          TappableIcon(
+            icon: const Icon(Icons.edit_rounded, size: 30),
             tooltip: 'Reihenfolge ändern',
-            icon: const Icon(Icons.edit_rounded),
             onPressed: () {
               Navigator.of(context).push<void>(
                 MaterialPageRoute<void>(
-                  builder: (ctx) => const SortableSupportCategoryListPage(),
+                  builder: (ctx) => const SortableSupportCategoryListScreen(),
                 ),
               );
             },

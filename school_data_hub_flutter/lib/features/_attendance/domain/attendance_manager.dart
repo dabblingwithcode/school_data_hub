@@ -41,6 +41,9 @@ class AttendanceManager with ChangeNotifier {
   void dispose() {
     _hubSubscription?.cancel();
     _hubSubscription = null;
+    for (final proxy in _pupilMissedSchooldaysMap.values) {
+      proxy.dispose();
+    }
     _pupilMissedSchooldaysMap.clear();
     _missedSchooldays.dispose();
     super.dispose();

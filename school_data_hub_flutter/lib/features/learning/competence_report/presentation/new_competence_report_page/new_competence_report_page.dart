@@ -3,21 +3,22 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 
-class NewCompetenceReportPage extends WatchingWidget {
+class NewCompetenceReportScreen extends WatchingWidget {
   final PupilProxy pupil;
 
-  const NewCompetenceReportPage({required this.pupil, super.key});
+  const NewCompetenceReportScreen({required this.pupil, super.key});
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final semesters = watchValue(
       (SchoolCalendarManager m) => m.schoolSemesters,
     );
@@ -65,25 +66,29 @@ class NewCompetenceReportPage extends WatchingWidget {
     }
 
     return Scaffold(
-      appBar: GenericAppBar(
+      backgroundColor: style.colors.canvas,
+      appBar: AppHeader(
         iconData: Icons.assignment_add,
         title: 'Neues Zeugnis - ${pupil.firstName} ${pupil.lastName}',
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(Style.spacing.lg),
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Schulhalbjahr',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: context.typography.title,
                 ),
-                const Gap(10),
+                Gap(Style.spacing.md),
                 InputDecorator(
-                  decoration: AppStyles.textFieldDecoration(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Style.radii.small),
+                    ),
                     labelText: 'Schulhalbjahr',
                   ),
                   child: DropdownButtonHideUnderline(
@@ -104,27 +109,30 @@ class NewCompetenceReportPage extends WatchingWidget {
                     ),
                   ),
                 ),
-                const Gap(20),
-                const Text(
+                Gap(Style.spacing.xl),
+                Text(
                   'Bezeichnung',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: context.typography.title,
                 ),
-                const Gap(10),
+                Gap(Style.spacing.md),
                 TextField(
                   minLines: 1,
                   maxLines: 3,
                   controller: achievementController,
-                  decoration: AppStyles.textFieldDecoration(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Style.radii.small),
+                    ),
                     labelText: 'Bezeichnung des Zeugnisses',
                   ),
                 ),
-                const Gap(20),
-                const Text(
+                Gap(Style.spacing.xl),
+                Text(
                   'Datum',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: context.typography.title,
                 ),
-                const Gap(10),
-                InkWell(
+                Gap(Style.spacing.md),
+                GestureDetector(
                   onTap: () async {
                     final picked = await showDatePicker(
                       context: context,
@@ -137,7 +145,10 @@ class NewCompetenceReportPage extends WatchingWidget {
                     }
                   },
                   child: InputDecorator(
-                    decoration: AppStyles.textFieldDecoration(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(Style.radii.small),
+                      ),
                       labelText: 'Datum',
                     ),
                     child: Row(
@@ -145,33 +156,28 @@ class NewCompetenceReportPage extends WatchingWidget {
                       children: [
                         Text(
                           DateFormat('dd.MM.yyyy').format(dateValue),
-                          style: const TextStyle(fontSize: 16),
+                          style: context.typography.subtitle,
                         ),
                         Icon(
                           Icons.calendar_today,
-                          color: AppColors.backgroundColor,
+                          color: style.colors.accent,
                         ),
                       ],
                     ),
                   ),
                 ),
                 const Spacer(),
-                ElevatedButton(
-                  style: AppStyles.actionButtonStyle,
+                Button(
+                  label: 'ERSTELLEN',
                   onPressed: submit,
-                  child:
-                      const Text('ERSTELLEN', style: AppStyles.buttonTextStyle),
                 ),
-                const Gap(15),
-                ElevatedButton(
-                  style: AppStyles.cancelButtonStyle,
+                Gap(Style.spacing.lg),
+                Button(
+                  label: 'ABBRECHEN',
+                  variant: ButtonVariant.secondary,
                   onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'ABBRECHEN',
-                    style: AppStyles.buttonTextStyle,
-                  ),
                 ),
-                const Gap(15),
+                Gap(Style.spacing.lg),
               ],
             ),
           ),

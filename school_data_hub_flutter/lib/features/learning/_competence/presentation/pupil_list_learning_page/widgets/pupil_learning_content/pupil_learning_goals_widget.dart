@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/pupil_list_learning_page/widgets/pupil_competence_goals/competence_goal_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
@@ -19,7 +20,7 @@ class PupilLearningGoals extends WatchingWidget {
       children: [
         competenceGoals.isNotEmpty
             ? ListView.builder(
-                padding: const EdgeInsets.all(0),
+                padding: EdgeInsets.zero,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: competenceGoals.length,
@@ -31,7 +32,7 @@ class PupilLearningGoals extends WatchingWidget {
                 },
               )
             : const SizedBox.shrink(),
-        const Gap(10),
+        Gap(Style.spacing.md),
       ],
     );
   }

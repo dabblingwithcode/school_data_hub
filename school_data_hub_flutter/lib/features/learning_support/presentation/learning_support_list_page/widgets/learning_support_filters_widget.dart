@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/filters/learning_support_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/models/learning_support_enums.dart';
 
 /// Learning-support filter content. Use inside
-/// [GenericFilterBottomSheet](children: [CommonPupilFiltersWidget(), LearningSupportFiltersWidget()]).
+/// [FilterSheet](children: [CommonPupilFiltersWidget(), LearningSupportFiltersWidget()]).
 class LearningSupportFiltersWidget extends WatchingWidget {
   const LearningSupportFiltersWidget({super.key});
 
@@ -28,12 +28,14 @@ class LearningSupportFiltersWidget extends WatchingWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Row(
-          children: [Text('Förderebene', style: AppStyles.subtitle)],
+        Row(
+          children: [
+            Text('Förderebene', style: context.typography.subtitle.bold),
+          ],
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Wrap(
-          spacing: 5,
+          spacing: Style.spacing.xs,
           crossAxisAlignment: WrapCrossAlignment.center,
           alignment: WrapAlignment.center,
           children: [
@@ -63,12 +65,14 @@ class LearningSupportFiltersWidget extends WatchingWidget {
             ),
           ],
         ),
-        const Row(
-          children: [Text('Förderbereich', style: AppStyles.subtitle)],
+        Row(
+          children: [
+            Text('Förderbereich', style: context.typography.subtitle.bold),
+          ],
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Wrap(
-          spacing: 5,
+          spacing: Style.spacing.xs,
           crossAxisAlignment: WrapCrossAlignment.center,
           alignment: WrapAlignment.center,
           children: [
@@ -86,14 +90,14 @@ class LearningSupportFiltersWidget extends WatchingWidget {
                 supportAreaFilters[SupportArea.language]!, SupportArea.language),
           ],
         ),
-        const Row(
+        Row(
           children: [
-            Text('Besondere Förderung', style: AppStyles.subtitle),
+            Text('Besondere Förderung', style: context.typography.subtitle.bold),
           ],
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Wrap(
-          spacing: 5,
+          spacing: Style.spacing.xs,
           crossAxisAlignment: WrapCrossAlignment.center,
           alignment: WrapAlignment.center,
           children: [
@@ -111,12 +115,14 @@ class LearningSupportFiltersWidget extends WatchingWidget {
             ),
           ],
         ),
-        const Row(
-          children: [Text('Förderplan', style: AppStyles.subtitle)],
+        Row(
+          children: [
+            Text('Förderplan', style: context.typography.subtitle.bold),
+          ],
         ),
-        const Gap(5),
+        Gap(Style.spacing.xs),
         Wrap(
-          spacing: 5,
+          spacing: Style.spacing.xs,
           crossAxisAlignment: WrapCrossAlignment.center,
           alignment: WrapAlignment.center,
           children: [
@@ -136,7 +142,7 @@ class LearningSupportFiltersWidget extends WatchingWidget {
             ),
           ],
         ),
-        const Gap(20),
+        Gap(Style.spacing.xl),
       ],
     );
   }

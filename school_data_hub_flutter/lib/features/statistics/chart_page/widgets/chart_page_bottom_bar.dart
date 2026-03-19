@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 class ChartPageBottomBar extends StatelessWidget {
   final int selectedIndex;
@@ -15,21 +15,22 @@ class ChartPageBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return BottomNavBarLayout(
       bottomNavBar: BottomAppBar(
         height: 80,
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        color: AppColors.backgroundColor,
+        color: style.colors.accent,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: Row(
             children: [
               IconButton(
                 tooltip: 'Zurück',
-                icon: const Icon(
+                icon: Icon(
                   Icons.arrow_back,
                   size: 30,
-                  color: Colors.white,
+                  color: style.colors.accentForeground,
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -40,8 +41,8 @@ class ChartPageBottomBar extends StatelessWidget {
                 child: NavigationBarTheme(
                   data: NavigationBarThemeData(
                     labelTextStyle: WidgetStateProperty.resolveWith((states) {
-                      return const TextStyle(
-                        color: Colors.white,
+                      return TextStyle(
+                        color: style.colors.accentForeground,
                         fontWeight: FontWeight.w500,
                       );
                     }),
@@ -49,7 +50,7 @@ class ChartPageBottomBar extends StatelessWidget {
                       if (states.contains(WidgetState.selected)) {
                         return null; // Keep default theme for selected state (usually contrasting with indicator)
                       }
-                      return const IconThemeData(color: Colors.white);
+                      return IconThemeData(color: style.colors.accentForeground);
                     }),
                   ),
                   child: NavigationBar(

@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_documents_section.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -27,6 +28,7 @@ class PupilBookLendingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final LibraryBookProxy book = di<BookManager>().getLibraryBookById(
       pupilBookLending.libraryBookId,
     )!;
@@ -44,279 +46,257 @@ class PupilBookLendingCard extends StatelessWidget {
       );
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Card(
-        color: AppColors.cardInCardColor,
-        child: InkWell(
-          mouseCursor: SystemMouseCursors.click,
-          focusColor: AppColors.cardInCardColor,
-          hoverColor: AppColors.cardInCardColor.withValues(alpha: 0.5),
-          onLongPress: () async {
-            final isAuthorized =
-                di<HubSessionManager>().isAdmin ||
-                di<HubSessionManager>().userName == pupilBookLending.lentBy;
+    return CardBox(
+      child: InkWell(
+        mouseCursor: SystemMouseCursors.click,
+        focusColor: style.colors.surfaceContainer,
+        hoverColor: style.colors.surfaceContainer.withValues(alpha: 0.5),
+        onLongPress: () async {
+          final isAuthorized =
+              di<HubSessionManager>().isAdmin ||
+              di<HubSessionManager>().userName == pupilBookLending.lentBy;
 
-            if (!isAuthorized) {
-              informationDialog(
-                context,
-                'Keine Berechtigung',
-                'Ausleihen können nur von der eintragenden Person bearbeitet werden!',
-              );
-              return;
-            }
-            final bool? result = await confirmationDialog(
-              context: context,
-              title: 'Ausleihe löschen',
-              message: 'Ausleihe von "${book.title}" wirklich löschen?',
+          if (!isAuthorized) {
+            informationDialog(
+              context,
+              'Keine Berechtigung',
+              'Ausleihen können nur von der eintragenden Person bearbeitet werden!',
             );
-            if (result == true) {
-              di<PupilBookLendingManager>().deletePupilBookLending(
-                lendingId: pupilBookLending.lendingId,
-              );
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.only(
-              top: 8.0,
-              bottom: 5,
-              left: 10,
-              right: 10,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Text(
-                          book.title,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Gap(10),
-                  ],
-                ),
-                const Gap(10),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Gap(5),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        UnencryptedImageInCard(
-                          cacheKey: book.isbn.toString(),
-                          path: book.imagePath,
-                          type: UnencryptedImageType.book,
-                          size: 80,
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, bottom: 8),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Gap(5),
-                            Text('Bucherei-Id: ${book.libraryId}'),
-                            const Gap(5),
-                            Row(
-                              children: [
-                                Text(
-                                  pupilBookLending.lentBy,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const Gap(2),
-                                const Icon(
-                                  Icons.arrow_circle_right_rounded,
-                                  color: Colors.orange,
-                                ),
-                                const Gap(2),
-                                Text(
-                                  pupilBookLending.lentAt
-                                      .toLocal()
-                                      .formatDateForUser(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (pupilBookLending.returnedAt != null)
-                              Row(
-                                children: [
-                                  Text(
-                                    pupilBookLending.receivedBy!,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const Gap(2),
-                                  const Icon(
-                                    Icons.arrow_circle_left_rounded,
-                                    color: Colors.green,
-                                  ),
-                                  const Gap(2),
-                                  Text(
-                                    pupilBookLending.returnedAt!
-                                        .formatDateForUser(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            const Gap(10),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GrowthDropdown(
-                          dropdownValue: pupilBookLending.score,
-                          onChangedFunction: updatePupilBookRating,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                _BookScoreDisplay(
-                  bookScore: pupilBookLending.bookScore,
-                  onChanged: updateBookScore,
-                ),
-                const Gap(10),
-                const Text(
-                  'Beobachtungen:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                InkWell(
-                  onTap: () async {
-                    final result = await longTextFieldDialog(
-                      title: 'Status',
-                      labelText: 'Status',
-                      initialValue: pupilBookLending.status ?? '',
-                      parentContext: context,
-                    );
-                    if (result == null ||
-                        result.value == pupilBookLending.status) {
-                      return;
-                    }
-                    await di<PupilBookLendingManager>().updatePupilBookLending(
-                      pupilBookLending: pupilBookLending,
-                      status: (value: result.value),
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.interactiveColor.withValues(
-                          alpha: 0.3,
-                        ),
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      (pupilBookLending.status == null ||
-                              pupilBookLending.status == '')
-                          ? 'Kein Eintrag - Tippen zum Bearbeiten'
-                          : pupilBookLending.status!,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.interactiveColor,
+            return;
+          }
+          final bool? result = await confirmationDialog(
+            context: context,
+            title: 'Ausleihe löschen',
+            message: 'Ausleihe von "${book.title}" wirklich löschen?',
+          );
+          if (result == true) {
+            di<PupilBookLendingManager>().deletePupilBookLending(
+              lendingId: pupilBookLending.lendingId,
+            );
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 8.0,
+            bottom: 5,
+            left: 10,
+            right: 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        book.title,
+                        style: context.typography.subtitle,
                       ),
                     ),
                   ),
-                ),
-                const Gap(10),
-                HubDocumentsSectionWidget(
-                  title: 'Dokumente:',
-                  documents: pupilBookLending.pupilBookLendingFiles,
-                  withSpacerToButtons: true,
-                  showMetadata: true,
-                  onImageFileCaptured: (file) async {
-                    if (file == null) return;
-                    await di<PupilBookLendingManager>().addPupilBookLendingFile(
-                      file,
-                      pupilBookLending: pupilBookLending,
-                    );
-                  },
-                  onAudioFileRecorded: (file, fileInfo) async {
-                    if (file == null) return;
-                    await di<PupilBookLendingManager>().addPupilBookLendingFile(
-                      file,
-                      pupilBookLending: pupilBookLending,
-                      fileInfo: fileInfo,
-                    );
-                  },
-                  onDeleteDocument: (documentId) async {
-                    await di<PupilBookLendingManager>()
-                        .deletePupilBookLendingFile(
-                          pupilBookLending: pupilBookLending,
-                          fileId: documentId,
-                        );
-                  },
-                  buttonsBackgroundColor: AppColors.backgroundColor,
-                  buttonsIconColor: Colors.white,
-                ),
-
-                const Gap(10),
-                if (pupilBookLending.returnedAt == null) ...[
+                  const Gap(10),
+                ],
+              ),
+              const Gap(10),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   const Gap(5),
-                  Row(
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8,
-                            right: 8,
-                            bottom: 8,
+                      UnencryptedImageInCard(
+                        cacheKey: book.isbn.toString(),
+                        path: book.imagePath,
+                        type: UnencryptedImageType.book,
+                        size: 80,
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, bottom: 8),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Gap(5),
+                          Text('Bucherei-Id: ${book.libraryId}'),
+                          const Gap(5),
+                          Row(
+                            children: [
+                              Text(
+                                pupilBookLending.lentBy,
+                                style: context.typography.body.bold,
+                              ),
+                              const Gap(2),
+                              Icon(
+                                Icons.arrow_circle_right_rounded,
+                                color: style.colors.warning,
+                              ),
+                              const Gap(2),
+                              Text(
+                                pupilBookLending.lentAt
+                                    .toLocal()
+                                    .formatDateForUser(),
+                                style: context.typography.body.bold,
+                              ),
+                            ],
                           ),
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              final result = await confirmationDialog(
-                                context: context,
-                                title: 'Buch zurückgeben',
-                                message:
-                                    'Buch "${book.title}" wirklich zurückgeben?',
-                              );
-                              if (result!) {
-                                di<PupilBookLendingManager>().returnLibraryBook(
-                                  pupilBookLending: pupilBookLending,
-                                );
-                              }
-                            },
-                            style: AppStyles.successButtonStyle,
-                            child: const Text(
-                              'BUCH ZURÜCKGEBEN',
-                              style: AppStyles.buttonTextStyle,
+                          if (pupilBookLending.returnedAt != null)
+                            Row(
+                              children: [
+                                Text(
+                                  pupilBookLending.receivedBy!,
+                                  style: context.typography.body.bold,
+                                ),
+                                const Gap(2),
+                                Icon(
+                                  Icons.arrow_circle_left_rounded,
+                                  color: style.colors.success,
+                                ),
+                                const Gap(2),
+                                Text(
+                                  pupilBookLending.returnedAt!
+                                      .formatDateForUser(),
+                                  style: context.typography.body.bold,
+                                ),
+                              ],
                             ),
-                          ),
-                        ),
+                          const Gap(10),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GrowthDropdown(
+                        dropdownValue: pupilBookLending.score,
+                        onChangedFunction: updatePupilBookRating,
                       ),
                     ],
                   ),
                 ],
+              ),
+              _BookScoreDisplay(
+                bookScore: pupilBookLending.bookScore,
+                onChanged: updateBookScore,
+              ),
+              const Gap(10),
+              Text(
+                'Beobachtungen:',
+                style: context.typography.body.bold,
+              ),
+              InkWell(
+                onTap: () async {
+                  final result = await longTextFieldDialog(
+                    title: 'Status',
+                    labelText: 'Status',
+                    initialValue: pupilBookLending.status ?? '',
+                    parentContext: context,
+                  );
+                  if (result == null ||
+                      result.value == pupilBookLending.status) {
+                    return;
+                  }
+                  await di<PupilBookLendingManager>().updatePupilBookLending(
+                    pupilBookLending: pupilBookLending,
+                    status: (value: result.value),
+                  );
+                },
+                borderRadius: BorderRadius.circular(Style.radii.small),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: style.colors.accent.withValues(
+                        alpha: 0.3,
+                      ),
+                    ),
+                    borderRadius: BorderRadius.circular(Style.radii.small),
+                  ),
+                  child: Text(
+                    (pupilBookLending.status == null ||
+                            pupilBookLending.status == '')
+                        ? 'Kein Eintrag - Tippen zum Bearbeiten'
+                        : pupilBookLending.status!,
+                    style: context.typography.body.withColor(style.colors.accent),
+                  ),
+                ),
+              ),
+              const Gap(10),
+              HubDocumentsSectionWidget(
+                title: 'Dokumente:',
+                documents: pupilBookLending.pupilBookLendingFiles,
+                withSpacerToButtons: true,
+                showMetadata: true,
+                onImageFileCaptured: (file) async {
+                  if (file == null) return;
+                  await di<PupilBookLendingManager>().addPupilBookLendingFile(
+                    file,
+                    pupilBookLending: pupilBookLending,
+                  );
+                },
+                onAudioFileRecorded: (file, fileInfo) async {
+                  if (file == null) return;
+                  await di<PupilBookLendingManager>().addPupilBookLendingFile(
+                    file,
+                    pupilBookLending: pupilBookLending,
+                    fileInfo: fileInfo,
+                  );
+                },
+                onDeleteDocument: (documentId) async {
+                  await di<PupilBookLendingManager>()
+                      .deletePupilBookLendingFile(
+                        pupilBookLending: pupilBookLending,
+                        fileId: documentId,
+                      );
+                },
+                buttonsBackgroundColor: style.colors.accent,
+                buttonsIconColor: style.colors.background,
+              ),
+
+              const Gap(10),
+              if (pupilBookLending.returnedAt == null) ...[
+                const Gap(5),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 8,
+                          right: 8,
+                          bottom: 8,
+                        ),
+                        child: Button(
+                          onPressed: () async {
+                            final result = await confirmationDialog(
+                              context: context,
+                              title: 'Buch zurückgeben',
+                              message:
+                                  'Buch "${book.title}" wirklich zurückgeben?',
+                            );
+                            if (result!) {
+                              di<PupilBookLendingManager>().returnLibraryBook(
+                                pupilBookLending: pupilBookLending,
+                              );
+                            }
+                          },
+                          label: 'BUCH ZURÜCKGEBEN',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
-            ),
+            ],
           ),
         ),
       ),
@@ -333,6 +313,7 @@ class _BookScoreDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     return InkWell(
       onTap: () async {
         final result = await _showBookScoreDialog(
@@ -343,29 +324,25 @@ class _BookScoreDisplay extends StatelessWidget {
           onChanged(result);
         }
       },
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(Style.radii.small),
       child: Row(
         children: [
-          const Text(
+          Text(
             'Buchbewertung:',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: context.typography.body.bold,
           ),
           const Gap(8),
           bookScore != null
               ? _buildStarRow(bookScore!)
-              : const Text(
+              : Text(
                   'Nicht bewertet',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                  ),
+                  style: context.typography.body.bold.muted(context),
                 ),
           const Spacer(),
           Icon(
             Icons.edit,
             size: 18,
-            color: AppColors.interactiveColor.withValues(alpha: 0.6),
+            color: style.colors.accent.withValues(alpha: 0.6),
           ),
         ],
       ),
@@ -427,13 +404,14 @@ class _BookScoreDialogState extends State<_BookScoreDialog> {
         ],
       ),
       actions: [
-        TextButton(
+        Button.small(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
+          label: 'Abbrechen',
+          variant: ButtonVariant.ghost,
         ),
-        TextButton(
+        Button.small(
           onPressed: () => Navigator.of(context).pop(score),
-          child: const Text('Speichern'),
+          label: 'Speichern',
         ),
       ],
     );

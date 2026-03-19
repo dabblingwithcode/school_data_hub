@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
+import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/classroom_list_page/widgets/classroom_list_card.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/new_classroom_page/new_classroom_page.dart';
 import 'package:flutter_it/flutter_it.dart';
 
-class ClassroomListPage extends WatchingWidget {
-  const ClassroomListPage({super.key});
+class ClassroomListScreen extends WatchingWidget {
+  const ClassroomListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final timetableManager = di<TimetableManager>();
 
-    return GenericListPage<Classroom>(
-      backgroundColor: AppColors.canvasColor,
+    return ListScreen<Classroom>(
+      backgroundColor: Style.of(context).colors.canvas,
       iconData: Icons.meeting_room,
       title: 'Räume verwalten',
       itemsListenable: timetableManager.data.classrooms,
@@ -28,10 +29,10 @@ class ClassroomListPage extends WatchingWidget {
       onRefresh: () async => timetableManager.refreshData(),
       maxWidth: 700,
       bottomBarActions: [
-        IconButton(
-          tooltip: 'Neuen Raum hinzufügen',
-          icon: const Icon(Icons.add, size: 35),
+        TappableIcon(
+          icon: const Icon(Icons.add, size: 30),
           onPressed: () => _navigateToNewClassroom(context),
+          tooltip: 'Neuen Raum hinzufügen',
         ),
       ],
     );
@@ -40,7 +41,7 @@ class ClassroomListPage extends WatchingWidget {
   void _navigateToNewClassroom(BuildContext context) async {
     await Navigator.push(
       context,
-      MaterialPageRoute<void>(builder: (context) => const NewClassroomPage()),
+      MaterialPageRoute<void>(builder: (context) => const NewClassroomScreen()),
     );
     await di<TimetableManager>().refreshData();
   }
@@ -52,7 +53,7 @@ class ClassroomListPage extends WatchingWidget {
     await Navigator.push(
       context,
       MaterialPageRoute<void>(
-        builder: (context) => NewClassroomPage(classroom: classroom),
+        builder: (context) => NewClassroomScreen(classroom: classroom),
       ),
     );
     await di<TimetableManager>().refreshData();

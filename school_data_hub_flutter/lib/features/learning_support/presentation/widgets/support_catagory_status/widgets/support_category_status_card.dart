@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
-import 'package:school_data_hub_flutter/common/theme/styles.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_content.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_controller.dart';
-import 'package:school_data_hub_flutter/common/widgets/custom_expansion_tile/custom_expansion_tile_switch.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
+import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/pupil_proxy_learning_support_ext.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_page/controller/new_support_category_status_controller.dart';
@@ -27,9 +28,8 @@ class SupportCategoryStatusCard extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     watch(pupil);
-    final expansionController = createOnce(
-      () => CustomExpansionTileController(),
-    );
+    final expansionController = createOnce(() => ExpansionController());
+    final style = Style.of(context);
 
     final int supportCategoryId =
         statusesWithSameGoalCategory[0].supportCategoryId;
@@ -42,18 +42,18 @@ class SupportCategoryStatusCard extends WatchingWidget {
       }
     }
 
-    return Card(
-      color: AppColors.cardInCardColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+    return CardBox(
+      variant: CardBoxVariant.filledSecondary,
+      padding: EdgeInsets.zero,
       child: Column(
         children: [
-          const Gap(10),
+          Gap(Style.spacing.md),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Gap(10),
+              Gap(Style.spacing.md),
               Expanded(
-                child: InkWell(
+                child: GestureDetector(
                   onLongPress: () {
                     Navigator.of(context).push(
                       MaterialPageRoute<void>(
@@ -69,39 +69,37 @@ class SupportCategoryStatusCard extends WatchingWidget {
                   child: CategoryTreeAncestors(categoryId: supportCategoryId),
                 ),
               ),
-              const Gap(10),
+              Gap(Style.spacing.md),
             ],
           ),
-          const Gap(5),
+          Gap(Style.spacing.xs),
           for (final status in statusesWithSameGoalCategory)
             SupportCategoryStatusEntry(pupil: pupil, status: status),
-          const Gap(5),
+          Gap(Style.spacing.xs),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const Gap(10),
-              CustomExpansionTileSwitch(
-                customExpansionTileController: expansionController,
-                switchColor: Colors.black,
+              Gap(Style.spacing.md),
+              ExpansionHeader(
+                expansionController: expansionController,
+                switchColor: style.colors.foreground,
                 expansionSwitchWidget: Text(
                   goalIndices.isEmpty
                       ? 'Noch keine Förderziele festgelegt!'
                       : 'Förderziele (${goalIndices.length})',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: goalIndices.isEmpty
-                        ? AppColors.accentColor
-                        : Colors.black,
+                  style: context.typography.subtitle.bold.withColor(
+                    goalIndices.isEmpty
+                        ? style.colors.accent
+                        : style.colors.foreground,
                   ),
                 ),
                 includeSwitch: true,
               ),
-              const Gap(10),
+              Gap(Style.spacing.md),
             ],
           ),
-          const Gap(5),
-          CustomExpansionTileContent(
+          Gap(Style.spacing.xs),
+          ExpansionBody(
             tileController: expansionController,
             widgetList: [
               if (goalIndices.isNotEmpty)
@@ -112,9 +110,10 @@ class SupportCategoryStatusCard extends WatchingWidget {
                     showCategoryBadge: false,
                   ),
               Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ElevatedButton(
-                  style: AppStyles.actionButtonStyle,
+                padding: EdgeInsets.all(Style.spacing.md),
+                child: Button(
+                  label: 'NEUES FÖRDERZIEL',
+                  variant: ButtonVariant.primary,
                   onPressed: () async {
                     await Navigator.of(context).push(
                       MaterialPageRoute<void>(
@@ -127,14 +126,6 @@ class SupportCategoryStatusCard extends WatchingWidget {
                       ),
                     );
                   },
-                  child: const Text(
-                    "NEUES FÖRDERZIEL",
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                 ),
               ),
             ],

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/controller/statistics.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_page/list_tiles/group_card.dart';
 
 RenderObjectWidget groupTiles(
-  context,
+  BuildContext context,
   StatisticsController controller,
   List<PupilProxy> group,
 ) {
@@ -18,46 +19,25 @@ RenderObjectWidget groupTiles(
     children: [
       Row(
         children: [
-          Text(
-            groupString,
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
+          Text(groupString, style: context.typography.subtitle.bold),
           const Gap(10),
-          const Text(
-            'insgesamt:',
-            style: TextStyle(color: Colors.black, fontSize: 18),
-          ),
+          Text('insgesamt:', style: context.typography.subtitle),
           const Gap(10),
           Text(
             group.length.toString(),
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+            style: context.typography.subtitle.bold,
           ),
           const Gap(20),
-          const Text(
-            'davon OGS:',
-            style: TextStyle(color: Colors.black, fontSize: 18),
-          ),
+          Text('davon OGS:', style: context.typography.subtitle),
           const Gap(10),
           Text(
             controller.pupilsInOGS(group).length.toString(),
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+            style: context.typography.subtitle.bold,
           ),
         ],
       ),
       const Gap(10),
-      statisticsGroupCard(controller, group),
+      statisticsGroupCard(context, controller, group),
     ],
   );
 }

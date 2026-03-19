@@ -3,6 +3,7 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
+import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/_competence/presentation/widgets/competence_check_symbols.dart';
@@ -32,75 +33,71 @@ class PupilCompetenceCard extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = Style.of(context);
     final competenceManager = di<CompetenceManager>();
     final competenceColor = CompetenceHelper.getCompetenceColor(
       competence.publicId,
     );
     return Padding(
       padding: isReport
-          ? const EdgeInsets.symmetric(vertical: 4, horizontal: 4)
+          ? EdgeInsets.symmetric(
+              vertical: Style.spacing.xs,
+              horizontal: Style.spacing.xs,
+            )
           : EdgeInsets.symmetric(
               vertical: competence.parentCompetence == null ? 3 : 0,
             ),
       child: Column(
         children: [
-          const Gap(10),
+          Gap(Style.spacing.md),
           Row(
             children: [
-              const Gap(15),
+              Gap(Style.spacing.lg),
               Text(
                 competence.name,
-                style: TextStyle(
-                  color: AppColors.readableOnWhiteBackgroungColor(
+                style: context.typography.subtitle.bold.withColor(
+                  AppColors.readableOnWhiteBackgroungColor(
                     competenceColor,
                   ),
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const Gap(10),
+              Gap(Style.spacing.md),
               Container(
                 width: 23.0,
                 height: 23.0,
                 decoration: BoxDecoration(
                   color: competenceColor,
                   shape: BoxShape.circle,
-                  // border: Border.all(
-                  //   color: Colors.white,
-                  //   width: 2.0,
-                  // ),
                 ),
                 child: Center(
                   child: Text(
                     competenceChecks.length.toString(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.bestContrastCompetenceFontColor(
+                    style: context.typography.body.bold.withColor(
+                      AppColors.bestContrastCompetenceFontColor(
                         competenceColor,
                       ),
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-              const Gap(10),
-              const Text(
+              Gap(Style.spacing.md),
+              Text(
                 'Ø',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                style: context.typography.title.withColor(
+                  style.colors.foreground,
+                ),
               ),
-              const Gap(5),
+              Gap(Style.spacing.xs),
               if (checksAverageValue != null)
                 Text(
                   checksAverageValue!.toStringAsFixed(1),
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
+                  style: context.typography.subtitle.bold.withColor(
+                    style.colors.foreground,
                   ),
                 ),
               const Spacer(),
-              InkWell(
+              GestureDetector(
                 onTap: () async {
                   await competenceManager.postCompetenceCheck(
                     pupilId: pupil.pupilId,
@@ -113,11 +110,11 @@ class PupilCompetenceCard extends WatchingWidget {
                 child: Icon(
                   Icons.add_circle_rounded,
                   color: isReport
-                      ? AppColors.backgroundColor
-                      : AppColors.interactiveColor,
+                      ? style.colors.accent
+                      : style.colors.interactive,
                 ),
               ),
-              const Gap(10),
+              Gap(Style.spacing.md),
               if (isReport) ...<Widget>[
                 const Spacer(),
                 GestureDetector(
@@ -130,23 +127,21 @@ class PupilCompetenceCard extends WatchingWidget {
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: EdgeInsets.all(Style.spacing.sm),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.interactiveColor,
+                      color: style.colors.interactive,
                     ),
-                    child: InkWell(
-                      child: _CompetenceReportCheckSymbolWidget(
-                        pupil: pupil,
-                        competenceId: competence.publicId,
-                      ),
+                    child: _CompetenceReportCheckSymbolWidget(
+                      pupil: pupil,
+                      competenceId: competence.publicId,
                     ),
                   ),
                 ),
               ],
             ],
           ),
-          const Gap(5),
+          Gap(Style.spacing.xs),
           if (competenceChecks.isNotEmpty || isReport) ...competenceChecks,
           ...children,
         ],
