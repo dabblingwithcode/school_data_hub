@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/reorderable_list.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/post_or_patch_support_category_screen/post_or_patch_support_category_screen.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_screen/select_parent_category_screen.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_screen/widgets/support_category_leaf_card_sortable.dart';
 
@@ -88,12 +89,9 @@ class _SupportCategoryCardSortableState
   }
 
   Future<void> _navigateToSelectParent(BuildContext context) async {
-    final result = await Navigator.of(context, rootNavigator: true).push<int>(
-      MaterialPageRoute<int>(
-        builder: (ctx) => SelectParentCategoryScreen(
-          movingCategoryId: widget.category.categoryId,
-        ),
-      ),
+    final result = await context.push<int>(
+      RoutePaths.learningSupportCategorySelectParent,
+      extra: widget.category.categoryId,
     );
     if (result != null && context.mounted) {
       final newParent = result == SelectParentCategoryScreen.rootSentinel
@@ -182,12 +180,9 @@ class _SupportCategoryCardSortableState
                       size: 22,
                     ),
                     onPressed: () {
-                      Navigator.of(context, rootNavigator: true).push<void>(
-                        MaterialPageRoute<void>(
-                          builder: (ctx) => PostOrPatchSupportCategoryScreen(
-                            category: widget.category,
-                          ),
-                        ),
+                      context.push(
+                        RoutePaths.learningSupportCategoryEdit,
+                        extra: {'category': widget.category},
                       );
                     },
                     tooltip: 'Kategorie bearbeiten',

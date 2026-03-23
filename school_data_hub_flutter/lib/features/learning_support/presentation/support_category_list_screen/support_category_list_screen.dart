@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_screen/widgets/support_category_tree.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_screen/sortable_support_category_list_screen.dart';
 
 class CategoryListScreen extends WatchingWidget {
   const CategoryListScreen({super.key});
@@ -47,11 +48,7 @@ class CategoryListScreen extends WatchingWidget {
             icon: const Icon(Icons.edit_rounded, size: 30),
             tooltip: 'Reihenfolge ändern',
             onPressed: () {
-              Navigator.of(context, rootNavigator: true).push<void>(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => const SortableSupportCategoryListScreen(),
-                ),
-              );
+              context.push(RoutePaths.learningSupportCategorySortable);
             },
           ),
         ],

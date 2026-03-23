@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
@@ -10,11 +11,11 @@ import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_contr
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_documents_section.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/pupil_proxy_learning_support_ext.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_screen/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_goal_check_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_symbol.dart';
@@ -230,17 +231,13 @@ class _GoalDescriptionRow extends WatchingWidget {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => NewSupportCategoryStatus(
-                    appBarTitle: 'Förderziel bearbeiten',
-                    pupilId: pupil.pupilId,
-                    goalCategoryId: goal.supportCategoryId,
-                    elementType: 'goal',
-                    existingGoal: goal,
-                  ),
-                ),
-              );
+              context.push(RoutePaths.learningSupportNewStatus, extra: {
+                'appBarTitle': 'Förderziel bearbeiten',
+                'pupilId': pupil.pupilId,
+                'goalCategoryId': goal.supportCategoryId,
+                'elementType': 'goal',
+                'existingGoal': goal,
+              });
             },
             child: Text(
               goal.description,

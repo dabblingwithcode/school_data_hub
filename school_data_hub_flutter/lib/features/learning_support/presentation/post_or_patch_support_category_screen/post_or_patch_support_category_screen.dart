@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_screen/select_parent_category_screen.dart';
 
@@ -111,12 +113,9 @@ class _PostOrPatchSupportCategoryScreenState
   }
 
   Future<void> _openSelectParent() async {
-    final result = await Navigator.of(context, rootNavigator: true).push<int>(
-      MaterialPageRoute<int>(
-        builder: (ctx) => SelectParentCategoryScreen(
-          movingCategoryId: widget.category?.categoryId ?? -1,
-        ),
-      ),
+    final result = await context.push<int>(
+      RoutePaths.learningSupportCategorySelectParent,
+      extra: widget.category?.categoryId ?? -1,
     );
     if (result != null && mounted) {
       if (result == SelectParentCategoryScreen.rootSentinel) {

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/post_or_patch_support_category_screen/post_or_patch_support_category_screen.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_screen/widgets/support_category_tree_sortable.dart';
 
 class SortableSupportCategoryListScreen extends WatchingWidget {
@@ -60,14 +61,7 @@ class SortableSupportCategoryListScreen extends WatchingWidget {
             icon: const Icon(Icons.add, size: 30),
             tooltip: 'Neue Kategorie',
             onPressed: () {
-              Navigator.of(context, rootNavigator: true).push<void>(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => const PostOrPatchSupportCategoryScreen(
-                    category: null,
-                    parentCategoryId: null,
-                  ),
-                ),
-              );
+              context.push(RoutePaths.learningSupportCategoryEdit);
             },
           ),
         ],

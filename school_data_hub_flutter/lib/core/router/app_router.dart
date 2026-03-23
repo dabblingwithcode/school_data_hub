@@ -50,6 +50,7 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/s
 import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_screen/set_bulk_support_categoies_status_scren.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_goal_screen/new_support_goal_screen.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_screen/controller/new_support_category_status_controller.dart';
+import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan_screen/controller/new_learning_support_plan_controller.dart' show NewLearningSupportPlan;
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_screen/workbook_list_screen.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_screen/new_workbook_screen.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/books_main_menu_screen/books_main_menu_screen.dart';
@@ -455,6 +456,29 @@ class AppRouter {
             builder: (_, state) => NewSupportGoalScreen(
               state.extra! as NewSupportCategoryStatusController,
             ),
+          ),
+          GoRoute(
+            path: RoutePaths.learningSupportNewPlan,
+            builder: (_, state) {
+              final args = state.extra! as Map<String, dynamic>;
+              return NewLearningSupportPlan(
+                pupil: args['pupil'] as PupilProxy,
+                existingPlan: args['existingPlan'] as LearningSupportPlan?,
+              );
+            },
+          ),
+          GoRoute(
+            path: RoutePaths.learningSupportNewStatus,
+            builder: (_, state) {
+              final args = state.extra! as Map<String, dynamic>;
+              return NewSupportCategoryStatus(
+                appBarTitle: args['appBarTitle'] as String,
+                pupilId: args['pupilId'] as int,
+                goalCategoryId: args['goalCategoryId'] as int,
+                elementType: args['elementType'] as String,
+                existingGoal: args['existingGoal'] as SupportGoal?,
+              );
+            },
           ),
 
           // --- Matrix ---

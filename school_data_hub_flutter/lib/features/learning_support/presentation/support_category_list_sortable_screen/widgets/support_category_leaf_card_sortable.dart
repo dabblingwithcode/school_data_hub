@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/post_or_patch_support_category_screen/post_or_patch_support_category_screen.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/support_category_list_sortable_screen/select_parent_category_screen.dart';
 
 class SupportCategoryLeafCardSortable extends StatelessWidget {
@@ -19,11 +20,9 @@ class SupportCategoryLeafCardSortable extends StatelessWidget {
   });
 
   Future<void> _navigateToSelectParent(BuildContext context) async {
-    final result = await Navigator.of(context, rootNavigator: true).push<int>(
-      MaterialPageRoute<int>(
-        builder: (ctx) =>
-            SelectParentCategoryScreen(movingCategoryId: category.categoryId),
-      ),
+    final result = await context.push<int>(
+      RoutePaths.learningSupportCategorySelectParent,
+      extra: category.categoryId,
     );
     if (result != null && context.mounted) {
       final newParent = result == SelectParentCategoryScreen.rootSentinel
@@ -67,11 +66,9 @@ class SupportCategoryLeafCardSortable extends StatelessWidget {
               size: 22,
             ),
             onPressed: () {
-              Navigator.of(context, rootNavigator: true).push<void>(
-                MaterialPageRoute<void>(
-                  builder: (ctx) =>
-                      PostOrPatchSupportCategoryScreen(category: category),
-                ),
+              context.push(
+                RoutePaths.learningSupportCategoryEdit,
+                extra: {'category': category},
               );
             },
             tooltip: 'Kategorie bearbeiten',

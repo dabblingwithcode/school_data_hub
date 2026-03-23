@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
@@ -8,9 +9,9 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/pupil_proxy_learning_support_ext.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_screen/controller/new_support_category_status_controller.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_catagory_status/widgets/support_category_status_entry/support_category_status_entry.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_goal/support_goal_card.dart';
@@ -55,16 +56,13 @@ class SupportCategoryStatusCard extends WatchingWidget {
               Expanded(
                 child: GestureDetector(
                   onLongPress: () {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (ctx) => NewSupportCategoryStatus(
-                          appBarTitle: 'Neuer Status',
-                          pupilId: pupil.pupilId,
-                          goalCategoryId: supportCategoryId,
-                          elementType: 'status',
-                        ),
-                      ),
-                    );
+                    context.push(RoutePaths.learningSupportNewStatus, extra: {
+                      'appBarTitle': 'Neuer Status',
+                      'pupilId': pupil.pupilId,
+                      'goalCategoryId': supportCategoryId,
+                      'elementType': 'status',
+                      'existingGoal': null,
+                    });
                   },
                   child: CategoryTreeAncestors(categoryId: supportCategoryId),
                 ),
@@ -115,15 +113,15 @@ class SupportCategoryStatusCard extends WatchingWidget {
                   label: 'NEUES FÖRDERZIEL',
                   variant: ButtonVariant.primary,
                   onPressed: () async {
-                    await Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (ctx) => NewSupportCategoryStatus(
-                          appBarTitle: 'Neues Förderziel',
-                          pupilId: pupil.pupilId,
-                          goalCategoryId: supportCategoryId,
-                          elementType: 'goal',
-                        ),
-                      ),
+                    await context.push(
+                      RoutePaths.learningSupportNewStatus,
+                      extra: {
+                        'appBarTitle': 'Neues Förderziel',
+                        'pupilId': pupil.pupilId,
+                        'goalCategoryId': supportCategoryId,
+                        'elementType': 'goal',
+                        'existingGoal': null,
+                      },
                     );
                   },
                 ),

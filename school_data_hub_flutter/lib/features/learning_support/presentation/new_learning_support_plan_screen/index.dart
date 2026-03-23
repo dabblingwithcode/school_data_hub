@@ -4,14 +4,14 @@
 ///
 /// Usage:
 /// ```dart
-/// import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan/new_learning_support_plan.dart';
+/// import 'package:go_router/go_router.dart';
+/// import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 ///
 /// // Navigate to create a new learning support plan
-/// Navigator.of(context, rootNavigator: true).push(
-///   MaterialPageRoute(
-///     builder: (context) => NewLearningSupportPlan(pupil: pupil),
-///   ),
-/// );
+/// context.push(RoutePaths.learningSupportNewPlan, extra: {
+///   'pupil': pupil,
+///   'existingPlan': null,
+/// });
 /// ```
 library;
 

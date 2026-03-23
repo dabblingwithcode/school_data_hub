@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_screen/controller/new_support_category_status_controller.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/select_support_category_screen/select_support_category_screen.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/goal_examples_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/support_category_parents_names.dart';
 
@@ -66,19 +67,16 @@ class NewSupportCategoryStatusScreen extends StatelessWidget {
                             ? Button(
                                 onPressed: () async {
                                   final int? categoryId =
-                                      await Navigator.of(context, rootNavigator: true).push(
-                                        MaterialPageRoute<int>(
-                                          builder: (ctx) =>
-                                              SelectSupportCategoryScreen(
-                                                pupil: pupilManager
-                                                    .getPupilByPupilId(
-                                                      controller.widget.pupilId,
-                                                    )!,
-                                                elementType: controller
-                                                    .widget
-                                                    .elementType,
-                                              ),
-                                        ),
+                                      await context.push<int>(
+                                        RoutePaths.learningSupportCategorySelect,
+                                        extra: {
+                                          'pupil': pupilManager
+                                              .getPupilByPupilId(
+                                                controller.widget.pupilId,
+                                              )!,
+                                          'elementType':
+                                              controller.widget.elementType,
+                                        },
                                       );
                                   if (categoryId == null) {
                                     return;
