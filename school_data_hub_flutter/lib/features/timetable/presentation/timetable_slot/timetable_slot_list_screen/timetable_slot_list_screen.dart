@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot/new_timetable_slot_screen/new_timetable_slot_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot/timetable_slot_list_screen/widgets/timetable_slot_list.dart';
 
 class TimetableSlotListScreen extends WatchingWidget {
@@ -34,12 +35,7 @@ class TimetableSlotListScreen extends WatchingWidget {
         return;
       }
 
-      await Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (context) =>
-              NewTimetableSlotScreen(timetableManager: timetableManager),
-        ),
-      );
+      await context.push(RoutePaths.toolsTimetableNewSlot);
       // Refresh data after returning from the new slot page
       await timetableManager.refreshData();
     }

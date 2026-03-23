@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/classroom_list_page/widgets/classroom_list_card.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/new_classroom_page/new_classroom_page.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 class ClassroomListScreen extends WatchingWidget {
   const ClassroomListScreen({super.key});
@@ -39,10 +40,7 @@ class ClassroomListScreen extends WatchingWidget {
   }
 
   void _navigateToNewClassroom(BuildContext context) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute<void>(builder: (context) => const NewClassroomScreen()),
-    );
+    await context.push(RoutePaths.toolsTimetableNewClassroom);
     await di<TimetableManager>().refreshData();
   }
 
@@ -50,12 +48,7 @@ class ClassroomListScreen extends WatchingWidget {
     BuildContext context,
     Classroom classroom,
   ) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (context) => NewClassroomScreen(classroom: classroom),
-      ),
-    );
+    await context.push(RoutePaths.toolsTimetableNewClassroom, extra: classroom);
     await di<TimetableManager>().refreshData();
   }
 

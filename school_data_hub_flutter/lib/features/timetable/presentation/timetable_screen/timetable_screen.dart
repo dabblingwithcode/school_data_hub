@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/generic_bottom_nav_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_app_bar.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/classroom_list_page/classroom_list_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/lesson_group/lesson_group_list_page/lesson_group_list_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_screen/new_timetable_screen.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/subject_list_screen/subject_list_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_screen/widgets/timetable_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_screen/widgets/weekday_selector.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot/timetable_slot_list_screen/timetable_slot_list_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/services/timetable_pdf_generator.dart';
 
 import 'widgets/timetable_grid_widget.dart';
@@ -61,12 +57,7 @@ class TimetablePage extends WatchingWidget {
             tooltip: 'Zeitslots verwalten',
             icon: const Icon(Icons.punch_clock_rounded, size: 35),
             onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => const TimetableSlotListScreen(),
-                ),
-              );
+              await context.push(RoutePaths.toolsTimetableSlots);
               await di<TimetableManager>().refreshData();
             },
           ),
@@ -74,12 +65,7 @@ class TimetablePage extends WatchingWidget {
             tooltip: 'Neuer Stundenplan',
             icon: const Icon(Icons.calendar_month, size: 35),
             onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => const NewTimetableScreen(),
-                ),
-              );
+              await context.push(RoutePaths.toolsTimetableNew);
               await di<TimetableManager>().refreshData();
             },
           ),
@@ -87,36 +73,21 @@ class TimetablePage extends WatchingWidget {
             tooltip: 'Lerngruppen',
             icon: const Icon(Icons.groups, size: 35),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => const LessonGroupListScreen(),
-                ),
-              );
+              context.push(RoutePaths.toolsTimetableGroups);
             },
           ),
           IconButton(
             tooltip: 'Räume verwalten',
             icon: const Icon(Icons.door_front_door_rounded, size: 35),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => const ClassroomListScreen(),
-                ),
-              );
+              context.push(RoutePaths.toolsTimetableClassrooms);
             },
           ),
           IconButton(
             tooltip: 'Fächer verwalten',
             icon: const Icon(Icons.subject, size: 35),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => const SubjectListScreen(),
-                ),
-              );
+              context.push(RoutePaths.toolsTimetableSubjects);
             },
           ),
           IconButton(
@@ -134,18 +105,15 @@ class TimetablePage extends WatchingWidget {
                 }
                 return;
               }
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute<void>(
-                  builder: (context) => PdfViewerScreen(
-                    pdfGenerator: () =>
-                        TimetablePdfGenerator.generateTimetablePdf(
-                          timetableManager: manager,
-                        ),
-                    title: 'Stundenplan PDF',
-                    showZoomButton: true,
-                  ),
-                ),
-              );
+              if (context.mounted) {
+                context.push(RoutePaths.utilPdfViewer, extra: {
+                  'pdfGenerator': () =>
+                      TimetablePdfGenerator.generateTimetablePdf(
+                        timetableManager: manager,
+                      ),
+                  'title': 'Stundenplan PDF',
+                });
+              }
             },
           ),
           IconButton(

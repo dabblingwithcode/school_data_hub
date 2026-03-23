@@ -70,9 +70,13 @@ import 'package:school_data_hub_flutter/features/school_calendar/presentation/sc
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_screen/timetable_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_screen/new_timetable_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_screen/new_scheduled_lesson_screen.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/lesson_group/lesson_group_list_page/lesson_group_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/lesson_group/new_lesson_group_page/new_lesson_group_page.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/classroom_list_page/classroom_list_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/new_classroom_page/new_classroom_page.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/subject_list_screen/subject_list_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_screen/new_subject_screen.dart';
+import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot/timetable_slot_list_screen/timetable_slot_list_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot/new_timetable_slot_screen/new_timetable_slot_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/schooldays_calendar_screen/schooldays_calendar_screen.dart';
@@ -516,6 +520,22 @@ class AppRouter {
           ),
 
           // --- Timetable ---
+          GoRoute(
+            path: RoutePaths.toolsTimetableSlots,
+            builder: (_, __) => const TimetableSlotListScreen(),
+          ),
+          GoRoute(
+            path: RoutePaths.toolsTimetableGroups,
+            builder: (_, __) => const LessonGroupListScreen(),
+          ),
+          GoRoute(
+            path: RoutePaths.toolsTimetableClassrooms,
+            builder: (_, __) => const ClassroomListScreen(),
+          ),
+          GoRoute(
+            path: RoutePaths.toolsTimetableSubjects,
+            builder: (_, __) => const SubjectListScreen(),
+          ),
           GoRoute(
             path: RoutePaths.toolsTimetableNew,
             builder: (_, state) => NewTimetableScreen(

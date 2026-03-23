@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_overlap_helper.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/lesson_group/new_lesson_group_page/new_lesson_group_page.dart';
 
 /// Dropdown widget for selecting a lesson group.
 /// Availability is based on overlap with the target slot (no synchronous callbacks).
@@ -119,10 +120,8 @@ class LessonGroupDropdown extends WatchingWidget {
         SizedBox(width: Style.spacing.md),
         GestureDetector(
           onTap: () async {
-            final result = await Navigator.of(context, rootNavigator: true).push<LessonGroup>(
-              MaterialPageRoute<LessonGroup>(
-                builder: (context) => const NewLessonGroupScreen(),
-              ),
+            final result = await context.push<LessonGroup>(
+              RoutePaths.toolsTimetableNewLessonGroup,
             );
 
             if (result != null && context.mounted) {

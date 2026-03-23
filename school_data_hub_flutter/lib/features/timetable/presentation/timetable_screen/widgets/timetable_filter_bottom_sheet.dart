@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_utils.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/lesson_group/lesson_group_list_page/lesson_group_list_page.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/lesson_group/new_lesson_group_page/new_lesson_group_page.dart';
 
 class TimetableFilterBottomSheet extends WatchingWidget {
   const TimetableFilterBottomSheet({super.key});
@@ -32,19 +32,11 @@ class TimetableFilterBottomSheet extends WatchingWidget {
     }
 
     void navigateToNewLessonGroup() {
-      Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (context) => const NewLessonGroupScreen(),
-        ),
-      );
+      context.push(RoutePaths.toolsTimetableNewLessonGroup);
     }
 
     void navigateToLearningGroupList() {
-      Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (context) => const LessonGroupListScreen(),
-        ),
-      );
+      context.push(RoutePaths.toolsTimetableGroups);
     }
 
     return Padding(

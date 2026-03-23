@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_slot/new_timetable_slot_screen/new_timetable_slot_screen.dart';
 
 class TimetableSlotList extends StatelessWidget {
   final List<TimetableSlot> timetableSlots;
@@ -143,14 +144,9 @@ class TimetableSlotList extends StatelessWidget {
   }
 
   void _editSlot(BuildContext context, TimetableSlot slot) {
-    Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(
-        builder: (_) => NewTimetableSlotScreen(
-          timetableManager: timetableManager,
-          timetableSlot: slot,
-        ),
-      ),
-    );
+    context.push(RoutePaths.toolsTimetableNewSlot, extra: {
+      'timetableSlot': slot,
+    });
   }
 
   void _deleteSlot(BuildContext context, TimetableSlot slot) {

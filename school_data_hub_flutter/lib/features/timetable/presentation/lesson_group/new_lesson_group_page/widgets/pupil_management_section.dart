@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:flutter_it/flutter_it.dart';
 
 /// Widget for managing pupils in a lesson group
 class PupilManagementSection extends WatchingWidget {
@@ -154,12 +155,9 @@ class PupilManagementSection extends WatchingWidget {
   }
 
   void _selectPupils(BuildContext context) async {
-    final result = await Navigator.of(context, rootNavigator: true).push<List<int>>(
-      MaterialPageRoute<List<int>>(
-        builder: (context) => SelectPupilsListScreen(
-          selectablePupils: di<PupilProxyManager>().allPupils,
-        ),
-      ),
+    final result = await context.push<List<int>>(
+      RoutePaths.utilSelectPupils,
+      extra: di<PupilProxyManager>().allPupils,
     );
 
     if (result != null) {

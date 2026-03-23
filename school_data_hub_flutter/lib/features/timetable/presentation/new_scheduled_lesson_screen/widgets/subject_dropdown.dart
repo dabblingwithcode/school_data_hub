@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_subject_screen/new_subject_screen.dart';
-
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_utils.dart';
 
 /// Dropdown widget for selecting a subject
@@ -73,10 +73,8 @@ class SubjectDropdown extends WatchingWidget {
         SizedBox(width: Style.spacing.md),
         GestureDetector(
           onTap: () async {
-            final result = await Navigator.of(context, rootNavigator: true).push<Subject>(
-              MaterialPageRoute<Subject>(
-                builder: (context) => const NewSubjectScreen(),
-              ),
+            final result = await context.push<Subject>(
+              RoutePaths.toolsTimetableNewSubject,
             );
 
             if (result != null && context.mounted) {

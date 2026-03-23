@@ -4,10 +4,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/room_drag_snap_validator.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/new_scheduled_lesson_screen/new_scheduled_lesson_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_screen/widgets/lesson_cell/lesson_cell.dart';
 
 /// Main widget that renders a scrollable room × time grid for the
@@ -446,30 +447,19 @@ class _RoomTimetableGridWidgetState extends State<TimetableGridWidget> {
     // The user will choose duration, classroom, group, etc. before
     // a ScheduledLesson is created server-side.
     if (!mounted) return;
-    await Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(
-        builder: (_) => NewScheduledLessonScreen(
-          timetableManager: timetableManager,
-          initialWeekday: weekday,
-          initialStartTime: startTime,
-          initialClassroom: classroom,
-        ),
-      ),
-    );
+    await context.push(RoutePaths.toolsTimetableNewLesson, extra: {
+      'initialWeekday': weekday,
+      'initialStartTime': startTime,
+      'initialClassroom': classroom,
+    });
   }
 
   // --- Drag & overlay -------------------------------------------------
 
   void _editLesson(ScheduledLesson lesson) {
-    final timetableManager = di<TimetableManager>();
-    Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(
-        builder: (_) => NewScheduledLessonScreen(
-          timetableManager: timetableManager,
-          editingLessonId: lesson.id,
-        ),
-      ),
-    );
+    context.push(RoutePaths.toolsTimetableNewLesson, extra: {
+      'editingLessonId': lesson.id,
+    });
   }
 
   void _startDrag(

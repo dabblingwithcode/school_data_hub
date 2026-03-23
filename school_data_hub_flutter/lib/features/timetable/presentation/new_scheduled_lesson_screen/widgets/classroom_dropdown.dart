@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_manager.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_overlap_helper.dart';
-import 'package:school_data_hub_flutter/features/timetable/presentation/classroom/new_classroom_page/new_classroom_page.dart';
 import 'package:school_data_hub_flutter/features/timetable/domain/timetable_utils.dart';
 
 /// Dropdown widget for selecting a classroom.
@@ -122,10 +123,8 @@ class ClassroomDropdown extends WatchingWidget {
         SizedBox(width: Style.spacing.md),
         GestureDetector(
           onTap: () async {
-            final result = await Navigator.of(context, rootNavigator: true).push<Classroom>(
-              MaterialPageRoute<Classroom>(
-                builder: (context) => const NewClassroomScreen(),
-              ),
+            final result = await context.push<Classroom>(
+              RoutePaths.toolsTimetableNewClassroom,
             );
 
             if (result != null && context.mounted) {
