@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
@@ -94,6 +96,9 @@ import 'package:school_data_hub_flutter/features/user/presentation/batch_import_
 import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_screen.dart';
 // Pupil profile + utility screens
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/birthdays_screen.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_screen/pupil_identity_stream_screen.dart';
+import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen.dart';
 import 'package:school_data_hub_flutter/features/school/presentation/edit_school_data_screen/edit_school_data_screen.dart';
 import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_screen/logs_screen.dart';
@@ -103,6 +108,7 @@ import 'package:school_data_hub_flutter/features/statistics/chart_screen/chart_p
 import 'package:school_data_hub_flutter/features/statistics/statistics_screen/controller/statistics.dart';
 import 'package:school_data_hub_flutter/app_utils/shorebird_code_push_screen.dart';
 import 'package:school_data_hub_flutter/features/server_model_diagram/presentation/server_model_diagram_screen.dart';
+import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 
 final _log = Logger('AppRouter');
 
@@ -564,6 +570,38 @@ class AppRouter {
           ),
 
           // --- Utility ---
+          GoRoute(
+            path: RoutePaths.pupilBirthdays,
+            builder: (_, state) {
+              final args = state.extra! as Map<String, dynamic>;
+              return BirthdaysScreen(
+                selectedDate: args['selectedDate'] as DateTime,
+                endDate: args['endDate'] as DateTime?,
+              );
+            },
+          ),
+          GoRoute(
+            path: RoutePaths.pupilIdentityStream,
+            builder: (_, state) {
+              final args = state.extra! as Map<String, dynamic>;
+              return PupilIdentityStreamScreen(
+                role: args['role'] as PupilIdentityStreamRole,
+                encryptedData: args['encryptedData'] as String?,
+                importedChannelName: args['importedChannelName'] as String?,
+                selectedPupilIds: args['selectedPupilIds'] as List<int>?,
+              );
+            },
+          ),
+          GoRoute(
+            path: RoutePaths.utilPdfViewer,
+            builder: (_, state) {
+              final args = state.extra! as Map<String, dynamic>;
+              return PdfViewerScreen(
+                pdfGenerator: args['pdfGenerator'] as Future<File> Function(),
+                title: (args['title'] as String?) ?? 'PDF Vorschau',
+              );
+            },
+          ),
           GoRoute(
             path: RoutePaths.utilSelectUsers,
             builder: (_, state) {

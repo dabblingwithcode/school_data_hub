@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/birthdays_screen.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/birthday_date_range_dialog.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
@@ -162,14 +162,10 @@ class PupilListButtons extends WatchingWidget {
                 );
             if (result == null) return;
             if (context.mounted) {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => BirthdaysScreen(
-                    selectedDate: result.pastDayValue,
-                    endDate: result.futureDayValue,
-                  ),
-                ),
-              );
+              context.push(RoutePaths.pupilBirthdays, extra: {
+                'selectedDate': result.pastDayValue,
+                'endDate': result.futureDayValue,
+              });
             }
           },
           buttonIcon: Icon(

@@ -22,15 +22,8 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_helper.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_identity_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_screen/pupil_identity_stream_screen.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/matrix_tools_screen.dart';
-import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 import 'package:go_router/go_router.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_screen/school_semester_list.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_screen.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/reset_password/reset_user_password_screen.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/user_list/user_list_screen.dart';
+import 'package:school_data_hub_flutter/features/app_main_navigation/widgets/main_menu_button.dart';
 
 class ToolsScreen extends WatchingWidget {
   const ToolsScreen({super.key});
@@ -170,15 +163,10 @@ class ToolsScreen extends WatchingWidget {
                                 return;
                               }
                               if (!context.mounted) return;
-                              Navigator.of(context, rootNavigator: true).push(
-                                MaterialPageRoute<void>(
-                                  builder: (context) =>
-                                      PupilIdentityStreamScreen(
-                                        role: PupilIdentityStreamRole.receiver,
-                                        importedChannelName: channelName,
-                                      ),
-                                ),
-                              );
+                              context.push(RoutePaths.pupilIdentityStream, extra: {
+                                'role': PupilIdentityStreamRole.receiver,
+                                'importedChannelName': channelName,
+                              });
                             },
                             onLongPress: Platform.isAndroid || Platform.isIOS
                                 ? () async {
@@ -199,16 +187,10 @@ class ToolsScreen extends WatchingWidget {
                                       return;
                                     }
                                     if (!context.mounted) return;
-                                    Navigator.of(context, rootNavigator: true).push(
-                                      MaterialPageRoute<void>(
-                                        builder: (context) =>
-                                            PupilIdentityStreamScreen(
-                                              role: PupilIdentityStreamRole
-                                                  .receiver,
-                                              importedChannelName: channelName,
-                                            ),
-                                      ),
-                                    );
+                                    context.push(RoutePaths.pupilIdentityStream, extra: {
+                                      'role': PupilIdentityStreamRole.receiver,
+                                      'importedChannelName': channelName,
+                                    });
                                   }
                                 : null,
                             icon: Icons.qr_code_scanner_rounded,
@@ -217,18 +199,17 @@ class ToolsScreen extends WatchingWidget {
                           _ToolsMenuButton(
                             onPressed: () async {
                               Navigator.pop(context);
+                              final selectablePupils =
+                                  di<PupilProxyManager>()
+                                      .getPupilsFromInternalIds(
+                                        di<PupilIdentityManager>()
+                                            .availablePupilIds,
+                                      );
+                              if (!context.mounted) return;
                               final List<int>? pupilIds =
-                                  await Navigator.of(context, rootNavigator: true).push(
-                                    MaterialPageRoute<List<int>>(
-                                      builder: (ctx) => SelectPupilsListScreen(
-                                        selectablePupils:
-                                            di<PupilProxyManager>()
-                                                .getPupilsFromInternalIds(
-                                                  di<PupilIdentityManager>()
-                                                      .availablePupilIds,
-                                                ),
-                                      ),
-                                    ),
+                                  await context.push<List<int>>(
+                                    RoutePaths.utilSelectPupils,
+                                    extra: selectablePupils,
                                   );
                               if (pupilIds == null || pupilIds.isEmpty) return;
                               final internalIds = di<PupilProxyManager>()
@@ -239,16 +220,11 @@ class ToolsScreen extends WatchingWidget {
                                         internalIds,
                                       );
                               if (!context.mounted) return;
-                              Navigator.of(context, rootNavigator: true).push(
-                                MaterialPageRoute<void>(
-                                  builder: (context) =>
-                                      PupilIdentityStreamScreen(
-                                        role: PupilIdentityStreamRole.sender,
-                                        encryptedData: encryptedPupilIdentities,
-                                        selectedPupilIds: pupilIds,
-                                      ),
-                                ),
-                              );
+                              context.push(RoutePaths.pupilIdentityStream, extra: {
+                                'role': PupilIdentityStreamRole.sender,
+                                'encryptedData': encryptedPupilIdentities,
+                                'selectedPupilIds': pupilIds,
+                              });
                             },
                             icon: Icons.mobile_screen_share,
                             label: 'Ids teilen',
@@ -359,12 +335,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context, rootNavigator: true).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        const CreateOrEditUserScreen(),
-                                  ),
-                                );
+                                context.push(RoutePaths.adminUsersNew);
                               },
                               icon: Icons.person_add_rounded,
                               label: 'User erstellen',
@@ -372,11 +343,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context, rootNavigator: true).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => const UserListScreen(),
-                                  ),
-                                );
+                                context.push(RoutePaths.adminUsers);
                               },
                               icon: Icons.people_rounded,
                               label: 'User-Verwaltung',
@@ -384,12 +351,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context, rootNavigator: true).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        const ResetUserPasswordScreen(),
-                                  ),
-                                );
+                                context.push(RoutePaths.adminUsersResetPassword);
                               },
                               icon: Icons.lock_reset_rounded,
                               label: 'Passwort\nzurücksetzen',
@@ -443,12 +405,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context, rootNavigator: true).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        const SchoolSemesterListScreen(),
-                                  ),
-                                );
+                                context.push(RoutePaths.schoolSemesters);
                               },
                               icon: Icons.calendar_view_month_rounded,
                               label: 'Schulhalbjahre\nverwalten',
@@ -467,11 +424,7 @@ class ToolsScreen extends WatchingWidget {
                             _ToolsMenuButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                Navigator.of(context, rootNavigator: true).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => const MatrixToolsScreen(),
-                                  ),
-                                );
+                                context.push(RoutePaths.adminMatrix);
                               },
                               icon: Icons.chat_rounded,
                               label: 'Matrix',
