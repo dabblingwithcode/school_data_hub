@@ -109,6 +109,8 @@ import 'package:school_data_hub_flutter/features/statistics/statistics_screen/co
 import 'package:school_data_hub_flutter/app_utils/shorebird_code_push_screen.dart';
 import 'package:school_data_hub_flutter/features/server_model_diagram/presentation/server_model_diagram_screen.dart';
 import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
+import 'package:school_data_hub_flutter/features/server_logs/presentation/server_logs_screen.dart';
+import 'package:school_data_hub_flutter/features/matrix/logs/presentation/matrix_corporal_logs_screen.dart';
 
 final _log = Logger('AppRouter');
 
@@ -567,6 +569,14 @@ class AppRouter {
           GoRoute(
             path: RoutePaths.settingsServerDiagram,
             builder: (_, __) => const ServerModelDiagramScreen(),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsServerLogs,
+            builder: (_, __) => const ServerLogsScreen(),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsMatrixCorporalLogs,
+            builder: (_, __) => const MatrixCorporalLogsScreen(),
           ),
 
           // --- Utility ---

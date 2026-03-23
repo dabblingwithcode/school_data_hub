@@ -150,6 +150,8 @@ abstract final class RoutePaths {
 
   // --- Settings (additional) ---
   static const settingsServerDiagram = '/settings/server-diagram';
+  static const settingsServerLogs = '/settings/server-logs';
+  static const settingsMatrixCorporalLogs = '/settings/matrix-corporal-logs';
 
   // --- Utility ---
   static const utilScanner = '/util/scanner';

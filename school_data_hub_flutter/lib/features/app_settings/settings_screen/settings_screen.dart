@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:school_data_hub_flutter/app_utils/shorebird_code_push_screen.dart';
 import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
@@ -14,10 +13,7 @@ import 'package:school_data_hub_flutter/core/updater/shorebird_update_manager.da
 import 'package:school_data_hub_flutter/features/app_settings/settings_screen/widgets/settings_account_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_screen/widgets/settings_admin_section.dart';
 import 'package:school_data_hub_flutter/features/app_settings/settings_screen/widgets/settings_session_section.dart';
-import 'package:school_data_hub_flutter/features/matrix/logs/presentation/matrix_corporal_logs_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/server_logs/presentation/server_logs_screen.dart';
-import 'package:school_data_hub_flutter/features/server_model_diagram/presentation/server_model_diagram_screen.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class SettingsScreen extends WatchingWidget {
@@ -102,14 +98,8 @@ class SettingsScreen extends WatchingWidget {
                               leading: const Icon(Icons.dns_outlined),
                               title: const Text('Server-Logs'),
                               trailing: const Icon(Icons.chevron_right),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => const ServerLogsScreen(),
-                                  ),
-                                );
-                              },
+                              onTap: () =>
+                                  context.push(RoutePaths.settingsServerLogs),
                             ),
                           if (showMatrixLogs)
                             ListTile(
@@ -119,12 +109,8 @@ class SettingsScreen extends WatchingWidget {
                               onTap: () async {
                                 await di.getAsync<MatrixPolicyManager>();
                                 if (!context.mounted) return;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        const MatrixCorporalLogsScreen(),
-                                  ),
+                                context.push(
+                                  RoutePaths.settingsMatrixCorporalLogs,
                                 );
                               },
                             ),
@@ -132,14 +118,8 @@ class SettingsScreen extends WatchingWidget {
                             leading: const Icon(Icons.account_tree_rounded),
                             title: const Text('Server-Datenmodell'),
                             trailing: const Icon(Icons.chevron_right),
-                            onTap: () {
-                              Navigator.of(context, rootNavigator: true).push(
-                                MaterialPageRoute<void>(
-                                  builder: (_) =>
-                                      const ServerModelDiagramScreen(),
-                                ),
-                              );
-                            },
+                            onTap: () =>
+                                context.push(RoutePaths.settingsServerDiagram),
                           ),
                           ListTile(
                             leading: const Icon(Icons.info_rounded),
@@ -166,14 +146,8 @@ class SettingsScreen extends WatchingWidget {
                             leading: const Icon(Icons.update_rounded),
                             title: const Text('App Updates überprüfen'),
                             trailing: const Icon(Icons.chevron_right),
-                            onTap: () {
-                              Navigator.of(context, rootNavigator: true).push(
-                                MaterialPageRoute<void>(
-                                  builder: (ctx) =>
-                                      const ShorebirdCodePushScreen(),
-                                ),
-                              );
-                            },
+                            onTap: () => context
+                                .push(RoutePaths.settingsShorebirdUpdate),
                           ),
                         ],
                       ),

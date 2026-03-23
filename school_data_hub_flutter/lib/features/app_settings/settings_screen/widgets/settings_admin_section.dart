@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/app_utils/app_helpers.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/books/utils/book_ids_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/support_category_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/batch_import_users/batch_import_users_screen.dart';
 
 class SettingsAdminSection extends WatchingWidget {
   const SettingsAdminSection({super.key});
@@ -104,13 +105,8 @@ class SettingsAdminSection extends WatchingWidget {
                   leading: const Icon(Icons.upload_file),
                   title: const Text('Benutzer aus Excel importieren'),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (ctx) => const BatchImportUsersScreen(),
-                      ),
-                    );
-                  },
+                  onTap: () =>
+                      context.push(RoutePaths.adminUsersBatchImport),
                 ),
               ],
             ),
