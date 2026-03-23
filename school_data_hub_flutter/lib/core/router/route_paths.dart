@@ -40,6 +40,17 @@ abstract final class RoutePaths {
   static const schoolCalendar = '/school/calendar';
   static const schoolSemesters = '/school/semesters';
 
+  // --- Authorizations ---
+  static const authorizationNew = '/authorizations/new';
+  static const authorizationPupils = '/authorizations/pupils';
+
+  // --- School Lists ---
+  static const schoolListNew = '/school/lists/new';
+  static const schoolListEntries = '/school/lists/entries';
+
+  // --- Schoolday Events ---
+  static const schooldayEventNew = '/schoolday-events/new';
+
   // --- Learning ---
   static const learningCompetences = '/learning/competences';
   static const learningCompetencesSortable = '/learning/competences/sortable';
@@ -60,6 +71,38 @@ abstract final class RoutePaths {
   static const learningBooksTags = '/learning/books/tags';
   static const learningBooksSelectTags = '/learning/books/select-tags';
 
+  // --- Workbooks ---
+  static const workbookNew = '/learning/workbooks/new';
+
+  // --- Learning Competence ---
+  static const learningCompetenceEdit = '/learning/competences/edit';
+  static const learningCompetenceGoalNew = '/learning/competence-goal/new';
+  static const learningCompetenceCheck = '/learning/competence-check';
+  static const learningCompetenceSelect = '/learning/competences/select';
+
+  // --- Learning Competence Report ---
+  static const learningCompetenceReportNew = '/learning/competence-report/new';
+  static const learningCompetenceReportPupil =
+      '/learning/competence-report/pupil';
+  static const learningCompetenceReportItemEdit =
+      '/learning/competence-report/item-edit';
+
+  // --- Learning Support (additional) ---
+  static const learningSupportCategoryEdit = '/learning/support/category/edit';
+  static const learningSupportCategorySortable =
+      '/learning/support/category/sortable';
+  static const learningSupportCategorySelect =
+      '/learning/support/category/select';
+  static const learningSupportCategorySelectParent =
+      '/learning/support/category/select-parent';
+  static const learningSupportCategoryBulkStatus =
+      '/learning/support/category/bulk-status';
+  static const learningSupportGoalNew = '/learning/support/goal/new';
+
+  // --- Books (additional) ---
+  static const learningBooksEdit = '/learning/books/edit';
+  static const learningBooksInfo = '/learning/books/info';
+
   // --- Tools ---
   static const toolsTimetable = '/tools/timetable';
   static const toolsTimetableNew = '/tools/timetable/new';
@@ -72,6 +115,14 @@ abstract final class RoutePaths {
   static const toolsStatistics = '/tools/statistics';
   static const toolsCharts = '/tools/charts';
 
+  // --- Timetable (additional) ---
+  static const toolsTimetableNewLesson = '/tools/timetable/new-lesson';
+  static const toolsTimetableNewLessonGroup =
+      '/tools/timetable/new-lesson-group';
+  static const toolsTimetableNewClassroom = '/tools/timetable/new-classroom';
+  static const toolsTimetableNewSubject = '/tools/timetable/new-subject';
+  static const toolsTimetableNewSlot = '/tools/timetable/new-slot';
+
   // --- Admin ---
   static const adminUsers = '/admin/users';
   static const adminUsersNew = '/admin/users/new';
@@ -81,16 +132,36 @@ abstract final class RoutePaths {
   static const adminMatrixContacts = '/admin/matrix/contacts';
   static const adminMatrixSetEnv = '/admin/matrix/set-environment';
 
+  // --- Matrix (additional) ---
+  static const adminMatrixNewUser = '/admin/matrix/users/new';
+  static const adminMatrixRooms = '/admin/matrix/rooms';
+  static const adminMatrixRoomEdit = '/admin/matrix/rooms/edit';
+  static const adminMatrixRoomNew = '/admin/matrix/rooms/new';
+  static const adminMatrixEventReports = '/admin/matrix/event-reports';
+  static const adminMatrixSelectUsers = '/admin/matrix/select-users';
+
+  // --- Admin (additional) ---
+  static const adminUsersBatchImport = '/admin/users/batch-import';
+
   // --- Settings ---
   static const settingsChangePassword = '/settings/change-password';
   static const settingsLogs = '/settings/logs';
   static const settingsShorebirdUpdate = '/settings/update';
+
+  // --- Settings (additional) ---
+  static const settingsServerDiagram = '/settings/server-diagram';
 
   // --- Utility ---
   static const utilScanner = '/util/scanner';
   static const utilCropAvatar = '/util/crop-avatar';
   static const utilCropDocument = '/util/crop-document';
   static const utilPdfViewer = '/util/pdf-viewer';
+
+  // --- User (additional) ---
+  static const utilSelectUsers = '/util/select-users';
+
+  // --- Utility (additional) ---
+  static const utilSelectPupils = '/util/select-pupils';
 
   /// Builds the pupil profile path with the given [internalId].
   static String pupilProfilePath(int internalId) =>
