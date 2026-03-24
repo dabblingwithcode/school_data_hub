@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
@@ -9,8 +10,8 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/confirmation_po
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/toast.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
-import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_screen/new_school_semester_screen.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_screen/widgets/school_semester_list_card.dart';
 
 class SchoolSemesterListScreen extends WatchingWidget {
@@ -92,12 +93,7 @@ class SchoolSemesterListScreen extends WatchingWidget {
     BuildContext context,
     SchoolCalendarManager manager,
   ) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (context) => const NewSchoolSemesterScreen(),
-      ),
-    );
+    await context.push(RoutePaths.schoolSemesterNew);
     // Refresh data when returning from NewSchoolSemesterScreen
     await manager.fetchSchoolSemesters();
   }
@@ -107,12 +103,7 @@ class SchoolSemesterListScreen extends WatchingWidget {
     SchoolSemester semester,
     SchoolCalendarManager manager,
   ) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (context) => NewSchoolSemesterScreen(semester: semester),
-      ),
-    );
+    await context.push(RoutePaths.schoolSemesterNew, extra: semester);
     // Refresh data when returning from edit screen
     await manager.fetchSchoolSemesters();
   }

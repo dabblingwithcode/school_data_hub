@@ -2,27 +2,26 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_screen/widgets/school_list_pupil_entries_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_screen/widgets/school_list_pupil_entries_search_bar_stats.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_screen/widgets/school_list_pupil_entry_card.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 import 'package:school_data_hub_flutter/features/school_lists/services/school_list_pdf_generator.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_screen.dart';
 
 class SchoolListPupilEntriesScreen extends WatchingWidget {
   final SchoolList schoolList;
@@ -122,20 +121,19 @@ class SchoolListPupilEntriesScreen extends WatchingWidget {
             tooltip: 'Liste teilen',
             onPressed: () async {
               final users = di<UserManager>().users.value;
-              final List<User>? selectedUsers = await Navigator.of(context)
-                  .push(
-                    MaterialPageRoute<List<User>>(
-                      builder: (ctx) => SelectUsersScreen(
-                        selectableUsers: users
-                            .where(
-                              (user) =>
-                                  user.userInfo?.userName !=
-                                  di<HubSessionManager>().userName,
-                            )
-                            .toList(),
-                        authorizedUsers: schoolList.authorizedUsers,
-                      ),
-                    ),
+              final List<User>? selectedUsers =
+                  await context.push<List<User>>(
+                    RoutePaths.utilSelectUsers,
+                    extra: {
+                      'selectableUsers': users
+                          .where(
+                            (user) =>
+                                user.userInfo?.userName !=
+                                di<HubSessionManager>().userName,
+                          )
+                          .toList(),
+                      'authorizedUsers': schoolList.authorizedUsers,
+                    },
                   );
               if (selectedUsers == null) return;
 
@@ -157,17 +155,14 @@ class SchoolListPupilEntriesScreen extends WatchingWidget {
           icon: const Icon(Icons.add, size: 30),
           onPressed: () async {
             final List<int> selectedPupilIds =
-                await Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<List<int>>(
-                    builder: (ctx) => SelectPupilsListScreen(
-                      selectablePupils: di<PupilProxyManager>()
-                          .getPupilsNotListed(
-                            pupilsInList.value
-                                .map((pupil) => pupil.pupilId)
-                                .toList(),
-                          ),
-                    ),
-                  ),
+                await context.push<List<int>>(
+                  RoutePaths.utilSelectPupils,
+                  extra: di<PupilProxyManager>()
+                      .getPupilsNotListed(
+                        pupilsInList.value
+                            .map((pupil) => pupil.pupilId)
+                            .toList(),
+                      ),
                 ) ??
                 [];
             if (selectedPupilIds.isEmpty) return;
@@ -183,21 +178,20 @@ class SchoolListPupilEntriesScreen extends WatchingWidget {
         TappableIcon(
           tooltip: 'Liste als PDF',
           icon: const Icon(Icons.print, size: 30),
-          onPressed: () async {
-            Navigator.of(context, rootNavigator: true).push(
-              MaterialPageRoute<void>(
-                builder: (ctx) => PdfViewerScreen(
-                  pdfGenerator: () =>
-                      SchoolListPdfGenerator.generateSchoolListPdf(
-                        schoolList: schoolList,
-                        pupils: schoolListManager.getPupilsinSchoolList(
-                          schoolList.id!,
-                        ),
+          onPressed: () {
+            context.push(
+              RoutePaths.utilPdfViewer,
+              extra: {
+                'pdfGenerator': () =>
+                    SchoolListPdfGenerator.generateSchoolListPdf(
+                      schoolList: schoolList,
+                      pupils: schoolListManager.getPupilsinSchoolList(
+                        schoolList.id!,
                       ),
-                  title: 'Schulliste PDF',
-                  iconData: Icons.list_alt_rounded,
-                ),
-              ),
+                    ),
+                'title': 'Schulliste PDF',
+                'iconData': Icons.list_alt_rounded,
+              },
             );
           },
         ),

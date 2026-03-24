@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -13,11 +14,11 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/widgets/competence_grades_widget.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart';
-import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_screen/new_workbook_screen.dart';
 
 class PupilWorkbookCard extends WatchingWidget {
   const PupilWorkbookCard({
@@ -101,16 +102,11 @@ class PupilWorkbookCard extends WatchingWidget {
                             Expanded(
                               child: GestureDetector(
                                 onLongPress: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (context) => NewWorkbookScreen(
-                                        isbn: workbook.isbn,
-                                        isEdit: true,
-                                        workbook: workbook,
-                                      ),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.workbookNew, extra: {
+                                    'isEdit': true,
+                                    'isbn': workbook.isbn,
+                                    'workbook': workbook,
+                                  });
                                 },
                                 child: Text(
                                   workbook.name,

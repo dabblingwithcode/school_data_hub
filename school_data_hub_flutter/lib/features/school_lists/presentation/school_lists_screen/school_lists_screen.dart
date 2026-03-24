@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
@@ -8,10 +9,10 @@ import 'package:school_data_hub_flutter/common/widgets/buttons_switches/icon_tog
 import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_enums.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/filters/school_list_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/new_list_screen/new_school_list_screen.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_screen/widgets/school_list_card.dart';
 
 class SchoolListsScreen extends StatelessWidget {
@@ -46,11 +47,7 @@ class SchoolListsScreen extends StatelessWidget {
           tooltip: 'Neue Liste',
           icon: const Icon(Icons.add, size: 35),
           onPressed: () {
-            Navigator.of(context, rootNavigator: true).push(
-              MaterialPageRoute<void>(
-                builder: (ctx) => const NewSchoolListScreen(),
-              ),
-            );
+            context.push(RoutePaths.schoolListNew);
           },
         ),
       ],

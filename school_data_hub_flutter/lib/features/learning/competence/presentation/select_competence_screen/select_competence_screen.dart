@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/filter_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/filter_sheet.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_screen/widgets/competence_filters_widget.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/multi_pupil_competence_check_screen/multi_pupil_competence_check_screen.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/select_competence_screen/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/select_competence_screen/selectable_competence_tree.dart';
 
@@ -89,12 +90,9 @@ class SelectCompetenceScreen extends StatelessWidget {
                       viewModel.selectedCompetence!,
                     );
                   } else {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (ctx) => MultiPupilCompetenceCheckScreen(
-                          competence: viewModel.selectedCompetence!,
-                        ),
-                      ),
+                    context.push(
+                      RoutePaths.learningCompetenceCheck,
+                      extra: viewModel.selectedCompetence!,
                     );
                   }
                 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
@@ -9,7 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tag.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_screen.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart';
 
 class UserListCard extends WatchingWidget {
@@ -47,12 +48,9 @@ class UserListCard extends WatchingWidget {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute<void>(
-                              builder: (ctx) => CreateOrEditUserScreen(
-                                userWithDevices: userWithDevices,
-                              ),
-                            ),
+                          context.push(
+                            RoutePaths.adminUsersNew,
+                            extra: userWithDevices,
                           );
                         },
                         child: Text(

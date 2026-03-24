@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/attendance_pdf_generator.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -62,17 +63,16 @@ class MissedSchooldaysPupilListScreen extends StatelessWidget {
             icon: const Icon(Icons.print_rounded, size: 30),
             tooltip: 'PDF drucken',
             onPressed: () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute<void>(
-                  builder: (context) => PdfViewerScreen(
-                    pdfGenerator: () =>
-                        MissedSchooldaysPdfGenerator.generateMissedSchooldaysPdf(
-                          pupils: pupilsFilter.filteredPupils.value,
-                        ),
-                    title: 'Fehlzeitenliste PDF',
-                    iconData: Icons.calendar_month_rounded,
-                  ),
-                ),
+              context.push(
+                RoutePaths.utilPdfViewer,
+                extra: {
+                  'pdfGenerator': () =>
+                      MissedSchooldaysPdfGenerator.generateMissedSchooldaysPdf(
+                        pupils: pupilsFilter.filteredPupils.value,
+                      ),
+                  'title': 'Fehlzeitenliste PDF',
+                  'iconData': Icons.calendar_month_rounded,
+                },
               );
             },
           ),

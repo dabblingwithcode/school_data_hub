@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
@@ -8,6 +9,7 @@ import 'package:school_data_hub_flutter/common/widgets/generic_components/conten
 import 'package:school_data_hub_flutter/common/widgets/generic_components/sliver_search_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
@@ -15,8 +17,6 @@ import 'package:school_data_hub_flutter/features/learning/competence/presentatio
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/learning_list_card/learning_list_card.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/learning_list_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_list_learning_search_bar/_pupil_list_learning_search_bar.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/select_competence_screen/select_competence_view_model.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 import 'package:school_data_hub_flutter/features/learning/services/learning_goals_pdf_generator.dart';
 
 class PupilListLearningScreen extends WatchingWidget {
@@ -66,11 +66,7 @@ class PupilListLearningScreen extends WatchingWidget {
               tooltip: 'Kompetenz hinzufuegen',
               icon: const Icon(Icons.add_a_photo_rounded, size: 30),
               onPressed: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => const SelectCompetence(),
-                  ),
-                );
+                context.push(RoutePaths.learningCompetenceSelect);
               },
             ),
 
@@ -80,17 +76,16 @@ class PupilListLearningScreen extends WatchingWidget {
               tooltip: 'PDF drucken',
               icon: const Icon(Icons.print_rounded, size: 30),
               onPressed: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<void>(
-                    builder: (context) => PdfViewerScreen(
-                      pdfGenerator: () =>
-                          LearningGoalsPdfGenerator.generateLearningGoalsPdf(
-                            pupils: pupilsFilter.filteredPupils.value,
-                          ),
-                      title: 'Lernziele PDF',
-                      iconData: Icons.lightbulb_rounded,
-                    ),
-                  ),
+                context.push(
+                  RoutePaths.utilPdfViewer,
+                  extra: {
+                    'pdfGenerator': () =>
+                        LearningGoalsPdfGenerator.generateLearningGoalsPdf(
+                          pupils: pupilsFilter.filteredPupils.value,
+                        ),
+                    'title': 'Lernziele PDF',
+                    'iconData': Icons.lightbulb_rounded,
+                  },
                 );
               },
             ),

@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
@@ -13,6 +14,7 @@ import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_heade
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/widgets/competence_grades_widget.dart';
@@ -20,7 +22,6 @@ import 'package:school_data_hub_flutter/features/workbooks/domain/pupil_workbook
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_enums.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/common/workbook_image.dart';
-import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_screen/new_workbook_screen.dart';
 
 class WorkbookCard extends WatchingWidget {
   const WorkbookCard({required this.workbook, super.key});
@@ -93,16 +94,12 @@ class _WorkbookCardContent extends WatchingWidget {
               Expanded(
                 child: GestureDetector(
                   onLongPress: (di<HubSessionManager>().isAdmin)
-                      ? () async {
-                          Navigator.of(context, rootNavigator: true).push<void>(
-                            MaterialPageRoute<void>(
-                              builder: (ctx) => NewWorkbookScreen(
-                                workbook: workbook,
-                                isbn: workbook.isbn,
-                                isEdit: true,
-                              ),
-                            ),
-                          );
+                      ? () {
+                          context.push(RoutePaths.workbookNew, extra: {
+                            'isEdit': true,
+                            'isbn': workbook.isbn,
+                            'workbook': workbook,
+                          });
                         }
                       : () {},
                   child: SingleChildScrollView(

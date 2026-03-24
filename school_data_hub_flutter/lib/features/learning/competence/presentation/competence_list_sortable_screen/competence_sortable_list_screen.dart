@@ -14,7 +14,6 @@ import 'package:school_data_hub_flutter/features/learning/competence/domain/comp
 import 'package:school_data_hub_flutter/features/learning/competence/domain/filters/competence_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_screen/widgets/competence_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_sortable_screen/widgets/competence_tree_sortable.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/post_or_patch_competence_screen/post_or_patch_competence_screen.dart';
 
 class CompetenceSortableListScreen extends WatchingWidget {
   const CompetenceSortableListScreen({super.key});
@@ -25,13 +24,12 @@ class CompetenceSortableListScreen extends WatchingWidget {
       int? competenceId,
       Competence? competence,
     }) {
-      Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (ctx) => PostOrPatchCompetenceScreen(
-            parentCompetence: competenceId,
-            competence: competence,
-          ),
-        ),
+      context.push(
+        RoutePaths.learningCompetenceEdit,
+        extra: {
+          'parentCompetence': competenceId,
+          'competence': competence,
+        },
       );
     }
 

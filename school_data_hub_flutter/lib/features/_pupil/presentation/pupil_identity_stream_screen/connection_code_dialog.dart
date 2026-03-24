@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_identity_stream_screen/pupil_identity_stream_screen.dart';
 
 Future<void> showConnectionCodeDialog(BuildContext context) async {
   final controller = TextEditingController();
@@ -42,14 +43,13 @@ Future<void> showConnectionCodeDialog(BuildContext context) async {
               final code = controller.text.trim();
               if (code.isNotEmpty) {
                 Navigator.of(context).pop();
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<void>(
-                    builder: (context) => PupilIdentityStreamScreen(
-                      role: PupilIdentityStreamRole.receiver,
-                      encryptedData: null,
-                      importedChannelName: code,
-                    ),
-                  ),
+                context.push(
+                  RoutePaths.pupilIdentityStream,
+                  extra: {
+                    'role': PupilIdentityStreamRole.receiver,
+                    'encryptedData': null,
+                    'importedChannelName': code,
+                  },
                 );
               }
             },

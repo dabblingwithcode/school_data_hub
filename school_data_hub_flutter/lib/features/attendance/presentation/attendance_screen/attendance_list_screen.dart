@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/services/attendance_pdf_generator.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/schoolday_date_picker.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/content_sliver_list.dart';
@@ -150,18 +151,17 @@ class AttendanceListScreen extends WatchingWidget {
               icon: const Icon(Icons.print_rounded, size: 30),
               tooltip: 'PDF drucken',
               onPressed: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<void>(
-                    builder: (context) => PdfViewerScreen(
-                      pdfGenerator: () =>
-                          AttendancePdfGenerator.generateAttendancePdf(
-                            date: thisDate,
-                            pupils: pupilsFilter.filteredPupils.value,
-                          ),
-                      title: 'Anwesenheitsliste PDF',
-                      iconData: Icons.list_alt_rounded,
-                    ),
-                  ),
+                context.push(
+                  RoutePaths.utilPdfViewer,
+                  extra: {
+                    'pdfGenerator': () =>
+                        AttendancePdfGenerator.generateAttendancePdf(
+                          date: thisDate,
+                          pupils: pupilsFilter.filteredPupils.value,
+                        ),
+                    'title': 'Anwesenheitsliste PDF',
+                    'iconData': Icons.list_alt_rounded,
+                  },
                 );
               },
             ),

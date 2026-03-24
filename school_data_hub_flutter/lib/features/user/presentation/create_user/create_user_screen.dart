@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/pupil_set_avatar.dart'
     show CropAvatarView;
@@ -28,7 +30,6 @@ import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/create_user/widgets/scope_names_selector.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/widgets/roles_dropdown.dart';
@@ -370,15 +371,12 @@ class CreateOrEditUserScreen extends WatchingWidget {
                           label: 'KINDER AUSWÄHLEN',
                           onPressed: () async {
                             final List<int> selectedPupilIds =
-                                await Navigator.of(context, rootNavigator: true).push(
-                                  MaterialPageRoute<List<int>>(
-                                    builder: (ctx) => SelectPupilsListScreen(
-                                      selectablePupils: pupilManager
-                                          .getPupilsNotListed(
-                                            watchedPupilsAuth.toList(),
-                                          ),
-                                    ),
-                                  ),
+                                await context.push<List<int>>(
+                                  RoutePaths.utilSelectPupils,
+                                  extra: pupilManager
+                                      .getPupilsNotListed(
+                                        watchedPupilsAuth.toList(),
+                                      ),
                                 ) ??
                                 [];
                             if (selectedPupilIds.isNotEmpty) {

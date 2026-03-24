@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
-import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_screen/authorization_pupils_screen.dart';
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorizations_list_screen/widgets/authorization_list_stats_row.dart';
 
 class AuthorizationCard extends WatchingWidget {
@@ -19,11 +20,7 @@ class AuthorizationCard extends WatchingWidget {
     return CardBox(
       padding: EdgeInsets.all(Style.spacing.lg),
       onTap: () {
-        Navigator.of(context, rootNavigator: true).push(
-          MaterialPageRoute<void>(
-            builder: (ctx) => AuthorizationPupilsScreen(authorization),
-          ),
-        );
+        context.push(RoutePaths.authorizationPupils, extra: authorization);
       },
       child: GestureDetector(
         onLongPress: () async {

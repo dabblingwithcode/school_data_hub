@@ -13,7 +13,6 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_screen/controller/select_matrix_users_list_controller.dart';
 
 List<String> _toMediaThumbnailUrls({
   required String? avatarUrl,
@@ -143,12 +142,12 @@ class MatrixUsersInRoomList extends WatchingWidget {
             );
 
             final List<String> selectedUserIds =
-                await Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<List<String>>(
-                    builder: (ctx) => SelectMatrixUsersList(
-                      MatrixUserHelper.usersFromUserIds(availableUsers),
-                    ),
-                  ),
+                await context.push<List<String>>(
+                  RoutePaths.adminMatrixSelectUsers,
+                  extra: <String, dynamic>{
+                    'selectableMatrixUsers':
+                        MatrixUserHelper.usersFromUserIds(availableUsers),
+                  },
                 ) ??
                 [];
             if (selectedUserIds.isNotEmpty) {

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
@@ -11,9 +12,9 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/workbooks/domain/workbook_manager.dart';
-import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_screen/new_workbook_screen.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_screen/widgets/workbook_card.dart';
 
 class WorkbookListScreen extends WatchingWidget {
@@ -70,11 +71,10 @@ class WorkbookListScreen extends WatchingWidget {
             }
             if (isbn == null) return;
             if (!context.mounted) return;
-            Navigator.of(context, rootNavigator: true).push(
-              MaterialPageRoute<void>(
-                builder: (ctx) => NewWorkbookScreen(isEdit: false, isbn: isbn!),
-              ),
-            );
+            context.push(RoutePaths.workbookNew, extra: {
+              'isEdit': false,
+              'isbn': isbn,
+            });
           },
         ),
       ],

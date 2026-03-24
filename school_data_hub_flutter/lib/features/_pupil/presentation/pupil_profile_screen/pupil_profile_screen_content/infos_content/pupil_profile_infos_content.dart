@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
@@ -10,6 +10,7 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/core/init/init_manager.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
@@ -24,7 +25,6 @@ import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_pol
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/dialogues/logout_devices_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_screen/new_matrix_user_screen.dart';
 
 class PupilProfileInfosContent extends WatchingWidget {
   final PupilProxy pupil;
@@ -246,17 +246,16 @@ class PupilProfileInfosContent extends WatchingWidget {
                       );
                       if (confirm != true) return;
                       if (context.mounted) {
-                        Navigator.of(context, rootNavigator: true).push(
-                          MaterialPageRoute<void>(
-                            builder: (ctx) => NewMatrixUserScreen(
-                              pupil: pupil,
-                              matrixId: MatrixPolicyHelper.generateMatrixId(
-                                isParent: false,
-                              ),
-                              displayName:
-                                  '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
+                        context.push(
+                          RoutePaths.adminMatrixNewUser,
+                          extra: {
+                            'pupil': pupil,
+                            'matrixId': MatrixPolicyHelper.generateMatrixId(
+                              isParent: false,
                             ),
-                          ),
+                            'displayName':
+                                '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (${pupil.group})',
+                          },
                         );
                       }
                     },
@@ -300,12 +299,9 @@ class PupilProfileInfosContent extends WatchingWidget {
                               isStaff: false,
                             );
                         if (file != null && context.mounted) {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute<void>(
-                              builder: (context) => PdfViewerScreen(
-                                pdfGenerator: () async => file,
-                              ),
-                            ),
+                          context.push(
+                            RoutePaths.utilPdfViewer,
+                            extra: {'pdfGenerator': () async => file},
                           );
                         }
                       }
@@ -360,19 +356,18 @@ class PupilProfileInfosContent extends WatchingWidget {
                           pupil,
                         ].map((e) => e.group).toList().join();
                       }
-                      Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute<void>(
-                          builder: (ctx) => NewMatrixUserScreen(
-                            pupil: pupil,
-                            matrixId: MatrixPolicyHelper.generateMatrixId(
-                              isParent: true,
-                            ),
-                            displayName: pupilSiblingsGroups != null
-                                ? 'Fa. ${pupil.lastName} (E) $pupilSiblingsGroups'
-                                : '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (E) ${pupil.group}',
+                      context.push(
+                        RoutePaths.adminMatrixNewUser,
+                        extra: {
+                          'pupil': pupil,
+                          'matrixId': MatrixPolicyHelper.generateMatrixId(
                             isParent: true,
                           ),
-                        ),
+                          'displayName': pupilSiblingsGroups != null
+                              ? 'Fa. ${pupil.lastName} (E) $pupilSiblingsGroups'
+                              : '${pupil.firstName} ${pupil.lastName.substring(0, 1).toUpperCase()}. (E) ${pupil.group}',
+                          'isParent': true,
+                        },
                       );
                     },
                     icon: Icon(
@@ -408,12 +403,9 @@ class PupilProfileInfosContent extends WatchingWidget {
                               isStaff: false,
                             );
                         if (file != null && context.mounted) {
-                          Navigator.of(context, rootNavigator: true).push(
-                            MaterialPageRoute<void>(
-                              builder: (context) => PdfViewerScreen(
-                                pdfGenerator: () async => file,
-                              ),
-                            ),
+                          context.push(
+                            RoutePaths.utilPdfViewer,
+                            extra: {'pdfGenerator': () async => file},
                           );
                         }
                       }

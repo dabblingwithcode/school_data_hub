@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
@@ -148,11 +149,11 @@ class SelectMatrixUsersListController extends State<SelectMatrixUsersList> {
         // Show PDF preview
         if (context.mounted) {
           _log.info('Navigating to BulkPdfViewPage with file: ${pdfFile.path}');
-          Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute<void>(
-              builder: (context) =>
-                  PdfViewerScreen(pdfGenerator: () async => pdfFile),
-            ),
+          context.push(
+            RoutePaths.utilPdfViewer,
+            extra: <String, dynamic>{
+              'pdfGenerator': () async => pdfFile,
+            },
           );
         }
       } else {

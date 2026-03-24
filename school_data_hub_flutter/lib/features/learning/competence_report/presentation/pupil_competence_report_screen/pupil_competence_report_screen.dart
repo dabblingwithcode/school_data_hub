@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/new_competence_report_screen/new_competence_report_screen.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/pupil_competence_report_screen/widgets/competence_report_card.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
@@ -64,10 +65,9 @@ class PupilCompetenceReportScreen extends WatchingWidget {
             tooltip: 'Neues Zeugnis',
             icon: const Icon(Icons.add, size: 30),
             onPressed: () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => NewCompetenceReportScreen(pupil: pupil),
-                ),
+              context.push(
+                RoutePaths.learningCompetenceReportNew,
+                extra: pupil,
               );
             },
           ),

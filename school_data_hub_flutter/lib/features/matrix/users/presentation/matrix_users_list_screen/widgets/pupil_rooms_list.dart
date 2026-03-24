@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_room_edit_screen/matrix_room_edit_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 
 List<String> _toMediaThumbnailUrls({
@@ -248,11 +249,9 @@ class MatrixUserRoomsListItem extends WatchingWidget {
                       Expanded(
                         child: InkWell(
                           onTap: () {
-                            Navigator.of(context, rootNavigator: true).push(
-                              MaterialPageRoute<void>(
-                                builder: (ctx) =>
-                                    MatrixRoomEditScreen(room: matrixRoom),
-                              ),
+                            context.push(
+                              RoutePaths.adminMatrixRoomEdit,
+                              extra: matrixRoom,
                             );
                           },
                           onLongPress: () async {

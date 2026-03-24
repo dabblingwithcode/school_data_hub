@@ -15,9 +15,6 @@ import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_infos_screen/book_infos_screen.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_screen/book_tag_management_controller.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/new_book_screen/new_book_controller.dart';
 
 class BooksMainMenuScreen extends WatchingWidget {
   const BooksMainMenuScreen({super.key});
@@ -111,11 +108,7 @@ class BookActionsCard extends StatelessWidget {
                 minWidth: buttonMinWidth,
                 maxWidth: buttonMaxWidth,
                 onTap: () {
-                  Navigator.of(context, rootNavigator: true).push(
-                    MaterialPageRoute<void>(
-                      builder: (ctx) => const BookTagManagement(),
-                    ),
-                  );
+                  context.push(RoutePaths.learningBooksTags);
                 },
               ),
             ],
@@ -271,11 +264,7 @@ Future<void> _showBookInfosDialog(
 
     if (libraryId != null && libraryId.isNotEmpty) {
       if (!context.mounted) return;
-      Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (ctx) => BookInfosScreen(libraryId: libraryId),
-        ),
-      );
+      context.push(RoutePaths.learningBooksInfo, extra: libraryId);
     }
   } else {
     final String? scannedLibraryId = await qrScanner(
@@ -286,11 +275,7 @@ Future<void> _showBookInfosDialog(
 
     final bookId = scannedLibraryId.replaceFirst('Buch ID: ', '').trim();
     if (context.mounted) {
-      Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (ctx) => BookInfosScreen(libraryId: bookId),
-        ),
-      );
+      context.push(RoutePaths.learningBooksInfo, extra: bookId);
     }
   }
 }
@@ -311,11 +296,10 @@ Future<void> _showNewBookDialog(
       final cleanIsbn = isbn.replaceAll('-', '');
 
       if (!context.mounted) return;
-      Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (ctx) => NewBook(isEdit: false, isbn: int.parse(cleanIsbn)),
-        ),
-      );
+      context.push(RoutePaths.learningBooksNew, extra: {
+        'isEdit': false,
+        'isbn': int.parse(cleanIsbn),
+      });
     }
   } else {
     final String? scannedIsbn = await qrScanner(
@@ -333,11 +317,9 @@ Future<void> _showNewBookDialog(
 
     final cleanScannedIsbn = scannedIsbn.replaceAll('-', '');
     if (!context.mounted) return;
-    Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute<void>(
-        builder: (ctx) =>
-            NewBook(isEdit: false, isbn: int.parse(cleanScannedIsbn)),
-      ),
-    );
+    context.push(RoutePaths.learningBooksNew, extra: {
+      'isEdit': false,
+      'isbn': int.parse(cleanScannedIsbn),
+    });
   }
 }

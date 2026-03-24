@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/authorization_manager.dart';
 import 'package:school_data_hub_flutter/features/authorizations/domain/filters/pupil_authorization_filter_manager.dart';
@@ -14,7 +16,6 @@ import 'package:school_data_hub_flutter/features/authorizations/presentation/aut
 import 'package:school_data_hub_flutter/features/_pupil/domain/filters/pupils_filter.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/common_pupil_filters.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/widgets/pupil_count_search_bar_stats.dart';
 
@@ -87,14 +88,11 @@ class AuthorizationPupilsScreen extends WatchingWidget {
             tooltip: 'Kinder hinzufügen',
             icon: const Icon(Icons.add, size: 30),
             onPressed: () async {
-              final List<int>? selectedPupilIds = await Navigator.of(context)
-                  .push(
-                    MaterialPageRoute<List<int>>(
-                      builder: (ctx) => SelectPupilsListScreen(
-                        selectablePupils: pupilManager.getPupilsNotListed(
-                          pupilManager.getPupilIdsFromPupils(pupilsInList),
-                        ),
-                      ),
+              final List<int>? selectedPupilIds =
+                  await context.push<List<int>>(
+                    RoutePaths.utilSelectPupils,
+                    extra: pupilManager.getPupilsNotListed(
+                      pupilManager.getPupilIdsFromPupils(pupilsInList),
                     ),
                   );
               if (selectedPupilIds == null) return;

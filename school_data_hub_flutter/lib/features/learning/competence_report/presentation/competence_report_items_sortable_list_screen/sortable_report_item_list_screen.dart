@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_items_sortable_list_screen/widgets/report_item_tree_sortable.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/post_or_patch_report_item_screen/post_or_patch_report_item_screen.dart';
 
 class SortableReportItemListScreen extends WatchingWidget {
   const SortableReportItemListScreen({super.key});
@@ -17,11 +18,12 @@ class SortableReportItemListScreen extends WatchingWidget {
       int? parentItemId,
       CompetenceReportItem? item,
     }) {
-      Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (ctx) =>
-              PostOrPatchReportItemScreen(parentItem: parentItemId, item: item),
-        ),
+      context.push(
+        RoutePaths.learningCompetenceReportItemEdit,
+        extra: {
+          'parentItem': parentItemId,
+          'item': item,
+        },
       );
     }
 

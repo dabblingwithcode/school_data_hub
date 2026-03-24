@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/app_utils/custom_encrypter.dart';
@@ -22,9 +23,8 @@ import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manag
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen_content/learning_support_content/support_level_history_expansion_tile.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/pupil_profile_screen_content/learning_support_content/widgets/learning_support_plans_section.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_content_widgets.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning_support/domain/learning_support_manager.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/new_support_category_status_screen/controller/new_support_category_status_controller.dart';
-import 'package:school_data_hub_flutter/features/learning_support/presentation/set_bulk_support_categoies_status_screen/set_bulk_support_categoies_status_scren.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/kindergarden_info_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/preschool_revision_dialog.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/widgets/dialogs/support_level_dialog.dart';
@@ -265,11 +265,9 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
           ...[
             GestureDetector(
               onTap: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) =>
-                        SetBulkSupportCategoriesStatusScreen(pupil: pupil),
-                  ),
+                context.push(
+                  RoutePaths.learningSupportCategoryBulkStatus,
+                  extra: pupil,
                 );
               },
               child: Padding(
@@ -311,15 +309,14 @@ class PupilProfileLearningSupportContentList extends WatchingWidget {
             padding: const EdgeInsets.all(10.0),
             child: Button(
               onPressed: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => NewSupportCategoryStatus(
-                      appBarTitle: 'Neuer Förderbereich',
-                      pupilId: pupil.pupilId,
-                      goalCategoryId: 0,
-                      elementType: 'status',
-                    ),
-                  ),
+                context.push(
+                  RoutePaths.learningSupportNewStatus,
+                  extra: {
+                    'appBarTitle': 'Neuer Förderbereich',
+                    'pupilId': pupil.pupilId,
+                    'goalCategoryId': 0,
+                    'elementType': 'status',
+                  },
                 );
               },
               label: 'NEUER FÖRDERBEREICH',

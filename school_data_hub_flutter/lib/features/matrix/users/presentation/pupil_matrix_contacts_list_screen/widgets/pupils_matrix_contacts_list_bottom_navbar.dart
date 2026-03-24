@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/select_competence_screen/select_competence_view_model.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning_support/presentation/learning_support_list_screen/widgets/learning_support_list_filter_bottom_sheet.dart';
 
 class PupilMatrixContactsListBottomNavBar extends StatelessWidget {
@@ -33,13 +34,8 @@ class PupilMatrixContactsListBottomNavBar extends StatelessWidget {
               ),
               const Gap(30),
               InkWell(
-                onTap: () {
-                  Navigator.of(context, rootNavigator: true).push(
-                    MaterialPageRoute<void>(
-                      builder: (ctx) => const SelectCompetence(),
-                    ),
-                  );
-                },
+                onTap: () =>
+                    context.push(RoutePaths.learningCompetenceSelect),
                 child: const Icon(Icons.add_a_photo_rounded, size: 30),
               ),
               const Gap(30),

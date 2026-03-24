@@ -9,12 +9,10 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_screen/matrix_event_reports_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/widgets/matrix_rooms_filters_widget.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/widgets/room_list_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/widgets/room_list_searchbar.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/new_matrix_room_screen/new_matrix_room_screen.dart';
 
 class MatrixRoomsListScreen extends WatchingWidget {
   const MatrixRoomsListScreen({super.key});
@@ -90,13 +88,7 @@ class MatrixRoomsListScreen extends WatchingWidget {
           IconButton(
             tooltip: 'Neuer Raum',
             icon: const Icon(Icons.add, size: 30),
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => const NewMatrixRoomScreen(),
-                ),
-              );
-            },
+            onPressed: () => context.push(RoutePaths.adminMatrixRoomNew),
           ),
           IconButton(
             tooltip: 'Gruppenräume für aktuelles Schuljahr anlegen',
@@ -116,13 +108,7 @@ class MatrixRoomsListScreen extends WatchingWidget {
           IconButton(
             tooltip: 'Event Reports',
             icon: const Icon(Icons.flag_circle_rounded, size: 30),
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) => const MatrixEventReportsScreen(),
-                ),
-              );
-            },
+            onPressed: () => context.push(RoutePaths.adminMatrixEventReports),
           ),
           IconButton(
             tooltip: 'Zur Startseite',

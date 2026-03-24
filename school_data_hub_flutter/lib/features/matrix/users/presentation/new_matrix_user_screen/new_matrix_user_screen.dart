@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_screen/controller/select_matrix_rooms_list_controller.dart';
 
 class NewMatrixUserScreen extends StatefulWidget {
   final String? matrixId;
@@ -283,12 +283,13 @@ class _NewMatrixUserScreenContentState
                   variant: ButtonVariant.primary,
                   onPressed: () async {
                     final List<String> selectedRoomIds =
-                        await Navigator.of(context, rootNavigator: true).push(
-                          MaterialPageRoute<List<String>>(
-                            builder: (ctx) => SelectMatrixRoomsList(
-                              MatrixRoomHelper.restOfRooms(roomIds.toList()),
+                        await context.push<List<String>>(
+                          RoutePaths.adminMatrixSelectRooms,
+                          extra: <String, dynamic>{
+                            'selectableRooms': MatrixRoomHelper.restOfRooms(
+                              roomIds.toList(),
                             ),
-                          ),
+                          },
                         ) ??
                         [];
                     if (selectedRoomIds.isNotEmpty) {
@@ -312,11 +313,11 @@ class _NewMatrixUserScreenContentState
                         );
 
                     if (file != null && context.mounted) {
-                      Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute<void>(
-                          builder: (context) =>
-                              PdfViewerScreen(pdfGenerator: () async => file),
-                        ),
+                      context.push(
+                        RoutePaths.utilPdfViewer,
+                        extra: <String, dynamic>{
+                          'pdfGenerator': () async => file,
+                        },
                       );
                     }
                   },

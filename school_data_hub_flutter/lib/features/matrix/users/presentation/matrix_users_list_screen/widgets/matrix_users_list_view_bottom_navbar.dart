@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/bottom_nav_bar_layouts.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/show_generic_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_screen/matrix_event_reports_screen.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/matrix_rooms_list_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_screen/widgets/matrix_users_list_filter_bottom_sheet.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_screen/new_matrix_user_screen.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_screen/controller/select_matrix_users_list_controller.dart';
 
 class MatrixUsersListViewBottomNavbar extends WatchingWidget {
   const MatrixUsersListViewBottomNavbar({super.key});
@@ -61,37 +58,20 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                 IconButton(
                   tooltip: 'neues Matrix-Konto',
                   icon: const Icon(Icons.add, size: 30),
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (ctx) => const NewMatrixUserScreen(),
-                      ),
-                    );
-                  },
+                  onPressed: () => context.push(RoutePaths.adminMatrixNewUser),
                 ),
                 const Gap(20),
                 IconButton(
                   tooltip: 'Matrix-Räume',
                   icon: const Icon(Icons.meeting_room_rounded, size: 30),
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (ctx) => const MatrixRoomsListScreen(),
-                      ),
-                    );
-                  },
+                  onPressed: () => context.push(RoutePaths.adminMatrixRooms),
                 ),
                 const Gap(20),
                 IconButton(
                   tooltip: 'Event Reports',
                   icon: const Icon(Icons.flag_circle_rounded, size: 30),
-                  onPressed: () {
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (ctx) => const MatrixEventReportsScreen(),
-                      ),
-                    );
-                  },
+                  onPressed: () =>
+                      context.push(RoutePaths.adminMatrixEventReports),
                 ),
                 const Gap(20),
                 IconButton(
@@ -109,11 +89,11 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                         .createMatrixCredentialsForPupilsWithoutContactInfo();
                     if (!context.mounted) return;
                     if (file != null) {
-                      Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) =>
-                              PdfViewerScreen(pdfGenerator: () async => file),
-                        ),
+                      context.push(
+                        RoutePaths.utilPdfViewer,
+                        extra: <String, dynamic>{
+                          'pdfGenerator': () async => file,
+                        },
                       );
                     }
                   },
@@ -128,11 +108,11 @@ class MatrixUsersListViewBottomNavbar extends WatchingWidget {
                   ),
                   onPressed: () {
                     final matrixUsers = matrixPolicyManager.matrixUsers.value;
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute<void>(
-                        builder: (context) =>
-                            SelectMatrixUsersList(matrixUsers),
-                      ),
+                    context.push(
+                      RoutePaths.adminMatrixSelectUsers,
+                      extra: <String, dynamic>{
+                        'selectableMatrixUsers': matrixUsers,
+                      },
                     );
                   },
                 ),

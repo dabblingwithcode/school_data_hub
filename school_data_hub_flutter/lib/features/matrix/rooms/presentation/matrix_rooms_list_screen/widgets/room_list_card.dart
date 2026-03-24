@@ -11,7 +11,8 @@ import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_pol
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/dialogs/remove_room_from_policy_dialog.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_room_edit_screen/matrix_room_edit_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/widgets/change_power_levels_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/widgets/users_in_room_list.dart';
 
@@ -148,14 +149,10 @@ class RoomListCard extends WatchingWidget {
                               child: Row(
                                 children: [
                                   InkWell(
-                                    onTap: () async {
-                                      Navigator.of(context, rootNavigator: true).push<void>(
-                                        MaterialPageRoute<void>(
-                                          builder: (ctx) =>
-                                              MatrixRoomEditScreen(room: room),
-                                        ),
-                                      );
-                                    },
+                                    onTap: () => context.push(
+                                      RoutePaths.adminMatrixRoomEdit,
+                                      extra: room,
+                                    ),
                                     onLongPress: () async {
                                       final result =
                                           await showRemoveRoomFromPolicyDialog(

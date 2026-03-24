@@ -6,7 +6,6 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/generic_async_action_button.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -23,7 +22,6 @@ import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/widgets/dialogues/logout_devices_dialog.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/matrix_room_helper.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_screen/controller/select_matrix_rooms_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/matrix_user_helper.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user_relationship.dart';
@@ -614,12 +612,11 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                               if (!context.mounted) {
                                 return;
                               }
-                              Navigator.of(context, rootNavigator: true).push(
-                                MaterialPageRoute<void>(
-                                  builder: (context) => PdfViewerScreen(
-                                    pdfGenerator: () async => file,
-                                  ),
-                                ),
+                              context.push(
+                                RoutePaths.utilPdfViewer,
+                                extra: <String, dynamic>{
+                                  'pdfGenerator': () async => file,
+                                },
                               );
                             }
                           },
@@ -672,11 +669,11 @@ class _MatrixUsersListCardState extends State<MatrixUsersListCard> {
                     matrixUser.joinedRooms.map((e) => e.roomId).toList(),
                   );
                   final List<String> selectedRoomIds =
-                      await Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute<List<String>>(
-                          builder: (ctx) =>
-                              SelectMatrixRoomsList(availableRooms),
-                        ),
+                      await context.push<List<String>>(
+                        RoutePaths.adminMatrixSelectRooms,
+                        extra: <String, dynamic>{
+                          'selectableRooms': availableRooms,
+                        },
                       ) ??
                       [];
                   if (selectedRoomIds.isNotEmpty) {

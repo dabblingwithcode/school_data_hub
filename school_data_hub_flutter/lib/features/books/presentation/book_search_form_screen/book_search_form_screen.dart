@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
@@ -8,10 +9,9 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
 import 'package:school_data_hub_flutter/common/widgets/themed_filter_chip.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_search_form_screen/select_book_tags_screen.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/book_search_screen/book_search_results_screen.dart';
 
 class BookSearchFormScreen extends WatchingStatefulWidget {
   const BookSearchFormScreen({super.key});
@@ -148,15 +148,12 @@ class _BookSearchFormScreenState extends State<BookSearchFormScreen> {
                                   color: style.colors.accent,
                                 ),
                                 onPressed: () async {
-                                  final result = await Navigator.of(context)
+                                  final result = await context
                                       .push<List<BookTag>>(
-                                        MaterialPageRoute<List<BookTag>>(
-                                          builder: (context) =>
-                                              SelectBookTagsScreen(
-                                                initialSelectedTags:
-                                                    selectedBookTags,
-                                              ),
-                                        ),
+                                        RoutePaths.learningBooksSelectTags,
+                                        extra: {
+                                          'initialSelectedTags': selectedBookTags,
+                                        },
                                       );
                                   if (result != null) {
                                     setState(() {
@@ -267,20 +264,19 @@ class _BookSearchFormScreenState extends State<BookSearchFormScreen> {
                 tags: selectedBookTags.isNotEmpty ? selectedBookTags : null,
               );
               if (!context.mounted) return;
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute<void>(
-                  builder: (context) => BookSearchResultsScreen(
-                    title: title,
-                    author: author,
-                    keywords: keywords,
-                    location: selectedLocation?.location == "Alle Räume"
-                        ? null
-                        : selectedLocation!,
-                    readingLevel: readingLevel,
-                    borrowStatus: selectedBorrowStatus,
-                    selectedTags: selectedBookTags,
-                  ),
-                ),
+              context.push(
+                RoutePaths.learningBooksResults,
+                extra: {
+                  'title': title,
+                  'author': author,
+                  'keywords': keywords,
+                  'location': selectedLocation?.location == "Alle Räume"
+                      ? null
+                      : selectedLocation,
+                  'readingLevel': readingLevel,
+                  'borrowStatus': selectedBorrowStatus,
+                  'selectedTags': selectedBookTags,
+                },
               );
             },
           ),

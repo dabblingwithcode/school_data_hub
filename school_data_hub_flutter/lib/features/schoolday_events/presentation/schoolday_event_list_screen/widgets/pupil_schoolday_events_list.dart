@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/filters/schoolday_event_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
-import 'package:school_data_hub_flutter/features/schoolday_events/presentation/new_schoolday_event_screen/new_schoolday_event_screen.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_screen/widgets/pupil_schoolday_event_card.dart';
 
 class PupilSchooldayEventsList extends WatchingWidget {
@@ -57,11 +58,9 @@ class PupilSchooldayEventsList extends WatchingWidget {
           ),
           child: Button(
             onPressed: () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute<void>(
-                  builder: (ctx) =>
-                      NewSchooldayEventScreen(pupilId: pupil.pupilId),
-                ),
+              context.push(
+                RoutePaths.schooldayEventNew,
+                extra: pupil.pupilId,
               );
             },
             label: 'NEUES EREIGNIS',

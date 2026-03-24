@@ -58,6 +58,7 @@ import 'package:school_data_hub_flutter/features/books/presentation/book_infos_s
 import 'package:school_data_hub_flutter/features/books/presentation/edit_book_screen/edit_book_controller.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_screen/competence_report_item_list_scope.dart';
+import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_competence_goals/new_competence_goal_page.dart';
 // School lists
 import 'package:school_data_hub_flutter/features/school_lists/presentation/school_lists_screen/school_lists_screen.dart';
 import 'package:school_data_hub_flutter/features/school_lists/presentation/new_list_screen/new_school_list_screen.dart';
@@ -67,6 +68,7 @@ import 'package:school_data_hub_flutter/features/authorizations/presentation/new
 import 'package:school_data_hub_flutter/features/authorizations/presentation/authorization_pupils_screen/authorization_pupils_screen.dart';
 // School calendar
 import 'package:school_data_hub_flutter/features/school_calendar/presentation/school_semester_list_screen/school_semester_list_screen.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/presentation/new_school_semester_screen/new_school_semester_screen.dart';
 // Tools
 import 'package:school_data_hub_flutter/features/timetable/presentation/timetable_screen/timetable_screen.dart';
 import 'package:school_data_hub_flutter/features/timetable/presentation/new_timetable_screen/new_timetable_screen.dart';
@@ -91,6 +93,7 @@ import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matri
 import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/new_matrix_room_screen/new_matrix_room_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_screen/matrix_event_reports_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/select_matrix_users_list_screen/controller/select_matrix_users_list_controller.dart';
+import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/select_matrix_rooms_list_screen/controller/select_matrix_rooms_list_controller.dart';
 import 'package:school_data_hub_flutter/features/matrix/rooms/domain/models/matrix_room.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 // Admin / User
@@ -109,6 +112,12 @@ import 'package:school_data_hub_flutter/features/school/presentation/edit_school
 import 'package:school_data_hub_flutter/app_utils/logger/presentation/logs_screen/logs_screen.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/change_password/change_password_screen.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_search_form_screen/book_search_form_screen.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_search_form_screen/select_book_tags_screen.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_search_screen/book_search_results_screen.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_tag_management_screen/book_tag_management_controller.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/new_book_screen/new_book_controller.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/edit_book_screen/book_tag_selection_screen.dart';
+import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/statistics/chart_screen/chart_page_controller.dart';
 import 'package:school_data_hub_flutter/features/statistics/statistics_screen/controller/statistics.dart';
 import 'package:school_data_hub_flutter/app_utils/shorebird_code_push_screen.dart';
@@ -284,6 +293,12 @@ class AppRouter {
             builder: (_, __) => const SchoolSemesterListScreen(),
           ),
           GoRoute(
+            path: RoutePaths.schoolSemesterNew,
+            builder: (_, state) => NewSchoolSemesterScreen(
+              semester: state.extra as SchoolSemester?,
+            ),
+          ),
+          GoRoute(
             path: RoutePaths.learningCompetencesSortable,
             builder: (_, __) => const CompetenceSortableListScreen(),
           ),
@@ -297,7 +312,9 @@ class AppRouter {
           ),
           GoRoute(
             path: RoutePaths.adminUsersNew,
-            builder: (_, __) => const CreateOrEditUserScreen(),
+            builder: (_, state) => CreateOrEditUserScreen(
+              userWithDevices: state.extra as UserWithDevices?,
+            ),
           ),
           GoRoute(
             path: RoutePaths.adminUsersResetPassword,
@@ -388,6 +405,17 @@ class AppRouter {
                   state.extra
                       as void Function(BuildContext, Competence)?,
             ),
+          ),
+          GoRoute(
+            path: RoutePaths.learningCompetenceGoalNew,
+            builder: (_, state) {
+              final args = state.extra as Map<String, dynamic>?;
+              return NewCompetenceGoalScreen(
+                pupilId: args?['pupilId'] as int?,
+                competenceId: args?['competenceId'] as int?,
+                existingGoal: args?['existingGoal'] as CompetenceGoal?,
+              );
+            },
           ),
 
           // --- Learning Competence Report ---
@@ -521,6 +549,15 @@ class AppRouter {
               );
             },
           ),
+          GoRoute(
+            path: RoutePaths.adminMatrixSelectRooms,
+            builder: (_, state) {
+              final args = state.extra! as Map<String, dynamic>;
+              return SelectMatrixRoomsList(
+                args['selectableRooms'] as List<String>?,
+              );
+            },
+          ),
 
           // --- Admin / User ---
           GoRoute(
@@ -541,6 +578,71 @@ class AppRouter {
             builder: (_, state) => BookInfosScreen(
               libraryId: state.extra! as String,
             ),
+          ),
+          GoRoute(
+            path: RoutePaths.learningBooksTags,
+            builder: (_, __) => const BookTagManagement(),
+          ),
+          GoRoute(
+            path: RoutePaths.learningBooksSelectTags,
+            builder: (_, state) {
+              final args = state.extra as Map<String, dynamic>?;
+              return SelectBookTagsScreen(
+                initialSelectedTags:
+                    (args?['initialSelectedTags'] as List<dynamic>?)
+                        ?.cast<BookTag>() ??
+                    const [],
+              );
+            },
+          ),
+          GoRoute(
+            path: RoutePaths.learningBooksNew,
+            builder: (_, state) {
+              final args = state.extra! as Map<String, dynamic>;
+              return NewBook(
+                isEdit: args['isEdit'] as bool,
+                isbn: args['isbn'] as int,
+                libraryId: args['libraryId'] as String?,
+                bookTitle: args['bookTitle'] as String?,
+                bookAuthor: args['bookAuthor'] as String?,
+                bookDescription: args['bookDescription'] as String?,
+                bookReadingLevel: args['bookReadingLevel'] as String?,
+                location: args['location'] as LibraryBookLocation?,
+                bookAvailable: args['bookAvailable'] as bool?,
+                imageId: args['imageId'] as String?,
+                bookTags: (args['bookTags'] as List<dynamic>?)
+                    ?.cast<BookTagging>(),
+              );
+            },
+          ),
+          GoRoute(
+            path: RoutePaths.learningBooksTagSelection,
+            builder: (_, state) {
+              final args = state.extra! as Map<String, dynamic>;
+              return BookTagSelectionScreen(
+                allTags: (args['allTags'] as List<dynamic>).cast<BookTag>(),
+                selectedTagIds: (args['selectedTagIds'] as Set<dynamic>)
+                    .cast<int>(),
+              );
+            },
+          ),
+          GoRoute(
+            path: RoutePaths.learningBooksResults,
+            builder: (_, state) {
+              final args = state.extra as Map<String, dynamic>?;
+              return BookSearchResultsScreen(
+                title: args?['title'] as String?,
+                author: args?['author'] as String?,
+                keywords: args?['keywords'] as String?,
+                location: args?['location'] as LibraryBookLocation?,
+                readingLevel: args?['readingLevel'] as String?,
+                borrowStatus: args?['borrowStatus'] as BorrowedStatus?,
+                selectedTags:
+                    (args?['selectedTags'] as List<dynamic>?)
+                        ?.cast<BookTag>() ??
+                    const [],
+              );
+            },
           ),
 
           // --- Timetable ---
@@ -653,6 +755,9 @@ class AppRouter {
               return PdfViewerScreen(
                 pdfGenerator: args['pdfGenerator'] as Future<File> Function(),
                 title: (args['title'] as String?) ?? 'PDF Vorschau',
+                iconData:
+                    (args['iconData'] as IconData?) ?? Icons.picture_as_pdf,
+                showZoomButton: (args['showZoomButton'] as bool?) ?? false,
               );
             },
           ),

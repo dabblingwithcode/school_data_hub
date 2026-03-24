@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/generic_list_page.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/filters/matrix_policy_filter_manager.dart';
 import 'package:school_data_hub_flutter/features/matrix/policy/domain/matrix_policy_manager.dart';
-import 'package:school_data_hub_flutter/features/matrix/policy/presentation/matrix_event_reports_screen/matrix_event_reports_screen.dart';
-import 'package:school_data_hub_flutter/features/matrix/rooms/presentation/matrix_rooms_list_screen/matrix_rooms_list_screen.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/domain/models/matrix_user.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_screen/widgets/matrix_user_app_user_map_scope.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_screen/widgets/matrix_user_list_card.dart';
 import 'package:school_data_hub_flutter/features/matrix/users/presentation/matrix_users_list_screen/widgets/matrix_users_list_filter_bottom_sheet.dart';
-import 'package:school_data_hub_flutter/features/matrix/users/presentation/new_matrix_user_screen/new_matrix_user_screen.dart';
 import 'package:school_data_hub_flutter/features/user/data/user_api_service.dart';
 
 class MatrixUsersListScreen extends WatchingWidget {
@@ -151,35 +150,17 @@ class _MatrixUsersListContent extends WatchingWidget {
       IconButton(
         tooltip: 'neues Matrix-Konto',
         icon: const Icon(Icons.add, size: 30),
-        onPressed: () {
-          Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute<void>(
-              builder: (ctx) => const NewMatrixUserScreen(),
-            ),
-          );
-        },
+        onPressed: () => context.push(RoutePaths.adminMatrixNewUser),
       ),
       IconButton(
         tooltip: 'Matrix-Räume',
         icon: const Icon(Icons.meeting_room_rounded, size: 30),
-        onPressed: () {
-          Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute<void>(
-              builder: (ctx) => const MatrixRoomsListScreen(),
-            ),
-          );
-        },
+        onPressed: () => context.push(RoutePaths.adminMatrixRooms),
       ),
       IconButton(
         tooltip: 'Event Reports',
         icon: const Icon(Icons.flag_circle_rounded, size: 30),
-        onPressed: () {
-          Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute<void>(
-              builder: (ctx) => const MatrixEventReportsScreen(),
-            ),
-          );
-        },
+        onPressed: () => context.push(RoutePaths.adminMatrixEventReports),
       ),
       IconButton(
         tooltip: 'Zur Startseite',

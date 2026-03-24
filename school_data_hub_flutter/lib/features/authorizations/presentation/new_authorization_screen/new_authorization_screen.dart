@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:school_data_hub_flutter/features/_pupil/presentation/select_pupils_list_screen/select_pupils_list_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 
 class NewAuthorizationScreen extends StatefulWidget {
@@ -254,12 +253,10 @@ class NewAuthorizationScreenState extends State<NewAuthorizationScreen> {
                   style: AppStyles.actionButtonStyle,
                   onPressed: () async {
                     final List<int> selectedPupilIds =
-                        await Navigator.of(context, rootNavigator: true).push(
-                          MaterialPageRoute<List<int>>(
-                            builder: (ctx) => SelectPupilsListScreen(
-                              selectablePupils: _pupilManager
-                                  .getPupilsNotListed(pupilIds.toList()),
-                            ),
+                        await context.push<List<int>>(
+                          RoutePaths.utilSelectPupils,
+                          extra: _pupilManager.getPupilsNotListed(
+                            pupilIds.toList(),
                           ),
                         ) ??
                         [];

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_competence_checks/pupil_competence_statuses_list.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/select_competence_screen/select_competence_view_model.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/widgets/dialogues/new_competence_check_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
@@ -25,22 +27,18 @@ class PupilLearningContentCompetenceStatuses extends StatelessWidget {
             const Spacer(),
             GestureDetector(
               onTap: () {
-                final parentContext =
-                    context; // Capture context before navigation
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => SelectCompetence(
-                      onSelected: (_, competence) {
-                        Navigator.of(ctx).pop(); // Close SelectCompetence page
-                        newCompetenceCheckDialog(
-                          pupil: pupil,
-                          competenceId: competence.publicId,
-                          isReport: false,
-                          parentContext: parentContext, // Use captured context
-                        );
-                      },
-                    ),
-                  ),
+                final parentContext = context;
+                context.push(
+                  RoutePaths.learningCompetenceSelect,
+                  extra: (BuildContext ctx, Competence competence) {
+                    ctx.pop(); // Close SelectCompetence page
+                    newCompetenceCheckDialog(
+                      pupil: pupil,
+                      competenceId: competence.publicId,
+                      isReport: false,
+                      parentContext: parentContext,
+                    );
+                  },
                 );
               },
               child: Icon(

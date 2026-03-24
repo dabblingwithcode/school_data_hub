@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/domain/filters/filters_state_manager.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/list_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/show_sheet.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tappable_icon.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/batch_import_users/batch_import_users_screen.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/create_user/create_user_screen.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_filter_bottom_sheet.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_card.dart';
 import 'package:school_data_hub_flutter/features/user/presentation/user_list/widgets/user_list_searchbar.dart';
@@ -144,22 +144,14 @@ class _UserListScreenState extends State<UserListScreen> {
               tooltip: 'Import aus Excel',
               icon: const Icon(Icons.upload_file, size: 30),
               onPressed: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => const BatchImportUsersScreen(),
-                  ),
-                );
+                context.push(RoutePaths.adminUsersBatchImport);
               },
             ),
             TappableIcon(
               tooltip: 'Neuer Benutzer',
               icon: const Icon(Icons.add, size: 30),
               onPressed: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute<void>(
-                    builder: (ctx) => const CreateOrEditUserScreen(),
-                  ),
-                );
+                context.push(RoutePaths.adminUsersNew);
               },
             ),
           ],

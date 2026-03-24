@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/app_utils/extensions/isbn_extensions.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
@@ -10,11 +11,11 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/tag.dart';
 import 'package:school_data_hub_flutter/common/widgets/unencrypted_image_in_card.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/enums.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_screen/widgets/library_book_card.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/edit_book_screen/edit_book_controller.dart';
 
 class BookSearchResultCard extends WatchingWidget {
   final List<LibraryBookProxy> group;
@@ -66,12 +67,7 @@ class _BookSearchResultContent extends WatchingWidget {
           scrollDirection: Axis.horizontal,
           child: InkWell(
             onTap: () {
-              Navigator.push<void>(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) => EditBook(libraryBook: bookProxy),
-                ),
-              );
+              context.push(RoutePaths.learningBooksEdit, extra: bookProxy);
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,

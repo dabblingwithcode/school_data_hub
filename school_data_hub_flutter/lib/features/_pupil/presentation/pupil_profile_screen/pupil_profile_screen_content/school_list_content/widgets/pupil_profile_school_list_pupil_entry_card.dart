@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/buttons_switches/custom_checkbox_either_or.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/models/pupil_list_entry_proxy.dart';
 import 'package:school_data_hub_flutter/features/school_lists/domain/school_list_manager.dart';
-import 'package:school_data_hub_flutter/features/school_lists/presentation/school_list_pupil_entries_screen/school_list_pupil_entries_screen.dart';
 
 class PupilProfileSchoolListPupilEntryCard extends WatchingWidget {
   final PupilListEntryProxy pupilListEntryProxy;
@@ -81,11 +82,9 @@ class _PupilProfileSchoolListEntryContent extends WatchingWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context, rootNavigator: true).push<void>(
-                              MaterialPageRoute<void>(
-                                builder: (ctx) =>
-                                    SchoolListPupilEntriesScreen(schoolList),
-                              ),
+                            context.push(
+                              RoutePaths.schoolListEntries,
+                              extra: schoolList,
                             );
                           },
                           child: Text(

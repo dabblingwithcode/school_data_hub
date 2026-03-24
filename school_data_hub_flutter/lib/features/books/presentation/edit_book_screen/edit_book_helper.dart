@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/edit_book_screen/edit_book_controller.dart';
 
 /// Helper class for navigating to the edit book page
 class EditBookHelper {
@@ -9,11 +10,6 @@ class EditBookHelper {
     BuildContext context,
     LibraryBookProxy libraryBook,
   ) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (context) => EditBook(libraryBook: libraryBook),
-      ),
-    );
+    await context.push(RoutePaths.learningBooksEdit, extra: libraryBook);
   }
 }

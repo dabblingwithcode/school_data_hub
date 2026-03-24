@@ -6,7 +6,8 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:logging/logging.dart';
 import 'package:printing/printing.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
@@ -214,11 +215,10 @@ class _BatchImportUsersScreenState extends State<BatchImportUsersScreen> {
     if (credentials.isEmpty) return;
     final file = await StaffCredentialsPdfService.generatePdfFile(credentials);
     if (file == null || !mounted) return;
-    await Navigator.of(context, rootNavigator: true).push<void>(
-      MaterialPageRoute(
-        builder: (context) => PdfViewerScreen(pdfGenerator: () async => file),
-      ),
-    );
+    if (!mounted) return;
+    await context.push(RoutePaths.utilPdfViewer, extra: {
+      'pdfGenerator': () async => file,
+    });
   }
 
   @override

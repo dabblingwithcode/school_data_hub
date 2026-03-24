@@ -14,7 +14,6 @@ import 'package:school_data_hub_flutter/features/learning/competence/presentatio
 import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/competence_list_screen/widgets/competence_tree.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/post_or_patch_competence_screen/post_or_patch_competence_screen.dart';
 
 class CompetenceListScreen extends WatchingWidget {
   const CompetenceListScreen({super.key});
@@ -26,13 +25,12 @@ class CompetenceListScreen extends WatchingWidget {
       int? competenceId,
       Competence? competence,
     }) {
-      Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (ctx) => PostOrPatchCompetenceScreen(
-            parentCompetence: competenceId,
-            competence: competence,
-          ),
-        ),
+      context.push(
+        RoutePaths.learningCompetenceEdit,
+        extra: {
+          'parentCompetence': competenceId,
+          'competence': competence,
+        },
       );
     }
 

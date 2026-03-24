@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/create_and_crop_image_file.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
@@ -14,6 +15,7 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_helper.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
@@ -23,7 +25,6 @@ import 'package:school_data_hub_flutter/features/schoolday_events/presentation/s
 import 'package:school_data_hub_flutter/features/schoolday_events/presentation/schoolday_event_list_screen/widgets/schoolday_event_type_icon.dart';
 import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/user/domain/user_manager.dart';
-import 'package:school_data_hub_flutter/features/user/presentation/select_users/select_users_screen.dart';
 
 /// Document image/placeholder for one schoolday event. Rebuilds only when this
 /// event's document part changes (via .select on the manager's event list).
@@ -294,17 +295,14 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                       final users =
                                           di<UserManager>().users.value;
                                       final List<User>? selectedUsers =
-                                          await Navigator.of(context, rootNavigator: true).push(
-                                            MaterialPageRoute<List<User>>(
-                                              builder: (ctx) =>
-                                                  SelectUsersScreen(
-                                                    selectableUsers: users,
-                                                    authorizedUsers:
-                                                        schooldayEvent
-                                                            .createdBy,
-                                                    isMultiSelectMode: false,
-                                                  ),
-                                            ),
+                                          await context.push<List<User>>(
+                                            RoutePaths.utilSelectUsers,
+                                            extra: {
+                                              'selectableUsers': users,
+                                              'authorizedUsers':
+                                                  schooldayEvent.createdBy,
+                                              'isMultiSelectMode': false,
+                                            },
                                           );
                                       if (selectedUsers == null ||
                                           selectedUsers.isEmpty) {
@@ -521,17 +519,14 @@ class PupilSchooldayEventCard extends StatelessWidget {
                                       final users =
                                           di<UserManager>().users.value;
                                       final List<User>? selectedUsers =
-                                          await Navigator.of(context, rootNavigator: true).push(
-                                            MaterialPageRoute<List<User>>(
-                                              builder: (ctx) =>
-                                                  SelectUsersScreen(
-                                                    selectableUsers: users,
-                                                    authorizedUsers:
-                                                        schooldayEvent
-                                                            .processedBy,
-                                                    isMultiSelectMode: false,
-                                                  ),
-                                            ),
+                                          await context.push<List<User>>(
+                                            RoutePaths.utilSelectUsers,
+                                            extra: {
+                                              'selectableUsers': users,
+                                              'authorizedUsers':
+                                                  schooldayEvent.processedBy,
+                                              'isMultiSelectMode': false,
+                                            },
                                           );
                                       if (selectedUsers == null ||
                                           selectedUsers.isEmpty) {

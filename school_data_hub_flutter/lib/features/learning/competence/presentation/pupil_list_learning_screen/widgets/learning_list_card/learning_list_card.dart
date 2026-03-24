@@ -23,7 +23,6 @@ import 'package:school_data_hub_flutter/features/learning/competence/presentatio
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_learning_content/pupil_learning_content_competence_reports.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_learning_content/pupil_learning_content_competence_statuses.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_learning_content/pupil_learning_content_workbooks.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/pupil_competence_report_screen/pupil_competence_report_screen.dart';
 
 class LearningListCard extends WatchingWidget {
   final PupilProxy pupil;
@@ -208,11 +207,9 @@ class _LearningListContent extends WatchingWidget {
                         color: style.colors.interactive,
                       ),
                       onPressed: () {
-                        Navigator.of(context, rootNavigator: true).push<void>(
-                          MaterialPageRoute<void>(
-                            builder: (ctx) =>
-                                PupilCompetenceReportScreen(pupil: pupil),
-                          ),
+                        context.push(
+                          RoutePaths.learningCompetenceReportPupil,
+                          extra: pupil,
                         );
                       },
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
@@ -9,10 +10,10 @@ import 'package:school_data_hub_flutter/common/widgets/hub_document/hub_document
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/core/session/hub_session_manager.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence/domain/competence_manager.dart';
-import 'package:school_data_hub_flutter/features/learning/competence/presentation/pupil_list_learning_screen/widgets/pupil_competence_goals/new_competence_goal_page.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 
 class CompetenceGoalCard extends StatelessWidget {
@@ -32,11 +33,9 @@ class CompetenceGoalCard extends StatelessWidget {
       child: CardBox(
         padding: EdgeInsets.all(Style.spacing.sm),
         onTap: () {
-          Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute<void>(
-              builder: (context) =>
-                  NewCompetenceGoalPage(existingGoal: pupilGoal),
-            ),
+          context.push(
+            RoutePaths.learningCompetenceGoalNew,
+            extra: {'existingGoal': pupilGoal},
           );
         },
         child: GestureDetector(

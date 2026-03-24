@@ -2,14 +2,15 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
-import 'package:school_data_hub_flutter/app_utils/pdf_viewer_screen.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_body.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_controller.dart';
 import 'package:school_data_hub_flutter/common/widgets/expansion/expansion_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_item_helper.dart';
 import 'package:school_data_hub_flutter/features/learning/competence_report/domain/competence_report_manager.dart';
@@ -68,18 +69,17 @@ class PupilLearningContentCompetenceReports extends WatchingWidget {
           alignment: Alignment.centerRight,
           child: TextButton.icon(
             onPressed: () {
-              Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute<void>(
-                  builder: (context) => PdfViewerScreen(
-                    pdfGenerator: () =>
-                        CompetenceReportPdfGenerator.generateCompetenceReportPdf(
-                          pupil: pupil,
-                          report: report,
-                        ),
-                    title: 'Kriterienzeugnis PDF',
-                    showZoomButton: true,
-                  ),
-                ),
+              context.push(
+                RoutePaths.utilPdfViewer,
+                extra: {
+                  'pdfGenerator': () =>
+                      CompetenceReportPdfGenerator.generateCompetenceReportPdf(
+                        pupil: pupil,
+                        report: report,
+                      ),
+                  'title': 'Kriterienzeugnis PDF',
+                  'showZoomButton': true,
+                },
               );
             },
             icon: const Icon(Icons.picture_as_pdf),

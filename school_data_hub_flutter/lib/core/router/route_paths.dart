@@ -39,6 +39,7 @@ abstract final class RoutePaths {
   static const schoolEdit = '/school/edit';
   static const schoolCalendar = '/school/calendar';
   static const schoolSemesters = '/school/semesters';
+  static const schoolSemesterNew = '/school/semesters/new';
 
   // --- Authorizations ---
   static const authorizationNew = '/authorizations/new';
@@ -102,6 +103,7 @@ abstract final class RoutePaths {
   // --- Books (additional) ---
   static const learningBooksEdit = '/learning/books/edit';
   static const learningBooksInfo = '/learning/books/info';
+  static const learningBooksTagSelection = '/learning/books/tag-selection';
 
   // --- Tools ---
   static const toolsTimetable = '/tools/timetable';
@@ -139,6 +141,7 @@ abstract final class RoutePaths {
   static const adminMatrixRoomNew = '/admin/matrix/rooms/new';
   static const adminMatrixEventReports = '/admin/matrix/event-reports';
   static const adminMatrixSelectUsers = '/admin/matrix/select-users';
+  static const adminMatrixSelectRooms = '/admin/matrix/select-rooms';
 
   // --- Admin (additional) ---
   static const adminUsersBatchImport = '/admin/users/batch-import';

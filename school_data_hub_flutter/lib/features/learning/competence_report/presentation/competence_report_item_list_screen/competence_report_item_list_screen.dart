@@ -9,7 +9,6 @@ import 'package:school_data_hub_flutter/features/learning/competence_report/doma
 import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/competence_report_item_list_screen/widgets/competence_report_item_tree.dart';
 import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/core/router/route_paths.dart';
-import 'package:school_data_hub_flutter/features/learning/competence_report/presentation/post_or_patch_report_item_screen/post_or_patch_report_item_screen.dart';
 
 class CompetenceReportItemListScreen extends WatchingWidget {
   const CompetenceReportItemListScreen({super.key});
@@ -23,11 +22,12 @@ class CompetenceReportItemListScreen extends WatchingWidget {
       int? parentItemId,
       CompetenceReportItem? item,
     }) {
-      Navigator.of(context, rootNavigator: true).push(
-        MaterialPageRoute<void>(
-          builder: (ctx) =>
-              PostOrPatchReportItemScreen(parentItem: parentItemId, item: item),
-        ),
+      context.push(
+        RoutePaths.learningCompetenceReportItemEdit,
+        extra: {
+          'parentItem': parentItemId,
+          'item': item,
+        },
       );
     }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/common/widgets/bottom_nav_bar/action_bar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
@@ -8,13 +9,13 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/spinner.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/books/data/book_api_service.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_helper.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_infos_screen/widgets/book_header.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_screen/widgets/book_pupil_card.dart';
-import 'package:school_data_hub_flutter/features/books/presentation/new_book_screen/new_book_controller.dart';
 
 class BookInfosScreen extends WatchingStatefulWidget {
   final String libraryId;
@@ -85,29 +86,26 @@ class _BookInfosScreenState extends State<BookInfosScreen> {
     );
   }
 
-  void _editBook() {
+  void _editBook() async {
     if (_bookProxy == null) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (context) => NewBook(
-          isEdit: true,
-          isbn: _bookProxy!.isbn,
-          libraryId: _bookProxy!.libraryId,
-          bookTitle: _bookProxy!.title,
-          bookAuthor: _bookProxy!.author,
-          bookDescription: _bookProxy!.description,
-          bookReadingLevel: _bookProxy!.readingLevel,
-          location: _bookProxy!.location,
-          bookAvailable: _bookProxy!.available,
-          imageId: _bookProxy!.imagePath,
-          bookTags: _bookProxy!.book.tags,
-        ),
-      ),
-    ).then((_) {
-      // Reload book after editing
-      _loadBook();
-    });
+    await context.push(
+      RoutePaths.learningBooksNew,
+      extra: {
+        'isEdit': true,
+        'isbn': _bookProxy!.isbn,
+        'libraryId': _bookProxy!.libraryId,
+        'bookTitle': _bookProxy!.title,
+        'bookAuthor': _bookProxy!.author,
+        'bookDescription': _bookProxy!.description,
+        'bookReadingLevel': _bookProxy!.readingLevel,
+        'location': _bookProxy!.location,
+        'bookAvailable': _bookProxy!.available,
+        'imageId': _bookProxy!.imagePath,
+        'bookTags': _bookProxy!.book.tags,
+      },
+    );
+    // Reload book after editing
+    _loadBook();
   }
 
   Widget _buildBody() {
@@ -234,14 +232,12 @@ class _BookInfosScreenState extends State<BookInfosScreen> {
           child: Column(
             children: otherCopies.map((book) {
               return InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) =>
-                          BookInfosScreen(libraryId: book.libraryId),
-                    ),
-                  ).then((_) => _loadBook());
+                onTap: () async {
+                  await context.push(
+                    RoutePaths.learningBooksInfo,
+                    extra: book.libraryId,
+                  );
+                  _loadBook();
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
