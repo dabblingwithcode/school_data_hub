@@ -15,8 +15,8 @@ class PupilProxy with ChangeNotifier {
     required PupilData pupilData,
     required PupilIdentity pupilIdentity,
     SiblingsResolver? siblingsResolver,
-  })  : _pupilData = pupilData,
-        _pupilIdentity = pupilIdentity {
+  }) : _pupilData = pupilData,
+       _pupilIdentity = pupilIdentity {
     _siblingsResolver = siblingsResolver;
   }
 
@@ -260,5 +260,4 @@ class PupilProxy with ChangeNotifier {
   // schoolday related
 
   List<SchooldayEvent>? get schooldayEvents => _pupilData.schooldayEvents;
-
 }

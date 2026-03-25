@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/snackbars.dart';
 import 'package:school_data_hub_flutter/core/env/env_manager.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
+import 'package:school_data_hub_flutter/main.dart' show MyApp;
 
 final _log = Logger('GlobalOverlayHost');
 
@@ -41,8 +42,11 @@ class GlobalOverlayHost extends WatchingWidget {
         switch (value.target) {
           case NotificationTarget.informationDialog:
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (context.mounted) {
-                informationDialog(context, 'Info', value.message);
+              // Use the router's navigator context — GlobalOverlayHost sits
+              // above the Navigator so its own context has no Navigator ancestor.
+              final navContext = MyApp.navigatorKey.currentContext;
+              if (navContext != null && navContext.mounted) {
+                informationDialog(navContext, 'Info', value.message);
               }
             });
             break;

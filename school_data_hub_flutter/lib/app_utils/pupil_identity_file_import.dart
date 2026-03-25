@@ -51,7 +51,7 @@ class SchildExportColumns {
   static const int nationality = 10; // Staatsangehörigkeit (Schlüssel)
   static const int migrationBackground = 11; // Migrationshintergrund vorhanden
   static const int language = 12; // Verkehrssprache in der Familie
-  static const int familyLanguageLessonsSince = 13; // Externe ID-Nummer (hijacked)
+  static const int family = 13; // Externe ID-Nummer (hijacked for family code)
   static const int birthday = 14; // Geburtsdatum
   static const int migrationSupportEnds = 15; // Ende der Eingliederungsphase
   static const int pupilSince = 16; // Aufnahmedatum
@@ -59,7 +59,7 @@ class SchildExportColumns {
   static const int religion = 18; // Konfession (Klartext)
   static const int religionLessonsSince = 19; // Religionsanmeldung
   static const int religionLessonsCancelledAt = 20; // Religionsabmeldung
-  static const int family = 21; // Ausweisnummer (hijacked for family code)
+  static const int familyLanguageLessonsSince = 21; // Ausweisnummer (hijacked for familyLanguageLessonsSince)
   static const int schoolTransitionRecommendation = 22; // Übergangsempfehlung
   static const int leavingDate = 23; // Entlassdatum
 }

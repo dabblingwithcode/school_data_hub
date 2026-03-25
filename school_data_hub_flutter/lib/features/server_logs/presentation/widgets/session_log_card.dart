@@ -22,12 +22,12 @@ class SessionLogCard extends StatelessWidget {
     final hasError = entry.error != null;
     final isSlow = entry.slow == true;
     final isOpen = entry.isOpen == true;
-    final borderColor = _borderColor(
-      style: style,
-      hasError: hasError,
-      isSlow: isSlow,
-      isOpen: isOpen,
-    );
+    // final borderColor = _borderColor(
+    //   style: style,
+    //   hasError: hasError,
+    //   isSlow: isSlow,
+    //   isOpen: isOpen,
+    // );
 
     final endpointLabel = entry.endpoint != null
         ? '${entry.endpoint}.${entry.method ?? '?'}'
@@ -183,17 +183,17 @@ ${info.sessionLogEntry.stackTrace ?? 'none set'}
     );
   }
 
-  Color _borderColor({
-    required Style style,
-    required bool hasError,
-    required bool isSlow,
-    required bool isOpen,
-  }) {
-    if (hasError) return style.colors.error;
-    if (isSlow) return style.colors.warning;
-    if (isOpen) return style.colors.info;
-    return style.colors.success;
-  }
+  // Color _borderColor({
+  //   required Style style,
+  //   required bool hasError,
+  //   required bool isSlow,
+  //   required bool isOpen,
+  // }) {
+  //   if (hasError) return style.colors.error;
+  //   if (isSlow) return style.colors.warning;
+  //   if (isOpen) return style.colors.info;
+  //   return style.colors.success;
+  // }
 }
 
 class _ExpandableErrorText extends StatelessWidget {

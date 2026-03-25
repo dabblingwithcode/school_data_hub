@@ -94,7 +94,7 @@ class _CompetenceNode extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs),
+      padding: EdgeInsets.symmetric(horizontal: Style.spacing.sm),
       child: GestureDetector(
         onLongPress: () async {
           final confirm = await confirmationDialog(

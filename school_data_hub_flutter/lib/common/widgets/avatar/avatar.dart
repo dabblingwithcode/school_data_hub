@@ -3,18 +3,26 @@ import 'package:flutter_it/flutter_it.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 import 'package:school_data_hub_flutter/common/theme/styles.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/pupil_set_avatar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/confirmation_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/information_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/get_image_cached_or_download.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper.dart';
-import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_mutator.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_helper.dart';
-import 'package:school_data_hub_flutter/common/widgets/avatar/pupil_set_avatar.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_helper.dart';
+import 'package:school_data_hub_flutter/features/attendance/domain/attendance_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_helper_functions.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/schoolday_event_manager.dart';
 import 'package:widget_zoom/widget_zoom.dart';
+
+enum ReligionShortform {
+  catholic('K'),
+  islam('I');
+
+  final String value;
+  const ReligionShortform(this.value);
+}
 
 class AvatarImage extends WatchingStatefulWidget {
   final PupilProxy pupil;
@@ -328,42 +336,32 @@ class AvatarWithBadges extends StatelessWidget {
                 right: -_badgeOffset,
                 child: Align(
                   alignment: Alignment.centerRight,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Text(
-                        specialNeedsText ??
-                            (pupil.latestSupportLevel != null
-                                ? pupil.latestSupportLevel!.level.toString()
-                                : ''),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: specialNeedsText != null ? 17 : 18,
-                          foreground: Paint()
-                            ..style = PaintingStyle.stroke
-                            ..strokeWidth = 4
-                            ..color = Colors.white,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: specialNeedsText != null
+                          ? AppColors.groupColor
+                          : AppColors.accentColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: FittedBox(
+                        child: Text(
+                          specialNeedsText ??
+                              (pupil.latestSupportLevel != null
+                                  ? 'FE\n${pupil.latestSupportLevel!.level}'
+                                  : ''),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            height: 1.1,
+                          ),
                         ),
                       ),
-
-                      const SizedBox(),
-                      Text(
-                        specialNeedsText ??
-                            (pupil.latestSupportLevel != null
-                                ? 'FE\n${pupil.latestSupportLevel!.level.toString()}'
-                                : ''),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: specialNeedsText != null ? 17 : 18,
-                          height: 1.1,
-                          color: specialNeedsText != null
-                              ? AppColors.groupColor
-                              : AppColors.accentColor,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -466,8 +464,8 @@ class AvatarWithBadges extends StatelessWidget {
             if (pupil.religionLessonsSince != null &&
                 pupil.religionLessonsCancelledAt == null)
               Positioned(
-                left: 0,
-                top: 38,
+                left: 32,
+                top: 0,
                 child: Container(
                   width: 20,
                   height: 20,
@@ -475,13 +473,15 @@ class AvatarWithBadges extends StatelessWidget {
                     color: AppColors.religionColor,
                     shape: BoxShape.circle,
                   ),
-                  child: const Center(
-                    child: Text(
-                      'R',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                  child: Center(
+                    child: FittedBox(
+                      child: Text(
+                        pupil.religion != 'isl.' ? 'Kat.' : 'Isl.',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -489,8 +489,8 @@ class AvatarWithBadges extends StatelessWidget {
               ),
             if (pupil.familyLanguageLessonsSince != null)
               Positioned(
-                right: 0,
-                top: 38,
+                right: 32,
+                top: 0,
                 child: Container(
                   width: 20,
                   height: 20,
@@ -499,12 +499,14 @@ class AvatarWithBadges extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: const Center(
-                    child: Text(
-                      'H',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                    child: FittedBox(
+                      child: Text(
+                        'HSU',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

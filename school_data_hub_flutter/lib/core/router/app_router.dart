@@ -254,13 +254,6 @@ class AppRouter {
             builder: (_, __) => const MatrixUsersListScreen(),
           ),
 
-          // Pupil profile (extra: PupilProxy)
-          GoRoute(
-            path: RoutePaths.pupilProfile,
-            builder: (_, state) => PupilProfileScreen(
-              pupil: state.extra! as PupilProxy,
-            ),
-          ),
           // Utility / no-param screens
           GoRoute(
             path: RoutePaths.schoolEdit,
@@ -747,6 +740,14 @@ class AppRouter {
                 selectedPupilIds: args['selectedPupilIds'] as List<int>?,
               );
             },
+          ),
+          // Pupil profile — MUST be after all fixed /pupil/* routes
+          // so that /pupil/birthdays etc. don't match /pupil/:internalId
+          GoRoute(
+            path: RoutePaths.pupilProfile,
+            builder: (_, state) => PupilProfileScreen(
+              pupil: state.extra! as PupilProxy,
+            ),
           ),
           GoRoute(
             path: RoutePaths.utilPdfViewer,

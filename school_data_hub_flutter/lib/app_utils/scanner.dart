@@ -42,25 +42,49 @@ Future<String?> qrScanner({
               controller.dispose();
             },
           ),
+          //TODO: Style this better
           Positioned(
-            bottom: 50,
+            bottom: 100,
             left: 0,
             right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  overlayText,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    decoration: TextDecoration.none,
-                    backgroundColor: Colors.transparent,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-              ],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      overlayText,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        decoration: TextDecoration.none,
+                        backgroundColor: Colors.transparent,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 40,
+            left: 20,
+            child: IconButton(
+              color: Colors.red,
+
+              onPressed: () {
+                Navigator.pop(context);
+                controller.dispose();
+              },
+              icon: const Icon(Icons.close, color: Colors.white, size: 30),
             ),
           ),
         ],

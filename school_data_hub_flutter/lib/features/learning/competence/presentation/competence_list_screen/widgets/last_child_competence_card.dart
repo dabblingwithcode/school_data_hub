@@ -18,74 +18,79 @@ class LastChildCompetenceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = Style.of(context);
-    return CardBox(
-      padding: EdgeInsets.all(Style.spacing.sm),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Flexible(
-                child: GestureDetector(
-                  onTap: () => navigateToNewOrPatchCompetencePage(
-                    competence: competence,
-                  ),
-                  onLongPress: () => navigateToNewOrPatchCompetencePage(
-                    competenceId: competence.publicId,
-                  ),
-                  child: Text(
-                    competence.name,
-                    textAlign: TextAlign.start,
-                    style: context.typography.subtitle.bold.withColor(
-                      style.colors.foreground,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Gap(Style.spacing.sm),
-          if (competence.indicators != null &&
-              competence.indicators!.isNotEmpty) ...[
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: Style.spacing.xs),
+      child: CardBox(
+        padding: EdgeInsets.all(Style.spacing.sm),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Indikatoren:',
-                  style: context.typography.body.bold.copyWith(
-                    fontStyle: FontStyle.italic,
-                    color: style.colors.foreground,
+                Flexible(
+                  child: GestureDetector(
+                    onTap: () => navigateToNewOrPatchCompetencePage(
+                      competence: competence,
+                    ),
+                    onLongPress: () => navigateToNewOrPatchCompetencePage(
+                      competenceId: competence.publicId,
+                    ),
+                    child: Text(
+                      competence.name,
+                      textAlign: TextAlign.start,
+                      style: context.typography.subtitle.bold.withColor(
+                        style.colors.foreground,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-            Gap(Style.spacing.xs),
-            Text(
-              competence.indicators!.join(),
-              textAlign: TextAlign.start,
-              style: context.typography.body.withColor(style.colors.foreground),
-            ),
-          ],
-          competence.level != null
-              ? Padding(
-                  padding: EdgeInsets.only(
-                    top: Style.spacing.sm,
-                    bottom: Style.spacing.sm,
+            Gap(Style.spacing.sm),
+            if (competence.indicators != null &&
+                competence.indicators!.isNotEmpty) ...[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Indikatoren:',
+                    style: context.typography.body.bold.copyWith(
+                      fontStyle: FontStyle.italic,
+                      color: style.colors.foreground,
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: GradesWidget(
-                          stringWithGrades: competence.level!.join(),
+                ],
+              ),
+              Gap(Style.spacing.xs),
+              Text(
+                competence.indicators!.join(),
+                textAlign: TextAlign.start,
+                style: context.typography.body.withColor(
+                  style.colors.foreground,
+                ),
+              ),
+            ],
+            competence.level != null
+                ? Padding(
+                    padding: EdgeInsets.only(
+                      top: Style.spacing.sm,
+                      bottom: Style.spacing.sm,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: GradesWidget(
+                            stringWithGrades: competence.level!.join(),
+                          ),
                         ),
-                      ),
-                      Gap(Style.spacing.sm),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ],
+                        Gap(Style.spacing.sm),
+                      ],
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ],
+        ),
       ),
     );
   }

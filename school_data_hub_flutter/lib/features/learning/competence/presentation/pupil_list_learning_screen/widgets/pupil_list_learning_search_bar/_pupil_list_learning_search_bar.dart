@@ -95,7 +95,14 @@ class PupilListLearningSearchBarInfos extends WatchingWidget {
 
     switch (selectedContent) {
       case SelectedContent.competenceReports:
-        return const Placeholder();
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.people_alt_rounded, color: style.colors.accent),
+            Gap(Style.spacing.md),
+            Text(pupils.length.toString(), style: context.typography.title),
+          ],
+        );
       case SelectedContent.competenceStatuses:
         // Calculate total competence checks across all filtered pupils
         int totalCompetenceChecks = 0;

@@ -26,7 +26,6 @@ class BookSearchResultCard extends WatchingWidget {
   Widget build(BuildContext context) {
     if (group.isEmpty) return const SizedBox.shrink();
 
-    final style = Style.of(context);
     final List<LibraryBookProxy> books = group;
     final LibraryBookProxy bookProxy = books.first;
     final descriptionTileController = createOnce<ExpansionController>(

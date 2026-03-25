@@ -152,7 +152,8 @@ class _BookSearchFormScreenState extends State<BookSearchFormScreen> {
                                       .push<List<BookTag>>(
                                         RoutePaths.learningBooksSelectTags,
                                         extra: {
-                                          'initialSelectedTags': selectedBookTags,
+                                          'initialSelectedTags':
+                                              selectedBookTags,
                                         },
                                       );
                                   if (result != null) {
@@ -194,7 +195,7 @@ class _BookSearchFormScreenState extends State<BookSearchFormScreen> {
                 ),
                 Gap(Style.spacing.sm),
                 DropdownButtonFormField<LibraryBookLocation>(
-                  value: selectedLocation,
+                  initialValue: selectedLocation,
                   decoration: _inputDecoration(style, labelText: 'Ablageort'),
                   items: locationItems
                       .map(
