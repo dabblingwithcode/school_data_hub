@@ -11,6 +11,7 @@ import 'package:school_data_hub_flutter/common/domain/models/nullable_records.da
 import 'package:school_data_hub_flutter/core/client/hub_stream_service.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
+import 'package:school_data_hub_flutter/features/school_calendar/domain/school_calendar_manager.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/data/schoolday_event_api_service.dart';
 import 'package:school_data_hub_flutter/features/schoolday_events/domain/models/pupil_schoolday_events_proxy.dart';
 
@@ -197,10 +198,30 @@ class SchooldayEventManager with ChangeNotifier {
   }
 
   Future<void> fetchSchooldayEvents() async {
-    final events = await _schooldayEventApiService.fetchSchooldayEvents();
+    // Only fetch events from current school year start for efficiency
+    final semesterStartDate = _getCurrentSchoolYearStart();
+    final events = await _schooldayEventApiService.fetchSchooldayEvents(
+      sinceDate: semesterStartDate,
+    );
     if (events == null) return;
 
     updateSchooldayEventsBatchInCollections(events);
+  }
+
+  /// Returns the start date of the earliest semester in the current school year.
+  /// Falls back to 6 months ago if no semester data is available.
+  DateTime? _getCurrentSchoolYearStart() {
+    try {
+      final calendarManager = di<SchoolCalendarManager>();
+      final semesters = calendarManager.schoolSemesters.value;
+      if (semesters.isEmpty) return null;
+      // Find the earliest start date across all semesters
+      final sorted = [...semesters]
+        ..sort((a, b) => a.startDate.compareTo(b.startDate));
+      return sorted.first.startDate;
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> updateSchooldayEvent({

@@ -92,6 +92,7 @@ hub:
   - streamHubEvents:
   - getLastChangeTimes:
 competenceCheck:
+  - postCompetenceChecks:
   - postCompetenceCheck:
   - updateCompetenceCheck:
   - deleteCompetenceCheck:
@@ -168,6 +169,10 @@ matrix:
 pupil:
   - fetchPupilsAsStream:
   - fetchPupils:
+  - fetchPupilsList:
+  - fetchPupilCommunicationData:
+  - fetchPupilPreschoolData:
+  - fetchPupilMediaData:
   - fetchPupilsById:
   - deletePupilDocument:
   - resetPublicMediaAuth:

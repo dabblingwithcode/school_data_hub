@@ -51,9 +51,10 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    final initialPage =
-        widget.initialTab ?? di<BottomNavManager>().bottomNavState.value;
-    if (widget.initialTab != null) {
+    final navRegistered = di.isRegistered<BottomNavManager>();
+    final initialPage = widget.initialTab ??
+        (navRegistered ? di<BottomNavManager>().bottomNavState.value : 0);
+    if (widget.initialTab != null && navRegistered) {
       di<BottomNavManager>().setBottomNavPage(widget.initialTab!);
     }
     _pageController = PageController(initialPage: initialPage);
@@ -88,6 +89,9 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
   @override
   Widget build(BuildContext context) {
     final locale = AppLocalizations.of(context)!;
+    if (!di.isRegistered<BottomNavManager>()) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     final tab = watchValue((BottomNavManager x) => x.bottomNavState);
 
     // One-time env-data check

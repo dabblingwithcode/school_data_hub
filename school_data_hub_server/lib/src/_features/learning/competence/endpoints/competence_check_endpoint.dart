@@ -1,3 +1,4 @@
+import 'package:school_data_hub_server/src/_features/hub/services/hub_updates_tracker.dart';
 import 'package:school_data_hub_server/src/generated/protocol.dart';
 import 'package:school_data_hub_server/src/helpers/hub_document_helper.dart';
 import 'package:school_data_hub_server/src/_features/pupil/schemas/pupil_schemas.dart';
@@ -6,6 +7,68 @@ import 'package:serverpod/serverpod.dart';
 class CompetenceCheckEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
+
+  /// Batch-create competence checks for multiple pupils in a single transaction.
+  /// Returns the list of affected PupilData objects with full includes.
+  Future<List<PupilData>> postCompetenceChecks(
+    Session session, {
+    required List<CompetenceCheck> checks,
+  }) async {
+    if (checks.isEmpty) return [];
+
+    final affectedPupilIds = <int>{};
+
+    await session.db.transaction((transaction) async {
+      for (final check in checks) {
+        final checkWithId = check.copyWith(
+          checkId: Uuid().v4(),
+          createdAt: DateTime.now().toUtc(),
+        );
+        final inserted = await CompetenceCheck.db.insertRow(
+          session, checkWithId,
+          transaction: transaction,
+        );
+
+        final pupil = await PupilData.db.findById(
+          session, check.pupilId,
+          transaction: transaction,
+        );
+        if (pupil != null) {
+          await PupilData.db.attachRow.competenceChecks(
+            session, pupil, inserted,
+            transaction: transaction,
+          );
+          affectedPupilIds.add(pupil.id!);
+        }
+
+        final competence = await Competence.db.findById(
+          session, check.competenceId,
+          transaction: transaction,
+        );
+        if (competence != null) {
+          await Competence.db.attachRow.competenceChecks(
+            session, competence, inserted,
+            transaction: transaction,
+          );
+        }
+      }
+    });
+
+    final updatedPupils = await PupilData.db.find(
+      session,
+      where: (t) => t.id.inSet(affectedPupilIds),
+      include: PupilSchemas.allInclude,
+    );
+
+    for (final pupil in updatedPupils) {
+      session.messages.postMessage(
+          'hub_events_stream', PupilSchemas.slimForStream(pupil));
+    }
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
+
+    return updatedPupils;
+  }
+
   //- create
 
   Future<PupilData> postCompetenceCheck(

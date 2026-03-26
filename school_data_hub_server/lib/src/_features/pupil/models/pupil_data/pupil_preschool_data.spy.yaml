@@ -1,0 +1,10 @@
+## Domain sub-model: groups preschool-related fields from PupilData.
+## Phase 1 (additive): coexists with legacy fields on pupil_data.
+## Phase 2 (deferred): legacy fields removed from pupil_data after forced migration.
+class: PupilPreschoolData
+table: pupil_preschool_data
+fields:
+  kindergardenData: KindergardenInfo?
+  preSchoolMedical: PreSchoolMedical?, relation(optional)
+  kindergarden: Kindergarden?, relation(optional)
+  preSchoolTest: PreSchoolTest?, relation(optional)

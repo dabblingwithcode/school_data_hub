@@ -32,6 +32,50 @@ class PupilEndpoint extends Endpoint {
     return pupils;
   }
 
+  /// Lightweight fetch for startup — returns only avatar + support level
+  /// relations. Use fetchPupilsById for full detail on individual pupils.
+  Future<List<PupilData>> fetchPupilsList(
+      Session session, Set<int> internalIds) async {
+    _logger.info('Fetching pupils list (lightweight) for ${internalIds.length} IDs');
+    final pupils = await PupilData.db.find(
+      session,
+      where: (t) =>
+          t.internalId.inSet(internalIds) &
+          t.status.equals(PupilStatus.active),
+      include: PupilSchemas.listInclude,
+    );
+    return pupils;
+  }
+
+  // ── Domain-scoped fetch endpoints ──
+
+  /// Fetch communication data for a pupil (contact, tutorInfo, etc.).
+  Future<PupilCommunicationData?> fetchPupilCommunicationData(
+      Session session, int pupilId) async {
+    final pupil = await PupilData.db.findById(session, pupilId,
+        include: PupilData.include(
+            communicationData: PupilCommunicationData.include()));
+    return pupil?.communicationData;
+  }
+
+  /// Fetch preschool data for a pupil (kindergarden, medical, test).
+  Future<PupilPreschoolData?> fetchPupilPreschoolData(
+      Session session, int pupilId) async {
+    final pupil = await PupilData.db.findById(session, pupilId,
+        include: PupilData.include(
+            preschoolData: PupilSchemas.preschoolSubInclude));
+    return pupil?.preschoolData;
+  }
+
+  /// Fetch media data for a pupil (avatar, auth, publicMediaAuth).
+  Future<PupilMediaData?> fetchPupilMediaData(
+      Session session, int pupilId) async {
+    final pupil = await PupilData.db.findById(session, pupilId,
+        include: PupilData.include(
+            mediaData: PupilSchemas.mediaSubInclude));
+    return pupil?.mediaData;
+  }
+
   Future<List<PupilData>> fetchPupilsById(
       Session session, Set<int> internalIds) async {
     _logger.info('Fetching pupils by internal IDs');

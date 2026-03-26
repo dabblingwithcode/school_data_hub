@@ -60,6 +60,12 @@ import '../../../../_features/attendance/models/missed_schoolday.dart' as _i26;
 import '../../../../_features/schoolday_events/models/schoolday_event.dart'
     as _i27;
 import '../../../../_features/school_lists/models/pupil_entry.dart' as _i28;
+import '../../../../_features/pupil/models/pupil_data/pupil_communication_data.dart'
+    as _i29;
+import '../../../../_features/pupil/models/pupil_data/pupil_preschool_data.dart'
+    as _i30;
+import '../../../../_features/pupil/models/pupil_data/pupil_media_data.dart'
+    as _i31;
 
 abstract class PupilData
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
@@ -108,6 +114,12 @@ abstract class PupilData
     this.schooldayEvents,
     this.swimmer,
     this.pupilListEntries,
+    this.communicationDataId,
+    this.communicationData,
+    this.preschoolDataId,
+    this.preschoolData,
+    this.mediaDataId,
+    this.mediaData,
   }) : _kindergardenPupilsKindergardenId = null;
 
   factory PupilData({
@@ -155,6 +167,12 @@ abstract class PupilData
     List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i28.PupilListEntry>? pupilListEntries,
+    int? communicationDataId,
+    _i29.PupilCommunicationData? communicationData,
+    int? preschoolDataId,
+    _i30.PupilPreschoolData? preschoolData,
+    int? mediaDataId,
+    _i31.PupilMediaData? mediaData,
   }) = _PupilDataImpl;
 
   factory PupilData.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -292,6 +310,21 @@ abstract class PupilData
           ?.map(
               (e) => _i28.PupilListEntry.fromJson((e as Map<String, dynamic>)))
           .toList(),
+      communicationDataId: jsonSerialization['communicationDataId'] as int?,
+      communicationData: jsonSerialization['communicationData'] == null
+          ? null
+          : _i29.PupilCommunicationData.fromJson(
+              (jsonSerialization['communicationData'] as Map<String, dynamic>)),
+      preschoolDataId: jsonSerialization['preschoolDataId'] as int?,
+      preschoolData: jsonSerialization['preschoolData'] == null
+          ? null
+          : _i30.PupilPreschoolData.fromJson(
+              (jsonSerialization['preschoolData'] as Map<String, dynamic>)),
+      mediaDataId: jsonSerialization['mediaDataId'] as int?,
+      mediaData: jsonSerialization['mediaData'] == null
+          ? null
+          : _i31.PupilMediaData.fromJson(
+              (jsonSerialization['mediaData'] as Map<String, dynamic>)),
       $_kindergardenPupilsKindergardenId:
           jsonSerialization['_kindergardenPupilsKindergardenId'] as int?,
     );
@@ -390,6 +423,18 @@ abstract class PupilData
 
   List<_i28.PupilListEntry>? pupilListEntries;
 
+  int? communicationDataId;
+
+  _i29.PupilCommunicationData? communicationData;
+
+  int? preschoolDataId;
+
+  _i30.PupilPreschoolData? preschoolData;
+
+  int? mediaDataId;
+
+  _i31.PupilMediaData? mediaData;
+
   final int? _kindergardenPupilsKindergardenId;
 
   @override
@@ -443,6 +488,12 @@ abstract class PupilData
     List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i28.PupilListEntry>? pupilListEntries,
+    int? communicationDataId,
+    _i29.PupilCommunicationData? communicationData,
+    int? preschoolDataId,
+    _i30.PupilPreschoolData? preschoolData,
+    int? mediaDataId,
+    _i31.PupilMediaData? mediaData,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -530,6 +581,14 @@ abstract class PupilData
       if (pupilListEntries != null)
         'pupilListEntries':
             pupilListEntries?.toJson(valueToJson: (v) => v.toJson()),
+      if (communicationDataId != null)
+        'communicationDataId': communicationDataId,
+      if (communicationData != null)
+        'communicationData': communicationData?.toJson(),
+      if (preschoolDataId != null) 'preschoolDataId': preschoolDataId,
+      if (preschoolData != null) 'preschoolData': preschoolData?.toJson(),
+      if (mediaDataId != null) 'mediaDataId': mediaDataId,
+      if (mediaData != null) 'mediaData': mediaData?.toJson(),
       if (_kindergardenPupilsKindergardenId != null)
         '_kindergardenPupilsKindergardenId': _kindergardenPupilsKindergardenId,
     };
@@ -625,6 +684,15 @@ abstract class PupilData
       if (pupilListEntries != null)
         'pupilListEntries':
             pupilListEntries?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
+      if (communicationDataId != null)
+        'communicationDataId': communicationDataId,
+      if (communicationData != null)
+        'communicationData': communicationData?.toJsonForProtocol(),
+      if (preschoolDataId != null) 'preschoolDataId': preschoolDataId,
+      if (preschoolData != null)
+        'preschoolData': preschoolData?.toJsonForProtocol(),
+      if (mediaDataId != null) 'mediaDataId': mediaDataId,
+      if (mediaData != null) 'mediaData': mediaData?.toJsonForProtocol(),
     };
   }
 
@@ -652,6 +720,9 @@ abstract class PupilData
     _i26.MissedSchooldayIncludeList? missedSchooldays,
     _i27.SchooldayEventIncludeList? schooldayEvents,
     _i28.PupilListEntryIncludeList? pupilListEntries,
+    _i29.PupilCommunicationDataInclude? communicationData,
+    _i30.PupilPreschoolDataInclude? preschoolData,
+    _i31.PupilMediaDataInclude? mediaData,
   }) {
     return PupilDataInclude._(
       preSchoolMedical: preSchoolMedical,
@@ -677,6 +748,9 @@ abstract class PupilData
       missedSchooldays: missedSchooldays,
       schooldayEvents: schooldayEvents,
       pupilListEntries: pupilListEntries,
+      communicationData: communicationData,
+      preschoolData: preschoolData,
+      mediaData: mediaData,
     );
   }
 
@@ -754,6 +828,12 @@ class _PupilDataImpl extends PupilData {
     List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i28.PupilListEntry>? pupilListEntries,
+    int? communicationDataId,
+    _i29.PupilCommunicationData? communicationData,
+    int? preschoolDataId,
+    _i30.PupilPreschoolData? preschoolData,
+    int? mediaDataId,
+    _i31.PupilMediaData? mediaData,
   }) : super._(
           id: id,
           status: status,
@@ -799,6 +879,12 @@ class _PupilDataImpl extends PupilData {
           schooldayEvents: schooldayEvents,
           swimmer: swimmer,
           pupilListEntries: pupilListEntries,
+          communicationDataId: communicationDataId,
+          communicationData: communicationData,
+          preschoolDataId: preschoolDataId,
+          preschoolData: preschoolData,
+          mediaDataId: mediaDataId,
+          mediaData: mediaData,
         );
 
   /// Returns a shallow copy of this [PupilData]
@@ -850,6 +936,12 @@ class _PupilDataImpl extends PupilData {
     Object? schooldayEvents = _Undefined,
     Object? swimmer = _Undefined,
     Object? pupilListEntries = _Undefined,
+    Object? communicationDataId = _Undefined,
+    Object? communicationData = _Undefined,
+    Object? preschoolDataId = _Undefined,
+    Object? preschoolData = _Undefined,
+    Object? mediaDataId = _Undefined,
+    Object? mediaData = _Undefined,
   }) {
     return PupilDataImplicit._(
       id: id is int? ? id : this.id,
@@ -961,6 +1053,21 @@ class _PupilDataImpl extends PupilData {
       pupilListEntries: pupilListEntries is List<_i28.PupilListEntry>?
           ? pupilListEntries
           : this.pupilListEntries?.map((e0) => e0.copyWith()).toList(),
+      communicationDataId: communicationDataId is int?
+          ? communicationDataId
+          : this.communicationDataId,
+      communicationData: communicationData is _i29.PupilCommunicationData?
+          ? communicationData
+          : this.communicationData?.copyWith(),
+      preschoolDataId:
+          preschoolDataId is int? ? preschoolDataId : this.preschoolDataId,
+      preschoolData: preschoolData is _i30.PupilPreschoolData?
+          ? preschoolData
+          : this.preschoolData?.copyWith(),
+      mediaDataId: mediaDataId is int? ? mediaDataId : this.mediaDataId,
+      mediaData: mediaData is _i31.PupilMediaData?
+          ? mediaData
+          : this.mediaData?.copyWith(),
       $_kindergardenPupilsKindergardenId:
           this._kindergardenPupilsKindergardenId,
     );
@@ -1013,6 +1120,12 @@ class PupilDataImplicit extends _PupilDataImpl {
     List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i28.PupilListEntry>? pupilListEntries,
+    int? communicationDataId,
+    _i29.PupilCommunicationData? communicationData,
+    int? preschoolDataId,
+    _i30.PupilPreschoolData? preschoolData,
+    int? mediaDataId,
+    _i31.PupilMediaData? mediaData,
     int? $_kindergardenPupilsKindergardenId,
   })  : _kindergardenPupilsKindergardenId = $_kindergardenPupilsKindergardenId,
         super(
@@ -1060,6 +1173,12 @@ class PupilDataImplicit extends _PupilDataImpl {
           schooldayEvents: schooldayEvents,
           swimmer: swimmer,
           pupilListEntries: pupilListEntries,
+          communicationDataId: communicationDataId,
+          communicationData: communicationData,
+          preschoolDataId: preschoolDataId,
+          preschoolData: preschoolData,
+          mediaDataId: mediaDataId,
+          mediaData: mediaData,
         );
 
   factory PupilDataImplicit(
@@ -1111,6 +1230,12 @@ class PupilDataImplicit extends _PupilDataImpl {
       schooldayEvents: pupilData.schooldayEvents,
       swimmer: pupilData.swimmer,
       pupilListEntries: pupilData.pupilListEntries,
+      communicationDataId: pupilData.communicationDataId,
+      communicationData: pupilData.communicationData,
+      preschoolDataId: pupilData.preschoolDataId,
+      preschoolData: pupilData.preschoolData,
+      mediaDataId: pupilData.mediaDataId,
+      mediaData: pupilData.mediaData,
       $_kindergardenPupilsKindergardenId: $_kindergardenPupilsKindergardenId,
     );
   }
@@ -1200,6 +1325,18 @@ class PupilDataTable extends _i1.Table<int?> {
     );
     swimmer = _i1.ColumnString(
       'swimmer',
+      this,
+    );
+    communicationDataId = _i1.ColumnInt(
+      'communicationDataId',
+      this,
+    );
+    preschoolDataId = _i1.ColumnInt(
+      'preschoolDataId',
+      this,
+    );
+    mediaDataId = _i1.ColumnInt(
+      'mediaDataId',
       this,
     );
     $_kindergardenPupilsKindergardenId = _i1.ColumnInt(
@@ -1328,6 +1465,18 @@ class PupilDataTable extends _i1.Table<int?> {
   _i28.PupilListEntryTable? ___pupilListEntries;
 
   _i1.ManyRelation<_i28.PupilListEntryTable>? _pupilListEntries;
+
+  late final _i1.ColumnInt communicationDataId;
+
+  _i29.PupilCommunicationDataTable? _communicationData;
+
+  late final _i1.ColumnInt preschoolDataId;
+
+  _i30.PupilPreschoolDataTable? _preschoolData;
+
+  late final _i1.ColumnInt mediaDataId;
+
+  _i31.PupilMediaDataTable? _mediaData;
 
   late final _i1.ColumnInt $_kindergardenPupilsKindergardenId;
 
@@ -1631,6 +1780,45 @@ class PupilDataTable extends _i1.Table<int?> {
           _i28.PupilListEntryTable(tableRelation: foreignTableRelation),
     );
     return ___pupilListEntries!;
+  }
+
+  _i29.PupilCommunicationDataTable get communicationData {
+    if (_communicationData != null) return _communicationData!;
+    _communicationData = _i1.createRelationTable(
+      relationFieldName: 'communicationData',
+      field: PupilData.t.communicationDataId,
+      foreignField: _i29.PupilCommunicationData.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i29.PupilCommunicationDataTable(tableRelation: foreignTableRelation),
+    );
+    return _communicationData!;
+  }
+
+  _i30.PupilPreschoolDataTable get preschoolData {
+    if (_preschoolData != null) return _preschoolData!;
+    _preschoolData = _i1.createRelationTable(
+      relationFieldName: 'preschoolData',
+      field: PupilData.t.preschoolDataId,
+      foreignField: _i30.PupilPreschoolData.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i30.PupilPreschoolDataTable(tableRelation: foreignTableRelation),
+    );
+    return _preschoolData!;
+  }
+
+  _i31.PupilMediaDataTable get mediaData {
+    if (_mediaData != null) return _mediaData!;
+    _mediaData = _i1.createRelationTable(
+      relationFieldName: 'mediaData',
+      field: PupilData.t.mediaDataId,
+      foreignField: _i31.PupilMediaData.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i31.PupilMediaDataTable(tableRelation: foreignTableRelation),
+    );
+    return _mediaData!;
   }
 
   _i1.ManyRelation<_i11.PupilAuthorizationTable> get authorizations {
@@ -1969,6 +2157,9 @@ class PupilDataTable extends _i1.Table<int?> {
         creditEarned,
         schoolyearHeldBackAt,
         swimmer,
+        communicationDataId,
+        preschoolDataId,
+        mediaDataId,
         $_kindergardenPupilsKindergardenId,
       ];
 
@@ -1995,6 +2186,9 @@ class PupilDataTable extends _i1.Table<int?> {
         creditEarned,
         schoolyearHeldBackAt,
         swimmer,
+        communicationDataId,
+        preschoolDataId,
+        mediaDataId,
       ];
 
   @override
@@ -2068,6 +2262,15 @@ class PupilDataTable extends _i1.Table<int?> {
     if (relationField == 'pupilListEntries') {
       return __pupilListEntries;
     }
+    if (relationField == 'communicationData') {
+      return communicationData;
+    }
+    if (relationField == 'preschoolData') {
+      return preschoolData;
+    }
+    if (relationField == 'mediaData') {
+      return mediaData;
+    }
     return null;
   }
 }
@@ -2097,6 +2300,9 @@ class PupilDataInclude extends _i1.IncludeObject {
     _i26.MissedSchooldayIncludeList? missedSchooldays,
     _i27.SchooldayEventIncludeList? schooldayEvents,
     _i28.PupilListEntryIncludeList? pupilListEntries,
+    _i29.PupilCommunicationDataInclude? communicationData,
+    _i30.PupilPreschoolDataInclude? preschoolData,
+    _i31.PupilMediaDataInclude? mediaData,
   }) {
     _preSchoolMedical = preSchoolMedical;
     _kindergarden = kindergarden;
@@ -2121,6 +2327,9 @@ class PupilDataInclude extends _i1.IncludeObject {
     _missedSchooldays = missedSchooldays;
     _schooldayEvents = schooldayEvents;
     _pupilListEntries = pupilListEntries;
+    _communicationData = communicationData;
+    _preschoolData = preschoolData;
+    _mediaData = mediaData;
   }
 
   _i3.PreSchoolMedicalInclude? _preSchoolMedical;
@@ -2169,6 +2378,12 @@ class PupilDataInclude extends _i1.IncludeObject {
 
   _i28.PupilListEntryIncludeList? _pupilListEntries;
 
+  _i29.PupilCommunicationDataInclude? _communicationData;
+
+  _i30.PupilPreschoolDataInclude? _preschoolData;
+
+  _i31.PupilMediaDataInclude? _mediaData;
+
   @override
   Map<String, _i1.Include?> get includes => {
         'preSchoolMedical': _preSchoolMedical,
@@ -2194,6 +2409,9 @@ class PupilDataInclude extends _i1.IncludeObject {
         'missedSchooldays': _missedSchooldays,
         'schooldayEvents': _schooldayEvents,
         'pupilListEntries': _pupilListEntries,
+        'communicationData': _communicationData,
+        'preschoolData': _preschoolData,
+        'mediaData': _mediaData,
       };
 
   @override
@@ -3023,6 +3241,76 @@ class PupilDataAttachRowRepository {
     );
   }
 
+  /// Creates a relation between the given [PupilData] and [PupilCommunicationData]
+  /// by setting the [PupilData]'s foreign key `communicationDataId` to refer to the [PupilCommunicationData].
+  Future<void> communicationData(
+    _i1.Session session,
+    PupilData pupilData,
+    _i29.PupilCommunicationData communicationData, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilData.id == null) {
+      throw ArgumentError.notNull('pupilData.id');
+    }
+    if (communicationData.id == null) {
+      throw ArgumentError.notNull('communicationData.id');
+    }
+
+    var $pupilData =
+        pupilData.copyWith(communicationDataId: communicationData.id);
+    await session.db.updateRow<PupilData>(
+      $pupilData,
+      columns: [PupilData.t.communicationDataId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between the given [PupilData] and [PupilPreschoolData]
+  /// by setting the [PupilData]'s foreign key `preschoolDataId` to refer to the [PupilPreschoolData].
+  Future<void> preschoolData(
+    _i1.Session session,
+    PupilData pupilData,
+    _i30.PupilPreschoolData preschoolData, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilData.id == null) {
+      throw ArgumentError.notNull('pupilData.id');
+    }
+    if (preschoolData.id == null) {
+      throw ArgumentError.notNull('preschoolData.id');
+    }
+
+    var $pupilData = pupilData.copyWith(preschoolDataId: preschoolData.id);
+    await session.db.updateRow<PupilData>(
+      $pupilData,
+      columns: [PupilData.t.preschoolDataId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between the given [PupilData] and [PupilMediaData]
+  /// by setting the [PupilData]'s foreign key `mediaDataId` to refer to the [PupilMediaData].
+  Future<void> mediaData(
+    _i1.Session session,
+    PupilData pupilData,
+    _i31.PupilMediaData mediaData, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilData.id == null) {
+      throw ArgumentError.notNull('pupilData.id');
+    }
+    if (mediaData.id == null) {
+      throw ArgumentError.notNull('mediaData.id');
+    }
+
+    var $pupilData = pupilData.copyWith(mediaDataId: mediaData.id);
+    await session.db.updateRow<PupilData>(
+      $pupilData,
+      columns: [PupilData.t.mediaDataId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between this [PupilData] and the given [PupilAuthorization]
   /// by setting the [PupilAuthorization]'s foreign key `pupilId` to refer to this [PupilData].
   Future<void> authorizations(
@@ -3770,6 +4058,72 @@ class PupilDataDetachRowRepository {
     await session.db.updateRow<PupilData>(
       $pupildata,
       columns: [PupilData.t.publicMediaAuthDocumentId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [PupilData] and the [PupilCommunicationData] set in `communicationData`
+  /// by setting the [PupilData]'s foreign key `communicationDataId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> communicationData(
+    _i1.Session session,
+    PupilData pupildata, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupildata.id == null) {
+      throw ArgumentError.notNull('pupildata.id');
+    }
+
+    var $pupildata = pupildata.copyWith(communicationDataId: null);
+    await session.db.updateRow<PupilData>(
+      $pupildata,
+      columns: [PupilData.t.communicationDataId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [PupilData] and the [PupilPreschoolData] set in `preschoolData`
+  /// by setting the [PupilData]'s foreign key `preschoolDataId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> preschoolData(
+    _i1.Session session,
+    PupilData pupildata, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupildata.id == null) {
+      throw ArgumentError.notNull('pupildata.id');
+    }
+
+    var $pupildata = pupildata.copyWith(preschoolDataId: null);
+    await session.db.updateRow<PupilData>(
+      $pupildata,
+      columns: [PupilData.t.preschoolDataId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [PupilData] and the [PupilMediaData] set in `mediaData`
+  /// by setting the [PupilData]'s foreign key `mediaDataId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> mediaData(
+    _i1.Session session,
+    PupilData pupildata, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupildata.id == null) {
+      throw ArgumentError.notNull('pupildata.id');
+    }
+
+    var $pupildata = pupildata.copyWith(mediaDataId: null);
+    await session.db.updateRow<PupilData>(
+      $pupildata,
+      columns: [PupilData.t.mediaDataId],
       transaction: transaction,
     );
   }

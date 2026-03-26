@@ -1,26 +1,60 @@
 {
 	"folders": [
 		{
+			"name": "school_data_hub_flutter",
 			"path": ".."
 		},
 		{
+			"name": "school_data_hub_client",
 			"path": "../../school_data_hub_client"
 		},
 		{
+			"name": "test_data",
 			"path": "../../test_data"
 		},
 		{
+			"name": "school_data_hub_server",
 			"path": "../../school_data_hub_server"
 		},
 		{
+			"name": "docs",
 			"path": "../../docs"
 		},
 		{
+			"name": "private",
 			"path": "../../private"
 		}
 	],
 	"settings": {
-  "dart.flutterSdkPath": "C:\\Users\\p53\\.puro\\envs\\3.41.0\\flutter",
-  "dart.sdkPath": "C:\\Users\\p53\\.puro\\envs\\3.41.0\\flutter\\bin\\cache\\dart-sdk"
-}
+		"dart.flutterSdkPath": "C:\\Users\\p53\\.puro\\envs\\3.41.0\\flutter",
+		"dart.sdkPath": "C:\\Users\\p53\\.puro\\envs\\3.41.0\\flutter\\bin\\cache\\dart-sdk"
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "school_data_hub_flutter",
+				"request": "launch",
+				"type": "dart",
+				"cwd": "${workspaceFolder:school_data_hub_flutter}",
+				"program": "lib/main.dart"
+			},
+			{
+				"name": "school_data_hub_flutter (profile mode)",
+				"request": "launch",
+				"type": "dart",
+				"cwd": "${workspaceFolder:school_data_hub_flutter}",
+				"program": "lib/main.dart",
+				"flutterMode": "profile"
+			},
+			{
+				"name": "school_data_hub_flutter (release mode)",
+				"request": "launch",
+				"type": "dart",
+				"cwd": "${workspaceFolder:school_data_hub_flutter}",
+				"program": "lib/main.dart",
+				"flutterMode": "release"
+			}
+		]
+	}
 }

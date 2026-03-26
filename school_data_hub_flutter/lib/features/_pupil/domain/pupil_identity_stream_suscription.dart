@@ -467,43 +467,15 @@ class PupilIdentityStream {
             final beforeCount =
                 di<PupilIdentityManager>().pupilIdentities.length;
 
-            // final dataUpdateIsUpToDate = event.dataTimeStamp!.isAfter(
-            //   di<EnvManager>().activeEnv!.lastIdentitiesUpdate!,
-            // );
+            final dataTimestamp =
+                eventForDispatch.dataTimeStamp ?? DateTime.now().toUtc();
+            _log.info(
+              '[${role.name.toUpperCase()}]: Received pupil identities (timestamp: $dataTimestamp)',
+            );
 
-            _log.info('''Received newer pupil identities:
-                      Timestamp: ${eventForDispatch.dataTimeStamp}
-                      Last identities update: ${di<EnvManager>().activeEnv!.lastIdentitiesUpdate}
-                      ''');
-            // if (!dataUpdateIsUpToDate) {
-            //   // Send confirmation
-            //   await _client.pupilIdentity.sendPupilIdentityMessage(
-            //     channelName,
-            //     PupilIdentityDto(
-            //       sender: di<HubSessionManager>()
-            //           .user!
-            //           .userInfo!
-            //           .userName!,
-            //       type: 'ok',
-            //       value: '',
-            //     ),
-            //   );
-
-            //   onCompleted();
-            //   onStatusUpdate('Schülerdaten sind veraltet!');
-            //   _encryptedPupilIdsSubscription!.cancel();
-            //   if (onRequestRejected != null) {
-            //     onRequestRejected(false);
-            //   }
-            //   _notificationService.showInformationDialog(
-            //     'Schülerdaten sind veraltet und wurden nicht verarbeitet.',
-            //   );
-
-            //   return;
-            // }
             await di<PupilIdentityManager>()
                 .updatePupilIdentitiesFromEncryptedText(
-                  eventForDispatch.dataTimeStamp!,
+                  dataTimestamp,
                   actualData,
                 );
             final afterCount =
@@ -511,27 +483,21 @@ class PupilIdentityStream {
             final newCount = afterCount - beforeCount;
             // Set the last identities update to the received data time stamp
             di<EnvManager>().updateActiveEnv(
-              lastIdentitiesUpdate: eventForDispatch.dataTimeStamp?.toUtc(),
+              lastIdentitiesUpdate: dataTimestamp,
             );
 
-            // Validate user session before sending confirmation
+            // Send confirmation to sender
             final confirmUser =
                 di<HubSessionManager>().user?.userInfo?.userName;
-            if (confirmUser == null || confirmUser.isEmpty) {
-              _log.severe(
-                '[${role.name.toUpperCase()}]: Cannot send confirmation - username is null or empty',
+            if (confirmUser != null && confirmUser.isNotEmpty) {
+              final sendChannel = _isPrivateStream && _session != null
+                  ? _session!.privateStreamId
+                  : channelName;
+              await client.pupilIdentity.sendPupilIdentityMessage(
+                sendChannel,
+                PupilIdentityDto(sender: confirmUser, type: 'ok', value: ''),
               );
-              break;
             }
-
-            // Send confirmation
-            final sendChannel = _isPrivateStream && _session != null
-                ? _session!.privateStreamId
-                : channelName;
-            await client.pupilIdentity.sendPupilIdentityMessage(
-              sendChannel,
-              PupilIdentityDto(sender: confirmUser, type: 'ok', value: ''),
-            );
 
             onCompleted();
             onStatusUpdate(
@@ -542,7 +508,6 @@ class PupilIdentityStream {
             if (onDataReceived != null) {
               onDataReceived(newCount, afterCount);
             } else if (onShouldPopPage != null) {
-              // Fallback: if no data received callback, use the old pop page callback
               onShouldPopPage();
             }
 
@@ -551,7 +516,11 @@ class PupilIdentityStream {
             _log.severe(
               '[${role.name.toUpperCase()}] [${eventForDispatch.type}] from $eventSender: Error processing received data: $e',
             );
+            // Reset state so UI can recover — onCompleted resets flags
+            // (isTransmitting, receiverJoined, etc.) which hides the overlay.
+            onCompleted();
             onStatusUpdate('Fehler beim Verarbeiten der Daten: $e');
+            currentSourceHolder[0]?.cancel();
           }
           break;
         case 'shutdown':

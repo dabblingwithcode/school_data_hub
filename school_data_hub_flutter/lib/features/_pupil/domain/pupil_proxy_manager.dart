@@ -305,6 +305,46 @@ class PupilProxyManager extends ChangeNotifier {
     await fetchPupilsByInternalId(pupilsToFetch);
   }
 
+  /// Fetch lightweight pupil data (avatar + support levels) for init.
+  Future<void> fetchPupilsListByInternalId(List<int> pupilInternalIds) async {
+    _log.info('Fetching ${pupilInternalIds.length} pupils list (lightweight)');
+
+    final fetchedPupils = await _pupilDataApiService.fetchPupilsList(
+      pupilInternalIds: pupilInternalIds,
+    );
+    if (fetchedPupils == null) return;
+
+    final List<int> outdatedPupilIdentitiesIds = pupilInternalIds
+        .where(
+          (element) =>
+              !fetchedPupils.any((pupil) => pupil.internalId == element),
+        )
+        .toList();
+
+    updatePupilProxiesWithPupilData(fetchedPupils);
+
+    if (outdatedPupilIdentitiesIds.isNotEmpty) {
+      final deletedPupilIdentities = await di<PupilIdentityManager>()
+          .deleteOrphanPupilIdentities(outdatedPupilIdentitiesIds);
+      _notificationService.showInformationDialog(
+        NotificationType.info,
+        'Diese Schüler_innen existieren nicht mehr in der Datenbank, Ihre Ids wurden aus dem Gerät gelöscht:\n\n$deletedPupilIdentities',
+      );
+    }
+    _log.info('Schülerdaten geladen! (lightweight)');
+    notifyListeners();
+  }
+
+  /// Fetch full pupil detail for a single pupil (all relations).
+  Future<void> fetchPupilDetail(int internalId) async {
+    final fetchedPupils = await _pupilDataApiService.fetchListOfPupils(
+      pupilInternalIds: [internalId],
+    );
+    if (fetchedPupils != null && fetchedPupils.isNotEmpty) {
+      updatePupilProxyWithPupilData(fetchedPupils.first);
+    }
+  }
+
   Future<void> updatePupilList(List<PupilProxy> pupils) async {
     await fetchPupilsByInternalId(pupils.map((e) => e.internalId).toList());
   }
@@ -368,10 +408,10 @@ class PupilProxyManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updatePupilProxyWithPupilData(PupilData pupilData) {
+  void updatePupilProxyWithPupilData(PupilData pupilData, {bool merge = false}) {
     final proxy = _pupilIdPupilsMap[pupilData.id!];
     if (proxy != null) {
-      proxy.updatePupil(pupilData);
+      proxy.updatePupil(pupilData, merge: merge);
     } else {
       final pupilIdentity = di<PupilIdentityManager>()
           .getPupilIdentityByInternalId(pupilData.internalId);
@@ -397,9 +437,11 @@ class PupilProxyManager extends ChangeNotifier {
   }
 
   /// Called by [HubStreamService] when a PupilData update arrives on the hub stream.
+  /// Uses merge mode to preserve existing relations that may not be included
+  /// in lightweight stream events.
   void upsertFromStream(PupilData pupilData) {
     _log.fine('[STREAM] upsert pupil ${pupilData.id}');
-    updatePupilProxyWithPupilData(pupilData);
+    updatePupilProxyWithPupilData(pupilData, merge: true);
   }
 
   Future<void> updateSchoolyearHeldBackDate({

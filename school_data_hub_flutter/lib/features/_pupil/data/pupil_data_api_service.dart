@@ -25,7 +25,20 @@ class PupilDataApiService {
     return pupils?.toList();
   }
 
-  //- fetch list of pupils
+  //- fetch list of pupils (lightweight — avatar + support levels only)
+
+  Future<List<PupilData>?> fetchPupilsList({
+    required List<int> pupilInternalIds,
+  }) async {
+    final pupilIdsSet = pupilInternalIds.toSet();
+    final pupils = await ClientHelper.apiCall(
+      call: () => _client.pupil.fetchPupilsList(pupilIdsSet),
+      errorMessage: 'Die Schüler konnten nicht geladen werden',
+    );
+    return pupils;
+  }
+
+  //- fetch list of pupils (full detail — all relations)
 
   Future<List<PupilData>?> fetchListOfPupils({
     required List<int> pupilInternalIds,

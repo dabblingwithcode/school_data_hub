@@ -58,6 +58,12 @@ import '../../../../_features/attendance/models/missed_schoolday.dart' as _i26;
 import '../../../../_features/schoolday_events/models/schoolday_event.dart'
     as _i27;
 import '../../../../_features/school_lists/models/pupil_entry.dart' as _i28;
+import '../../../../_features/pupil/models/pupil_data/pupil_communication_data.dart'
+    as _i29;
+import '../../../../_features/pupil/models/pupil_data/pupil_preschool_data.dart'
+    as _i30;
+import '../../../../_features/pupil/models/pupil_data/pupil_media_data.dart'
+    as _i31;
 
 abstract class PupilData implements _i1.SerializableModel {
   PupilData._({
@@ -105,6 +111,12 @@ abstract class PupilData implements _i1.SerializableModel {
     this.schooldayEvents,
     this.swimmer,
     this.pupilListEntries,
+    this.communicationDataId,
+    this.communicationData,
+    this.preschoolDataId,
+    this.preschoolData,
+    this.mediaDataId,
+    this.mediaData,
   });
 
   factory PupilData({
@@ -152,6 +164,12 @@ abstract class PupilData implements _i1.SerializableModel {
     List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i28.PupilListEntry>? pupilListEntries,
+    int? communicationDataId,
+    _i29.PupilCommunicationData? communicationData,
+    int? preschoolDataId,
+    _i30.PupilPreschoolData? preschoolData,
+    int? mediaDataId,
+    _i31.PupilMediaData? mediaData,
   }) = _PupilDataImpl;
 
   factory PupilData.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -289,6 +307,21 @@ abstract class PupilData implements _i1.SerializableModel {
           ?.map(
               (e) => _i28.PupilListEntry.fromJson((e as Map<String, dynamic>)))
           .toList(),
+      communicationDataId: jsonSerialization['communicationDataId'] as int?,
+      communicationData: jsonSerialization['communicationData'] == null
+          ? null
+          : _i29.PupilCommunicationData.fromJson(
+              (jsonSerialization['communicationData'] as Map<String, dynamic>)),
+      preschoolDataId: jsonSerialization['preschoolDataId'] as int?,
+      preschoolData: jsonSerialization['preschoolData'] == null
+          ? null
+          : _i30.PupilPreschoolData.fromJson(
+              (jsonSerialization['preschoolData'] as Map<String, dynamic>)),
+      mediaDataId: jsonSerialization['mediaDataId'] as int?,
+      mediaData: jsonSerialization['mediaData'] == null
+          ? null
+          : _i31.PupilMediaData.fromJson(
+              (jsonSerialization['mediaData'] as Map<String, dynamic>)),
     );
   }
 
@@ -383,6 +416,18 @@ abstract class PupilData implements _i1.SerializableModel {
 
   List<_i28.PupilListEntry>? pupilListEntries;
 
+  int? communicationDataId;
+
+  _i29.PupilCommunicationData? communicationData;
+
+  int? preschoolDataId;
+
+  _i30.PupilPreschoolData? preschoolData;
+
+  int? mediaDataId;
+
+  _i31.PupilMediaData? mediaData;
+
   /// Returns a shallow copy of this [PupilData]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -431,6 +476,12 @@ abstract class PupilData implements _i1.SerializableModel {
     List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i28.PupilListEntry>? pupilListEntries,
+    int? communicationDataId,
+    _i29.PupilCommunicationData? communicationData,
+    int? preschoolDataId,
+    _i30.PupilPreschoolData? preschoolData,
+    int? mediaDataId,
+    _i31.PupilMediaData? mediaData,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -518,6 +569,14 @@ abstract class PupilData implements _i1.SerializableModel {
       if (pupilListEntries != null)
         'pupilListEntries':
             pupilListEntries?.toJson(valueToJson: (v) => v.toJson()),
+      if (communicationDataId != null)
+        'communicationDataId': communicationDataId,
+      if (communicationData != null)
+        'communicationData': communicationData?.toJson(),
+      if (preschoolDataId != null) 'preschoolDataId': preschoolDataId,
+      if (preschoolData != null) 'preschoolData': preschoolData?.toJson(),
+      if (mediaDataId != null) 'mediaDataId': mediaDataId,
+      if (mediaData != null) 'mediaData': mediaData?.toJson(),
     };
   }
 
@@ -575,6 +634,12 @@ class _PupilDataImpl extends PupilData {
     List<_i27.SchooldayEvent>? schooldayEvents,
     String? swimmer,
     List<_i28.PupilListEntry>? pupilListEntries,
+    int? communicationDataId,
+    _i29.PupilCommunicationData? communicationData,
+    int? preschoolDataId,
+    _i30.PupilPreschoolData? preschoolData,
+    int? mediaDataId,
+    _i31.PupilMediaData? mediaData,
   }) : super._(
           id: id,
           status: status,
@@ -620,6 +685,12 @@ class _PupilDataImpl extends PupilData {
           schooldayEvents: schooldayEvents,
           swimmer: swimmer,
           pupilListEntries: pupilListEntries,
+          communicationDataId: communicationDataId,
+          communicationData: communicationData,
+          preschoolDataId: preschoolDataId,
+          preschoolData: preschoolData,
+          mediaDataId: mediaDataId,
+          mediaData: mediaData,
         );
 
   /// Returns a shallow copy of this [PupilData]
@@ -671,6 +742,12 @@ class _PupilDataImpl extends PupilData {
     Object? schooldayEvents = _Undefined,
     Object? swimmer = _Undefined,
     Object? pupilListEntries = _Undefined,
+    Object? communicationDataId = _Undefined,
+    Object? communicationData = _Undefined,
+    Object? preschoolDataId = _Undefined,
+    Object? preschoolData = _Undefined,
+    Object? mediaDataId = _Undefined,
+    Object? mediaData = _Undefined,
   }) {
     return PupilData(
       id: id is int? ? id : this.id,
@@ -782,6 +859,21 @@ class _PupilDataImpl extends PupilData {
       pupilListEntries: pupilListEntries is List<_i28.PupilListEntry>?
           ? pupilListEntries
           : this.pupilListEntries?.map((e0) => e0.copyWith()).toList(),
+      communicationDataId: communicationDataId is int?
+          ? communicationDataId
+          : this.communicationDataId,
+      communicationData: communicationData is _i29.PupilCommunicationData?
+          ? communicationData
+          : this.communicationData?.copyWith(),
+      preschoolDataId:
+          preschoolDataId is int? ? preschoolDataId : this.preschoolDataId,
+      preschoolData: preschoolData is _i30.PupilPreschoolData?
+          ? preschoolData
+          : this.preschoolData?.copyWith(),
+      mediaDataId: mediaDataId is int? ? mediaDataId : this.mediaDataId,
+      mediaData: mediaData is _i31.PupilMediaData?
+          ? mediaData
+          : this.mediaData?.copyWith(),
     );
   }
 }

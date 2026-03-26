@@ -53,9 +53,13 @@ class SchooldayEventApiService {
 
   //- GET
 
-  Future<List<SchooldayEvent>?> fetchSchooldayEvents() async {
+  Future<List<SchooldayEvent>?> fetchSchooldayEvents({
+    DateTime? sinceDate,
+  }) async {
     return await ClientHelper.apiCall(
-      call: () => _client.schooldayEvent.fetchSchooldayEvents(),
+      call: () => _client.schooldayEvent.fetchSchooldayEvents(
+        sinceDate: sinceDate,
+      ),
       errorMessage: 'Fehler beim Laden der Vorfälle',
     );
   }

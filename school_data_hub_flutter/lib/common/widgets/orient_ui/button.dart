@@ -174,7 +174,7 @@ class _ButtonState extends State<Button> with SingleTickerProviderStateMixin {
                 child: Container(
                   padding: padding,
                   height: height,
-                  width: widget._isSmall ? null : double.maxFinite,
+                  width: widget._isSmall ? null : double.infinity,
                   decoration: BoxDecoration(
                     color: _getBackgroundColor(bg),
                     border: widget.variant == ButtonVariant.outline

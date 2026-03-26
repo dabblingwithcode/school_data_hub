@@ -356,13 +356,12 @@ class PupilIdentityStreamScreen extends WatchingWidget {
     bool isTransmitting,
   ) {
     if (joined || requestSent || isTransmitting) {
-      _showReceiverStatusOverlay(
-        context,
-        controller,
-        joined,
-        requestSent,
-        isTransmitting,
-      );
+      if (_receiverStatusOverlay != null) {
+        // Overlay already visible — rebuild it with fresh state values
+        _receiverStatusOverlay!.markNeedsBuild();
+      } else {
+        _showReceiverStatusOverlay(context, controller);
+      }
     } else {
       _hideReceiverStatusOverlay();
     }
@@ -371,97 +370,103 @@ class PupilIdentityStreamScreen extends WatchingWidget {
   void _showReceiverStatusOverlay(
     BuildContext context,
     PupilIdentityStreamController controller,
-    bool joined,
-    bool requestSent,
-    bool isTransmitting,
   ) {
-    if (_receiverStatusOverlay != null) {
-      return; // Overlay is already shown
-    }
-
     final style = Style.of(context);
+    // Store the page's navigator so the "Stream beenden" button can pop
+    // even after the overlay entry is removed from the tree.
+    final navigator = Navigator.of(context);
 
     _receiverStatusOverlay = OverlayEntry(
-      builder: (overlayContext) => Material(
-        color: style.colors.foreground.withValues(alpha: 0.54),
-        child: Center(
-          child: Container(
-            width: 350,
-            margin: const EdgeInsets.all(20),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: style.colors.background,
-              borderRadius: BorderRadius.circular(Style.radii.medium),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isTransmitting)
-                  Column(
-                    children: [
-                      const CircularProgressIndicator(),
-                      const Gap(16),
-                      Text(
-                        'Daten werden übertragen...',
-                        style: context.typography.title,
-                      ),
-                      const Gap(8),
-                      Text(
-                        'Bitte warten Sie, bis die Übertragung abgeschlossen ist.',
-                        textAlign: TextAlign.center,
-                        style: context.typography.body,
-                      ),
-                    ],
-                  )
-                else if (joined)
-                  Column(
-                    children: [
-                      Icon(Icons.check_circle, color: style.colors.success, size: 48),
-                      const Gap(16),
-                      Text(
-                        'Mit Sender verbunden',
-                        style: context.typography.title,
-                      ),
-                      const Gap(8),
-                      Text(
-                        'Warten auf Datenübertragung vom Sender.',
-                        textAlign: TextAlign.center,
-                        style: context.typography.body,
-                      ),
-                    ],
-                  )
-                else if (requestSent)
-                  Column(
-                    children: [
-                      const CircularProgressIndicator(),
-                      const Gap(16),
-                      Text(
-                        'Anfrage gesendet',
-                        style: context.typography.title,
-                      ),
-                      const Gap(8),
-                      Text(
-                        'Warten auf Bestätigung vom Sender.',
-                        textAlign: TextAlign.center,
-                        style: context.typography.body,
-                      ),
-                    ],
+      builder: (overlayContext) {
+        // Read directly from the controller's state so each
+        // markNeedsBuild() picks up the latest values.
+        final isTransmitting =
+            controller.state.streamState.isTransmitting.value;
+        final joined = controller.state.streamState.receiverJoined.value;
+        final requestSent = controller.state.streamState.requestSent.value;
+
+        return Material(
+          color: style.colors.foreground.withValues(alpha: 0.54),
+          child: Center(
+            child: Container(
+              width: 350,
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: style.colors.background,
+                borderRadius: BorderRadius.circular(Style.radii.medium),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isTransmitting)
+                    Column(
+                      children: [
+                        const CircularProgressIndicator(),
+                        const Gap(16),
+                        Text(
+                          'Daten werden übertragen...',
+                          style: context.typography.title,
+                        ),
+                        const Gap(8),
+                        Text(
+                          'Bitte warten Sie, bis die Übertragung abgeschlossen ist.',
+                          textAlign: TextAlign.center,
+                          style: context.typography.body,
+                        ),
+                      ],
+                    )
+                  else if (joined)
+                    Column(
+                      children: [
+                        Icon(Icons.check_circle,
+                            color: style.colors.success, size: 48),
+                        const Gap(16),
+                        Text(
+                          'Mit Sender verbunden',
+                          style: context.typography.title,
+                        ),
+                        const Gap(8),
+                        Text(
+                          'Warten auf Datenübertragung vom Sender.',
+                          textAlign: TextAlign.center,
+                          style: context.typography.body,
+                        ),
+                      ],
+                    )
+                  else if (requestSent)
+                    Column(
+                      children: [
+                        const CircularProgressIndicator(),
+                        const Gap(16),
+                        Text(
+                          'Anfrage gesendet',
+                          style: context.typography.title,
+                        ),
+                        const Gap(8),
+                        Text(
+                          'Warten auf Bestätigung vom Sender.',
+                          textAlign: TextAlign.center,
+                          style: context.typography.body,
+                        ),
+                      ],
+                    ),
+                  const Gap(20),
+                  Button(
+                    onPressed: () {
+                      controller.stopStream();
+                      _hideReceiverStatusOverlay();
+                      navigator.pop();
+                    },
+                    label: 'Stream beenden',
+                    variant: ButtonVariant.destructive,
                   ),
-                const Gap(20),
-                Button(
-                  onPressed: () {
-                    controller.stopStream();
-                    _hideReceiverStatusOverlay();
-                    Navigator.of(overlayContext).pop();
-                  },
-                  label: 'Stream beenden',
-                  variant: ButtonVariant.destructive,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
 
     Overlay.of(context).insert(_receiverStatusOverlay!);

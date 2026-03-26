@@ -46,62 +46,79 @@ class AdminLogsEndpoint extends Endpoint {
       limit: 100,
     );
 
-    final List<HubSessionLogInfo> sessionLogInfoList = [];
-
-    for (final entry in sessionLogEntries) {
-      final logs = await LogEntry.db.find(
-        session,
-        where: (t) => t.sessionLogId.equals(entry.id!),
-      );
-
-      final queries = await QueryLogEntry.db.find(
-        session,
-        where: (t) => t.sessionLogId.equals(entry.id!),
-      );
-
-      sessionLogInfoList.add(
-        HubSessionLogInfo(
-          sessionLogEntry: HubSessionLogEntry(
-            sessionId: entry.id!,
-            serverId: entry.serverId,
-            time: entry.time,
-            endpoint: entry.endpoint,
-            method: entry.method,
-            duration: entry.duration,
-            numQueries: entry.numQueries,
-            slow: entry.slow,
-            error: entry.error,
-            stackTrace: entry.stackTrace,
-            authenticatedUserId: entry.authenticatedUserId,
-            isOpen: entry.isOpen,
-          ),
-          logs: logs
-              .map(
-                (l) => HubLogEntry(
-                  logLevel: l.logLevel.index,
-                  message: l.message,
-                  error: l.error,
-                  stackTrace: l.stackTrace,
-                  time: l.time,
-                  order: l.order,
-                ),
-              )
-              .toList(),
-          queries: queries
-              .map(
-                (q) => HubQueryLogEntry(
-                  query: q.query,
-                  duration: q.duration,
-                  numRows: q.numRows,
-                  error: q.error,
-                  slow: q.slow,
-                  order: q.order,
-                ),
-              )
-              .toList(),
-        ),
-      );
+    if (sessionLogEntries.isEmpty) {
+      return HubSessionLogResult(sessionLog: []);
     }
+
+    // Batch-fetch all log entries and query entries in 2 queries instead of 2N
+    final sessionLogIds = sessionLogEntries.map((e) => e.id!).toSet();
+
+    final allLogs = await LogEntry.db.find(
+      session,
+      where: (t) => t.sessionLogId.inSet(sessionLogIds),
+    );
+
+    final allQueries = await QueryLogEntry.db.find(
+      session,
+      where: (t) => t.sessionLogId.inSet(sessionLogIds),
+    );
+
+    // Group by sessionLogId in Dart
+    final logsBySession = <int, List<LogEntry>>{};
+    for (final log in allLogs) {
+      (logsBySession[log.sessionLogId] ??= []).add(log);
+    }
+
+    final queriesBySession = <int, List<QueryLogEntry>>{};
+    for (final query in allQueries) {
+      (queriesBySession[query.sessionLogId] ??= []).add(query);
+    }
+
+    final sessionLogInfoList = sessionLogEntries.map((entry) {
+      final logs = logsBySession[entry.id!] ?? [];
+      final queries = queriesBySession[entry.id!] ?? [];
+
+      return HubSessionLogInfo(
+        sessionLogEntry: HubSessionLogEntry(
+          sessionId: entry.id!,
+          serverId: entry.serverId,
+          time: entry.time,
+          endpoint: entry.endpoint,
+          method: entry.method,
+          duration: entry.duration,
+          numQueries: entry.numQueries,
+          slow: entry.slow,
+          error: entry.error,
+          stackTrace: entry.stackTrace,
+          authenticatedUserId: entry.authenticatedUserId,
+          isOpen: entry.isOpen,
+        ),
+        logs: logs
+            .map(
+              (l) => HubLogEntry(
+                logLevel: l.logLevel.index,
+                message: l.message,
+                error: l.error,
+                stackTrace: l.stackTrace,
+                time: l.time,
+                order: l.order,
+              ),
+            )
+            .toList(),
+        queries: queries
+            .map(
+              (q) => HubQueryLogEntry(
+                query: q.query,
+                duration: q.duration,
+                numRows: q.numRows,
+                error: q.error,
+                slow: q.slow,
+                order: q.order,
+              ),
+            )
+            .toList(),
+      );
+    }).toList();
 
     return HubSessionLogResult(sessionLog: sessionLogInfoList);
   }

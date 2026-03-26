@@ -9,4 +9,3 @@ fields:
   pupil: PupilData?, relation
   supportCategory: SupportCategory?, relation
   learningSupportPlan: LearningSupportPlan?, relation
-  

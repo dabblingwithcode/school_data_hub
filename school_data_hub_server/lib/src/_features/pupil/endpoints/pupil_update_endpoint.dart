@@ -24,18 +24,11 @@ class PupilUpdateEndpoint extends Endpoint {
       throw Exception('Pupil not found');
     }
     pupil.communicationPupil = communicationSkills;
-
-    // Update the pupil in the database
     await PupilData.db.updateRow(session, pupil);
-    final updatedPupilWithRelation = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    session.messages
-        .postMessage('hub_events_stream', updatedPupilWithRelation!);
-        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
-    return updatedPupilWithRelation;
+    session.messages.postMessage(
+        'hub_events_stream', PupilSchemas.slimForStream(pupil));
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
+    return pupil;
   }
 
   Future<PupilData> updateTutorInfo(
@@ -47,15 +40,10 @@ class PupilUpdateEndpoint extends Endpoint {
     }
     pupil.tutorInfo = tutorInfo;
     await PupilData.db.updateRow(session, pupil);
-    final updatedPupilWithRelation = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    session.messages
-        .postMessage('hub_events_stream', updatedPupilWithRelation!);
-        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
-    return updatedPupilWithRelation;
+    session.messages.postMessage(
+        'hub_events_stream', PupilSchemas.slimForStream(pupil));
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
+    return pupil;
   }
 
   Future<PupilData> updateKindergardenData(
@@ -67,15 +55,10 @@ class PupilUpdateEndpoint extends Endpoint {
     }
     pupil.kindergardenData = kindergardenData;
     await PupilData.db.updateRow(session, pupil);
-    final updatedPupilWithRelation = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    session.messages
-        .postMessage('hub_events_stream', updatedPupilWithRelation!);
-        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
-    return updatedPupilWithRelation;
+    session.messages.postMessage(
+        'hub_events_stream', PupilSchemas.slimForStream(pupil));
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
+    return pupil;
   }
 
   Future<List<PupilData>> updateSiblingsTutorInfo(
@@ -102,9 +85,10 @@ class PupilUpdateEndpoint extends Endpoint {
       include: PupilSchemas.allInclude,
     );
     for (final sibling in updatedSiblingsWithRelation) {
-      session.messages.postMessage('hub_events_stream', sibling);
-      HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
+      session.messages.postMessage(
+          'hub_events_stream', PupilSchemas.slimForStream(sibling));
     }
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedSiblingsWithRelation;
   }
 
@@ -243,7 +227,8 @@ class PupilUpdateEndpoint extends Endpoint {
         .findById(session, pupil.id!, include: PupilSchemas.allInclude);
 
     session.log('Updated pupil : ${updatedPupil!.toJson()}', level: LogLevel.debug);
-    session.messages.postMessage('hub_events_stream', updatedPupil);
+    session.messages.postMessage(
+        'hub_events_stream', PupilSchemas.slimForStream(updatedPupil));
     HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
     return updatedPupil;
   }
@@ -268,21 +253,16 @@ class PupilUpdateEndpoint extends Endpoint {
       default:
         throw Exception('Invalid property name');
     }
-    await session.db.updateRow(pupil);
-    final updatedPupil = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    session.messages.postMessage('hub_events_stream', updatedPupil!);
+    await PupilData.db.updateRow(session, pupil);
+    session.messages.postMessage(
+        'hub_events_stream', PupilSchemas.slimForStream(pupil));
     HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
-    return updatedPupil;
+    return pupil;
   }
 
   Future<PupilData> updateCredit(Session session, int pupilId, int value,
       String? description, String sender) async {
-    final pupil = await PupilData.db
-        .findById(session, pupilId, include: PupilSchemas.allInclude);
+    final pupil = await PupilData.db.findById(session, pupilId);
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
@@ -317,7 +297,8 @@ class PupilUpdateEndpoint extends Endpoint {
         include: PupilSchemas.allInclude,
         transaction: transaction,
       );
-      session.messages.postMessage('hub_events_stream', updatedPupil!);
+      session.messages.postMessage(
+          'hub_events_stream', PupilSchemas.slimForStream(updatedPupil!));
       HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
       return updatedPupil;
     });
@@ -329,8 +310,8 @@ class PupilUpdateEndpoint extends Endpoint {
     PreSchoolMedicalStatus preSchoolMedicalStatus,
     String updatedBy,
   ) async {
-    final pupil = await PupilData.db
-        .findById(session, pupilId, include: PupilSchemas.allInclude);
+    final pupil = await PupilData.db.findById(session, pupilId,
+        include: PupilData.include(preSchoolMedical: PreSchoolMedical.include()));
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
@@ -355,7 +336,8 @@ class PupilUpdateEndpoint extends Endpoint {
         include: PupilSchemas.allInclude,
         transaction: transaction,
       );
-      session.messages.postMessage('hub_events_stream', updatedPupil!);
+      session.messages.postMessage(
+          'hub_events_stream', PupilSchemas.slimForStream(updatedPupil!));
       HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
       return updatedPupil;
     });
@@ -365,28 +347,20 @@ class PupilUpdateEndpoint extends Endpoint {
       Session session, int pupilId, PublicMediaAuth publicMediaAuth) async {
     final pupil = await PupilData.db
         .findById(session, pupilId, include: PupilSchemas.allInclude);
-
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
     pupil.publicMediaAuth = publicMediaAuth;
     await PupilData.db.updateRow(session, pupil);
-    final updatedPupilWithRelation = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    session.messages
-        .postMessage('hub_events_stream', updatedPupilWithRelation!);
-        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
-    return updatedPupilWithRelation;
+    session.messages.postMessage(
+        'hub_events_stream', PupilSchemas.slimForStream(pupil));
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
+    return pupil;
   }
 
   Future<PupilData> updateSupportLevel(
       Session session, SupportLevel supportLevel, int pupilId) async {
-    final pupil = await PupilData.db
-        .findById(session, pupilId, include: PupilSchemas.allInclude);
-
+    final pupil = await PupilData.db.findById(session, pupilId);
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
@@ -404,9 +378,9 @@ class PupilUpdateEndpoint extends Endpoint {
         include: PupilSchemas.allInclude,
         transaction: transaction,
       );
-      session.messages
-          .postMessage('hub_events_stream', updatedPupilWithRelation!);
-          HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
+      session.messages.postMessage(
+          'hub_events_stream', PupilSchemas.slimForStream(updatedPupilWithRelation!));
+      HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
       return updatedPupilWithRelation;
     });
   }
@@ -415,21 +389,15 @@ class PupilUpdateEndpoint extends Endpoint {
       ({DateTime? value}) schoolyearHeldBackDate) async {
     final pupil = await PupilData.db
         .findById(session, pupilId, include: PupilSchemas.allInclude);
-
     if (pupil == null) {
       throw Exception('Pupil not found');
     }
     pupil.schoolyearHeldBackAt = schoolyearHeldBackDate.value;
     await PupilData.db.updateRow(session, pupil);
-    final updatedPupilWithRelation = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    session.messages
-        .postMessage('hub_events_stream', updatedPupilWithRelation!);
-        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
-    return updatedPupilWithRelation;
+    session.messages.postMessage(
+        'hub_events_stream', PupilSchemas.slimForStream(pupil));
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
+    return pupil;
   }
 
   Future<PupilData> updateAfterSchoolCare(
@@ -441,14 +409,9 @@ class PupilUpdateEndpoint extends Endpoint {
     }
     pupil.afterSchoolCare = afterSchoolCare;
     await PupilData.db.updateRow(session, pupil);
-    final updatedPupilWithRelation = await PupilData.db.findById(
-      session,
-      pupil.id!,
-      include: PupilSchemas.allInclude,
-    );
-    session.messages
-        .postMessage('hub_events_stream', updatedPupilWithRelation!);
-        HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
-    return updatedPupilWithRelation;
+    session.messages.postMessage(
+        'hub_events_stream', PupilSchemas.slimForStream(pupil));
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilData);
+    return pupil;
   }
 }

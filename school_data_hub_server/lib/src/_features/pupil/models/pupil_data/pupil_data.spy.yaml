@@ -47,9 +47,13 @@ fields:
   ## schoolday related
   missedSchooldays: List<MissedSchoolday>?, relation(name=missed_schoolday_pupil)
   schooldayEvents: List<SchooldayEvent>?, relation(name=schoolday_event_pupil)
-  ## miscellaneous  
+  ## miscellaneous
   swimmer: String?
   pupilListEntries: List<PupilListEntry>?, relation(name=pupil_list_entry_pupil)
+  ## domain sub-models (Phase 1: additive, coexists with legacy fields above)
+  communicationData: PupilCommunicationData?, relation(optional)
+  preschoolData: PupilPreschoolData?, relation(optional)
+  mediaData: PupilMediaData?, relation(optional)
 indexes:
   pupil_data_status_idx:
     fields: status, internalId

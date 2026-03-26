@@ -9,8 +9,22 @@ class SchooldayEventEndpoint extends Endpoint {
   @override
   bool get requireLogin => true;
 
-  Future<List<SchooldayEvent>> fetchSchooldayEvents(Session session) async {
+  Future<List<SchooldayEvent>> fetchSchooldayEvents(
+      Session session, {DateTime? sinceDate}) async {
+    Expression? eventFilter;
+    if (sinceDate != null) {
+      // Find schoolday IDs on or after sinceDate, then filter events
+      final schooldays = await Schoolday.db.find(
+        session,
+        where: (t) => t.schoolday >= sinceDate,
+      );
+      final schooldayIds = schooldays.map((s) => s.id!).toSet();
+      if (schooldayIds.isEmpty) return [];
+      eventFilter = SchooldayEvent.t.schooldayId.inSet(schooldayIds);
+    }
+
     return SchooldayEvent.db.find(session,
+        where: eventFilter != null ? (t) => eventFilter! : null,
         include: SchooldayEvent.include(
           schoolday: Schoolday.include(),
           document: HubDocument.include(),

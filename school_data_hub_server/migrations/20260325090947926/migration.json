@@ -1,0 +1,349 @@
+{
+  "actions": [
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "pupil_communication_data",
+        "dartName": "PupilCommunicationData",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('pupil_communication_data_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "contact",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "String?"
+          },
+          {
+            "name": "communicationPupil",
+            "columnType": 8,
+            "isNullable": true,
+            "dartType": "protocol:CommunicationSkills?"
+          },
+          {
+            "name": "specialInformation",
+            "columnType": 0,
+            "isNullable": true,
+            "dartType": "String?"
+          },
+          {
+            "name": "tutorInfo",
+            "columnType": 8,
+            "isNullable": true,
+            "dartType": "protocol:TutorInfo?"
+          }
+        ],
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "indexName": "pupil_communication_data_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          }
+        ],
+        "managed": true
+      }
+    },
+    {
+      "type": "alterTable",
+      "alterTable": {
+        "name": "pupil_data",
+        "schema": "public",
+        "addColumns": [
+          {
+            "name": "communicationDataId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          },
+          {
+            "name": "preschoolDataId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          },
+          {
+            "name": "mediaDataId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          }
+        ],
+        "deleteColumns": [],
+        "modifyColumns": [],
+        "addIndexes": [],
+        "deleteIndexes": [],
+        "addForeignKeys": [
+          {
+            "constraintName": "pupil_data_fk_7",
+            "columns": [
+              "preschoolDataId"
+            ],
+            "referenceTable": "pupil_preschool_data",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "pupil_data_fk_8",
+            "columns": [
+              "mediaDataId"
+            ],
+            "referenceTable": "pupil_media_data",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "pupil_data_fk_9",
+            "columns": [
+              "_kindergardenPupilsKindergardenId"
+            ],
+            "referenceTable": "kindergarden",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "pupil_data_fk_6",
+            "columns": [
+              "communicationDataId"
+            ],
+            "referenceTable": "pupil_communication_data",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          }
+        ],
+        "deleteForeignKeys": [
+          "pupil_data_fk_6"
+        ],
+        "warnings": []
+      }
+    },
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "pupil_media_data",
+        "dartName": "PupilMediaData",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('pupil_media_data_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "publicMediaAuth",
+            "columnType": 8,
+            "isNullable": false,
+            "dartType": "protocol:PublicMediaAuth"
+          },
+          {
+            "name": "avatarId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          },
+          {
+            "name": "avatarAuthId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          },
+          {
+            "name": "publicMediaAuthDocumentId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "constraintName": "pupil_media_data_fk_0",
+            "columns": [
+              "avatarId"
+            ],
+            "referenceTable": "hub_document",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "pupil_media_data_fk_1",
+            "columns": [
+              "avatarAuthId"
+            ],
+            "referenceTable": "hub_document",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "pupil_media_data_fk_2",
+            "columns": [
+              "publicMediaAuthDocumentId"
+            ],
+            "referenceTable": "hub_document",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          }
+        ],
+        "indexes": [
+          {
+            "indexName": "pupil_media_data_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          }
+        ],
+        "managed": true
+      }
+    },
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "pupil_preschool_data",
+        "dartName": "PupilPreschoolData",
+        "module": "school_data_hub",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('pupil_preschool_data_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "kindergardenData",
+            "columnType": 8,
+            "isNullable": true,
+            "dartType": "protocol:KindergardenInfo?"
+          },
+          {
+            "name": "preSchoolMedicalId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          },
+          {
+            "name": "kindergardenId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          },
+          {
+            "name": "preSchoolTestId",
+            "columnType": 6,
+            "isNullable": true,
+            "dartType": "int?"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "constraintName": "pupil_preschool_data_fk_0",
+            "columns": [
+              "preSchoolMedicalId"
+            ],
+            "referenceTable": "pre_school_medical",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "pupil_preschool_data_fk_1",
+            "columns": [
+              "kindergardenId"
+            ],
+            "referenceTable": "kindergarden",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          },
+          {
+            "constraintName": "pupil_preschool_data_fk_2",
+            "columns": [
+              "preSchoolTestId"
+            ],
+            "referenceTable": "pre_school_test",
+            "referenceTableSchema": "public",
+            "referenceColumns": [
+              "id"
+            ],
+            "onUpdate": 3,
+            "onDelete": 3
+          }
+        ],
+        "indexes": [
+          {
+            "indexName": "pupil_preschool_data_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          }
+        ],
+        "managed": true
+      }
+    }
+  ],
+  "warnings": [],
+  "migrationApiVersion": 1
+}

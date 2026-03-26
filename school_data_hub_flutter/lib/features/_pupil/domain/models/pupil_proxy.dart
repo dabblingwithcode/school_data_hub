@@ -31,12 +31,54 @@ class PupilProxy with ChangeNotifier {
   static const _deepEquality = DeepCollectionEquality();
   int _dataHash = 0;
 
-  void updatePupil(PupilData pupilData) {
-    final newHash = _deepEquality.hash(pupilData.toJson());
+  /// Update the proxy with new PupilData.
+  ///
+  /// If [merge] is true, null relation lists in [pupilData] are treated as
+  /// "not loaded" and the existing values are preserved. This supports
+  /// lightweight stream events that omit heavy relations like competence
+  /// checks and reports.
+  ///
+  /// If [merge] is false (default), the entire [_pupilData] is replaced.
+  void updatePupil(PupilData pupilData, {bool merge = false}) {
+    final PupilData effective;
+    if (merge) {
+      effective = _mergeWith(pupilData);
+    } else {
+      effective = pupilData;
+    }
+    final newHash = _deepEquality.hash(effective.toJson());
     if (newHash == _dataHash) return;
     _dataHash = newHash;
-    _pupilData = pupilData;
+    _pupilData = effective;
     notifyListeners();
+  }
+
+  /// Merge [incoming] into [_pupilData]: all scalar fields from [incoming]
+  /// win; relation lists use [incoming] if non-null, otherwise keep existing.
+  PupilData _mergeWith(PupilData incoming) {
+    return incoming.copyWith(
+      // Relations: keep existing when incoming is null (not loaded)
+      avatar: incoming.avatar ?? _pupilData.avatar,
+      avatarAuth: incoming.avatarAuth ?? _pupilData.avatarAuth,
+      publicMediaAuthDocument:
+          incoming.publicMediaAuthDocument ?? _pupilData.publicMediaAuthDocument,
+      creditTransactions:
+          incoming.creditTransactions ?? _pupilData.creditTransactions,
+      supportLevelHistory:
+          incoming.supportLevelHistory ?? _pupilData.supportLevelHistory,
+      learningSupportPlans:
+          incoming.learningSupportPlans ?? _pupilData.learningSupportPlans,
+      preSchoolMedical:
+          incoming.preSchoolMedical ?? _pupilData.preSchoolMedical,
+      supportCategoryStatuses:
+          incoming.supportCategoryStatuses ?? _pupilData.supportCategoryStatuses,
+      competenceChecks:
+          incoming.competenceChecks ?? _pupilData.competenceChecks,
+      competenceReports:
+          incoming.competenceReports ?? _pupilData.competenceReports,
+      competenceReportChecks:
+          incoming.competenceReportChecks ?? _pupilData.competenceReportChecks,
+    );
   }
 
   void updatePupilIdentity(PupilIdentity pupilIdentity) {

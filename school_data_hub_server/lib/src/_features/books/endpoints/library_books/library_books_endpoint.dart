@@ -200,8 +200,8 @@ class LibraryBooksEndpoint extends Endpoint {
       session,
       where: query != null ? (_) => query! : null,
       include: LibraryBookSchemas.allInclude,
-      // limit: libraryBookQuery.perPage,
-      // offset: libraryBookQuery.page * libraryBookQuery.perPage,
+      limit: libraryBookQuery.perPage,
+      offset: libraryBookQuery.page * libraryBookQuery.perPage,
     );
     return libraryBooks;
   }

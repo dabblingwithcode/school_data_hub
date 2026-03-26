@@ -100,10 +100,11 @@ class PupilIdentityStreamController {
         ? 'Datenübertragung abgeschlossen!'
         : 'Schülerdaten wurden erfolgreich empfangen!';
 
-    // Only cancel subscription for receiver, sender should stay connected
-    if (role == PupilIdentityStreamRole.receiver) {
-      _subscription?.cancel();
-    }
+    // Don't cancel _subscription here — the source stream
+    // (currentSourceHolder) is cancelled in processReceiverEvent after
+    // all callbacks complete.  _subscription is cleaned up in dispose().
+    // Cancelling mid-handler would close the broadcast controller and
+    // could disrupt the remaining callback chain.
   }
 
   String get _sendChannel => _session?.privateStreamId ?? channelName;
@@ -508,6 +509,9 @@ class PupilIdentityStreamController {
   void _handleReceiverLeft(String userName) {
     _log.info('Receiver $userName left the stream');
 
+    final wasInActiveTransfer =
+        state.receiverState.activeTransfers.value.contains(userName);
+
     // Remove from connected receivers
     final updatedConnectedReceivers = Set<String>.from(
       state.receiverState.connectedReceivers.value,
@@ -529,15 +533,29 @@ class PupilIdentityStreamController {
     updatedActiveTransfers.remove(userName);
     state.receiverState.activeTransfers.value = updatedActiveTransfers;
 
+    // If receiver disconnected during active transfer and we never got 'ok',
+    // treat it as completed so the transfer is recorded.
+    if (wasInActiveTransfer && !state.streamState.isCompleted.value) {
+      completeTransfer();
+      state.streamState.statusMessage.value =
+          'Übertragung an $userName abgeschlossen.';
+    } else {
+      state.streamState.statusMessage.value =
+          'Empfänger $userName hat die Verbindung beendet.';
+    }
+
     // Update status message and reset completion state if needed
     if (updatedConnectedReceivers.isEmpty) {
-      // No receivers left - reset to standby state
-      resetSenderForNewRequest();
+      if (wasInActiveTransfer) {
+        // Delay reset so user sees the completion message briefly
+        Future.delayed(const Duration(seconds: 3), () {
+          if (_isDisposed) return;
+          resetSenderForNewRequest();
+        });
+      } else {
+        resetSenderForNewRequest();
+      }
       _log.info('Reset to standby state - no receivers connected');
-    } else {
-      // Other receivers still connected
-      state.streamState.statusMessage.value =
-          'Empfänger $userName hat die Verbindung beendet. ${updatedConnectedReceivers.length} Empfänger verbunden.';
     }
   }
 

@@ -754,6 +754,19 @@ class PreSchoolTest <<table: <b>pre_school_test</b>>> #e2f0fb##[bold] {
 
 }
 
+class PupilCommunicationData <<table: <b>pupil_communication_data</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/pupil_communication_data.spy.yaml</size></b>
+--
+<color:#93c47d>## Domain sub-model: groups communication-related fields from PupilData.</color>
+<color:#93c47d>## Phase 1 (additive): coexists with legacy fields on pupil_data.</color>
+<color:#93c47d>## Phase 2 (deferred): legacy fields removed from pupil_data after forced migration.</color>
+  <i>contact</i>: <b><color:#ff962f>String?</color></b>
+  <i>communicationPupil</i>: <b><color:#ff962f>CommunicationSkills?</color></b>
+  <i>specialInformation</i>: <b><color:#ff962f>String?</color></b>
+  <i>tutorInfo</i>: <b><color:#ff962f>TutorInfo?</color></b>
+
+}
+
 class PupilData <<table: <b>pupil_data</b>>> #e2f0fb##[bold] {
 <size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/pupil_data.spy.yaml</size></b>
 --
@@ -806,10 +819,40 @@ class PupilData <<table: <b>pupil_data</b>>> #e2f0fb##[bold] {
 <color:#93c47d>## miscellaneous</color>
   <i>swimmer</i>: <b><color:#ff962f>String?</color></b>
  ➡️ <i>pupilListEntries</i> : <b><color:#ff962f>List<PupilListEntry>?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>name</color></b><color:#ff962f>=</color>pupil_list_entry_pupil<color:#ff962f>)</color>
+<color:#93c47d>## domain sub-models (Phase 1: additive, coexists with legacy fields above)</color>
+ ➡️ <i>communicationData</i> : <b><color:#ff962f>PupilCommunicationData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+ ➡️ <i>preschoolData</i> : <b><color:#ff962f>PupilPreschoolData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+ ➡️ <i>mediaData</i> : <b><color:#ff962f>PupilMediaData?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
 <b><color:#0164aa>indexes:</color></b>
 <b><color:#0164aa>pupil_data_status_idx:</color></b>
 <b><color:#0164aa>pupil_data_internal_id_idx:</color></b>
 <b><color:#0164aa>unique</color></b>: <b><color:#ff962f>true</color></b>
+
+}
+
+class PupilMediaData <<table: <b>pupil_media_data</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/pupil_media_data.spy.yaml</size></b>
+--
+<color:#93c47d>## Domain sub-model: groups media/avatar-related fields from PupilData.</color>
+<color:#93c47d>## Phase 1 (additive): coexists with legacy fields on pupil_data.</color>
+<color:#93c47d>## Phase 2 (deferred): legacy fields removed from pupil_data after forced migration.</color>
+  <i>publicMediaAuth</i>: <b><color:#ff962f>PublicMediaAuth</color></b>
+ ➡️ <i>avatar</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+ ➡️ <i>avatarAuth</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+ ➡️ <i>publicMediaAuthDocument</i> : <b><color:#ff962f>HubDocument?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+
+}
+
+class PupilPreschoolData <<table: <b>pupil_preschool_data</b>>> #e2f0fb##[bold] {
+<size:14>📁</size> <b><size:12> /_features/pupil/models/pupil_data/pupil_preschool_data.spy.yaml</size></b>
+--
+<color:#93c47d>## Domain sub-model: groups preschool-related fields from PupilData.</color>
+<color:#93c47d>## Phase 1 (additive): coexists with legacy fields on pupil_data.</color>
+<color:#93c47d>## Phase 2 (deferred): legacy fields removed from pupil_data after forced migration.</color>
+  <i>kindergardenData</i>: <b><color:#ff962f>KindergardenInfo?</color></b>
+ ➡️ <i>preSchoolMedical</i> : <b><color:#ff962f>PreSchoolMedical?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+ ➡️ <i>kindergarden</i> : <b><color:#ff962f>Kindergarden?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
+ ➡️ <i>preSchoolTest</i> : <b><color:#ff962f>PreSchoolTest?</color></b>,  <b><color:#0164aa>relation</color></b><color:#ff962f>(</color><b><color:#f44336>optional</color></b><color:#ff962f>)</color>
 
 }
 
@@ -1293,30 +1336,39 @@ enum MemberOperation #ece4ff ##[bold] {
  PupilData::pupilWorkbooks "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#008000,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilWorkbook 
  PupilData::schooldayEvents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4169E1,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchooldayEvent 
  PupilData::pupilListEntries "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilListEntry 
- Schoolday::schooldayEvents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#8A2BE2,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchooldayEvent 
- Schoolday::schoolSemester "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchoolSemester 
- SchoolSemester::timetables "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FF4500,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
- SchooldayEvent::document "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
- SchooldayEvent::processedDocument "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
- SchoolData::logo "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
- SchoolData::officialSeal "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
- PupilListEntry::schoolList "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchoolList 
- Classroom::scheduledLessons "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FF4500,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
- LessonTeacher::user "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" User 
- LessonTeacher::scheduledLesson "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Lesson 
- ScheduledLessonTeacher::user "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" User 
- ScheduledLessonTeacher::scheduledLesson "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
- Lesson::attendedPupils "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4682B4,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" LessonAttendance 
- Lesson::subject "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Subject 
- LessonGroup::timetable "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
- LessonGroup::scheduledLessons "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4169E1,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
- LessonGroup::memberships "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLessonGroupMembership 
- ScheduledLesson::subject "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Subject 
- ScheduledLesson::scheduledAt "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" TimetableSlot 
- ScheduledLesson::timetable "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
- TimetableSlot::timetable "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
- User::userInfo "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" module 
- PupilWorkbook::workbook "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Workbook 
+ PupilData::communicationData "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilCommunicationData 
+ PupilData::preschoolData "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilPreschoolData 
+ PupilData::mediaData "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PupilMediaData 
+ PupilMediaData::avatar "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ PupilMediaData::avatarAuth "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ PupilMediaData::publicMediaAuthDocument "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ PupilPreschoolData::preSchoolMedical "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PreSchoolMedical 
+ PupilPreschoolData::kindergarden "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Kindergarden 
+ PupilPreschoolData::preSchoolTest "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" PreSchoolTest 
+ Schoolday::schooldayEvents "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#008000,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchooldayEvent 
+ Schoolday::schoolSemester "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchoolSemester 
+ SchoolSemester::timetables "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
+ SchooldayEvent::document "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ SchooldayEvent::processedDocument "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ SchoolData::logo "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ SchoolData::officialSeal "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" HubDocument 
+ PupilListEntry::schoolList "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" SchoolList 
+ Classroom::scheduledLessons "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FFD700,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
+ LessonTeacher::user "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" User 
+ LessonTeacher::scheduledLesson "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Lesson 
+ ScheduledLessonTeacher::user "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" User 
+ ScheduledLessonTeacher::scheduledLesson "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
+ Lesson::attendedPupils "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4169E1,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" LessonAttendance 
+ Lesson::subject "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Subject 
+ LessonGroup::timetable "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
+ LessonGroup::scheduledLessons "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#4682B4,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLesson 
+ LessonGroup::memberships "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" <-[#FF4500,thickness=4]- "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" ScheduledLessonGroupMembership 
+ ScheduledLesson::subject "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#008000,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Subject 
+ ScheduledLesson::scheduledAt "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4169E1,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" TimetableSlot 
+ ScheduledLesson::timetable "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FFD700,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
+ TimetableSlot::timetable "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#8A2BE2,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Timetable 
+ User::userInfo "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#4682B4,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" module 
+ PupilWorkbook::workbook "<b><size:20><color:#9b59b6><back:white>1</back></color></size></b>" -[#FF4500,thickness=4]-> "<b><size:20><color:#27ae60><back:white>N</back></color></size></b>" Workbook 
 
 BatchCreateUsersResponse - BatchCreateUserError
 BatchCreateUsersResponse - CreatedUserCredential
@@ -1343,6 +1395,8 @@ AfterSchoolCarePickUpTimes - PickUpInfo
 TutorInfo - CommunicationSkills
 SiblingsTutorInfo - TutorInfo
 PreSchoolMedical - PreSchoolMedicalStatus
+PupilCommunicationData - CommunicationSkills
+PupilCommunicationData - TutorInfo
 PupilData - AfterSchoolCare
 PupilData - CommunicationSkills
 PupilData - PublicMediaAuth
@@ -1350,6 +1404,9 @@ PupilData - TutorInfo
 PupilData - Kindergarden
 PupilData - KindergardenInfo
 PupilData - PupilStatus
+PupilMediaData - PublicMediaAuth
+PupilPreschoolData - Kindergarden
+PupilPreschoolData - KindergardenInfo
 PupilIdentity - SchoolGrade
 SchooldayEvent - Schoolday
 SchooldayEvent - SchooldayEventType
