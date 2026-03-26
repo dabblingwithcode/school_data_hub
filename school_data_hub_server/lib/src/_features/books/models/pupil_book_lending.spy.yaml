@@ -9,7 +9,9 @@ fields:
   lentBy: String
   returnedAt: DateTime?
   receivedBy: String?
-  pupil: PupilData?, relation(name=pupil_book_lending_pupil)
+  pupil: PupilData?, relation(name=pupil_book_lending_pupil, optional)
   isbn: int
   libraryBook: LibraryBook?, relation(name=pupil_book_lending_library_book)
   pupilBookLendingFiles: List<HubDocument>?, relation
+  borrowerUser: User?, relation(name=book_lending_user, optional)
+  borrowerType: String?

@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
@@ -211,102 +211,107 @@ class SchooldayEventReasonDialog extends WatchingWidget {
             ],
           );
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        chips,
-        Gap(Style.spacing.xl),
-        Row(
-          children: [
-            Expanded(
-              child: Button(
-                label: 'ABBRECHEN',
-                onPressed: () => Navigator.pop(context),
-                variant: ButtonVariant.secondary,
+    return Material(
+      type: MaterialType.transparency,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          chips,
+          Gap(Style.spacing.xl),
+          Row(
+            children: [
+              Expanded(
+                child: Button(
+                  label: 'ABBRECHEN',
+                  onPressed: () => Navigator.pop(context),
+                  variant: ButtonVariant.secondary,
+                ),
               ),
-            ),
-            Gap(Style.spacing.lg),
-            Expanded(
-              child: Button(
-                label: 'SPEICHERN',
-                onPressed: () async {
-                  Set<String> schooldayEventReason = {};
-                  String schooldayEventReasons = '';
-                  if (violenceAgainstPupils.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.violenceAgainstPupils.value,
+              Gap(Style.spacing.lg),
+              Expanded(
+                child: Button(
+                  label: 'SPEICHERN',
+                  onPressed: () async {
+                    Set<String> schooldayEventReason = {};
+                    String schooldayEventReasons = '';
+                    if (violenceAgainstPupils.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.violenceAgainstPupils.value,
+                      );
+                    }
+                    if (violenceAgainstTeacher.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.violenceAgainstTeachers.value,
+                      );
+                    }
+                    if (violenceAgainstThings.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.violenceAgainstThings.value,
+                      );
+                    }
+                    if (imminentDanger.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.dangerousBehaviour.value,
+                      );
+                    }
+                    if (insultOthers.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.insultOthers.value,
+                      );
+                    }
+                    if (annoyOthers.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.annoyOthers.value,
+                      );
+                    }
+                    if (ignoreTeacherInstructions.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.ignoreInstructions.value,
+                      );
+                    }
+                    if (disturbLesson.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.disturbLesson.value,
+                      );
+                    }
+                    if (learningDevelopmentInfo.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.learningDevelopmentInfo.value,
+                      );
+                    }
+                    if (learningSupportInfo.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.learningSupportInfo.value,
+                      );
+                    }
+                    if (admonitionInfo.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.admonitionInfo.value,
+                      );
+                    }
+                    if (other.value == true) {
+                      schooldayEventReason.add(
+                        SchooldayEventReason.other.value,
+                      );
+                    }
+                    for (final reason in schooldayEventReason) {
+                      schooldayEventReasons = '$schooldayEventReasons$reason*';
+                    }
+                    await di<SchooldayEventManager>().updateSchooldayEvent(
+                      eventToUpdate: schooldayEvent,
+                      reason: schooldayEventReasons,
                     );
-                  }
-                  if (violenceAgainstTeacher.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.violenceAgainstTeachers.value,
-                    );
-                  }
-                  if (violenceAgainstThings.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.violenceAgainstThings.value,
-                    );
-                  }
-                  if (imminentDanger.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.dangerousBehaviour.value,
-                    );
-                  }
-                  if (insultOthers.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.insultOthers.value,
-                    );
-                  }
-                  if (annoyOthers.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.annoyOthers.value,
-                    );
-                  }
-                  if (ignoreTeacherInstructions.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.ignoreInstructions.value,
-                    );
-                  }
-                  if (disturbLesson.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.disturbLesson.value,
-                    );
-                  }
-                  if (learningDevelopmentInfo.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.learningDevelopmentInfo.value,
-                    );
-                  }
-                  if (learningSupportInfo.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.learningSupportInfo.value,
-                    );
-                  }
-                  if (admonitionInfo.value == true) {
-                    schooldayEventReason.add(
-                      SchooldayEventReason.admonitionInfo.value,
-                    );
-                  }
-                  if (other.value == true) {
-                    schooldayEventReason.add(SchooldayEventReason.other.value);
-                  }
-                  for (final reason in schooldayEventReason) {
-                    schooldayEventReasons = '$schooldayEventReasons$reason*';
-                  }
-                  await di<SchooldayEventManager>().updateSchooldayEvent(
-                    eventToUpdate: schooldayEvent,
-                    reason: schooldayEventReasons,
-                  );
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                  }
-                },
-                variant: ButtonVariant.primary,
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  },
+                  variant: ButtonVariant.primary,
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

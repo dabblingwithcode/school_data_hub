@@ -124,7 +124,7 @@ class _SupportCategoryCardSortableState
     } else {
       return Padding(
         key: ValueKey('child_${parentId}_$categoryId'),
-        padding: EdgeInsets.symmetric(horizontal: Style.spacing.xs),
+        padding: EdgeInsets.all(Style.spacing.xs),
         child: SupportCategoryLeafCardSortable(
           index: index,
           category: category,

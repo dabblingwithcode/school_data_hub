@@ -95,11 +95,14 @@ class _WorkbookCardContent extends WatchingWidget {
                 child: GestureDetector(
                   onLongPress: (di<HubSessionManager>().isAdmin)
                       ? () {
-                          context.push(RoutePaths.workbookNew, extra: {
-                            'isEdit': true,
-                            'isbn': workbook.isbn,
-                            'workbook': workbook,
-                          });
+                          context.push(
+                            RoutePaths.workbookNew,
+                            extra: {
+                              'isEdit': true,
+                              'isbn': workbook.isbn,
+                              'workbook': workbook,
+                            },
+                          );
                         }
                       : () {},
                   child: SingleChildScrollView(

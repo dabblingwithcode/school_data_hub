@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:isbn/isbn.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/app_utils/scanner.dart';
@@ -11,7 +12,6 @@ import 'package:school_data_hub_flutter/common/widgets/dialogs/short_textfield_d
 import 'package:school_data_hub_flutter/common/widgets/generic_components/app_header.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
-import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_manager.dart';
@@ -26,10 +26,7 @@ class BooksMainMenuScreen extends WatchingWidget {
 
     return Scaffold(
       backgroundColor: style.colors.canvas,
-      appBar: const AppHeader(
-        iconData: Icons.book_rounded,
-        title: 'Bücherei',
-      ),
+      appBar: const AppHeader(iconData: Icons.book_rounded, title: 'Bücherei'),
       body: Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
@@ -91,6 +88,24 @@ class BookActionsCard extends StatelessWidget {
                 },
                 onLongPress: () async {
                   await _showBookInfosDialog(context, typeIsbn: true);
+                },
+              ),
+              BookActionButton(
+                icon: Icons.swap_horiz,
+                label: 'Buch ausleihen',
+                minWidth: buttonMinWidth,
+                maxWidth: buttonMaxWidth,
+                onTap: () {
+                  context.push(RoutePaths.learningBooksLending);
+                },
+              ),
+              BookActionButton(
+                icon: Icons.assignment_return,
+                label: 'Buch zurückgeben',
+                minWidth: buttonMinWidth,
+                maxWidth: buttonMaxWidth,
+                onTap: () {
+                  context.push(RoutePaths.learningBooksReturn);
                 },
               ),
               BookActionButton(
@@ -240,10 +255,7 @@ class BookStatRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: context.typography.body),
-          Text(
-            value,
-            style: context.typography.body.bold,
-          ),
+          Text(value, style: context.typography.body.bold),
         ],
       ),
     );
@@ -296,10 +308,10 @@ Future<void> _showNewBookDialog(
       final cleanIsbn = isbn.replaceAll('-', '');
 
       if (!context.mounted) return;
-      context.push(RoutePaths.learningBooksNew, extra: {
-        'isEdit': false,
-        'isbn': int.parse(cleanIsbn),
-      });
+      context.push(
+        RoutePaths.learningBooksNew,
+        extra: {'isEdit': false, 'isbn': int.parse(cleanIsbn)},
+      );
     }
   } else {
     final String? scannedIsbn = await qrScanner(
@@ -317,9 +329,9 @@ Future<void> _showNewBookDialog(
 
     final cleanScannedIsbn = scannedIsbn.replaceAll('-', '');
     if (!context.mounted) return;
-    context.push(RoutePaths.learningBooksNew, extra: {
-      'isEdit': false,
-      'isbn': int.parse(cleanScannedIsbn),
-    });
+    context.push(
+      RoutePaths.learningBooksNew,
+      extra: {'isEdit': false, 'isbn': int.parse(cleanScannedIsbn)},
+    );
   }
 }

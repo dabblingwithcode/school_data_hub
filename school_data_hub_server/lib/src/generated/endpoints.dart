@@ -2127,6 +2127,37 @@ class Endpoints extends _i1.EndpointDispatch {
             params['lentBy'],
           ),
         ),
+        'postUserBookLending': _i1.MethodConnector(
+          name: 'postUserBookLending',
+          params: {
+            'userId': _i1.ParameterDescription(
+              name: 'userId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'libraryId': _i1.ParameterDescription(
+              name: 'libraryId',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'lentBy': _i1.ParameterDescription(
+              name: 'lentBy',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['pupilBookLending'] as _i16.PupilBookLendingEndpoint)
+                  .postUserBookLending(
+            session,
+            params['userId'],
+            params['libraryId'],
+            params['lentBy'],
+          ),
+        ),
         'fetchPupilBookLendings': _i1.MethodConnector(
           name: 'fetchPupilBookLendings',
           params: {},

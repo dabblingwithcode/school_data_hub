@@ -19,6 +19,7 @@ import '../../../_features/timetable/models/junction_models/scheduled_lesson_tea
 import '../../../_features/timetable/models/junction_models/lesson_teacher.dart'
     as _i5;
 import '../../../_features/user/models/user_flags.dart' as _i6;
+import '../../../_features/books/models/pupil_book_lending.dart' as _i7;
 
 abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   User._({
@@ -35,6 +36,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     this.schooldayEventsProcessingTeam,
     required this.credit,
     required this.userFlags,
+    this.bookLendings,
   });
 
   factory User({
@@ -51,6 +53,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     String? schooldayEventsProcessingTeam,
     required int credit,
     required _i6.UserFlags userFlags,
+    List<_i7.PupilBookLending>? bookLendings,
   }) = _UserImpl;
 
   factory User.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -83,6 +86,10 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
       credit: jsonSerialization['credit'] as int,
       userFlags: _i6.UserFlags.fromJson(
           (jsonSerialization['userFlags'] as Map<String, dynamic>)),
+      bookLendings: (jsonSerialization['bookLendings'] as List?)
+          ?.map(
+              (e) => _i7.PupilBookLending.fromJson((e as Map<String, dynamic>)))
+          .toList(),
     );
   }
 
@@ -117,6 +124,8 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
 
   _i6.UserFlags userFlags;
 
+  List<_i7.PupilBookLending>? bookLendings;
+
   @override
   _i1.Table<int?> get table => t;
 
@@ -137,6 +146,7 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     String? schooldayEventsProcessingTeam,
     int? credit,
     _i6.UserFlags? userFlags,
+    List<_i7.PupilBookLending>? bookLendings,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -159,6 +169,8 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
         'schooldayEventsProcessingTeam': schooldayEventsProcessingTeam,
       'credit': credit,
       'userFlags': userFlags.toJson(),
+      if (bookLendings != null)
+        'bookLendings': bookLendings?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -183,6 +195,9 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
         'schooldayEventsProcessingTeam': schooldayEventsProcessingTeam,
       'credit': credit,
       'userFlags': userFlags.toJsonForProtocol(),
+      if (bookLendings != null)
+        'bookLendings':
+            bookLendings?.toJson(valueToJson: (v) => v.toJsonForProtocol()),
     };
   }
 
@@ -190,11 +205,13 @@ abstract class User implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
     _i2.UserInfoInclude? userInfo,
     _i4.ScheduledLessonTeacherIncludeList? scheduledLessonsTeacher,
     _i5.LessonTeacherIncludeList? lessonsTeacher,
+    _i7.PupilBookLendingIncludeList? bookLendings,
   }) {
     return UserInclude._(
       userInfo: userInfo,
       scheduledLessonsTeacher: scheduledLessonsTeacher,
       lessonsTeacher: lessonsTeacher,
+      bookLendings: bookLendings,
     );
   }
 
@@ -241,6 +258,7 @@ class _UserImpl extends User {
     String? schooldayEventsProcessingTeam,
     required int credit,
     required _i6.UserFlags userFlags,
+    List<_i7.PupilBookLending>? bookLendings,
   }) : super._(
           id: id,
           userInfoId: userInfoId,
@@ -255,6 +273,7 @@ class _UserImpl extends User {
           schooldayEventsProcessingTeam: schooldayEventsProcessingTeam,
           credit: credit,
           userFlags: userFlags,
+          bookLendings: bookLendings,
         );
 
   /// Returns a shallow copy of this [User]
@@ -275,6 +294,7 @@ class _UserImpl extends User {
     Object? schooldayEventsProcessingTeam = _Undefined,
     int? credit,
     _i6.UserFlags? userFlags,
+    Object? bookLendings = _Undefined,
   }) {
     return User(
       id: id is int? ? id : this.id,
@@ -300,6 +320,9 @@ class _UserImpl extends User {
           : this.schooldayEventsProcessingTeam,
       credit: credit ?? this.credit,
       userFlags: userFlags ?? this.userFlags.copyWith(),
+      bookLendings: bookLendings is List<_i7.PupilBookLending>?
+          ? bookLendings
+          : this.bookLendings?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }
@@ -373,6 +396,10 @@ class UserTable extends _i1.Table<int?> {
 
   late final _i1.ColumnSerializable userFlags;
 
+  _i7.PupilBookLendingTable? ___bookLendings;
+
+  _i1.ManyRelation<_i7.PupilBookLendingTable>? _bookLendings;
+
   _i2.UserInfoTable get userInfo {
     if (_userInfo != null) return _userInfo!;
     _userInfo = _i1.createRelationTable(
@@ -410,6 +437,19 @@ class UserTable extends _i1.Table<int?> {
           _i5.LessonTeacherTable(tableRelation: foreignTableRelation),
     );
     return ___lessonsTeacher!;
+  }
+
+  _i7.PupilBookLendingTable get __bookLendings {
+    if (___bookLendings != null) return ___bookLendings!;
+    ___bookLendings = _i1.createRelationTable(
+      relationFieldName: '__bookLendings',
+      field: User.t.id,
+      foreignField: _i7.PupilBookLending.t.borrowerUserId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i7.PupilBookLendingTable(tableRelation: foreignTableRelation),
+    );
+    return ___bookLendings!;
   }
 
   _i1.ManyRelation<_i4.ScheduledLessonTeacherTable>
@@ -450,6 +490,24 @@ class UserTable extends _i1.Table<int?> {
     return _lessonsTeacher!;
   }
 
+  _i1.ManyRelation<_i7.PupilBookLendingTable> get bookLendings {
+    if (_bookLendings != null) return _bookLendings!;
+    var relationTable = _i1.createRelationTable(
+      relationFieldName: 'bookLendings',
+      field: User.t.id,
+      foreignField: _i7.PupilBookLending.t.borrowerUserId,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i7.PupilBookLendingTable(tableRelation: foreignTableRelation),
+    );
+    _bookLendings = _i1.ManyRelation<_i7.PupilBookLendingTable>(
+      tableWithRelations: relationTable,
+      table: _i7.PupilBookLendingTable(
+          tableRelation: relationTable.tableRelation!.lastRelation),
+    );
+    return _bookLendings!;
+  }
+
   @override
   List<_i1.Column> get columns => [
         id,
@@ -475,6 +533,9 @@ class UserTable extends _i1.Table<int?> {
     if (relationField == 'lessonsTeacher') {
       return __lessonsTeacher;
     }
+    if (relationField == 'bookLendings') {
+      return __bookLendings;
+    }
     return null;
   }
 }
@@ -484,10 +545,12 @@ class UserInclude extends _i1.IncludeObject {
     _i2.UserInfoInclude? userInfo,
     _i4.ScheduledLessonTeacherIncludeList? scheduledLessonsTeacher,
     _i5.LessonTeacherIncludeList? lessonsTeacher,
+    _i7.PupilBookLendingIncludeList? bookLendings,
   }) {
     _userInfo = userInfo;
     _scheduledLessonsTeacher = scheduledLessonsTeacher;
     _lessonsTeacher = lessonsTeacher;
+    _bookLendings = bookLendings;
   }
 
   _i2.UserInfoInclude? _userInfo;
@@ -496,11 +559,14 @@ class UserInclude extends _i1.IncludeObject {
 
   _i5.LessonTeacherIncludeList? _lessonsTeacher;
 
+  _i7.PupilBookLendingIncludeList? _bookLendings;
+
   @override
   Map<String, _i1.Include?> get includes => {
         'userInfo': _userInfo,
         'scheduledLessonsTeacher': _scheduledLessonsTeacher,
         'lessonsTeacher': _lessonsTeacher,
+        'bookLendings': _bookLendings,
       };
 
   @override
@@ -533,6 +599,10 @@ class UserRepository {
   final attach = const UserAttachRepository._();
 
   final attachRow = const UserAttachRowRepository._();
+
+  final detach = const UserDetachRepository._();
+
+  final detachRow = const UserDetachRowRepository._();
 
   /// Returns a list of [User]s matching the given query parameters.
   ///
@@ -800,6 +870,31 @@ class UserAttachRepository {
       transaction: transaction,
     );
   }
+
+  /// Creates a relation between this [User] and the given [PupilBookLending]s
+  /// by setting each [PupilBookLending]'s foreign key `borrowerUserId` to refer to this [User].
+  Future<void> bookLendings(
+    _i1.Session session,
+    User user,
+    List<_i7.PupilBookLending> pupilBookLending, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilBookLending.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('pupilBookLending.id');
+    }
+    if (user.id == null) {
+      throw ArgumentError.notNull('user.id');
+    }
+
+    var $pupilBookLending = pupilBookLending
+        .map((e) => e.copyWith(borrowerUserId: user.id))
+        .toList();
+    await session.db.update<_i7.PupilBookLending>(
+      $pupilBookLending,
+      columns: [_i7.PupilBookLending.t.borrowerUserId],
+      transaction: transaction,
+    );
+  }
 }
 
 class UserAttachRowRepository {
@@ -871,6 +966,82 @@ class UserAttachRowRepository {
     await session.db.updateRow<_i5.LessonTeacher>(
       $lessonTeacher,
       columns: [_i5.LessonTeacher.t.userId],
+      transaction: transaction,
+    );
+  }
+
+  /// Creates a relation between this [User] and the given [PupilBookLending]
+  /// by setting the [PupilBookLending]'s foreign key `borrowerUserId` to refer to this [User].
+  Future<void> bookLendings(
+    _i1.Session session,
+    User user,
+    _i7.PupilBookLending pupilBookLending, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilBookLending.id == null) {
+      throw ArgumentError.notNull('pupilBookLending.id');
+    }
+    if (user.id == null) {
+      throw ArgumentError.notNull('user.id');
+    }
+
+    var $pupilBookLending = pupilBookLending.copyWith(borrowerUserId: user.id);
+    await session.db.updateRow<_i7.PupilBookLending>(
+      $pupilBookLending,
+      columns: [_i7.PupilBookLending.t.borrowerUserId],
+      transaction: transaction,
+    );
+  }
+}
+
+class UserDetachRepository {
+  const UserDetachRepository._();
+
+  /// Detaches the relation between this [User] and the given [PupilBookLending]
+  /// by setting the [PupilBookLending]'s foreign key `borrowerUserId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> bookLendings(
+    _i1.Session session,
+    List<_i7.PupilBookLending> pupilBookLending, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilBookLending.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('pupilBookLending.id');
+    }
+
+    var $pupilBookLending =
+        pupilBookLending.map((e) => e.copyWith(borrowerUserId: null)).toList();
+    await session.db.update<_i7.PupilBookLending>(
+      $pupilBookLending,
+      columns: [_i7.PupilBookLending.t.borrowerUserId],
+      transaction: transaction,
+    );
+  }
+}
+
+class UserDetachRowRepository {
+  const UserDetachRowRepository._();
+
+  /// Detaches the relation between this [User] and the given [PupilBookLending]
+  /// by setting the [PupilBookLending]'s foreign key `borrowerUserId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> bookLendings(
+    _i1.Session session,
+    _i7.PupilBookLending pupilBookLending, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilBookLending.id == null) {
+      throw ArgumentError.notNull('pupilBookLending.id');
+    }
+
+    var $pupilBookLending = pupilBookLending.copyWith(borrowerUserId: null);
+    await session.db.updateRow<_i7.PupilBookLending>(
+      $pupilBookLending,
+      columns: [_i7.PupilBookLending.t.borrowerUserId],
       transaction: transaction,
     );
   }

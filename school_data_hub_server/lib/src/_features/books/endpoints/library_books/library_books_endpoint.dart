@@ -201,7 +201,7 @@ class LibraryBooksEndpoint extends Endpoint {
       where: query != null ? (_) => query! : null,
       include: LibraryBookSchemas.allInclude,
       limit: libraryBookQuery.perPage,
-      offset: libraryBookQuery.page * libraryBookQuery.perPage,
+      offset: (libraryBookQuery.page - 1) * libraryBookQuery.perPage,
     );
     return libraryBooks;
   }

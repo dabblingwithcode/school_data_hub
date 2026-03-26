@@ -3823,6 +3823,29 @@ class PupilDataDetachRepository {
     );
   }
 
+  /// Detaches the relation between this [PupilData] and the given [PupilBookLending]
+  /// by setting the [PupilBookLending]'s foreign key `pupilId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> pupilBookLendings(
+    _i1.Session session,
+    List<_i21.PupilBookLending> pupilBookLending, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilBookLending.any((e) => e.id == null)) {
+      throw ArgumentError.notNull('pupilBookLending.id');
+    }
+
+    var $pupilBookLending =
+        pupilBookLending.map((e) => e.copyWith(pupilId: null)).toList();
+    await session.db.update<_i21.PupilBookLending>(
+      $pupilBookLending,
+      columns: [_i21.PupilBookLending.t.pupilId],
+      transaction: transaction,
+    );
+  }
+
   /// Detaches the relation between this [PupilData] and the given [SupportCategoryStatus]
   /// by setting the [SupportCategoryStatus]'s foreign key `_pupilDataSupportcategorystatusesPupilDataId` to `null`.
   ///
@@ -4218,6 +4241,28 @@ class PupilDataDetachRowRepository {
     await session.db.updateRow<_i20.PupilWorkbook>(
       $pupilWorkbook,
       columns: [_i20.PupilWorkbook.t.pupilId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [PupilData] and the given [PupilBookLending]
+  /// by setting the [PupilBookLending]'s foreign key `pupilId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> pupilBookLendings(
+    _i1.Session session,
+    _i21.PupilBookLending pupilBookLending, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilBookLending.id == null) {
+      throw ArgumentError.notNull('pupilBookLending.id');
+    }
+
+    var $pupilBookLending = pupilBookLending.copyWith(pupilId: null);
+    await session.db.updateRow<_i21.PupilBookLending>(
+      $pupilBookLending,
+      columns: [_i21.PupilBookLending.t.pupilId],
       transaction: transaction,
     );
   }

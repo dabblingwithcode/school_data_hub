@@ -17,13 +17,15 @@ List<DropdownMenuItem<MissedType>> missedTypeMenuItems(BuildContext context) {
           shape: BoxShape.circle,
         ),
         child: Center(
-          child: Text("A",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: fgColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "A",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: fgColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     ),
@@ -37,13 +39,15 @@ List<DropdownMenuItem<MissedType>> missedTypeMenuItems(BuildContext context) {
           shape: BoxShape.circle,
         ),
         child: Center(
-          child: Text("V",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: fgColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "V",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: fgColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     ),
@@ -57,13 +61,15 @@ List<DropdownMenuItem<MissedType>> missedTypeMenuItems(BuildContext context) {
           shape: BoxShape.circle,
         ),
         child: Center(
-          child: Text("F",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: fgColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "F",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: fgColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     ),
@@ -71,7 +77,8 @@ List<DropdownMenuItem<MissedType>> missedTypeMenuItems(BuildContext context) {
 }
 
 List<DropdownMenuItem<ContactedType>> dropdownContactedMenuItems(
-    BuildContext context) {
+  BuildContext context,
+) {
   final colors = Style.of(context).colors;
   final fgColor = colors.foreground;
   return [
@@ -85,13 +92,15 @@ List<DropdownMenuItem<ContactedType>> dropdownContactedMenuItems(
           shape: BoxShape.circle,
         ),
         child: Center(
-          child: Text("?",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: fgColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              )),
+          child: Text(
+            "?",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: fgColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
         ),
       ),
     ),
@@ -104,9 +113,7 @@ List<DropdownMenuItem<ContactedType>> dropdownContactedMenuItems(
           color: colors.attendanceContactedSuccess,
           shape: BoxShape.circle,
         ),
-        child: const Center(
-          child: Icon(Icons.local_phone_rounded),
-        ),
+        child: const Center(child: Icon(Icons.local_phone_rounded)),
       ),
     ),
     DropdownMenuItem(
@@ -118,9 +125,7 @@ List<DropdownMenuItem<ContactedType>> dropdownContactedMenuItems(
           color: colors.attendanceContactedCalledBack,
           shape: BoxShape.circle,
         ),
-        child: const Center(
-          child: Icon(Icons.phone_callback_rounded),
-        ),
+        child: const Center(child: Icon(Icons.phone_callback_rounded)),
       ),
     ),
     DropdownMenuItem(
@@ -132,9 +137,7 @@ List<DropdownMenuItem<ContactedType>> dropdownContactedMenuItems(
           color: colors.attendanceContactedFailed,
           shape: BoxShape.circle,
         ),
-        child: const Center(
-          child: Icon(Icons.phone_disabled_rounded),
-        ),
+        child: const Center(child: Icon(Icons.phone_disabled_rounded)),
       ),
     ),
   ];

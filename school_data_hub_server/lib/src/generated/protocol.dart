@@ -2663,8 +2663,8 @@ class Protocol extends _i1.SerializationManagerServer {
         _i2.ColumnDefinition(
           name: 'pupilId',
           columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
+          isNullable: true,
+          dartType: 'int?',
         ),
         _i2.ColumnDefinition(
           name: 'isbn',
@@ -2677,6 +2677,18 @@ class Protocol extends _i1.SerializationManagerServer {
           columnType: _i2.ColumnType.bigint,
           isNullable: false,
           dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'borrowerUserId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: true,
+          dartType: 'int?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'borrowerType',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
         ),
       ],
       foreignKeys: [
@@ -2694,6 +2706,16 @@ class Protocol extends _i1.SerializationManagerServer {
           constraintName: 'pupil_book_lending_fk_1',
           columns: ['libraryBookId'],
           referenceTable: 'library_book',
+          referenceTableSchema: 'public',
+          referenceColumns: ['id'],
+          onUpdate: _i2.ForeignKeyAction.noAction,
+          onDelete: _i2.ForeignKeyAction.noAction,
+          matchType: null,
+        ),
+        _i2.ForeignKeyDefinition(
+          constraintName: 'pupil_book_lending_fk_2',
+          columns: ['borrowerUserId'],
+          referenceTable: 'user',
           referenceTableSchema: 'public',
           referenceColumns: ['id'],
           onUpdate: _i2.ForeignKeyAction.noAction,
@@ -6411,6 +6433,13 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<Set<int>?>()) {
       return (data != null
           ? (data as List).map((e) => deserialize<int>(e)).toSet()
+          : null) as T;
+    }
+    if (t == _i1.getType<List<_i29.PupilBookLending>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) => deserialize<_i29.PupilBookLending>(e))
+              .toList()
           : null) as T;
     }
     if (t == List<_i19.UserDevice>) {

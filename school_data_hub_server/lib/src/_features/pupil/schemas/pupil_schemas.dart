@@ -1,4 +1,5 @@
 import 'package:school_data_hub_server/src/generated/protocol.dart';
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as auth;
 
 class PupilSchemas {
   /// Minimal include for list views and startup — just enough for
@@ -20,8 +21,9 @@ class PupilSchemas {
     supportLevelHistory: SupportLevel.includeList(),
     supportCategoryStatuses: SupportCategoryStatus.includeList(),
     learningSupportPlans: LearningSupportPlan.includeList(
-      include:
-          LearningSupportPlan.include(schoolSemester: SchoolSemester.include()),
+      include: LearningSupportPlan.include(
+        schoolSemester: SchoolSemester.include(),
+      ),
     ),
   );
 
@@ -47,12 +49,12 @@ class PupilSchemas {
   /// Preschool domain: kindergardenData, preSchoolMedical, kindergarden, preSchoolTest.
   static PupilPreschoolDataInclude preschoolSubInclude =
       PupilPreschoolData.include(
-    preSchoolMedical: PreSchoolMedical.include(
-      preschoolMedicalFiles: HubDocument.includeList(),
-    ),
-    kindergarden: Kindergarden.include(),
-    preSchoolTest: PreSchoolTest.include(),
-  );
+        preSchoolMedical: PreSchoolMedical.include(
+          preschoolMedicalFiles: HubDocument.includeList(),
+        ),
+        kindergarden: Kindergarden.include(),
+        preSchoolTest: PreSchoolTest.include(),
+      );
 
   /// Media domain: avatar, avatarAuth, publicMediaAuth, publicMediaAuthDocument.
   static PupilMediaDataInclude mediaSubInclude = PupilMediaData.include(
@@ -69,17 +71,16 @@ class PupilSchemas {
     creditTransactions: CreditTransaction.includeList(),
     supportLevelHistory: SupportLevel.includeList(),
     learningSupportPlans: LearningSupportPlan.includeList(
-      include:
-          LearningSupportPlan.include(schoolSemester: SchoolSemester.include()),
+      include: LearningSupportPlan.include(
+        schoolSemester: SchoolSemester.include(),
+      ),
     ),
     preSchoolMedical: PreSchoolMedical.include(
       preschoolMedicalFiles: HubDocument.includeList(),
     ),
     supportCategoryStatuses: SupportCategoryStatus.includeList(),
     competenceChecks: CompetenceCheck.includeList(
-      include: CompetenceCheck.include(
-        documents: HubDocument.includeList(),
-      ),
+      include: CompetenceCheck.include(documents: HubDocument.includeList()),
     ),
     competenceReports: CompetenceReport.includeList(
       include: CompetenceReport.include(
@@ -93,9 +94,7 @@ class LibraryBookSchemas {
   static LibraryBookInclude allInclude = LibraryBook.include(
     book: Book.include(
       tags: BookTagging.includeList(
-        include: BookTagging.include(
-          bookTag: BookTag.include(),
-        ),
+        include: BookTagging.include(bookTag: BookTag.include()),
       ),
     ),
     location: LibraryBookLocation.include(),
@@ -106,5 +105,6 @@ class PupilBookLendingSchemas {
   static PupilBookLendingInclude allInclude = PupilBookLending.include(
     pupilBookLendingFiles: HubDocument.includeList(),
     libraryBook: LibraryBookSchemas.allInclude,
+    borrowerUser: User.include(userInfo: auth.UserInfo.include()),
   );
 }

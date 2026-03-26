@@ -104,44 +104,53 @@ const SpacingTokens _spacing = SpacingTokens(
 
 // Typography
 
+const _fontFamily = 'Roboto';
+
 TypographyTokens _buildTypography(Color foreground) => TypographyTokens(
   display: TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 32,
     fontWeight: FontWeight.w700,
     height: 40 / 32,
     color: foreground,
   ),
   heading: TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 24,
     fontWeight: FontWeight.bold,
     height: 32 / 24,
     color: AppColors.backgroundColor,
   ),
   title: TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 18,
     fontWeight: FontWeight.bold,
     height: 26 / 18,
     color: AppColors.backgroundColor,
   ),
   subtitle: TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w500,
     height: 24 / 16,
     color: foreground,
   ),
   body: TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w400,
     height: 20 / 14,
     color: foreground,
   ),
   bodySmall: TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 16 / 12,
     color: foreground,
   ),
   caption: TextStyle(
+    fontFamily: _fontFamily,
     fontSize: 11,
     fontWeight: FontWeight.w400,
     height: 15 / 11,

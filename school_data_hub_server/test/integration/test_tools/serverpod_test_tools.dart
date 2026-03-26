@@ -2834,6 +2834,41 @@ class _PupilBookLendingEndpoint {
     });
   }
 
+  _i3.Future<_i32.PupilBookLending> postUserBookLending(
+    _i1.TestSessionBuilder sessionBuilder,
+    int userId,
+    String libraryId,
+    String lentBy,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+        endpoint: 'pupilBookLending',
+        method: 'postUserBookLending',
+      );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'pupilBookLending',
+          methodName: 'postUserBookLending',
+          parameters: _i1.testObjectToJson({
+            'userId': userId,
+            'libraryId': libraryId,
+            'lentBy': lentBy,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue = await (_localCallContext.method.call(
+          _localUniqueSession,
+          _localCallContext.arguments,
+        ) as _i3.Future<_i32.PupilBookLending>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
   _i3.Future<List<_i32.PupilBookLending>> fetchPupilBookLendings(
       _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {

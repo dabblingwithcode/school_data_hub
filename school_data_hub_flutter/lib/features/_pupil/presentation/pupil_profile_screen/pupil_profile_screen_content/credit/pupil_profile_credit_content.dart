@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
-import 'package:school_data_hub_client/school_data_hub_client.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/button.dart';
-import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
+import 'package:school_data_hub_flutter/features/_pupil/presentation/credit/credit_list_screen/widgets/credit_transaction_widget.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/credit/credit_list_screen/widgets/dialogues/change_credit_dialog.dart';
 import 'package:school_data_hub_flutter/features/_pupil/presentation/pupil_profile_screen/widgets/pupil_profile_content_widgets.dart';
 
@@ -89,67 +87,8 @@ class PupilProfileCreditContent extends WatchingWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: creditTransactions.length,
               itemBuilder: (BuildContext context, int index) {
-                final List<CreditTransaction> pupilCreditHistoryLogs =
-                    List.from(pupil.creditTransactions!);
-                final CreditTransaction tx = pupilCreditHistoryLogs[index];
-                final bool isPositive = tx.amount >= 0;
-                final Color amountColor = isPositive
-                    ? style.colors.success
-                    : style.colors.error;
-
-                return Padding(
-                  padding: EdgeInsets.only(bottom: Style.spacing.sm),
-                  child: CardBox(
-                    variant: CardBoxVariant.filledSecondary,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Style.spacing.lg,
-                      vertical: Style.spacing.md,
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: amountColor.withValues(alpha: 0.12),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            isPositive
-                                ? Icons.arrow_downward_rounded
-                                : Icons.arrow_upward_rounded,
-                            color: amountColor,
-                            size: 20,
-                          ),
-                        ),
-                        Gap(Style.spacing.md),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                DateFormat('dd.MM.yyyy').format(tx.dateTime),
-                                style: context.typography.subtitle.bold,
-                              ),
-                              const Gap(2),
-                              Text(
-                                tx.sender,
-                                style: context.typography.bodySmall.withColor(
-                                  style.colors.mutedForeground,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          '${isPositive ? '+' : ''}${tx.amount}',
-                          style: context.typography.title.bold.withColor(
-                            amountColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                return CreditTransactionWidget(
+                  transaction: creditTransactions[index],
                 );
               },
             ),

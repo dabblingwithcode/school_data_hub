@@ -1407,6 +1407,13 @@ class Protocol extends _i1.SerializationManager {
           ? (data as List).map((e) => deserialize<int>(e)).toSet()
           : null) as T;
     }
+    if (t == _i1.getType<List<_i27.PupilBookLending>?>()) {
+      return (data != null
+          ? (data as List)
+              .map((e) => deserialize<_i27.PupilBookLending>(e))
+              .toList()
+          : null) as T;
+    }
     if (t == List<_i17.UserDevice>) {
       return (data as List).map((e) => deserialize<_i17.UserDevice>(e)).toList()
           as T;

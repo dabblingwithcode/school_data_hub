@@ -74,11 +74,9 @@ class Popup extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title!,
-                    style: TextStyle(
+                    style: style.typography.display.copyWith(
                       fontSize: 28,
                       height: 36 / 28,
-                      fontWeight: FontWeight.bold,
-                      color: style.colors.foreground,
                       decoration: TextDecoration.none,
                     ),
                   ),
@@ -326,7 +324,8 @@ class _PopupRoute extends PageRouteBuilder<void> {
 
     // Close on Escape key
     return KeyboardListener(
-      focusNode: _focusNode..requestFocus(),
+      focusNode: _focusNode,
+      autofocus: true,
       onKeyEvent: (event) {
         if (event is KeyDownEvent &&
             event.logicalKey == LogicalKeyboardKey.escape) {

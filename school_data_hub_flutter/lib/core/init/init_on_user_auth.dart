@@ -76,6 +76,7 @@ class InitOnUserAuth {
 
     di.registerSingletonAsync<SchoolCalendarManager>(
       () => SchoolCalendarManager().init(),
+      dependsOn: [HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
@@ -101,35 +102,38 @@ class InitOnUserAuth {
         PupilProxyManager,
         SchoolCalendarManager,
         SupportCategoryManager,
+        HubStreamService,
       ],
       dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<BookManager>(
       () => BookManager().init(),
+      dependsOn: [HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<PupilBookLendingManager>(
       () => PupilBookLendingManager().init(),
-      dependsOn: [HubSessionManager, PupilProxyManager],
+      dependsOn: [HubSessionManager, PupilProxyManager, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<SchoolDataMainManager>(
       () => SchoolDataMainManager().init(),
+      dependsOn: [HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<WorkbookManager>(
       () => WorkbookManager().init(),
-      dependsOn: [HubSessionManager, PupilProxyManager],
+      dependsOn: [HubSessionManager, PupilProxyManager, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
     di.registerSingletonAsync<PupilWorkbookManager>(
       () => PupilWorkbookManager().init(),
-      dependsOn: [HubSessionManager, PupilProxyManager],
+      dependsOn: [HubSessionManager, PupilProxyManager, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
@@ -290,7 +294,7 @@ class InitOnUserAuth {
 
     di.registerSingletonAsync<UserManager>(
       () => UserManager().init(),
-      dependsOn: [HubSessionManager],
+      dependsOn: [HubSessionManager, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 
@@ -300,7 +304,7 @@ class InitOnUserAuth {
 
     di.registerSingletonAsync<TimetableManager>(
       () => TimetableManager().init(),
-      dependsOn: [HubSessionManager, TimetableApiService],
+      dependsOn: [HubSessionManager, TimetableApiService, HubStreamService],
       dispose: (m) => m.dispose(),
     );
 

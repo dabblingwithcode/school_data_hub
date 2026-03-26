@@ -19,6 +19,7 @@ class PupilBookLendingManager with ChangeNotifier {
   StreamSubscription<dynamic>? _hubSubscription;
 
   final Map<int, List<PupilBookLending>> _pupilBookLendings = {};
+  final Map<int, List<PupilBookLending>> _userBookLendings = {};
   final Map<String, PupilBookLending> _lendingIdMap = {};
   final Map<int, List<PupilBookLending>> _isbnPupilBookLendingsMap = {};
   final _pupilBookLendingApiService = PupilBookLendingApiService();
@@ -50,44 +51,67 @@ class PupilBookLendingManager with ChangeNotifier {
     return _pupilBookLendings.values.expand((lendings) => lendings).toList();
   }
 
+  List<PupilBookLending> getUserBookLendings(int userId) {
+    return _userBookLendings[userId] ?? [];
+  }
+
+  List<PupilBookLending> get allUserBookLendings {
+    return _userBookLendings.values.expand((lendings) => lendings).toList();
+  }
+
+  List<PupilBookLending> get allLendings {
+    return _lendingIdMap.values.toList();
+  }
+
+  PupilBookLending? getActiveLendingByLibraryBookId(int libraryBookId) {
+    return _lendingIdMap.values.cast<PupilBookLending?>().firstWhere(
+      (l) => l!.libraryBookId == libraryBookId && l.returnedAt == null,
+      orElse: () => null,
+    );
+  }
+
   void _addPupilBookLendingToCollections(PupilBookLending lending) {
-    // Add to pupil-indexed map
-    if (_pupilBookLendings.containsKey(lending.pupilId)) {
-      _pupilBookLendings[lending.pupilId]!.add(lending);
+    // Add to pupil-indexed or user-indexed map
+    if (lending.borrowerType == 'user' && lending.borrowerUserId != null) {
+      _userBookLendings
+          .putIfAbsent(lending.borrowerUserId!, () => [])
+          .add(lending);
     } else {
-      _pupilBookLendings[lending.pupilId] = [lending];
+      _pupilBookLendings.putIfAbsent(lending.pupilId!, () => []).add(lending);
     }
     if (lending.libraryBook != null) {
       final isbn = lending.isbn;
-      if (_isbnPupilBookLendingsMap.containsKey(isbn)) {
-        _isbnPupilBookLendingsMap[isbn]!.add(lending);
-      } else {
-        _isbnPupilBookLendingsMap[isbn] = [lending];
-      }
+      _isbnPupilBookLendingsMap.putIfAbsent(isbn, () => []).add(lending);
     }
     // Add to lending ID map for quick lookups
     _lendingIdMap[lending.lendingId] = lending;
   }
 
   void _removePupilBookLendingFromCollections(PupilBookLending lending) {
-    // Remove from pupil-indexed map
-    if (_pupilBookLendings.containsKey(lending.pupilId)) {
-      _pupilBookLendings[lending.pupilId]!.removeWhere(
+    // Remove from pupil-indexed or user-indexed map
+    if (lending.borrowerType == 'user' && lending.borrowerUserId != null) {
+      final userId = lending.borrowerUserId!;
+      _userBookLendings[userId]?.removeWhere(
         (l) => l.lendingId == lending.lendingId,
       );
-      if (_pupilBookLendings[lending.pupilId]!.isEmpty) {
+      if (_userBookLendings[userId]?.isEmpty ?? false) {
+        _userBookLendings.remove(userId);
+      }
+    } else {
+      _pupilBookLendings[lending.pupilId]?.removeWhere(
+        (l) => l.lendingId == lending.lendingId,
+      );
+      if (_pupilBookLendings[lending.pupilId]?.isEmpty ?? false) {
         _pupilBookLendings.remove(lending.pupilId);
       }
     }
     if (lending.libraryBook != null) {
       final isbn = lending.isbn;
-      if (_isbnPupilBookLendingsMap.containsKey(isbn)) {
-        _isbnPupilBookLendingsMap[isbn]!.removeWhere(
-          (l) => l.lendingId == lending.lendingId,
-        );
-        if (_isbnPupilBookLendingsMap[isbn]!.isEmpty) {
-          _isbnPupilBookLendingsMap.remove(isbn);
-        }
+      _isbnPupilBookLendingsMap[isbn]?.removeWhere(
+        (l) => l.lendingId == lending.lendingId,
+      );
+      if (_isbnPupilBookLendingsMap[isbn]?.isEmpty ?? false) {
+        _isbnPupilBookLendingsMap.remove(isbn);
       }
     }
     // Remove from lending ID map
@@ -95,32 +119,33 @@ class PupilBookLendingManager with ChangeNotifier {
   }
 
   void _updatePupilBookLendingInCollections(PupilBookLending lending) {
-    // Update in pupil-indexed map
-    if (_pupilBookLendings.containsKey(lending.pupilId)) {
-      final index = _pupilBookLendings[lending.pupilId]!.indexWhere(
-        (l) => l.lendingId == lending.lendingId,
-      );
+    // Update in pupil-indexed or user-indexed map
+    if (lending.borrowerType == 'user' && lending.borrowerUserId != null) {
+      final userId = lending.borrowerUserId!;
+      final list = _userBookLendings.putIfAbsent(userId, () => []);
+      final index = list.indexWhere((l) => l.lendingId == lending.lendingId);
       if (index != -1) {
-        _pupilBookLendings[lending.pupilId]![index] = lending;
+        list[index] = lending;
       } else {
-        _pupilBookLendings[lending.pupilId]!.add(lending);
+        list.add(lending);
       }
     } else {
-      _pupilBookLendings[lending.pupilId] = [lending];
+      final list = _pupilBookLendings.putIfAbsent(lending.pupilId!, () => []);
+      final index = list.indexWhere((l) => l.lendingId == lending.lendingId);
+      if (index != -1) {
+        list[index] = lending;
+      } else {
+        list.add(lending);
+      }
     }
     if (lending.libraryBook != null) {
       final isbn = lending.isbn;
-      if (_isbnPupilBookLendingsMap.containsKey(isbn)) {
-        final index = _isbnPupilBookLendingsMap[isbn]!.indexWhere(
-          (l) => l.lendingId == lending.lendingId,
-        );
-        if (index != -1) {
-          _isbnPupilBookLendingsMap[isbn]![index] = lending;
-        } else {
-          _isbnPupilBookLendingsMap[isbn]!.add(lending);
-        }
+      final list = _isbnPupilBookLendingsMap.putIfAbsent(isbn, () => []);
+      final index = list.indexWhere((l) => l.lendingId == lending.lendingId);
+      if (index != -1) {
+        list[index] = lending;
       } else {
-        _isbnPupilBookLendingsMap[isbn] = [lending];
+        list.add(lending);
       }
     }
     // Update in lending ID map
@@ -129,6 +154,7 @@ class PupilBookLendingManager with ChangeNotifier {
 
   void clearPupilBookLendings() {
     _pupilBookLendings.clear();
+    _userBookLendings.clear();
     _lendingIdMap.clear();
     notifyListeners();
   }
@@ -152,6 +178,38 @@ class PupilBookLendingManager with ChangeNotifier {
 
     final lending = await _pupilBookLendingApiService.postPupilBookLending(
       pupilId: pupilId,
+      libraryId: libraryId,
+      lentBy: userName,
+    );
+
+    if (lending == null) {
+      return;
+    }
+
+    _addPupilBookLendingToCollections(lending);
+    notifyListeners();
+
+    _notificationService.showSnackBar(
+      NotificationType.success,
+      'Buch ausgeliehen',
+    );
+  }
+
+  Future<void> postUserBookLending({
+    required int userId,
+    required String libraryId,
+  }) async {
+    final userName = _hubSessionManager.userName;
+    if (userName == null) {
+      _notificationService.showSnackBar(
+        NotificationType.error,
+        'Kein Benutzername gefunden',
+      );
+      return;
+    }
+
+    final lending = await _pupilBookLendingApiService.postUserBookLending(
+      userId: userId,
       libraryId: libraryId,
       lentBy: userName,
     );
@@ -375,17 +433,11 @@ class PupilBookLendingManager with ChangeNotifier {
 
   void _deleteFromStream(int id) {
     _log.fine('[STREAM] delete pupilBookLending $id');
-    // Find the lending by id across all collections
-    PupilBookLending? found;
-    for (final lendings in _pupilBookLendings.values) {
-      for (final lending in lendings) {
-        if (lending.id == id) {
-          found = lending;
-          break;
-        }
-      }
-      if (found != null) break;
-    }
+    // Find the lending by id in the lending ID map
+    final found = _lendingIdMap.values.cast<PupilBookLending?>().firstWhere(
+      (l) => l!.id == id,
+      orElse: () => null,
+    );
     if (found != null) {
       _removePupilBookLendingFromCollections(found);
       notifyListeners();
@@ -394,10 +446,11 @@ class PupilBookLendingManager with ChangeNotifier {
 
   Future<void> _refetchAll() async {
     _pupilBookLendings.clear();
+    _userBookLendings.clear();
     _lendingIdMap.clear();
     _isbnPupilBookLendingsMap.clear();
-    final allLendings =
-        await _pupilBookLendingApiService.fetchAllPupilBookLendings();
+    final allLendings = await _pupilBookLendingApiService
+        .fetchAllPupilBookLendings();
     if (allLendings == null) return;
     for (var lending in allLendings) {
       _addPupilBookLendingToCollections(lending);
@@ -410,6 +463,7 @@ class PupilBookLendingManager with ChangeNotifier {
     _hubSubscription?.cancel();
     _hubSubscription = null;
     _pupilBookLendings.clear();
+    _userBookLendings.clear();
     _lendingIdMap.clear();
     super.dispose();
   }

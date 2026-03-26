@@ -17,28 +17,24 @@ class BookHelpers {
         .length;
   }
 
+  static List<PupilBookLending> lendingsLinkedToLibraryBook({
+    required int libraryBookId,
+  }) {
+    final lendingManager = di<PupilBookLendingManager>();
+
+    final linked = lendingManager.allLendings
+        .where((lending) => lending.libraryBookId == libraryBookId)
+        .toList()
+      ..sort((a, b) => b.lentAt.compareTo(a.lentAt));
+
+    return linked;
+  }
+
+  @Deprecated('Use lendingsLinkedToLibraryBook instead')
   static List<PupilBookLending> pupilBookLendingsLinkedToLibraryBook({
     required int libraryBookId,
   }) {
-    // Get all pupil book lendings
-    final allPupilBookLendings = di<PupilProxyManager>().allPupils
-        .map((pupil) => pupil.pupilBookLendings)
-        .expand((element) => element)
-        .toList();
-
-    // Filter by libraryId
-    final pupilBookLendingsLinkedToLibraryBook = allPupilBookLendings.where((
-      pupilBook,
-    ) {
-      final match = pupilBook.libraryBookId == libraryBookId;
-
-      return match;
-    }).toList();
-
-    pupilBookLendingsLinkedToLibraryBook.sort(
-      (a, b) => b.lentAt.compareTo(a.lentAt),
-    );
-    return pupilBookLendingsLinkedToLibraryBook;
+    return lendingsLinkedToLibraryBook(libraryBookId: libraryBookId);
   }
 
   static BookBorrowStatus getBorrowedStatus(PupilBookLending book) {

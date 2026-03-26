@@ -17,6 +17,7 @@ import '../../../_features/timetable/models/junction_models/scheduled_lesson_tea
 import '../../../_features/timetable/models/junction_models/lesson_teacher.dart'
     as _i5;
 import '../../../_features/user/models/user_flags.dart' as _i6;
+import '../../../_features/books/models/pupil_book_lending.dart' as _i7;
 
 abstract class User implements _i1.SerializableModel {
   User._({
@@ -33,6 +34,7 @@ abstract class User implements _i1.SerializableModel {
     this.schooldayEventsProcessingTeam,
     required this.credit,
     required this.userFlags,
+    this.bookLendings,
   });
 
   factory User({
@@ -49,6 +51,7 @@ abstract class User implements _i1.SerializableModel {
     String? schooldayEventsProcessingTeam,
     required int credit,
     required _i6.UserFlags userFlags,
+    List<_i7.PupilBookLending>? bookLendings,
   }) = _UserImpl;
 
   factory User.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -81,6 +84,10 @@ abstract class User implements _i1.SerializableModel {
       credit: jsonSerialization['credit'] as int,
       userFlags: _i6.UserFlags.fromJson(
           (jsonSerialization['userFlags'] as Map<String, dynamic>)),
+      bookLendings: (jsonSerialization['bookLendings'] as List?)
+          ?.map(
+              (e) => _i7.PupilBookLending.fromJson((e as Map<String, dynamic>)))
+          .toList(),
     );
   }
 
@@ -113,6 +120,8 @@ abstract class User implements _i1.SerializableModel {
 
   _i6.UserFlags userFlags;
 
+  List<_i7.PupilBookLending>? bookLendings;
+
   /// Returns a shallow copy of this [User]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -130,6 +139,7 @@ abstract class User implements _i1.SerializableModel {
     String? schooldayEventsProcessingTeam,
     int? credit,
     _i6.UserFlags? userFlags,
+    List<_i7.PupilBookLending>? bookLendings,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -152,6 +162,8 @@ abstract class User implements _i1.SerializableModel {
         'schooldayEventsProcessingTeam': schooldayEventsProcessingTeam,
       'credit': credit,
       'userFlags': userFlags.toJson(),
+      if (bookLendings != null)
+        'bookLendings': bookLendings?.toJson(valueToJson: (v) => v.toJson()),
     };
   }
 
@@ -178,6 +190,7 @@ class _UserImpl extends User {
     String? schooldayEventsProcessingTeam,
     required int credit,
     required _i6.UserFlags userFlags,
+    List<_i7.PupilBookLending>? bookLendings,
   }) : super._(
           id: id,
           userInfoId: userInfoId,
@@ -192,6 +205,7 @@ class _UserImpl extends User {
           schooldayEventsProcessingTeam: schooldayEventsProcessingTeam,
           credit: credit,
           userFlags: userFlags,
+          bookLendings: bookLendings,
         );
 
   /// Returns a shallow copy of this [User]
@@ -212,6 +226,7 @@ class _UserImpl extends User {
     Object? schooldayEventsProcessingTeam = _Undefined,
     int? credit,
     _i6.UserFlags? userFlags,
+    Object? bookLendings = _Undefined,
   }) {
     return User(
       id: id is int? ? id : this.id,
@@ -237,6 +252,9 @@ class _UserImpl extends User {
           : this.schooldayEventsProcessingTeam,
       credit: credit ?? this.credit,
       userFlags: userFlags ?? this.userFlags.copyWith(),
+      bookLendings: bookLendings is List<_i7.PupilBookLending>?
+          ? bookLendings
+          : this.bookLendings?.map((e0) => e0.copyWith()).toList(),
     );
   }
 }

@@ -5,7 +5,12 @@ import 'package:school_data_hub_flutter/common/theme/app_colors.dart';
 
 class BottomNavBarLayout extends StatelessWidget {
   final Widget bottomNavBar;
-  const BottomNavBarLayout({required this.bottomNavBar, super.key});
+  final bool? isMainNavigation;
+  const BottomNavBarLayout({
+    required this.bottomNavBar,
+    this.isMainNavigation,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +19,9 @@ class BottomNavBarLayout extends StatelessWidget {
           ? const EdgeInsets.only(left: 5, right: 5, bottom: 20)
           : const EdgeInsets.only(left: 5, right: 5, bottom: 20),
       child: SizedBox(
-        height: kBottomNavigationBarHeight + 30,
+        height: isMainNavigation == true
+            ? kBottomNavigationBarHeight + 30
+            : kBottomNavigationBarHeight,
         child: Align(
           alignment: Alignment.bottomCenter,
           child: ConstrainedBox(

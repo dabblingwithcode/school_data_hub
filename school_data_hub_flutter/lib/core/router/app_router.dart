@@ -53,6 +53,8 @@ import 'package:school_data_hub_flutter/features/learning_support/presentation/n
 import 'package:school_data_hub_flutter/features/learning_support/presentation/new_learning_support_plan_screen/controller/new_learning_support_plan_controller.dart' show NewLearningSupportPlan;
 import 'package:school_data_hub_flutter/features/workbooks/presentation/workbook_list_screen/workbook_list_screen.dart';
 import 'package:school_data_hub_flutter/features/workbooks/presentation/new_workbook_screen/new_workbook_screen.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_lending_screen/book_lending_screen.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_return_screen/book_return_screen.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/books_main_menu_screen/books_main_menu_screen.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_infos_screen/book_infos_screen.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/edit_book_screen/edit_book_controller.dart';
@@ -270,6 +272,14 @@ class AppRouter {
           GoRoute(
             path: RoutePaths.learningBooksSearch,
             builder: (_, __) => const BookSearchFormScreen(),
+          ),
+          GoRoute(
+            path: RoutePaths.learningBooksLending,
+            builder: (_, __) => const BookLendingScreen(),
+          ),
+          GoRoute(
+            path: RoutePaths.learningBooksReturn,
+            builder: (_, __) => const BookReturnScreen(),
           ),
           GoRoute(
             path: RoutePaths.toolsCharts,
@@ -775,9 +785,20 @@ class AppRouter {
           ),
           GoRoute(
             path: RoutePaths.utilSelectPupils,
-            builder: (_, state) => SelectPupilsListScreen(
-              selectablePupils: state.extra as List<PupilProxy>?,
-            ),
+            builder: (_, state) {
+              if (state.extra is Map<String, dynamic>) {
+                final args = state.extra! as Map<String, dynamic>;
+                return SelectPupilsListScreen(
+                  selectablePupils:
+                      args['selectablePupils'] as List<PupilProxy>?,
+                  isMultiSelectMode:
+                      args['isMultiSelectMode'] as bool? ?? true,
+                );
+              }
+              return SelectPupilsListScreen(
+                selectablePupils: state.extra as List<PupilProxy>?,
+              );
+            },
           ),
 
           // --- Main app shell with bottom navigation (5 tabs via PageView) ---

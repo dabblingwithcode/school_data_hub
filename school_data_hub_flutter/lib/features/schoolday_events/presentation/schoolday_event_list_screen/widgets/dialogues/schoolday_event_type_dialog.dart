@@ -49,7 +49,9 @@ class SchooldayEventTypeDialog extends WatchingWidget {
       () => ValueNotifier<SchooldayEventType>(SchooldayEventType.notSet),
     );
 
-    return Column(
+    return Material(
+      type: MaterialType.transparency,
+      child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         DropdownButton<SchooldayEventType>(
@@ -91,6 +93,7 @@ class SchooldayEventTypeDialog extends WatchingWidget {
           variant: ButtonVariant.secondary,
         ),
       ],
+      ),
     );
   }
 }

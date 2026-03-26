@@ -52,7 +52,8 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     final navRegistered = di.isRegistered<BottomNavManager>();
-    final initialPage = widget.initialTab ??
+    final initialPage =
+        widget.initialTab ??
         (navRegistered ? di<BottomNavManager>().bottomNavState.value : 0);
     if (widget.initialTab != null && navRegistered) {
       di<BottomNavManager>().setBottomNavPage(widget.initialTab!);
@@ -77,8 +78,10 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
 
   void _onTap(int index) {
     di<BottomNavManager>().setBottomNavPage(index);
-    final distance =
-        (index - (_pageController.page?.round() ?? 0)).abs().clamp(1, 5);
+    final distance = (index - (_pageController.page?.round() ?? 0)).abs().clamp(
+      1,
+      5,
+    );
     _pageController.animateToPage(
       index,
       duration: Duration(milliseconds: _msPerPage * distance),
@@ -97,8 +100,8 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
     // One-time env-data check
     callOnce((context) async {
       final envManager = di<EnvManager>();
-      final envDataIncomplete =
-          envManager.isAnyImportantEnvDataNotPopulatedInServer();
+      final envDataIncomplete = envManager
+          .isAnyImportantEnvDataNotPopulatedInServer();
       if (envDataIncomplete) {
         final serverDataStatus = envManager.populatedEnvServerData;
         final List<String> missingFields = [];
@@ -133,8 +136,9 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
       select: (BottomNavManager x) => x.bottomNavState,
       handler: (context, value, cancel) {
         if ((_pageController.page?.round() ?? 0) != value) {
-          final distance =
-              (value - (_pageController.page?.round() ?? 0)).abs().clamp(1, 5);
+          final distance = (value - (_pageController.page?.round() ?? 0))
+              .abs()
+              .clamp(1, 5);
           _pageController.animateToPage(
             value,
             duration: Duration(milliseconds: _msPerPage * distance),
@@ -154,6 +158,7 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar>
         children: _pages,
       ),
       bottomNavigationBar: BottomNavBarLayout(
+        isMainNavigation: true,
         bottomNavBar: BottomNavigationBar(
           iconSize: 28,
           onTap: _onTap,

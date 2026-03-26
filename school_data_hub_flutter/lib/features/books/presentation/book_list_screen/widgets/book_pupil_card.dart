@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_it/flutter_it.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:school_data_hub_client/school_data_hub_client.dart';
+import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/common/widgets/dialogs/long_textfield_dialog.dart';
 import 'package:school_data_hub_flutter/common/widgets/growth_dropdown.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/card_box.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/core/models/datetime_extensions.dart';
+import 'package:school_data_hub_flutter/core/router/route_paths.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/models/pupil_proxy.dart';
 import 'package:school_data_hub_flutter/features/_pupil/domain/pupil_proxy_manager.dart';
-import 'package:go_router/go_router.dart';
-import 'package:school_data_hub_flutter/core/router/route_paths.dart';
-import 'package:school_data_hub_flutter/features/books/domain/pupil_proxy_books_ext.dart';
-import 'package:school_data_hub_flutter/common/widgets/avatar/avatar.dart';
 import 'package:school_data_hub_flutter/features/app_main_navigation/domain/main_menu_bottom_nav_manager.dart';
 import 'package:school_data_hub_flutter/features/books/domain/pupil_book_lending_manager.dart';
+import 'package:school_data_hub_flutter/features/books/domain/pupil_proxy_books_ext.dart';
 
 class BookLendingPupilCard extends WatchingWidget {
   final PupilBookLending passedPupilBook;
@@ -24,7 +24,7 @@ class BookLendingPupilCard extends WatchingWidget {
   Widget build(BuildContext context) {
     final style = Style.of(context);
     final pupil = watch<PupilProxy>(
-      di<PupilProxyManager>().getPupilByPupilId(passedPupilBook.pupilId)!,
+      di<PupilProxyManager>().getPupilByPupilId(passedPupilBook.pupilId!)!,
     );
     final watchedPupilBook = pupil.pupilBookLendings.firstWhere(
       (element) => element.lendingId == passedPupilBook.lendingId,

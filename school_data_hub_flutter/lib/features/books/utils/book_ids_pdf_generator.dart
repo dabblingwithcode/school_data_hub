@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter_it/flutter_it.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import 'package:school_data_hub_flutter/core/notification_manager.dart';
 import 'package:school_data_hub_flutter/features/school/domain/school_data_manager.dart';
 
@@ -89,7 +88,7 @@ void generateBookIdsPdf() async {
     );
   }
 
-  final file = File("book_ids_qr.pdf");
-  await file.writeAsBytes(await pdf.save());
+  final bytes = await pdf.save();
   _notificationService.setHeavyLoadingValue(false);
+  await Printing.layoutPdf(onLayout: (_) => bytes);
 }

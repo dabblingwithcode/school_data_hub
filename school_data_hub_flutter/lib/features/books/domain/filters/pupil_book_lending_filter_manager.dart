@@ -121,8 +121,10 @@ class PupilBookLendingFilterManager implements Resettable {
     if (activeFilters[PupilBookLendingFilter.all]!) {
       final sorted = List<PupilBookLending>.from(pupilBookLendings)
         ..sort((a, b) => b.lentAt.compareTo(a.lentAt));
-      _pupilIdsWithFilteredPupilBookLendings.value =
-          pupilBookLendings.map((e) => e.pupilId).toSet();
+      _pupilIdsWithFilteredPupilBookLendings.value = pupilBookLendings
+          .where((e) => e.pupilId != null)
+          .map((e) => e.pupilId!)
+          .toSet();
       return sorted;
     }
 
@@ -175,7 +177,9 @@ class PupilBookLendingFilterManager implements Resettable {
       }
 
       filteredLendings.add(lending);
-      filteredPupilIds.add(lending.pupilId);
+      if (lending.pupilId != null) {
+        filteredPupilIds.add(lending.pupilId!);
+      }
     }
 
     if (filterIsActive) {

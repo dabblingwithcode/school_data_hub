@@ -82,6 +82,7 @@ libraryBooks:
   - deleteLibraryBook:
 pupilBookLending:
   - postPupilBookLending:
+  - postUserBookLending:
   - fetchPupilBookLendings:
   - fetchPupilBookLendingByLendingId:
   - updatePupilBookLending:

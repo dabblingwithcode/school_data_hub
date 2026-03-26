@@ -162,10 +162,13 @@ class PupilListButtons extends WatchingWidget {
                 );
             if (result == null) return;
             if (context.mounted) {
-              context.push(RoutePaths.pupilBirthdays, extra: {
-                'selectedDate': result.pastDayValue,
-                'endDate': result.futureDayValue,
-              });
+              context.push(
+                RoutePaths.pupilBirthdays,
+                extra: {
+                  'selectedDate': result.pastDayValue,
+                  'endDate': result.futureDayValue,
+                },
+              );
             }
           },
           buttonIcon: Icon(

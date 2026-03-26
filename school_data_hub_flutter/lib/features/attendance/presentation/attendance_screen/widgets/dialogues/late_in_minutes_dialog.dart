@@ -4,28 +4,23 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/popup.dart';
 import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 
 Future<int?> minutesLateDialog(BuildContext context) async {
-  final controller = TextEditingController();
   int? result;
 
   await Popup.show(
     context: context,
     title: 'Minuten Verspätung',
     child: _MinutesLateContent(
-      controller: controller,
       onResult: (value) => result = value,
     ),
   );
 
-  controller.dispose();
   return result;
 }
 
 class _MinutesLateContent extends StatefulWidget {
-  final TextEditingController controller;
   final ValueChanged<int?> onResult;
 
   const _MinutesLateContent({
-    required this.controller,
     required this.onResult,
   });
 
@@ -35,25 +30,53 @@ class _MinutesLateContent extends StatefulWidget {
 
 class _MinutesLateContentState extends State<_MinutesLateContent> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final TextEditingController _controller;
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    _focusNode = FocusNode();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
+    return Material(
+      type: MaterialType.transparency,
+      child: Form(
+        key: _formKey,
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
             width: 100,
             child: TextFormField(
+              focusNode: _focusNode,
+              autofocus: true,
               textAlign: TextAlign.center,
               style: context.typography.display,
               keyboardType: TextInputType.number,
-              controller: widget.controller,
+              controller: _controller,
               validator: (value) {
                 return value!.isNotEmpty ? null : "";
               },
-              decoration: const InputDecoration(hintText: "?"),
+              decoration: InputDecoration(
+                hintText: "?",
+                hintStyle: context.typography.display.withColor(
+                  Style.of(context).colors.mutedForeground,
+                ),
+              ),
             ),
           ),
           SizedBox(height: Style.spacing.xl),
@@ -64,7 +87,7 @@ class _MinutesLateContentState extends State<_MinutesLateContent> {
                   label: 'ABBRECHEN',
                   variant: ButtonVariant.secondary,
                   onPressed: () {
-                    widget.controller.clear();
+                    _controller.clear();
                     Navigator.of(context).pop();
                   },
                 ),
@@ -75,9 +98,9 @@ class _MinutesLateContentState extends State<_MinutesLateContent> {
                   label: 'OKAY',
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      int amount = int.parse(widget.controller.text);
+                      int amount = int.parse(_controller.text);
                       widget.onResult(amount);
-                      widget.controller.clear();
+                      _controller.clear();
                       Navigator.of(context).pop();
                     }
                   },
@@ -85,7 +108,8 @@ class _MinutesLateContentState extends State<_MinutesLateContent> {
               ),
             ],
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

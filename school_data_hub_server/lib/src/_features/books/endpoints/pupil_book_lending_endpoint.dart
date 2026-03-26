@@ -34,6 +34,7 @@ class PupilBookLendingEndpoint extends Endpoint {
         libraryBookId: libraryBook.id!,
         lentAt: DateTime.now(),
         lentBy: lentBy,
+        borrowerType: 'pupil',
       );
 
       final pupilBookLendingInDatabase = await PupilBookLending.db
@@ -58,6 +59,80 @@ class PupilBookLendingEndpoint extends Endpoint {
 
     session.messages.postMessage('hub_events_stream', result!);
     HubUpdatesTracker.instance.touch(HubObjectType.pupilBookLending);
+
+    // Broadcast updated library book availability
+    final updatedLibraryBook = await LibraryBook.db.findFirstRow(session,
+        where: (t) => t.id.equals(result.libraryBookId),
+        include: LibraryBookSchemas.allInclude);
+    if (updatedLibraryBook != null) {
+      session.messages.postMessage('hub_events_stream', updatedLibraryBook);
+      HubUpdatesTracker.instance.touch(HubObjectType.libraryBook);
+    }
+    return result;
+  }
+
+  Future<PupilBookLending> postUserBookLending(
+      Session session, int userId, String libraryId, String lentBy) async {
+    final result = await session.db.transaction((transaction) async {
+      final user = await User.db.findById(
+        session,
+        userId,
+        transaction: transaction,
+      );
+      if (user == null) {
+        throw Exception('User with id $userId does not exist.');
+      }
+      final libraryBook = await LibraryBook.db.findFirstRow(session,
+          where: (t) => t.libraryId.equals(libraryId),
+          include: LibraryBookSchemas.allInclude,
+          transaction: transaction);
+      if (libraryBook == null) {
+        throw Exception('Library book with id $libraryId does not exist.');
+      }
+      if (!libraryBook.available) {
+        throw Exception('Library book $libraryId is not available.');
+      }
+      final bookLending = PupilBookLending(
+        score: 0,
+        isbn: libraryBook.book!.isbn,
+        lendingId: Uuid().v4(),
+        libraryBookId: libraryBook.id!,
+        lentAt: DateTime.now(),
+        lentBy: lentBy,
+        borrowerType: 'user',
+      );
+
+      final lendingInDatabase = await PupilBookLending.db
+          .insertRow(session, bookLending, transaction: transaction);
+      await PupilBookLending.db.attachRow.borrowerUser(
+          session, lendingInDatabase, user,
+          transaction: transaction);
+      await PupilBookLending.db.attachRow.libraryBook(
+          session, lendingInDatabase, libraryBook,
+          transaction: transaction);
+      libraryBook.available = false;
+      await LibraryBook.db
+          .updateRow(session, libraryBook, transaction: transaction);
+
+      final createdLending = await PupilBookLending.db.findFirstRow(session,
+          where: (t) => t.lendingId.equals(bookLending.lendingId),
+          include: PupilBookLendingSchemas.allInclude,
+          transaction: transaction);
+
+      return createdLending;
+    });
+
+    session.messages.postMessage('hub_events_stream', result!);
+    HubUpdatesTracker.instance.touch(HubObjectType.pupilBookLending);
+
+    // Broadcast updated library book availability
+    final updatedUserLibraryBook = await LibraryBook.db.findFirstRow(session,
+        where: (t) => t.id.equals(result.libraryBookId),
+        include: LibraryBookSchemas.allInclude);
+    if (updatedUserLibraryBook != null) {
+      session.messages.postMessage('hub_events_stream', updatedUserLibraryBook);
+      HubUpdatesTracker.instance.touch(HubObjectType.libraryBook);
+    }
     return result;
   }
 
@@ -107,6 +182,17 @@ class PupilBookLendingEndpoint extends Endpoint {
     });
     session.messages.postMessage('hub_events_stream', result);
     HubUpdatesTracker.instance.touch(HubObjectType.pupilBookLending);
+
+    // Broadcast updated library book availability
+    if (pupilBookLending.returnedAt != null) {
+      final updatedLibraryBook = await LibraryBook.db.findFirstRow(session,
+          where: (t) => t.id.equals(result.libraryBookId),
+          include: LibraryBookSchemas.allInclude);
+      if (updatedLibraryBook != null) {
+        session.messages.postMessage('hub_events_stream', updatedLibraryBook);
+        HubUpdatesTracker.instance.touch(HubObjectType.libraryBook);
+      }
+    }
     return result;
   }
 

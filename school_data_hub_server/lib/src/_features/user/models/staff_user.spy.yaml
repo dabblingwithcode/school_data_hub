@@ -15,6 +15,7 @@ fields:
   schooldayEventsProcessingTeam: String?
   credit: int
   userFlags: UserFlags
+  bookLendings: List<PupilBookLending>?, relation(name=book_lending_user)
 indexes:
   user_info_id_unique_idx:
     fields: userInfoId

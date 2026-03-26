@@ -44,6 +44,22 @@ class PupilBookLendingApiService {
     return lending;
   }
 
+  Future<PupilBookLending?> postUserBookLending({
+    required int userId,
+    required String libraryId,
+    required String lentBy,
+  }) async {
+    final lending = await ClientHelper.apiCall(
+      call: () => _client.pupilBookLending.postUserBookLending(
+        userId,
+        libraryId,
+        lentBy,
+      ),
+      errorMessage: 'Fehler beim Erstellen des Leihvorgangs',
+    );
+    return lending;
+  }
+
   //- update
 
   Future<PupilBookLending?> updatePupilBookLending({

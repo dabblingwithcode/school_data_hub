@@ -983,6 +983,21 @@ class EndpointPupilBookLending extends _i1.EndpointRef {
         },
       );
 
+  _i2.Future<_i31.PupilBookLending> postUserBookLending(
+    int userId,
+    String libraryId,
+    String lentBy,
+  ) =>
+      caller.callServerEndpoint<_i31.PupilBookLending>(
+        'pupilBookLending',
+        'postUserBookLending',
+        {
+          'userId': userId,
+          'libraryId': libraryId,
+          'lentBy': lentBy,
+        },
+      );
+
   _i2.Future<List<_i31.PupilBookLending>> fetchPupilBookLendings() =>
       caller.callServerEndpoint<List<_i31.PupilBookLending>>(
         'pupilBookLending',

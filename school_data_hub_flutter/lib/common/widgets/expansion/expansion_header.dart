@@ -40,7 +40,11 @@ class ExpansionHeader extends WatchingWidget {
                 AnimatedRotation(
                   turns: isExpanded ? 0.5 : 0.0,
                   duration: const Duration(milliseconds: 200),
-                  child: Icon(Icons.keyboard_arrow_down, color: switchColor!),
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 40,
+                    color: switchColor!,
+                  ),
                 ),
               ],
             )
@@ -51,7 +55,7 @@ class ExpansionHeader extends WatchingWidget {
               duration: const Duration(milliseconds: 200),
               child: Icon(
                 Icons.keyboard_arrow_down,
-                size: 30,
+                size: 40,
                 color: switchColor ?? Colors.white,
               ),
             ),

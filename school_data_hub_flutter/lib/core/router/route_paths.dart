@@ -71,6 +71,8 @@ abstract final class RoutePaths {
   static const learningBooksResults = '/learning/books/results';
   static const learningBooksTags = '/learning/books/tags';
   static const learningBooksSelectTags = '/learning/books/select-tags';
+  static const learningBooksLending = '/learning/books/lending';
+  static const learningBooksReturn = '/learning/books/return';
 
   // --- Workbooks ---
   static const workbookNew = '/learning/workbooks/new';

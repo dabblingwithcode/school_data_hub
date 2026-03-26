@@ -19,8 +19,13 @@ import 'package:school_data_hub_flutter/l10n/app_localizations.dart';
 
 class SelectPupilsListScreen extends WatchingStatefulWidget {
   final List<PupilProxy>? selectablePupils;
+  final bool isMultiSelectMode;
 
-  const SelectPupilsListScreen({required this.selectablePupils, super.key});
+  const SelectPupilsListScreen({
+    required this.selectablePupils,
+    this.isMultiSelectMode = true,
+    super.key,
+  });
 
   @override
   State<SelectPupilsListScreen> createState() => _SelectPupilsListScreenState();
@@ -50,6 +55,16 @@ class _SelectPupilsListScreenState extends State<SelectPupilsListScreen> {
   }
 
   void onCardPress(int pupilId) {
+    if (!widget.isMultiSelectMode) {
+      if (selectedPupilIds.contains(pupilId)) {
+        return;
+      }
+      setState(() {
+        selectedPupilIds = [pupilId];
+        isSelectMode = true;
+      });
+      return;
+    }
     if (selectedPupilIds.contains(pupilId)) {
       setState(() {
         selectedPupilIds.remove(pupilId);
@@ -149,17 +164,18 @@ class _SelectPupilsListScreenState extends State<SelectPupilsListScreen> {
               icon: const Icon(Icons.close, size: 30),
               onPressed: cancelSelect,
             ),
-          TappableIcon(
-            tooltip: 'alle auswählen',
-            icon: Icon(
-              Icons.select_all_rounded,
-              color: isSelectAllMode
-                  ? Colors.deepOrange
-                  : style.colors.background,
-              size: 30,
+          if (widget.isMultiSelectMode)
+            TappableIcon(
+              tooltip: 'alle auswählen',
+              icon: Icon(
+                Icons.select_all_rounded,
+                color: isSelectAllMode
+                    ? Colors.deepOrange
+                    : style.colors.background,
+                size: 30,
+              ),
+              onPressed: () => toggleSelectAll(selectablePupils),
             ),
-            onPressed: () => toggleSelectAll(selectablePupils),
-          ),
           TappableIcon(
             tooltip: 'Okay',
             icon: Icon(

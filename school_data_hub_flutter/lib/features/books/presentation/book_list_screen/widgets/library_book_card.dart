@@ -8,6 +8,7 @@ import 'package:school_data_hub_flutter/common/widgets/orient_ui/style.dart';
 import 'package:school_data_hub_flutter/features/books/domain/book_helper.dart';
 import 'package:school_data_hub_flutter/features/books/domain/models/library_book_proxy.dart';
 import 'package:school_data_hub_flutter/features/books/presentation/book_list_screen/widgets/book_pupil_card.dart';
+import 'package:school_data_hub_flutter/features/books/presentation/book_list_screen/widgets/book_user_card.dart';
 
 class LibraryBookCard extends WatchingWidget {
   final LibraryBookProxy libraryBookProxy;
@@ -17,12 +18,12 @@ class LibraryBookCard extends WatchingWidget {
   Widget build(BuildContext context) {
     final style = Style.of(context);
     final tileController = createOnce(() => ExpansionController());
-    final bookPupilLendings = BookHelpers.pupilBookLendingsLinkedToLibraryBook(
+    final bookLendings = BookHelpers.lendingsLinkedToLibraryBook(
       libraryBookId: libraryBookProxy.id,
     );
-    BookBorrowStatus? bookBorrowStatus = bookPupilLendings.isEmpty
+    BookBorrowStatus? bookBorrowStatus = bookLendings.isEmpty
         ? null
-        : BookHelpers.getBorrowedStatus(bookPupilLendings.first);
+        : BookHelpers.getBorrowedStatus(bookLendings.first);
     final Color borrowedColor = libraryBookProxy.available
         ? style.colors.success
         : bookBorrowStatus == BookBorrowStatus.since2Weeks
@@ -74,7 +75,7 @@ class LibraryBookCard extends WatchingWidget {
           ExpansionBody(
             title: null,
             tileController: tileController,
-            widgetList: bookPupilLendings.isEmpty
+            widgetList: bookLendings.isEmpty
                 ? [
                     Padding(
                       padding: const EdgeInsets.all(15.0),
@@ -84,8 +85,11 @@ class LibraryBookCard extends WatchingWidget {
                       ),
                     ),
                   ]
-                : bookPupilLendings.map((pupilBook) {
-                    return BookLendingPupilCard(passedPupilBook: pupilBook);
+                : bookLendings.map((lending) {
+                    if (lending.borrowerType == 'user') {
+                      return BookLendingUserCard(lending: lending);
+                    }
+                    return BookLendingPupilCard(passedPupilBook: lending);
                   }).toList(),
           ),
           const Gap(5),

@@ -15,6 +15,7 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../../../_features/pupil/models/pupil_data/pupil_data.dart' as _i2;
 import '../../../_features/books/models/library_book.dart' as _i3;
 import '../../../_shared/models/hub_document.dart' as _i4;
+import '../../../_features/user/models/staff_user.dart' as _i5;
 
 abstract class PupilBookLending
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
@@ -28,12 +29,15 @@ abstract class PupilBookLending
     required this.lentBy,
     this.returnedAt,
     this.receivedBy,
-    required this.pupilId,
+    this.pupilId,
     this.pupil,
     required this.isbn,
     required this.libraryBookId,
     this.libraryBook,
     this.pupilBookLendingFiles,
+    this.borrowerUserId,
+    this.borrowerUser,
+    this.borrowerType,
   });
 
   factory PupilBookLending({
@@ -46,12 +50,15 @@ abstract class PupilBookLending
     required String lentBy,
     DateTime? returnedAt,
     String? receivedBy,
-    required int pupilId,
+    int? pupilId,
     _i2.PupilData? pupil,
     required int isbn,
     required int libraryBookId,
     _i3.LibraryBook? libraryBook,
     List<_i4.HubDocument>? pupilBookLendingFiles,
+    int? borrowerUserId,
+    _i5.User? borrowerUser,
+    String? borrowerType,
   }) = _PupilBookLendingImpl;
 
   factory PupilBookLending.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -67,7 +74,7 @@ abstract class PupilBookLending
           ? null
           : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['returnedAt']),
       receivedBy: jsonSerialization['receivedBy'] as String?,
-      pupilId: jsonSerialization['pupilId'] as int,
+      pupilId: jsonSerialization['pupilId'] as int?,
       pupil: jsonSerialization['pupil'] == null
           ? null
           : _i2.PupilData.fromJson(
@@ -82,6 +89,12 @@ abstract class PupilBookLending
               as List?)
           ?.map((e) => _i4.HubDocument.fromJson((e as Map<String, dynamic>)))
           .toList(),
+      borrowerUserId: jsonSerialization['borrowerUserId'] as int?,
+      borrowerUser: jsonSerialization['borrowerUser'] == null
+          ? null
+          : _i5.User.fromJson(
+              (jsonSerialization['borrowerUser'] as Map<String, dynamic>)),
+      borrowerType: jsonSerialization['borrowerType'] as String?,
     );
   }
 
@@ -108,7 +121,7 @@ abstract class PupilBookLending
 
   String? receivedBy;
 
-  int pupilId;
+  int? pupilId;
 
   _i2.PupilData? pupil;
 
@@ -119,6 +132,12 @@ abstract class PupilBookLending
   _i3.LibraryBook? libraryBook;
 
   List<_i4.HubDocument>? pupilBookLendingFiles;
+
+  int? borrowerUserId;
+
+  _i5.User? borrowerUser;
+
+  String? borrowerType;
 
   @override
   _i1.Table<int?> get table => t;
@@ -142,6 +161,9 @@ abstract class PupilBookLending
     int? libraryBookId,
     _i3.LibraryBook? libraryBook,
     List<_i4.HubDocument>? pupilBookLendingFiles,
+    int? borrowerUserId,
+    _i5.User? borrowerUser,
+    String? borrowerType,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -155,7 +177,7 @@ abstract class PupilBookLending
       'lentBy': lentBy,
       if (returnedAt != null) 'returnedAt': returnedAt?.toJson(),
       if (receivedBy != null) 'receivedBy': receivedBy,
-      'pupilId': pupilId,
+      if (pupilId != null) 'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJson(),
       'isbn': isbn,
       'libraryBookId': libraryBookId,
@@ -163,6 +185,9 @@ abstract class PupilBookLending
       if (pupilBookLendingFiles != null)
         'pupilBookLendingFiles':
             pupilBookLendingFiles?.toJson(valueToJson: (v) => v.toJson()),
+      if (borrowerUserId != null) 'borrowerUserId': borrowerUserId,
+      if (borrowerUser != null) 'borrowerUser': borrowerUser?.toJson(),
+      if (borrowerType != null) 'borrowerType': borrowerType,
     };
   }
 
@@ -178,7 +203,7 @@ abstract class PupilBookLending
       'lentBy': lentBy,
       if (returnedAt != null) 'returnedAt': returnedAt?.toJson(),
       if (receivedBy != null) 'receivedBy': receivedBy,
-      'pupilId': pupilId,
+      if (pupilId != null) 'pupilId': pupilId,
       if (pupil != null) 'pupil': pupil?.toJsonForProtocol(),
       'isbn': isbn,
       'libraryBookId': libraryBookId,
@@ -186,6 +211,10 @@ abstract class PupilBookLending
       if (pupilBookLendingFiles != null)
         'pupilBookLendingFiles': pupilBookLendingFiles?.toJson(
             valueToJson: (v) => v.toJsonForProtocol()),
+      if (borrowerUserId != null) 'borrowerUserId': borrowerUserId,
+      if (borrowerUser != null)
+        'borrowerUser': borrowerUser?.toJsonForProtocol(),
+      if (borrowerType != null) 'borrowerType': borrowerType,
     };
   }
 
@@ -193,11 +222,13 @@ abstract class PupilBookLending
     _i2.PupilDataInclude? pupil,
     _i3.LibraryBookInclude? libraryBook,
     _i4.HubDocumentIncludeList? pupilBookLendingFiles,
+    _i5.UserInclude? borrowerUser,
   }) {
     return PupilBookLendingInclude._(
       pupil: pupil,
       libraryBook: libraryBook,
       pupilBookLendingFiles: pupilBookLendingFiles,
+      borrowerUser: borrowerUser,
     );
   }
 
@@ -240,12 +271,15 @@ class _PupilBookLendingImpl extends PupilBookLending {
     required String lentBy,
     DateTime? returnedAt,
     String? receivedBy,
-    required int pupilId,
+    int? pupilId,
     _i2.PupilData? pupil,
     required int isbn,
     required int libraryBookId,
     _i3.LibraryBook? libraryBook,
     List<_i4.HubDocument>? pupilBookLendingFiles,
+    int? borrowerUserId,
+    _i5.User? borrowerUser,
+    String? borrowerType,
   }) : super._(
           id: id,
           lendingId: lendingId,
@@ -262,6 +296,9 @@ class _PupilBookLendingImpl extends PupilBookLending {
           libraryBookId: libraryBookId,
           libraryBook: libraryBook,
           pupilBookLendingFiles: pupilBookLendingFiles,
+          borrowerUserId: borrowerUserId,
+          borrowerUser: borrowerUser,
+          borrowerType: borrowerType,
         );
 
   /// Returns a shallow copy of this [PupilBookLending]
@@ -278,12 +315,15 @@ class _PupilBookLendingImpl extends PupilBookLending {
     String? lentBy,
     Object? returnedAt = _Undefined,
     Object? receivedBy = _Undefined,
-    int? pupilId,
+    Object? pupilId = _Undefined,
     Object? pupil = _Undefined,
     int? isbn,
     int? libraryBookId,
     Object? libraryBook = _Undefined,
     Object? pupilBookLendingFiles = _Undefined,
+    Object? borrowerUserId = _Undefined,
+    Object? borrowerUser = _Undefined,
+    Object? borrowerType = _Undefined,
   }) {
     return PupilBookLending(
       id: id is int? ? id : this.id,
@@ -295,7 +335,7 @@ class _PupilBookLendingImpl extends PupilBookLending {
       lentBy: lentBy ?? this.lentBy,
       returnedAt: returnedAt is DateTime? ? returnedAt : this.returnedAt,
       receivedBy: receivedBy is String? ? receivedBy : this.receivedBy,
-      pupilId: pupilId ?? this.pupilId,
+      pupilId: pupilId is int? ? pupilId : this.pupilId,
       pupil: pupil is _i2.PupilData? ? pupil : this.pupil?.copyWith(),
       isbn: isbn ?? this.isbn,
       libraryBookId: libraryBookId ?? this.libraryBookId,
@@ -305,6 +345,12 @@ class _PupilBookLendingImpl extends PupilBookLending {
       pupilBookLendingFiles: pupilBookLendingFiles is List<_i4.HubDocument>?
           ? pupilBookLendingFiles
           : this.pupilBookLendingFiles?.map((e0) => e0.copyWith()).toList(),
+      borrowerUserId:
+          borrowerUserId is int? ? borrowerUserId : this.borrowerUserId,
+      borrowerUser: borrowerUser is _i5.User?
+          ? borrowerUser
+          : this.borrowerUser?.copyWith(),
+      borrowerType: borrowerType is String? ? borrowerType : this.borrowerType,
     );
   }
 }
@@ -356,6 +402,14 @@ class PupilBookLendingTable extends _i1.Table<int?> {
       'libraryBookId',
       this,
     );
+    borrowerUserId = _i1.ColumnInt(
+      'borrowerUserId',
+      this,
+    );
+    borrowerType = _i1.ColumnString(
+      'borrowerType',
+      this,
+    );
   }
 
   late final _i1.ColumnString lendingId;
@@ -387,6 +441,12 @@ class PupilBookLendingTable extends _i1.Table<int?> {
   _i4.HubDocumentTable? ___pupilBookLendingFiles;
 
   _i1.ManyRelation<_i4.HubDocumentTable>? _pupilBookLendingFiles;
+
+  late final _i1.ColumnInt borrowerUserId;
+
+  _i5.UserTable? _borrowerUser;
+
+  late final _i1.ColumnString borrowerType;
 
   _i2.PupilDataTable get pupil {
     if (_pupil != null) return _pupil!;
@@ -428,6 +488,19 @@ class PupilBookLendingTable extends _i1.Table<int?> {
     return ___pupilBookLendingFiles!;
   }
 
+  _i5.UserTable get borrowerUser {
+    if (_borrowerUser != null) return _borrowerUser!;
+    _borrowerUser = _i1.createRelationTable(
+      relationFieldName: 'borrowerUser',
+      field: PupilBookLending.t.borrowerUserId,
+      foreignField: _i5.User.t.id,
+      tableRelation: tableRelation,
+      createTable: (foreignTableRelation) =>
+          _i5.UserTable(tableRelation: foreignTableRelation),
+    );
+    return _borrowerUser!;
+  }
+
   _i1.ManyRelation<_i4.HubDocumentTable> get pupilBookLendingFiles {
     if (_pupilBookLendingFiles != null) return _pupilBookLendingFiles!;
     var relationTable = _i1.createRelationTable(
@@ -461,6 +534,8 @@ class PupilBookLendingTable extends _i1.Table<int?> {
         pupilId,
         isbn,
         libraryBookId,
+        borrowerUserId,
+        borrowerType,
       ];
 
   @override
@@ -474,6 +549,9 @@ class PupilBookLendingTable extends _i1.Table<int?> {
     if (relationField == 'pupilBookLendingFiles') {
       return __pupilBookLendingFiles;
     }
+    if (relationField == 'borrowerUser') {
+      return borrowerUser;
+    }
     return null;
   }
 }
@@ -483,10 +561,12 @@ class PupilBookLendingInclude extends _i1.IncludeObject {
     _i2.PupilDataInclude? pupil,
     _i3.LibraryBookInclude? libraryBook,
     _i4.HubDocumentIncludeList? pupilBookLendingFiles,
+    _i5.UserInclude? borrowerUser,
   }) {
     _pupil = pupil;
     _libraryBook = libraryBook;
     _pupilBookLendingFiles = pupilBookLendingFiles;
+    _borrowerUser = borrowerUser;
   }
 
   _i2.PupilDataInclude? _pupil;
@@ -495,11 +575,14 @@ class PupilBookLendingInclude extends _i1.IncludeObject {
 
   _i4.HubDocumentIncludeList? _pupilBookLendingFiles;
 
+  _i5.UserInclude? _borrowerUser;
+
   @override
   Map<String, _i1.Include?> get includes => {
         'pupil': _pupil,
         'libraryBook': _libraryBook,
         'pupilBookLendingFiles': _pupilBookLendingFiles,
+        'borrowerUser': _borrowerUser,
       };
 
   @override
@@ -839,6 +922,30 @@ class PupilBookLendingAttachRowRepository {
     );
   }
 
+  /// Creates a relation between the given [PupilBookLending] and [User]
+  /// by setting the [PupilBookLending]'s foreign key `borrowerUserId` to refer to the [User].
+  Future<void> borrowerUser(
+    _i1.Session session,
+    PupilBookLending pupilBookLending,
+    _i5.User borrowerUser, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilBookLending.id == null) {
+      throw ArgumentError.notNull('pupilBookLending.id');
+    }
+    if (borrowerUser.id == null) {
+      throw ArgumentError.notNull('borrowerUser.id');
+    }
+
+    var $pupilBookLending =
+        pupilBookLending.copyWith(borrowerUserId: borrowerUser.id);
+    await session.db.updateRow<PupilBookLending>(
+      $pupilBookLending,
+      columns: [PupilBookLending.t.borrowerUserId],
+      transaction: transaction,
+    );
+  }
+
   /// Creates a relation between this [PupilBookLending] and the given [HubDocument]
   /// by setting the [HubDocument]'s foreign key `_pupilBookLendingPupilbooklendingfilesPupilBookLendingId` to refer to this [PupilBookLending].
   Future<void> pupilBookLendingFiles(
@@ -906,6 +1013,50 @@ class PupilBookLendingDetachRepository {
 
 class PupilBookLendingDetachRowRepository {
   const PupilBookLendingDetachRowRepository._();
+
+  /// Detaches the relation between this [PupilBookLending] and the [PupilData] set in `pupil`
+  /// by setting the [PupilBookLending]'s foreign key `pupilId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> pupil(
+    _i1.Session session,
+    PupilBookLending pupilbooklending, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilbooklending.id == null) {
+      throw ArgumentError.notNull('pupilbooklending.id');
+    }
+
+    var $pupilbooklending = pupilbooklending.copyWith(pupilId: null);
+    await session.db.updateRow<PupilBookLending>(
+      $pupilbooklending,
+      columns: [PupilBookLending.t.pupilId],
+      transaction: transaction,
+    );
+  }
+
+  /// Detaches the relation between this [PupilBookLending] and the [User] set in `borrowerUser`
+  /// by setting the [PupilBookLending]'s foreign key `borrowerUserId` to `null`.
+  ///
+  /// This removes the association between the two models without deleting
+  /// the related record.
+  Future<void> borrowerUser(
+    _i1.Session session,
+    PupilBookLending pupilbooklending, {
+    _i1.Transaction? transaction,
+  }) async {
+    if (pupilbooklending.id == null) {
+      throw ArgumentError.notNull('pupilbooklending.id');
+    }
+
+    var $pupilbooklending = pupilbooklending.copyWith(borrowerUserId: null);
+    await session.db.updateRow<PupilBookLending>(
+      $pupilbooklending,
+      columns: [PupilBookLending.t.borrowerUserId],
+      transaction: transaction,
+    );
+  }
 
   /// Detaches the relation between this [PupilBookLending] and the given [HubDocument]
   /// by setting the [HubDocument]'s foreign key `_pupilBookLendingPupilbooklendingfilesPupilBookLendingId` to `null`.
